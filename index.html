@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Welcome to Nijmegen</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+:root {
+  --bg: #f4efe7;
+  --card: #ffffff;
+  --text: #3f3f3f;
+  --heading: #5c4638;
+  --accent: #c7b8a3;
+  --highlight: #ece6dc;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  font-size: 18px;
+}
+
+.container {
+  max-width: 720px;
+  margin: auto;
+  padding: 60px 22px 120px;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 38px;
+  color: var(--heading);
+  margin-bottom: 12px;
+}
+
+.hero p {
+  font-size: 17px;
+  opacity: 0.85;
+  max-width: 500px;
+  margin: auto;
+}
+
+.card {
+  background: var(--card);
+  padding: 28px 26px;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  margin-bottom: 28px;
+  opacity: 0;
+  transform: translateY(15px);
+  animation: fadeIn 0.6s ease forwards;
+}
+
+.card:nth-of-type(odd) { animation-delay: 0.1s; }
+.card:nth-of-type(even) { animation-delay: 0.2s; }
+
+.card h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  color: var(--heading);
+  margin-top: 0;
+  margin-bottom: 12px;
+}
+
+ul {
+  padding-left: 18px;
+  margin-top: 8px;
+}
+
+li { margin-bottom: 6px; }
+
+.highlight {
+  background: var(--highlight);
+  padding: 16px;
+  border-radius: 10px;
+  margin-top: 10px;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 60px;
+  font-size: 15px;
+  opacity: 0.75;
+}
+
+.floating-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--heading);
+  color: white;
+  padding: 14px 20px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  transition: 0.3s ease;
+}
+
+.floating-btn:hover {
+  transform: translateY(-3px);
+}
+
+#topBtn {
+  position: fixed;
+  bottom: 85px;
+  right: 20px;
+  background: var(--accent);
+  color: white;
+  padding: 10px 14px;
+  border-radius: 50%;
+  font-size: 14px;
+  cursor: pointer;
+  display: none;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="hero">
+  <h1>🌉 Welcome to Nijmegen</h1>
+  <p>
+    Welcome to Nijmegen — the oldest city in the Netherlands, with more than 2000 years of history.<br><br>
+    We’re truly happy to host you. We hope you feel relaxed, comfortable, and completely at home during your stay.<br><br>
+    — Joa, Danilo & Lilly (the cat) 🤍
+  </p>
+</div>
+
+<div class="card">
+<h2>🏡 Feel at Home</h2>
+<p>This house has two Airbnb rooms, so the room next to yours may be occupied.</p>
+<p>We want you to feel free here. Use the space comfortably and enjoy it as if it were your own home.</p>
+<p>If there’s anything you need, we’re just a message away.</p>
+</div>
+
+<div class="card">
+<h2>📶 WiFi</h2>
+<div class="highlight">
+<p><strong>Network:</strong> BokaSami</p>
+<p><strong>Password:</strong> LandBouwStraat15!</p>
+</div>
+</div>
+
+<div class="card">
+<h2>🍵 Kitchen Use</h2>
+<p>Coffee and tea are free of charge ☕</p>
+<ul>
+<li>Pots & pans</li>
+<li>Plates & cutlery</li>
+<li>Seasoning & oil</li>
+<li>Anything in the cabinets</li>
+</ul>
+<p>Just open the cupboards and make yourself at home.</p>
+</div>
+
+<div class="card">
+<h2>🛏 Towels & Bedding</h2>
+<ul>
+<li>Extra towels, bedding and comforter are in the closet</li>
+<li>Used towels can be placed on the stair railing</li>
+<li>Need extra towels? Just send us a message</li>
+</ul>
+</div>
+
+<div class="card">
+<h2>📺 Chromecast</h2>
+<p>Simply connect to the Chromecast that matches your room name and number.</p>
+</div>
+
+<div class="card">
+<h2>🧺 Washing Machine & Dryer</h2>
+<p>Located in the basement.</p>
+<ul>
+<li>Free to use</li>
+<li>Detergent and fabric softener included</li>
+<li>For safety reasons, please stay home while running</li>
+</ul>
+</div>
+
+<div class="card">
+<h2>🧹 Cleaning & Housekeeping</h2>
+<p>Staying longer than 4 days? We can provide housekeeping — just let us know.</p>
+<p>Prefer to clean yourself?</p>
+<ul>
+<li>Vacuum cleaner: main floor, near basement door</li>
+<li>Cleaning supplies: under the kitchen sink</li>
+</ul>
+<p>If something is not working properly, please tell us immediately so we can fix it for you.</p>
+</div>
+
+<div class="card">
+<h2>🌙 Quiet Hours</h2>
+<p>23:00 – 07:00. Please be mindful of other guests who may be resting.</p>
+</div>
+
+<div class="card">
+<h2>🚆 Train Track</h2>
+<p>The house is located next to a train track.</p>
+<ul>
+<li>Close the window completely</li>
+<li>Close the air vent before sleeping</li>
+</ul>
+<p>Most guests sleep perfectly fine after doing this.</p>
+</div>
+
+<div class="card">
+<h2>🐱 Meet Lilly</h2>
+<p>Our social cat Lilly loves attention and pets. She is allowed outside.</p>
+<p><strong>She is not allowed inside your room.</strong></p>
+</div>
+
+<div class="card">
+<h2>🛒 Supermarket Nearby</h2>
+<p>Albert Heijn is about 10 minutes walking distance.</p>
+<p>Attached to your key is a Bonus Card for discounts (applied at checkout).</p>
+</div>
+
+<div class="card">
+<h2>🌇 Tips for Nijmegen</h2>
+<p>Looking for restaurants or things to do? We’re happy to share our favorite local spots — just ask.</p>
+</div>
+
+<div class="card">
+<h2>👥 Overnight Guests</h2>
+<p>Overnight guests are allowed at €20 per night.</p>
+<p>Please inform us in advance.</p>
+</div>
+
+<div class="card">
+<h2>🚪 Check-Out</h2>
+<ul>
+<li>Close all windows</li>
+<li>Turn off the heater</li>
+<li>Leave through the front door</li>
+<li>Drop the keys in the mailbox inside</li>
+</ul>
+<p>Thank you for staying with us 🤍</p>
+</div>
+
+<div class="card">
+<h2>🚨 Important</h2>
+<div class="highlight">
+<p><strong>Emergency:</strong> 112</p>
+<p><strong>No smoking inside the house.</strong></p>
+</div>
+</div>
+
+<div class="footer">
+With love,<br>
+<strong>Joa, Danilo & Lilly</strong>
+</div>
+
+</div>
+
+<a href="https://wa.me/31622192645?text=Hi%20Joa,%20I%E2%80%99m%20staying%20at%20your%20Airbnb%20in%20Nijmegen%20and%20I%20have%20a%20question."
+   class="floating-btn"
+   target="_blank">
+   💬 Message Joa
+</a>
+
+<div id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+<script>
+window.addEventListener("scroll", function() {
+  const btn = document.getElementById("topBtn");
+  btn.style.display = window.scrollY > 400 ? "block" : "none";
+});
+</script>
+
+</body>
+</html>
