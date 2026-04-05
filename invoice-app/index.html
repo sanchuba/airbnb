@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nijmegen Guest Rooms – Invoice Admin</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <div class="container">
+    <div class="topbar">
+      <div>
+        <h1>Nijmegen Guest Rooms</h1>
+        <p>Private Invoice Admin</p>
+      </div>
+      <button id="logoutBtn" class="secondary hidden">Log out</button>
+    </div>
+
+    <div id="loginView" class="card">
+      <h2>Sign in</h2>
+      <p>Only authorized users can access the invoice system.</p>
+      <div class="field">
+        <label for="loginEmail">Email</label>
+        <input id="loginEmail" type="email" placeholder="you@example.com" />
+      </div>
+      <button id="loginBtn" class="primary">Send login link</button>
+      <p id="loginMessage" class="muted"></p>
+    </div>
+
+    <div id="appView" class="hidden">
+      <div class="layout">
+        <div class="card">
+          <div class="section-header">
+            <h2>Invoice Details</h2>
+            <button id="newInvoiceBtn" class="secondary">New invoice</button>
+          </div>
+
+          <div class="grid">
+            <div class="field">
+              <label for="invoiceNumber">Invoice number</label>
+              <input id="invoiceNumber" type="text" />
+            </div>
+            <div class="field">
+              <label for="invoiceDate">Invoice date</label>
+              <input id="invoiceDate" type="date" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="guestName">Guest name</label>
+            <input id="guestName" type="text" />
+          </div>
+
+          <div class="field">
+            <label for="guestEmail">Guest email</label>
+            <input id="guestEmail" type="email" />
+          </div>
+
+          <div class="field">
+            <label for="roomName">Room name</label>
+            <select id="roomName">
+              <option value="Spacious Room (Garden View)">Spacious Room (Garden View)</option>
+              <option value="Cozy Room (Street Side)">Cozy Room (Street Side)</option>
+              <option value="Custom">Custom</option>
+            </select>
+          </div>
+
+          <div class="field hidden" id="customRoomWrap">
+            <label for="customRoomName">Custom room name</label>
+            <input id="customRoomName" type="text" />
+          </div>
+
+          <div class="grid">
+            <div class="field">
+              <label for="checkinDate">Check-in</label>
+              <input id="checkinDate" type="date" />
+            </div>
+            <div class="field">
+              <label for="checkoutDate">Check-out</label>
+              <input id="checkoutDate" type="date" />
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="field">
+              <label for="nights">Nights</label>
+              <input id="nights" type="number" min="1" />
+            </div>
+            <div class="field">
+              <label for="guests">Guests</label>
+              <input id="guests" type="number" min="1" value="1" />
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="field">
+              <label for="accommodationAmount">Accommodation (€)</label>
+              <input id="accommodationAmount" type="number" step="0.01" />
+            </div>
+            <div class="field">
+              <label for="cleaningFee">Cleaning fee (€)</label>
+              <input id="cleaningFee" type="number" step="0.01" value="5.00" />
+            </div>
+          </div>
+
+          <div class="grid">
+            <div class="field">
+              <label for="touristTaxRate">Tourist tax rate (€ / guest / night)</label>
+              <input id="touristTaxRate" type="number" step="0.01" value="3.71" />
+            </div>
+            <div class="field">
+              <label for="taxMode">Tourist tax handling</label>
+              <select id="taxMode">
+                <option value="included">Included in accommodation</option>
+                <option value="excluded">Added on top</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="paymentMethod">Payment method</label>
+            <select id="paymentMethod">
+              <option value="Paid via Booking.com">Paid via Booking.com</option>
+              <option value="Paid via Airbnb">Paid via Airbnb</option>
+              <option value="Custom">Custom</option>
+            </select>
+          </div>
+
+          <div class="field hidden" id="customPaymentWrap">
+            <label for="customPaymentMethod">Custom payment method</label>
+            <input id="customPaymentMethod" type="text" />
+          </div>
+
+          <div class="button-row">
+            <button id="saveBtn" class="primary">Save invoice</button>
+            <button id="printBtn" class="secondary">Print / Save PDF</button>
+          </div>
+
+          <p id="saveMessage" class="muted"></p>
+        </div>
+
+        <div class="card">
+          <h2>Saved Invoices</h2>
+          <div id="invoiceList" class="invoice-list"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
