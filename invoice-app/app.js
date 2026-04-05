@@ -20,6 +20,7 @@ const translations = {
     invoiceDate: 'Invoice date',
     guestName: 'Guest name',
     guestEmail: 'Guest email (optional)',
+    bookingReference: 'Booking reference (optional)',
     roomName: 'Room name',
     customRoomName: 'Custom room name',
     checkin: 'Check-in',
@@ -35,12 +36,16 @@ const translations = {
     paymentMethod: 'Payment',
     customPayment: 'Custom payment method',
     save: 'Save invoice',
+    delete: 'Delete invoice',
     print: 'Print / Save as PDF',
     savedInvoices: 'Saved Invoices',
+    searchInvoices: 'Search / filter invoices',
+    searchPlaceholder: 'Search by invoice number, guest name, email or booking reference',
     invoiceTitle: 'INVOICE',
     labelInvoiceNumber: 'Invoice number:',
     labelDate: 'Date:',
     sectionGuest: 'Guest',
+    labelBookingReference: 'Booking reference:',
     sectionStay: 'Stay Details',
     labelRoom: 'Room:',
     labelCheckin: 'Check-in:',
@@ -69,7 +74,9 @@ const translations = {
     checkEmail: 'Check your email for the login link.',
     enterEmail: 'Enter your email address.',
     notLoggedIn: 'You are not logged in.',
-    saved: 'Invoice saved.'
+    saved: 'Invoice saved.',
+    deleted: 'Invoice deleted.',
+    confirmDelete: 'Are you sure you want to delete this invoice? This cannot be undone.'
   },
   nl: {
     pageTitle: 'Factuurgenerator',
@@ -85,6 +92,7 @@ const translations = {
     invoiceDate: 'Factuurdatum',
     guestName: 'Naam gast',
     guestEmail: 'E-mailadres gast (optioneel)',
+    bookingReference: 'Boekingsreferentie (optioneel)',
     roomName: 'Kamernaam',
     customRoomName: 'Aangepaste kamernaam',
     checkin: 'Inchecken',
@@ -100,12 +108,16 @@ const translations = {
     paymentMethod: 'Betaling',
     customPayment: 'Aangepaste betaalmethode',
     save: 'Factuur opslaan',
+    delete: 'Factuur verwijderen',
     print: 'Printen / Opslaan als PDF',
     savedInvoices: 'Opgeslagen facturen',
+    searchInvoices: 'Zoeken / filteren facturen',
+    searchPlaceholder: 'Zoek op factuurnummer, gastnaam, e-mail of boekingsreferentie',
     invoiceTitle: 'FACTUUR',
     labelInvoiceNumber: 'Factuurnummer:',
     labelDate: 'Datum:',
     sectionGuest: 'Gast',
+    labelBookingReference: 'Boekingsreferentie:',
     sectionStay: 'Verblijfsgegevens',
     labelRoom: 'Kamer:',
     labelCheckin: 'Inchecken:',
@@ -134,13 +146,16 @@ const translations = {
     checkEmail: 'Controleer je e-mail voor de inloglink.',
     enterEmail: 'Voer je e-mailadres in.',
     notLoggedIn: 'Je bent niet ingelogd.',
-    saved: 'Factuur opgeslagen.'
+    saved: 'Factuur opgeslagen.',
+    deleted: 'Factuur verwijderd.',
+    confirmDelete: 'Weet je zeker dat je deze factuur wilt verwijderen? Dit kan niet ongedaan worden gemaakt.'
   }
 };
 
 let currentLang = 'en';
 let currentInvoiceId = null;
 let manualNightsOverride = false;
+let allInvoices = [];
 
 const loginView = document.getElementById('loginView');
 const appView = document.getElementById('appView');
@@ -149,16 +164,19 @@ const logoutBtn = document.getElementById('logoutBtn');
 const loginEmail = document.getElementById('loginEmail');
 const loginMessage = document.getElementById('loginMessage');
 const saveBtn = document.getElementById('saveBtn');
+const deleteBtn = document.getElementById('deleteBtn');
 const saveMessage = document.getElementById('saveMessage');
 const printBtn = document.getElementById('printBtn');
 const invoiceList = document.getElementById('invoiceList');
 const newInvoiceBtn = document.getElementById('newInvoiceBtn');
+const searchInvoicesInput = document.getElementById('searchInvoices');
 
 const fields = {
   invoiceNumber: document.getElementById('invoiceNumber'),
   invoiceDate: document.getElementById('invoiceDate'),
   guestName: document.getElementById('guestName'),
   guestEmail: document.getElementById('guestEmail'),
+  bookingReference: document.getElementById('bookingReference'),
   roomName: document.getElementById('roomName'),
   customRoomName: document.getElementById('customRoomName'),
   checkinDate: document.getElementById('checkinDate'),
@@ -266,6 +284,7 @@ function clearForm() {
   fields.invoiceDate.value = todayISO();
   fields.guestName.value = '';
   fields.guestEmail.value = '';
+  fields.bookingReference.value = '';
   fields.roomName.value = currentLang === 'nl' ? translations.nl.roomOption1 : translations.en.roomOption1;
   fields.customRoomName.value = '';
   fields.checkinDate.value = '';
@@ -279,6 +298,7 @@ function clearForm() {
   fields.paymentMethod.value = currentLang === 'nl' ? translations.nl.payBooking : translations.en.payBooking;
   fields.customPaymentMethod.value = '';
   toggleCustomFields();
+  deleteBtn.classList.add('hidden');
   updatePreview();
 }
 
@@ -336,6 +356,7 @@ async function saveInvoice() {
     invoice_date: fields.invoiceDate.value,
     guest_name: fields.guestName.value.trim(),
     guest_email: fields.guestEmail.value.trim(),
+    booking_reference: fields.bookingReference.value.trim(),
     room_name: getRoomValue(),
     checkin_date: fields.checkinDate.value,
     checkout_date: fields.checkoutDate.value,
@@ -373,8 +394,73 @@ async function saveInvoice() {
   }
 
   currentInvoiceId = result.data.id;
+  deleteBtn.classList.remove('hidden');
   saveMessage.textContent = translations[currentLang].saved;
   await loadInvoices();
+}
+
+async function deleteInvoice() {
+  if (!currentInvoiceId) return;
+
+  const confirmed = window.confirm(translations[currentLang].confirmDelete);
+  if (!confirmed) return;
+
+  const { error } = await supabaseClient
+    .from('invoices')
+    .delete()
+    .eq('id', currentInvoiceId);
+
+  if (error) {
+    saveMessage.textContent = error.message;
+    return;
+  }
+
+  saveMessage.textContent = translations[currentLang].deleted;
+  await prepareNewInvoice();
+  await loadInvoices();
+}
+
+function renderInvoiceList(filteredInvoices = allInvoices) {
+  if (!filteredInvoices.length) {
+    invoiceList.innerHTML = `<p class="muted">${translations[currentLang].noInvoices}</p>`;
+    return;
+  }
+
+  invoiceList.innerHTML = '';
+  filteredInvoices.forEach(invoice => {
+    const item = document.createElement('div');
+    item.className = 'invoice-item';
+    item.innerHTML = `
+      <strong>${invoice.invoice_number}</strong>
+      <span>${invoice.guest_name}</span><br>
+      <span class="muted">${formatDateForLang(invoice.invoice_date, currentLang)} · €${Number(invoice.total_paid).toFixed(2)}</span>
+      ${invoice.booking_reference ? `<br><span class="muted">${invoice.booking_reference}</span>` : ''}
+    `;
+    item.addEventListener('click', () => loadInvoiceIntoForm(invoice));
+    invoiceList.appendChild(item);
+  });
+}
+
+function filterInvoices() {
+  const query = (searchInvoicesInput.value || '').trim().toLowerCase();
+
+  if (!query) {
+    renderInvoiceList(allInvoices);
+    return;
+  }
+
+  const filtered = allInvoices.filter(invoice => {
+    return [
+      invoice.invoice_number,
+      invoice.guest_name,
+      invoice.guest_email,
+      invoice.booking_reference
+    ]
+      .filter(Boolean)
+      .some(value => String(value).toLowerCase().includes(query));
+  });
+
+  renderInvoiceList(filtered);
 }
 
 async function loadInvoices() {
@@ -391,23 +477,8 @@ async function loadInvoices() {
     return;
   }
 
-  if (!data.length) {
-    invoiceList.innerHTML = `<p class="muted">${translations[currentLang].noInvoices}</p>`;
-    return;
-  }
-
-  invoiceList.innerHTML = '';
-  data.forEach(invoice => {
-    const item = document.createElement('div');
-    item.className = 'invoice-item';
-    item.innerHTML = `
-      <strong>${invoice.invoice_number}</strong>
-      <span>${invoice.guest_name}</span><br>
-      <span class="muted">${formatDateForLang(invoice.invoice_date, currentLang)} · €${Number(invoice.total_paid).toFixed(2)}</span>
-    `;
-    item.addEventListener('click', () => loadInvoiceIntoForm(invoice));
-    invoiceList.appendChild(item);
-  });
+  allInvoices = data || [];
+  filterInvoices();
 }
 
 function loadInvoiceIntoForm(invoice) {
@@ -418,6 +489,7 @@ function loadInvoiceIntoForm(invoice) {
   fields.invoiceDate.value = invoice.invoice_date;
   fields.guestName.value = invoice.guest_name || '';
   fields.guestEmail.value = invoice.guest_email || '';
+  fields.bookingReference.value = invoice.booking_reference || '';
 
   const knownRooms = [
     translations.en.roomOption1, translations.en.roomOption2,
@@ -462,6 +534,7 @@ function loadInvoiceIntoForm(invoice) {
     fields.customPaymentMethod.value = invoice.payment_method || '';
   }
 
+  deleteBtn.classList.remove('hidden');
   toggleCustomFields();
   updatePreview();
   saveMessage.textContent = '';
@@ -488,6 +561,7 @@ function updateTexts() {
   document.getElementById('labelInvoiceDate').textContent = t.invoiceDate;
   document.getElementById('labelGuestName').textContent = t.guestName;
   document.getElementById('labelGuestEmail').textContent = t.guestEmail;
+  document.getElementById('labelBookingReference').textContent = t.bookingReference;
   document.getElementById('labelRoomName').textContent = t.roomName;
   document.getElementById('labelCustomRoomName').textContent = t.customRoomName;
   document.getElementById('labelCheckin').textContent = t.checkin;
@@ -501,8 +575,11 @@ function updateTexts() {
   document.getElementById('labelPaymentMethod').textContent = t.paymentMethod;
   document.getElementById('labelCustomPayment').textContent = t.customPayment;
   document.getElementById('saveBtn').textContent = t.save;
+  document.getElementById('deleteBtn').textContent = t.delete;
   document.getElementById('printBtn').textContent = t.print;
   document.getElementById('savedInvoicesTitle').textContent = t.savedInvoices;
+  document.getElementById('labelSearchInvoices').textContent = t.searchInvoices;
+  document.getElementById('searchInvoices').placeholder = t.searchPlaceholder;
 
   const currentRoom = fields.roomName.value;
   fields.roomName.innerHTML = `
@@ -548,6 +625,7 @@ function updatePreview() {
   document.getElementById('previewLabelInvoiceNumber').textContent = t.labelInvoiceNumber;
   document.getElementById('previewLabelInvoiceDate').textContent = t.labelDate;
   document.getElementById('previewSectionGuest').textContent = t.sectionGuest;
+  document.getElementById('previewLabelBookingReference').textContent = t.labelBookingReference;
   document.getElementById('previewSectionStay').textContent = t.sectionStay;
   document.getElementById('previewLabelRoom').textContent = t.labelRoom;
   document.getElementById('previewLabelCheckin2').textContent = t.labelCheckin;
@@ -571,6 +649,10 @@ function updatePreview() {
   document.getElementById('previewGuestName').textContent = fields.guestName.value || '—';
   document.getElementById('previewGuestEmail').textContent = fields.guestEmail.value || '';
   document.getElementById('previewGuestEmail').style.display = fields.guestEmail.value ? 'block' : 'none';
+
+  const bookingReference = fields.bookingReference.value || '';
+  document.getElementById('previewBookingReference').textContent = bookingReference;
+  document.getElementById('previewBookingReferenceWrap').classList.toggle('hidden', !bookingReference);
 
   document.getElementById('previewRoomName').textContent = getRoomValue() || '—';
   document.getElementById('previewCheckin').textContent = formatDateForLang(fields.checkinDate.value, currentLang);
@@ -605,8 +687,10 @@ loginBtn.addEventListener('click', async () => {
 
 logoutBtn.addEventListener('click', signOut);
 saveBtn.addEventListener('click', saveInvoice);
+deleteBtn.addEventListener('click', deleteInvoice);
 printBtn.addEventListener('click', () => window.print());
 newInvoiceBtn.addEventListener('click', prepareNewInvoice);
+searchInvoicesInput.addEventListener('input', filterInvoices);
 
 document.querySelectorAll('.lang-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -614,7 +698,7 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
     updateTexts();
     toggleCustomFields();
     updatePreview();
-    loadInvoices();
+    filterInvoices();
   });
 });
 
@@ -646,7 +730,7 @@ fields.nights.addEventListener('input', () => {
 });
 
 [
-  'invoiceNumber', 'invoiceDate', 'guestName', 'guestEmail', 'customRoomName',
+  'invoiceNumber', 'invoiceDate', 'guestName', 'guestEmail', 'bookingReference', 'customRoomName',
   'guests', 'accommodationAmount', 'cleaningFee', 'touristTaxRate',
   'taxMode', 'customPaymentMethod'
 ].forEach(id => {
