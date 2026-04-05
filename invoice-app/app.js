@@ -84,7 +84,8 @@ const translations = {
     invalidGuests: 'Guests must be greater than 0',
     invalidAccommodation: 'Accommodation amount cannot be negative',
     invalidCleaning: 'Cleaning fee cannot be negative',
-    invalidTouristTax: 'Tourist tax rate cannot be negative'
+    invalidTouristTax: 'Tourist tax rate cannot be negative',
+    accessDenied: 'Access denied. This email address is not authorized.'
   },
   nl: {
     pageTitle: 'Factuurgenerator',
@@ -164,7 +165,8 @@ const translations = {
     invalidGuests: 'Aantal gasten moet groter zijn dan 0',
     invalidAccommodation: 'Verblijfsbedrag mag niet negatief zijn',
     invalidCleaning: 'Schoonmaakkosten mogen niet negatief zijn',
-    invalidTouristTax: 'Toeristenbelasting mag niet negatief zijn'
+    invalidTouristTax: 'Toeristenbelasting mag niet negatief zijn',
+    accessDenied: 'Toegang geweigerd. Dit e-mailadres is niet geautoriseerd.'
   }
 };
 
@@ -341,6 +343,12 @@ function validateRequiredFields() {
 async function getSession() {
   const { data } = await supabaseClient.auth.getSession();
   return data.session;
+}
+
+async function isAuthorizedUser() {
+  const { data, error } = await supabaseClient.rpc('is_allowed_user');
+  if (error) return false;
+  return data === true;
 }
 
 async function sendMagicLink(email) {
@@ -906,6 +914,14 @@ async function init() {
   const session = await getSession();
   if (!session) {
     showLogin();
+    return;
+  }
+
+  const allowed = await isAuthorizedUser();
+  if (!allowed) {
+    await supabaseClient.auth.signOut();
+    showLogin();
+    loginMessage.textContent = translations[currentLang].accessDenied;
     return;
   }
 
