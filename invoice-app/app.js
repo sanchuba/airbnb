@@ -16,6 +16,7 @@ const translations = {
     logout: 'Log out',
     formTitle: 'Invoice Details',
     newInvoice: 'New invoice',
+    duplicateInvoice: 'Duplicate invoice',
     invoiceNumber: 'Invoice number',
     invoiceDate: 'Invoice date',
     guestName: 'Guest name',
@@ -76,7 +77,14 @@ const translations = {
     notLoggedIn: 'You are not logged in.',
     saved: 'Invoice saved.',
     deleted: 'Invoice deleted.',
-    confirmDelete: 'Are you sure you want to delete this invoice? This cannot be undone.'
+    duplicated: 'Invoice duplicated. You can now save it as a new invoice.',
+    confirmDelete: 'Are you sure you want to delete this invoice? This cannot be undone.',
+    pleaseFillIn: 'Please fill in',
+    invalidNights: 'Nights must be greater than 0',
+    invalidGuests: 'Guests must be greater than 0',
+    invalidAccommodation: 'Accommodation amount cannot be negative',
+    invalidCleaning: 'Cleaning fee cannot be negative',
+    invalidTouristTax: 'Tourist tax rate cannot be negative'
   },
   nl: {
     pageTitle: 'Factuurgenerator',
@@ -88,6 +96,7 @@ const translations = {
     logout: 'Uitloggen',
     formTitle: 'Factuurgegevens',
     newInvoice: 'Nieuwe factuur',
+    duplicateInvoice: 'Factuur dupliceren',
     invoiceNumber: 'Factuurnummer',
     invoiceDate: 'Factuurdatum',
     guestName: 'Naam gast',
@@ -148,7 +157,14 @@ const translations = {
     notLoggedIn: 'Je bent niet ingelogd.',
     saved: 'Factuur opgeslagen.',
     deleted: 'Factuur verwijderd.',
-    confirmDelete: 'Weet je zeker dat je deze factuur wilt verwijderen? Dit kan niet ongedaan worden gemaakt.'
+    duplicated: 'Factuur gedupliceerd. Je kunt deze nu opslaan als nieuwe factuur.',
+    confirmDelete: 'Weet je zeker dat je deze factuur wilt verwijderen? Dit kan niet ongedaan worden gemaakt.',
+    pleaseFillIn: 'Vul in',
+    invalidNights: 'Aantal nachten moet groter zijn dan 0',
+    invalidGuests: 'Aantal gasten moet groter zijn dan 0',
+    invalidAccommodation: 'Verblijfsbedrag mag niet negatief zijn',
+    invalidCleaning: 'Schoonmaakkosten mogen niet negatief zijn',
+    invalidTouristTax: 'Toeristenbelasting mag niet negatief zijn'
   }
 };
 
@@ -164,6 +180,7 @@ const logoutBtn = document.getElementById('logoutBtn');
 const loginEmail = document.getElementById('loginEmail');
 const loginMessage = document.getElementById('loginMessage');
 const saveBtn = document.getElementById('saveBtn');
+const duplicateBtn = document.getElementById('duplicateBtn');
 const deleteBtn = document.getElementById('deleteBtn');
 const saveMessage = document.getElementById('saveMessage');
 const printBtn = document.getElementById('printBtn');
@@ -245,6 +262,82 @@ function toggleCustomFields() {
   document.getElementById('customPaymentField').classList.toggle('hidden', fields.paymentMethod.value !== 'custom');
 }
 
+function clearValidationState() {
+  document.querySelectorAll('.field.invalid').forEach(el => el.classList.remove('invalid'));
+}
+
+function markInvalid(fieldElement) {
+  const wrapper = fieldElement.closest('.field');
+  if (wrapper) wrapper.classList.add('invalid');
+}
+
+function validateRequiredFields() {
+  clearValidationState();
+  const t = translations[currentLang];
+
+  const checks = [
+    { el: fields.invoiceNumber, label: t.invoiceNumber },
+    { el: fields.invoiceDate, label: t.invoiceDate },
+    { el: fields.guestName, label: t.guestName },
+    { el: fields.roomName, label: t.roomName },
+    { el: fields.checkinDate, label: t.checkin },
+    { el: fields.checkoutDate, label: t.checkout },
+    { el: fields.nights, label: t.nights },
+    { el: fields.guests, label: t.guests },
+    { el: fields.accommodationAmount, label: t.accommodation },
+    { el: fields.cleaningFee, label: t.cleaning },
+    { el: fields.touristTaxRate, label: t.touristTaxRate },
+    { el: fields.taxMode, label: t.taxMode },
+    { el: fields.paymentMethod, label: t.paymentMethod }
+  ];
+
+  for (const item of checks) {
+    if (!item.el.value || String(item.el.value).trim() === '') {
+      markInvalid(item.el);
+      return `${t.pleaseFillIn}: ${item.label}`;
+    }
+  }
+
+  if (fields.roomName.value === 'custom' && !fields.customRoomName.value.trim()) {
+    markInvalid(fields.customRoomName);
+    return `${t.pleaseFillIn}: ${t.customRoomName}`;
+  }
+
+  if (fields.paymentMethod.value === 'custom' && !fields.customPaymentMethod.value.trim()) {
+    markInvalid(fields.customPaymentMethod);
+    return `${t.pleaseFillIn}: ${t.customPayment}`;
+  }
+
+  const nights = Number(fields.nights.value || 0);
+  const guests = Number(fields.guests.value || 0);
+  const accommodation = Number(fields.accommodationAmount.value || 0);
+  const cleaning = Number(fields.cleaningFee.value || 0);
+  const touristTaxRate = Number(fields.touristTaxRate.value || 0);
+
+  if (nights <= 0) {
+    markInvalid(fields.nights);
+    return t.invalidNights;
+  }
+  if (guests <= 0) {
+    markInvalid(fields.guests);
+    return t.invalidGuests;
+  }
+  if (accommodation < 0) {
+    markInvalid(fields.accommodationAmount);
+    return t.invalidAccommodation;
+  }
+  if (cleaning < 0) {
+    markInvalid(fields.cleaningFee);
+    return t.invalidCleaning;
+  }
+  if (touristTaxRate < 0) {
+    markInvalid(fields.touristTaxRate);
+    return t.invalidTouristTax;
+  }
+
+  return null;
+}
+
 async function getSession() {
   const { data } = await supabaseClient.auth.getSession();
   return data.session;
@@ -285,7 +378,7 @@ function clearForm() {
   fields.guestName.value = '';
   fields.guestEmail.value = '';
   fields.bookingReference.value = '';
-  fields.roomName.value = currentLang === 'nl' ? translations.nl.roomOption1 : translations.en.roomOption1;
+  fields.roomName.value = currentLang === 'nl' ? translations.nl.roomOption2 : translations.en.roomOption2;
   fields.customRoomName.value = '';
   fields.checkinDate.value = '';
   fields.checkoutDate.value = '';
@@ -299,6 +392,8 @@ function clearForm() {
   fields.customPaymentMethod.value = '';
   toggleCustomFields();
   deleteBtn.classList.add('hidden');
+  duplicateBtn.classList.add('hidden');
+  clearValidationState();
   updatePreview();
 }
 
@@ -395,8 +490,26 @@ async function saveInvoice() {
 
   currentInvoiceId = result.data.id;
   deleteBtn.classList.remove('hidden');
+  duplicateBtn.classList.remove('hidden');
   saveMessage.textContent = translations[currentLang].saved;
   await loadInvoices();
+}
+
+async function duplicateInvoice() {
+  const validationError = validateRequiredFields();
+  if (validationError) {
+    saveMessage.textContent = validationError;
+    return;
+  }
+
+  currentInvoiceId = null;
+  fields.invoiceDate.value = todayISO();
+  fields.invoiceNumber.value = await getNextInvoiceNumber();
+
+  deleteBtn.classList.add('hidden');
+  duplicateBtn.classList.add('hidden');
+  saveMessage.textContent = translations[currentLang].duplicated;
+  updatePreview();
 }
 
 async function deleteInvoice() {
@@ -497,10 +610,10 @@ function loadInvoiceIntoForm(invoice) {
   ];
 
   if (knownRooms.includes(invoice.room_name)) {
-    if (invoice.room_name === translations.en.roomOption1 || invoice.room_name === translations.nl.roomOption1) {
-      fields.roomName.value = currentLang === 'nl' ? translations.nl.roomOption1 : translations.en.roomOption1;
-    } else {
+    if (invoice.room_name === translations.en.roomOption2 || invoice.room_name === translations.nl.roomOption2) {
       fields.roomName.value = currentLang === 'nl' ? translations.nl.roomOption2 : translations.en.roomOption2;
+    } else {
+      fields.roomName.value = currentLang === 'nl' ? translations.nl.roomOption1 : translations.en.roomOption1;
     }
     fields.customRoomName.value = '';
   } else {
@@ -535,7 +648,9 @@ function loadInvoiceIntoForm(invoice) {
   }
 
   deleteBtn.classList.remove('hidden');
+  duplicateBtn.classList.remove('hidden');
   toggleCustomFields();
+  clearValidationState();
   updatePreview();
   saveMessage.textContent = '';
 }
@@ -557,6 +672,7 @@ function updateTexts() {
   document.getElementById('logoutBtn').textContent = t.logout;
   document.getElementById('formTitle').textContent = t.formTitle;
   document.getElementById('newInvoiceBtn').textContent = t.newInvoice;
+  document.getElementById('duplicateBtn').textContent = t.duplicateInvoice;
   document.getElementById('labelInvoiceNumber').textContent = t.invoiceNumber;
   document.getElementById('labelInvoiceDate').textContent = t.invoiceDate;
   document.getElementById('labelGuestName').textContent = t.guestName;
@@ -583,12 +699,22 @@ function updateTexts() {
 
   const currentRoom = fields.roomName.value;
   fields.roomName.innerHTML = `
-    <option value="${t.roomOption1}">${t.roomOption1}</option>
     <option value="${t.roomOption2}">${t.roomOption2}</option>
+    <option value="${t.roomOption1}">${t.roomOption1}</option>
     <option value="custom">${t.roomOptionCustom}</option>
   `;
   if (currentRoom === 'custom') {
     fields.roomName.value = 'custom';
+  } else if (
+    currentRoom === translations.en.roomOption2 ||
+    currentRoom === translations.nl.roomOption2
+  ) {
+    fields.roomName.value = t.roomOption2;
+  } else if (
+    currentRoom === translations.en.roomOption1 ||
+    currentRoom === translations.nl.roomOption1
+  ) {
+    fields.roomName.value = t.roomOption1;
   }
 
   const currentPayment = fields.paymentMethod.value;
@@ -599,6 +725,16 @@ function updateTexts() {
   `;
   if (currentPayment === 'custom') {
     fields.paymentMethod.value = 'custom';
+  } else if (
+    currentPayment === translations.en.payBooking ||
+    currentPayment === translations.nl.payBooking
+  ) {
+    fields.paymentMethod.value = t.payBooking;
+  } else if (
+    currentPayment === translations.en.payAirbnb ||
+    currentPayment === translations.nl.payAirbnb
+  ) {
+    fields.paymentMethod.value = t.payAirbnb;
   }
 
   fields.taxMode.innerHTML = `
@@ -686,9 +822,28 @@ loginBtn.addEventListener('click', async () => {
 });
 
 logoutBtn.addEventListener('click', signOut);
-saveBtn.addEventListener('click', saveInvoice);
+
+saveBtn.addEventListener('click', async () => {
+  const validationError = validateRequiredFields();
+  if (validationError) {
+    saveMessage.textContent = validationError;
+    return;
+  }
+  await saveInvoice();
+});
+
+duplicateBtn.addEventListener('click', duplicateInvoice);
 deleteBtn.addEventListener('click', deleteInvoice);
-printBtn.addEventListener('click', () => window.print());
+
+printBtn.addEventListener('click', () => {
+  const validationError = validateRequiredFields();
+  if (validationError) {
+    saveMessage.textContent = validationError;
+    return;
+  }
+  window.print();
+});
+
 newInvoiceBtn.addEventListener('click', prepareNewInvoice);
 searchInvoicesInput.addEventListener('input', filterInvoices);
 
@@ -734,8 +889,14 @@ fields.nights.addEventListener('input', () => {
   'guests', 'accommodationAmount', 'cleaningFee', 'touristTaxRate',
   'taxMode', 'customPaymentMethod'
 ].forEach(id => {
-  fields[id].addEventListener('input', updatePreview);
-  fields[id].addEventListener('change', updatePreview);
+  fields[id].addEventListener('input', () => {
+    clearValidationState();
+    updatePreview();
+  });
+  fields[id].addEventListener('change', () => {
+    clearValidationState();
+    updatePreview();
+  });
 });
 
 async function init() {
