@@ -8,143 +8,230 @@
 </head>
 <body>
   <div class="container">
-    <div class="topbar">
-      <div>
-        <h1>Nijmegen Guest Rooms</h1>
-        <p>Private Invoice Admin</p>
+    <div class="topbar screen-only">
+      <div class="page-title">
+        <h1 id="pageTitle">Invoice Generator</h1>
+        <p id="pageSubtitle">Nijmegen Guest Rooms – Private Invoice Admin</p>
       </div>
-      <button id="logoutBtn" class="secondary hidden">Log out</button>
+
+      <div class="topbar-actions">
+        <div class="lang-switch" id="langSwitch">
+          <button class="lang-btn active" data-lang="en">🇬🇧 English</button>
+          <button class="lang-btn" data-lang="nl">🇳🇱 Nederlands</button>
+        </div>
+        <button id="logoutBtn" class="action-btn secondary hidden">Log out</button>
+      </div>
     </div>
 
-    <div id="loginView" class="card">
-      <h2>Sign in</h2>
-      <p>Only authorized users can access the invoice system.</p>
+    <div id="loginView" class="card login-card">
+      <h2 id="loginTitle">Sign in</h2>
+      <p id="loginText">Only authorized users can access the invoice system.</p>
       <div class="field">
-        <label for="loginEmail">Email</label>
+        <label id="labelLoginEmail" for="loginEmail">Email</label>
         <input id="loginEmail" type="email" placeholder="you@example.com" />
       </div>
-      <button id="loginBtn" class="primary">Send login link</button>
+      <button id="loginBtn" class="action-btn primary">Send login link</button>
       <p id="loginMessage" class="muted"></p>
     </div>
 
     <div id="appView" class="hidden">
       <div class="layout">
-        <div class="card">
-          <div class="section-header">
-            <h2>Invoice Details</h2>
-            <button id="newInvoiceBtn" class="secondary">New invoice</button>
-          </div>
-
-          <div class="grid">
-            <div class="field">
-              <label for="invoiceNumber">Invoice number</label>
-              <input id="invoiceNumber" type="text" />
+        <div class="left-column">
+          <div class="card form-card screen-only">
+            <div class="section-header">
+              <h2 id="formTitle">Invoice Details</h2>
+              <button id="newInvoiceBtn" class="action-btn secondary">New invoice</button>
             </div>
-            <div class="field">
-              <label for="invoiceDate">Invoice date</label>
-              <input id="invoiceDate" type="date" />
-            </div>
-          </div>
 
-          <div class="field">
-            <label for="guestName">Guest name</label>
-            <input id="guestName" type="text" />
-          </div>
-
-          <div class="field">
-            <label for="guestEmail">Guest email</label>
-            <input id="guestEmail" type="email" />
-          </div>
-
-          <div class="field">
-            <label for="roomName">Room name</label>
-            <select id="roomName">
-              <option value="Spacious Room (Garden View)">Spacious Room (Garden View)</option>
-              <option value="Cozy Room (Street Side)">Cozy Room (Street Side)</option>
-              <option value="Custom">Custom</option>
-            </select>
-          </div>
-
-          <div class="field hidden" id="customRoomWrap">
-            <label for="customRoomName">Custom room name</label>
-            <input id="customRoomName" type="text" />
-          </div>
-
-          <div class="grid">
-            <div class="field">
-              <label for="checkinDate">Check-in</label>
-              <input id="checkinDate" type="date" />
+            <div class="inline-grid">
+              <div class="field">
+                <label id="labelInvoiceNumber" for="invoiceNumber">Invoice number</label>
+                <input id="invoiceNumber" type="text" value="2026-001" />
+              </div>
+              <div class="field">
+                <label id="labelInvoiceDate" for="invoiceDate">Invoice date</label>
+                <input id="invoiceDate" type="date" />
+              </div>
             </div>
-            <div class="field">
-              <label for="checkoutDate">Check-out</label>
-              <input id="checkoutDate" type="date" />
-            </div>
-          </div>
 
-          <div class="grid">
             <div class="field">
-              <label for="nights">Nights</label>
-              <input id="nights" type="number" min="1" />
+              <label id="labelGuestName" for="guestName">Guest name</label>
+              <input id="guestName" type="text" />
             </div>
-            <div class="field">
-              <label for="guests">Guests</label>
-              <input id="guests" type="number" min="1" value="1" />
-            </div>
-          </div>
 
-          <div class="grid">
             <div class="field">
-              <label for="accommodationAmount">Accommodation (€)</label>
-              <input id="accommodationAmount" type="number" step="0.01" />
+              <label id="labelGuestEmail" for="guestEmail">Guest email (optional)</label>
+              <input id="guestEmail" type="email" />
             </div>
-            <div class="field">
-              <label for="cleaningFee">Cleaning fee (€)</label>
-              <input id="cleaningFee" type="number" step="0.01" value="5.00" />
-            </div>
-          </div>
 
-          <div class="grid">
             <div class="field">
-              <label for="touristTaxRate">Tourist tax rate (€ / guest / night)</label>
-              <input id="touristTaxRate" type="number" step="0.01" value="3.71" />
-            </div>
-            <div class="field">
-              <label for="taxMode">Tourist tax handling</label>
-              <select id="taxMode">
-                <option value="included">Included in accommodation</option>
-                <option value="excluded">Added on top</option>
+              <label id="labelRoomName" for="roomName">Room name</label>
+              <select id="roomName">
+                <option value="Spacious Room (Garden View)">Spacious Room (Garden View)</option>
+                <option value="Cozy Room (Street Side)">Cozy Room (Street Side)</option>
+                <option value="custom">Custom room name...</option>
               </select>
             </div>
+
+            <div class="field hidden" id="customRoomField">
+              <label id="labelCustomRoomName" for="customRoomName">Custom room name</label>
+              <input id="customRoomName" type="text" />
+            </div>
+
+            <div class="inline-grid">
+              <div class="field">
+                <label id="labelCheckin" for="checkinDate">Check-in</label>
+                <input id="checkinDate" type="date" />
+              </div>
+              <div class="field">
+                <label id="labelCheckout" for="checkoutDate">Check-out</label>
+                <input id="checkoutDate" type="date" />
+              </div>
+            </div>
+
+            <div class="inline-grid">
+              <div class="field">
+                <label id="labelNights" for="nights">Nights</label>
+                <input id="nights" type="number" min="1" />
+              </div>
+              <div class="field">
+                <label id="labelGuests" for="guests">Guests</label>
+                <input id="guests" type="number" min="1" value="1" />
+              </div>
+            </div>
+
+            <div class="inline-grid">
+              <div class="field">
+                <label id="labelAccommodation" for="accommodationAmount">Accommodation (€)</label>
+                <input id="accommodationAmount" type="number" step="0.01" />
+              </div>
+              <div class="field">
+                <label id="labelCleaning" for="cleaningFee">Cleaning fee (€)</label>
+                <input id="cleaningFee" type="number" step="0.01" value="5.00" />
+              </div>
+            </div>
+
+            <div class="inline-grid">
+              <div class="field">
+                <label id="labelTouristTaxRate" for="touristTaxRate">Tourist tax rate (€ per guest per night)</label>
+                <input id="touristTaxRate" type="number" step="0.01" value="3.71" />
+              </div>
+              <div class="field">
+                <label id="labelTaxMode" for="taxMode">Tourist tax handling</label>
+                <select id="taxMode">
+                  <option value="included">Accommodation amount already includes tourist tax</option>
+                  <option value="excluded">Tourist tax should be added on top of accommodation</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field">
+              <label id="labelPaymentMethod" for="paymentMethod">Payment</label>
+              <select id="paymentMethod">
+                <option value="Paid via Booking.com">Paid via Booking.com</option>
+                <option value="Paid via Airbnb">Paid via Airbnb</option>
+                <option value="custom">Custom payment method...</option>
+              </select>
+            </div>
+
+            <div class="field hidden" id="customPaymentField">
+              <label id="labelCustomPayment" for="customPaymentMethod">Custom payment method</label>
+              <input id="customPaymentMethod" type="text" />
+            </div>
+
+            <div class="button-row">
+              <button id="saveBtn" class="action-btn primary">Save invoice</button>
+              <button id="printBtn" class="action-btn secondary">Print / Save as PDF</button>
+            </div>
+
+            <p id="saveMessage" class="muted"></p>
           </div>
 
-          <div class="field">
-            <label for="paymentMethod">Payment method</label>
-            <select id="paymentMethod">
-              <option value="Paid via Booking.com">Paid via Booking.com</option>
-              <option value="Paid via Airbnb">Paid via Airbnb</option>
-              <option value="Custom">Custom</option>
-            </select>
+          <div class="card saved-card screen-only">
+            <div class="section-header">
+              <h2 id="savedInvoicesTitle">Saved Invoices</h2>
+            </div>
+            <div id="invoiceList" class="invoice-list"></div>
           </div>
-
-          <div class="field hidden" id="customPaymentWrap">
-            <label for="customPaymentMethod">Custom payment method</label>
-            <input id="customPaymentMethod" type="text" />
-          </div>
-
-          <div class="button-row">
-            <button id="saveBtn" class="primary">Save invoice</button>
-            <button id="printBtn" class="secondary">Print / Save PDF</button>
-          </div>
-
-          <p id="saveMessage" class="muted"></p>
         </div>
 
-        <div class="card">
-          <h2>Saved Invoices</h2>
-          <div id="invoiceList" class="invoice-list"></div>
+        <div class="right-column">
+          <div class="card preview-card" id="previewWrapper">
+            <div class="invoice-preview" id="invoicePreview">
+              <div class="invoice-header">
+                <div class="brand">
+                  <h3>Nijmegen Guest Rooms</h3>
+                  <p>Landbouwstraat 15</p>
+                  <p>Nijmegen, The Netherlands</p>
+                </div>
+
+                <div class="invoice-meta">
+                  <p class="invoice-title" id="previewInvoiceTitle">INVOICE</p>
+                  <p><strong id="previewLabelInvoiceNumber">Invoice number:</strong> <span id="previewInvoiceNumber">2026-001</span></p>
+                  <p><strong id="previewLabelInvoiceDate">Date:</strong> <span id="previewInvoiceDate">—</span></p>
+                </div>
+              </div>
+
+              <div class="invoice-section invoice-block">
+                <h4 id="previewSectionGuest">Guest</h4>
+                <p id="previewGuestName">—</p>
+                <p id="previewGuestEmail" class="subtle"></p>
+              </div>
+
+              <div class="invoice-section invoice-block">
+                <h4 id="previewSectionStay">Stay Details</h4>
+                <p><strong id="previewLabelRoom">Room:</strong> <span id="previewRoomName">Spacious Room (Garden View)</span></p>
+                <p><strong id="previewLabelCheckin2">Check-in:</strong> <span id="previewCheckin">—</span></p>
+                <p><strong id="previewLabelCheckout2">Check-out:</strong> <span id="previewCheckout">—</span></p>
+                <p><strong id="previewLabelNights2">Nights:</strong> <span id="previewNights">—</span></p>
+                <p><strong id="previewLabelGuests2">Guests:</strong> <span id="previewGuests">1</span></p>
+              </div>
+
+              <div class="invoice-section invoice-block">
+                <h4 id="previewSectionDescription">Description</h4>
+                <p id="previewDescription">Accommodation in private room (shared home)</p>
+              </div>
+
+              <div class="invoice-section">
+                <h4 id="previewSectionPrice">Price Breakdown</h4>
+                <table class="summary-table">
+                  <tr>
+                    <td id="previewLabelAccommodation">Accommodation</td>
+                    <td id="previewAccommodation">€0.00</td>
+                  </tr>
+                  <tr>
+                    <td id="previewLabelCleaning">Cleaning fee</td>
+                    <td id="previewCleaning">€0.00</td>
+                  </tr>
+                  <tr>
+                    <td id="previewLabelTaxRate">Tourist tax rate</td>
+                    <td id="previewTouristTaxRate">€3.71 × 1 × 0</td>
+                  </tr>
+                  <tr>
+                    <td id="previewLabelTaxTotal">Tourist tax included</td>
+                    <td id="previewTouristTax">€0.00</td>
+                  </tr>
+                  <tr class="total-row">
+                    <td id="previewLabelTotal">Total amount paid</td>
+                    <td id="previewTotal">€0.00</td>
+                  </tr>
+                </table>
+              </div>
+
+              <div class="invoice-section invoice-block">
+                <h4 id="previewSectionPayment">Payment</h4>
+                <p id="previewPaymentMethod">Paid via Booking.com</p>
+              </div>
+
+              <div class="invoice-section invoice-block">
+                <p class="subtle"><em id="previewNote">This is a private rental. No VAT is applicable.</em></p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+
   </div>
 
   <script type="module" src="./app.js"></script>
