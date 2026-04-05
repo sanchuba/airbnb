@@ -44,17 +44,17 @@
             </div>
 
             <div class="inline-grid">
-              <div class="field">
+              <div class="field" data-required="true">
                 <label id="labelInvoiceNumber" for="invoiceNumber">Invoice number</label>
                 <input id="invoiceNumber" type="text" value="2026-001" />
               </div>
-              <div class="field">
+              <div class="field" data-required="true">
                 <label id="labelInvoiceDate" for="invoiceDate">Invoice date</label>
                 <input id="invoiceDate" type="date" />
               </div>
             </div>
 
-            <div class="field">
+            <div class="field" data-required="true">
               <label id="labelGuestName" for="guestName">Guest name</label>
               <input id="guestName" type="text" />
             </div>
@@ -69,59 +69,59 @@
               <input id="bookingReference" type="text" />
             </div>
 
-            <div class="field">
+            <div class="field" data-required="true">
               <label id="labelRoomName" for="roomName">Room name</label>
               <select id="roomName">
-                <option value="Spacious Room (Garden View)">Spacious Room (Garden View)</option>
                 <option value="Cozy Room (Street Side)">Cozy Room (Street Side)</option>
+                <option value="Spacious Room (Garden View)">Spacious Room (Garden View)</option>
                 <option value="custom">Custom room name...</option>
               </select>
             </div>
 
-            <div class="field hidden" id="customRoomField">
+            <div class="field hidden" id="customRoomField" data-required-when="custom-room">
               <label id="labelCustomRoomName" for="customRoomName">Custom room name</label>
               <input id="customRoomName" type="text" />
             </div>
 
             <div class="inline-grid">
-              <div class="field">
+              <div class="field" data-required="true">
                 <label id="labelCheckin" for="checkinDate">Check-in</label>
                 <input id="checkinDate" type="date" />
               </div>
-              <div class="field">
+              <div class="field" data-required="true">
                 <label id="labelCheckout" for="checkoutDate">Check-out</label>
                 <input id="checkoutDate" type="date" />
               </div>
             </div>
 
             <div class="inline-grid">
-              <div class="field">
+              <div class="field" data-required="true">
                 <label id="labelNights" for="nights">Nights</label>
                 <input id="nights" type="number" min="1" />
               </div>
-              <div class="field">
+              <div class="field" data-required="true">
                 <label id="labelGuests" for="guests">Guests</label>
                 <input id="guests" type="number" min="1" value="1" />
               </div>
             </div>
 
             <div class="inline-grid">
-              <div class="field">
+              <div class="field" data-required="true">
                 <label id="labelAccommodation" for="accommodationAmount">Accommodation (€)</label>
                 <input id="accommodationAmount" type="number" step="0.01" />
               </div>
-              <div class="field">
+              <div class="field" data-required="true">
                 <label id="labelCleaning" for="cleaningFee">Cleaning fee (€)</label>
                 <input id="cleaningFee" type="number" step="0.01" value="5.00" />
               </div>
             </div>
 
             <div class="inline-grid">
-              <div class="field">
+              <div class="field" data-required="true">
                 <label id="labelTouristTaxRate" for="touristTaxRate">Tourist tax rate (€ per guest per night)</label>
                 <input id="touristTaxRate" type="number" step="0.01" value="3.71" />
               </div>
-              <div class="field">
+              <div class="field" data-required="true">
                 <label id="labelTaxMode" for="taxMode">Tourist tax handling</label>
                 <select id="taxMode">
                   <option value="included">Accommodation amount already includes tourist tax</option>
@@ -130,7 +130,7 @@
               </div>
             </div>
 
-            <div class="field">
+            <div class="field" data-required="true">
               <label id="labelPaymentMethod" for="paymentMethod">Payment</label>
               <select id="paymentMethod">
                 <option value="Paid via Booking.com">Paid via Booking.com</option>
@@ -139,13 +139,14 @@
               </select>
             </div>
 
-            <div class="field hidden" id="customPaymentField">
+            <div class="field hidden" id="customPaymentField" data-required-when="custom-payment">
               <label id="labelCustomPayment" for="customPaymentMethod">Custom payment method</label>
               <input id="customPaymentMethod" type="text" />
             </div>
 
             <div class="button-row">
               <button id="saveBtn" class="action-btn primary">Save invoice</button>
+              <button id="duplicateBtn" class="action-btn secondary hidden">Duplicate invoice</button>
               <button id="deleteBtn" class="action-btn danger hidden">Delete invoice</button>
               <button id="printBtn" class="action-btn secondary">Print / Save as PDF</button>
             </div>
@@ -196,7 +197,7 @@
 
               <div class="invoice-section invoice-block">
                 <h4 id="previewSectionStay">Stay Details</h4>
-                <p><strong id="previewLabelRoom">Room:</strong> <span id="previewRoomName">Spacious Room (Garden View)</span></p>
+                <p><strong id="previewLabelRoom">Room:</strong> <span id="previewRoomName">Cozy Room (Street Side)</span></p>
                 <p><strong id="previewLabelCheckin2">Check-in:</strong> <span id="previewCheckin">—</span></p>
                 <p><strong id="previewLabelCheckout2">Check-out:</strong> <span id="previewCheckout">—</span></p>
                 <p><strong id="previewLabelNights2">Nights:</strong> <span id="previewNights">—</span></p>
