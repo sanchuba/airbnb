@@ -1,0 +1,147 @@
+:root {
+  --bg: #f4efe7;
+  --card: #ffffff;
+  --text: #3f3f3f;
+  --heading: #5c4638;
+  --accent: #c7b8a3;
+  --border: #ddd3c7;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  padding: 24px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+  gap: 16px;
+}
+
+.topbar h1 {
+  margin: 0 0 6px;
+  color: var(--heading);
+}
+
+.topbar p {
+  margin: 0;
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr;
+  gap: 24px;
+}
+
+.card {
+  background: var(--card);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+.field {
+  margin-bottom: 14px;
+}
+
+.field label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: var(--heading);
+}
+
+.field input,
+.field select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.button-row {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+button {
+  border: none;
+  padding: 12px 18px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+button.primary {
+  background: var(--heading);
+  color: white;
+}
+
+button.secondary {
+  background: #ece6dc;
+  color: var(--heading);
+}
+
+.muted {
+  color: #6f6a64;
+  font-size: 14px;
+  margin-top: 12px;
+}
+
+.hidden {
+  display: none;
+}
+
+.invoice-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.invoice-item {
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #faf8f4;
+  cursor: pointer;
+}
+
+.invoice-item strong {
+  display: block;
+  color: var(--heading);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+@media (max-width: 900px) {
+  .layout,
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
