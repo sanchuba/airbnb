@@ -65,6 +65,11 @@
             </div>
 
             <div class="field">
+              <label id="labelBookingReference" for="bookingReference">Booking reference (optional)</label>
+              <input id="bookingReference" type="text" />
+            </div>
+
+            <div class="field">
               <label id="labelRoomName" for="roomName">Room name</label>
               <select id="roomName">
                 <option value="Spacious Room (Garden View)">Spacious Room (Garden View)</option>
@@ -141,6 +146,7 @@
 
             <div class="button-row">
               <button id="saveBtn" class="action-btn primary">Save invoice</button>
+              <button id="deleteBtn" class="action-btn danger hidden">Delete invoice</button>
               <button id="printBtn" class="action-btn secondary">Print / Save as PDF</button>
             </div>
 
@@ -151,6 +157,12 @@
             <div class="section-header">
               <h2 id="savedInvoicesTitle">Saved Invoices</h2>
             </div>
+
+            <div class="field">
+              <label id="labelSearchInvoices" for="searchInvoices">Search / filter invoices</label>
+              <input id="searchInvoices" type="text" placeholder="Search by invoice number, guest name, email or booking reference" />
+            </div>
+
             <div id="invoiceList" class="invoice-list"></div>
           </div>
         </div>
@@ -176,6 +188,10 @@
                 <h4 id="previewSectionGuest">Guest</h4>
                 <p id="previewGuestName">—</p>
                 <p id="previewGuestEmail" class="subtle"></p>
+                <p id="previewBookingReferenceWrap" class="subtle hidden">
+                  <strong id="previewLabelBookingReference">Booking reference:</strong>
+                  <span id="previewBookingReference">—</span>
+                </p>
               </div>
 
               <div class="invoice-section invoice-block">
