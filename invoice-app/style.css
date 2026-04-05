@@ -6,6 +6,8 @@
   --accent: #c7b8a3;
   --highlight: #ece6dc;
   --border: #ddd3c7;
+  --danger: #a14d4d;
+  --danger-bg: #f6e7e7;
 }
 
 * { box-sizing: border-box; }
@@ -169,6 +171,11 @@ body {
 .secondary {
   background: var(--highlight);
   color: var(--heading);
+}
+
+.danger {
+  background: var(--danger-bg);
+  color: var(--danger);
 }
 
 .action-btn:hover {
