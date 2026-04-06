@@ -22,6 +22,8 @@ const translations = {
     invoiceNumber: 'Invoice number',
     invoiceDate: 'Invoice date',
     guestName: 'Guest name',
+    companyName: 'Company name (optional)',
+    vatNumber: 'VAT number (optional)',
     guestEmail: 'Guest email (optional)',
     bookingReference: 'Booking reference (optional)',
     roomName: 'Room name',
@@ -43,11 +45,12 @@ const translations = {
     print: 'Print / Save as PDF',
     savedInvoices: 'Saved Invoices',
     searchInvoices: 'Search / filter invoices',
-    searchPlaceholder: 'Search by invoice number, guest name, email or booking reference',
+    searchPlaceholder: 'Search by invoice number, guest name, company, email or booking reference',
     invoiceTitle: 'INVOICE',
     labelInvoiceNumber: 'Invoice number:',
     labelDate: 'Date:',
-    sectionGuest: 'Guest',
+    sectionGuest: 'Billed to',
+    labelVatNumber: 'VAT number:',
     labelBookingReference: 'Booking reference:',
     sectionStay: 'Stay Details',
     labelRoom: 'Room:',
@@ -65,7 +68,7 @@ const translations = {
     labelTaxAdded: 'Tourist tax added',
     labelTotal: 'Total amount paid',
     sectionPayment: 'Payment',
-    note: 'This is a private rental. No VAT is applicable.',
+    note: 'This is a private rental. VAT is not applicable.',
     roomOption1: 'Spacious Room (Garden View)',
     roomOption2: 'Cozy Room (Street Side)',
     roomOptionCustom: 'Custom room name...',
@@ -106,6 +109,8 @@ const translations = {
     invoiceNumber: 'Factuurnummer',
     invoiceDate: 'Factuurdatum',
     guestName: 'Naam gast',
+    companyName: 'Bedrijfsnaam (optioneel)',
+    vatNumber: 'BTW-nummer (optioneel)',
     guestEmail: 'E-mailadres gast (optioneel)',
     bookingReference: 'Boekingsreferentie (optioneel)',
     roomName: 'Kamernaam',
@@ -127,11 +132,12 @@ const translations = {
     print: 'Printen / Opslaan als PDF',
     savedInvoices: 'Opgeslagen facturen',
     searchInvoices: 'Zoeken / filteren facturen',
-    searchPlaceholder: 'Zoek op factuurnummer, gastnaam, e-mail of boekingsreferentie',
+    searchPlaceholder: 'Zoek op factuurnummer, gastnaam, bedrijfsnaam, e-mail of boekingsreferentie',
     invoiceTitle: 'FACTUUR',
     labelInvoiceNumber: 'Factuurnummer:',
     labelDate: 'Datum:',
-    sectionGuest: 'Gast',
+    sectionGuest: 'Factureren aan',
+    labelVatNumber: 'BTW-nummer:',
     labelBookingReference: 'Boekingsreferentie:',
     sectionStay: 'Verblijfsgegevens',
     labelRoom: 'Kamer:',
@@ -149,7 +155,7 @@ const translations = {
     labelTaxAdded: 'Toeristenbelasting toegevoegd',
     labelTotal: 'Totaal betaald',
     sectionPayment: 'Betaling',
-    note: 'Dit betreft particuliere verhuur. Er is geen btw van toepassing.',
+    note: 'Dit betreft particuliere verhuur. BTW is niet van toepassing.',
     roomOption1: 'Ruime kamer (tuinzijde)',
     roomOption2: 'Knusse kamer (straatzijde)',
     roomOptionCustom: 'Aangepaste kamernaam...',
@@ -207,6 +213,8 @@ const fields = {
   invoiceNumber: document.getElementById('invoiceNumber'),
   invoiceDate: document.getElementById('invoiceDate'),
   guestName: document.getElementById('guestName'),
+  companyName: document.getElementById('companyName'),
+  vatNumber: document.getElementById('vatNumber'),
   guestEmail: document.getElementById('guestEmail'),
   bookingReference: document.getElementById('bookingReference'),
   roomName: document.getElementById('roomName'),
@@ -397,6 +405,8 @@ function clearForm() {
   manualNightsOverride = false;
   fields.invoiceDate.value = todayISO();
   fields.guestName.value = '';
+  fields.companyName.value = '';
+  fields.vatNumber.value = '';
   fields.guestEmail.value = '';
   fields.bookingReference.value = '';
   fields.roomName.value = currentLang === 'nl' ? translations.nl.roomOption2 : translations.en.roomOption2;
@@ -471,6 +481,8 @@ async function saveInvoice() {
     invoice_sequence,
     invoice_date: fields.invoiceDate.value,
     guest_name: fields.guestName.value.trim(),
+    company_name: fields.companyName.value.trim(),
+    vat_number: fields.vatNumber.value.trim(),
     guest_email: fields.guestEmail.value.trim(),
     booking_reference: fields.bookingReference.value.trim(),
     room_name: getRoomValue(),
@@ -590,7 +602,7 @@ function renderInvoiceList() {
     item.className = 'invoice-item';
     item.innerHTML = `
       <strong>${invoice.invoice_number}</strong>
-      <span>${invoice.guest_name}</span><br>
+      <span>${invoice.company_name ? invoice.company_name + ' — ' : ''}${invoice.guest_name}</span><br>
       <span class="muted">${formatDateForLang(invoice.invoice_date, currentLang)} · €${Number(invoice.total_paid).toFixed(2)}</span>
       ${invoice.booking_reference ? `<br><span class="muted">${invoice.booking_reference}</span>` : ''}
     `;
@@ -611,6 +623,8 @@ function filterInvoices(resetPage = true) {
       return [
         invoice.invoice_number,
         invoice.guest_name,
+        invoice.company_name,
+        invoice.vat_number,
         invoice.guest_email,
         invoice.booking_reference
       ]
@@ -648,6 +662,8 @@ function loadInvoiceIntoForm(invoice) {
   fields.invoiceNumber.value = invoice.invoice_number;
   fields.invoiceDate.value = invoice.invoice_date;
   fields.guestName.value = invoice.guest_name || '';
+  fields.companyName.value = invoice.company_name || '';
+  fields.vatNumber.value = invoice.vat_number || '';
   fields.guestEmail.value = invoice.guest_email || '';
   fields.bookingReference.value = invoice.booking_reference || '';
 
@@ -723,6 +739,8 @@ function updateTexts() {
   document.getElementById('labelInvoiceNumber').textContent = t.invoiceNumber;
   document.getElementById('labelInvoiceDate').textContent = t.invoiceDate;
   document.getElementById('labelGuestName').textContent = t.guestName;
+  document.getElementById('labelCompanyName').textContent = t.companyName;
+  document.getElementById('labelVatNumber').textContent = t.vatNumber;
   document.getElementById('labelGuestEmail').textContent = t.guestEmail;
   document.getElementById('labelBookingReference').textContent = t.bookingReference;
   document.getElementById('labelRoomName').textContent = t.roomName;
@@ -791,6 +809,7 @@ function updateTexts() {
     <option value="excluded">${t.taxModeExcluded}</option>
   `;
 
+  document.getElementById('previewLabelVatNumber').textContent = t.labelVatNumber;
   updatePaginationControls();
 }
 
@@ -812,6 +831,7 @@ function updatePreview() {
   document.getElementById('previewLabelInvoiceNumber').textContent = t.labelInvoiceNumber;
   document.getElementById('previewLabelInvoiceDate').textContent = t.labelDate;
   document.getElementById('previewSectionGuest').textContent = t.sectionGuest;
+  document.getElementById('previewLabelVatNumber').textContent = t.labelVatNumber;
   document.getElementById('previewLabelBookingReference').textContent = t.labelBookingReference;
   document.getElementById('previewSectionStay').textContent = t.sectionStay;
   document.getElementById('previewLabelRoom').textContent = t.labelRoom;
@@ -833,11 +853,24 @@ function updatePreview() {
 
   document.getElementById('previewInvoiceNumber').textContent = fields.invoiceNumber.value || '—';
   document.getElementById('previewInvoiceDate').textContent = formatDateForLang(fields.invoiceDate.value, currentLang);
-  document.getElementById('previewGuestName').textContent = fields.guestName.value || '—';
-  document.getElementById('previewGuestEmail').textContent = fields.guestEmail.value || '';
-  document.getElementById('previewGuestEmail').style.display = fields.guestEmail.value ? 'block' : 'none';
 
-  const bookingReference = fields.bookingReference.value || '';
+  const companyName = fields.companyName.value.trim();
+  const vatNumber = fields.vatNumber.value.trim();
+  const guestEmail = fields.guestEmail.value.trim();
+  const bookingReference = fields.bookingReference.value.trim();
+
+  const previewCompanyName = document.getElementById('previewCompanyName');
+  previewCompanyName.textContent = companyName;
+  previewCompanyName.classList.toggle('hidden', !companyName);
+
+  document.getElementById('previewGuestName').textContent = fields.guestName.value || '—';
+
+  document.getElementById('previewVatNumber').textContent = vatNumber;
+  document.getElementById('previewVatNumberWrap').classList.toggle('hidden', !vatNumber);
+
+  document.getElementById('previewGuestEmail').textContent = guestEmail;
+  document.getElementById('previewGuestEmail').style.display = guestEmail ? 'block' : 'none';
+
   document.getElementById('previewBookingReference').textContent = bookingReference;
   document.getElementById('previewBookingReferenceWrap').classList.toggle('hidden', !bookingReference);
 
@@ -950,7 +983,7 @@ fields.nights.addEventListener('input', () => {
 });
 
 [
-  'invoiceNumber', 'invoiceDate', 'guestName', 'guestEmail', 'bookingReference', 'customRoomName',
+  'invoiceNumber', 'invoiceDate', 'guestName', 'companyName', 'vatNumber', 'guestEmail', 'bookingReference', 'customRoomName',
   'guests', 'accommodationAmount', 'cleaningFee', 'touristTaxRate',
   'taxMode', 'customPaymentMethod'
 ].forEach(id => {
