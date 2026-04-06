@@ -519,6 +519,7 @@
       justify-content: center;
       z-index: 3000;
       padding: 24px;
+      touch-action: none;
     }
 
     .lightbox.open {
@@ -531,6 +532,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
+      touch-action: pan-y;
     }
 
     .lightbox-image {
@@ -540,6 +543,8 @@
       box-shadow: 0 14px 40px rgba(0,0,0,0.35);
       object-fit: contain;
       background: #111;
+      user-select: none;
+      -webkit-user-drag: none;
     }
 
     .lightbox-close,
@@ -551,14 +556,14 @@
       color: white;
       cursor: pointer;
       backdrop-filter: blur(6px);
-      transition: background 0.2s ease, transform 0.2s ease;
+      transition: background 0.2s ease, opacity 0.2s ease;
+      z-index: 2;
     }
 
     .lightbox-close:hover,
     .lightbox-prev:hover,
     .lightbox-next:hover {
       background: rgba(255,255,255,0.22);
-      transform: translateY(-1px);
     }
 
     .lightbox-close {
@@ -574,12 +579,12 @@
     .lightbox-prev,
     .lightbox-next {
       top: 50%;
-      transform: translateY(-50%);
       width: 48px;
       height: 48px;
       border-radius: 50%;
       font-size: 28px;
       line-height: 1;
+      transform: translateY(-50%);
     }
 
     .lightbox-prev {
@@ -599,6 +604,34 @@
       color: rgba(255,255,255,0.9);
       font-size: 14px;
       font-weight: 500;
+    }
+
+    @media (max-width: 620px) {
+      .lightbox {
+        padding: 16px;
+      }
+
+      .lightbox-prev {
+        left: 6px;
+      }
+
+      .lightbox-next {
+        right: 6px;
+      }
+
+      .lightbox-close {
+        top: 8px;
+        right: 8px;
+      }
+
+      .lightbox-image {
+        max-height: 72vh;
+      }
+
+      .lightbox-caption {
+        bottom: -34px;
+        font-size: 13px;
+      }
     }
 
     @media (max-width: 920px) {
@@ -1374,199 +1407,253 @@
       <div class="lightbox-caption" id="lightboxCaption"></div>
     </div>
   </div>
+  
+<script>
+  const langButtons = document.querySelectorAll('.lang-btn');
+  const contents = document.querySelectorAll('.lang-content');
+  const whatsappBtn = document.getElementById('whatsappBtn');
+  const brandLink = document.getElementById('brandLink');
+  const navLinks = document.querySelectorAll('.nav a');
+  const heroGuideBtnEn = document.getElementById('heroGuideBtnEn');
+  const heroGuideBtnNl = document.getElementById('heroGuideBtnNl');
 
-  <script>
-    const langButtons = document.querySelectorAll('.lang-btn');
-    const contents = document.querySelectorAll('.lang-content');
-    const whatsappBtn = document.getElementById('whatsappBtn');
-    const brandLink = document.getElementById('brandLink');
-    const navLinks = document.querySelectorAll('.nav a');
-    const heroGuideBtnEn = document.getElementById('heroGuideBtnEn');
-    const heroGuideBtnNl = document.getElementById('heroGuideBtnNl');
-
-    const navConfig = {
-      en: {
-        labels: ["Rooms", "Your Stay", "Before Arrival", "Guest Guide", "Book"],
-        hrefs: ["#rooms-en", "#stay-en", "#arrival-en", "#guide-en", "#book-en"],
-        brandHref: "#top-en",
-        guideHref: "#guide-en"
-      },
-      nl: {
-        labels: ["Kamers", "Je Verblijf", "Voor Aankomst", "Gastinformatie", "Boeken"],
-        hrefs: ["#rooms-nl", "#stay-nl", "#arrival-nl", "#guide-nl", "#book-nl"],
-        brandHref: "#top-nl",
-        guideHref: "#guide-nl"
-      }
-    };
-
-    const whatsappConfig = {
-      en: {
-        text: '💬 Message Joa',
-        href: 'https://wa.me/31622192645?text=Hi%20Joa,%20I%20have%20a%20question%20about%20my%20stay.'
-      },
-      nl: {
-        text: '💬 Stuur Joa een bericht',
-        href: 'https://wa.me/31622192645?text=Hoi%20Joa,%20ik%20heb%20een%20vraag%20over%20mijn%20verblijf.'
-      }
-    };
-
-    function setLanguage(lang) {
-      document.documentElement.lang = lang;
-
-      langButtons.forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.lang === lang);
-      });
-
-      contents.forEach(content => {
-        content.classList.toggle('active', content.id === `content-${lang}`);
-      });
-
-      whatsappBtn.textContent = whatsappConfig[lang].text;
-      whatsappBtn.href = whatsappConfig[lang].href;
-
-      navLinks.forEach((link, index) => {
-        link.textContent = navConfig[lang].labels[index];
-        link.href = navConfig[lang].hrefs[index];
-      });
-
-      brandLink.href = navConfig[lang].brandHref;
-      heroGuideBtnEn.href = navConfig[lang].guideHref;
-      heroGuideBtnNl.href = navConfig[lang].guideHref;
-
-      localStorage.setItem('preferredLanguage', lang);
+  const navConfig = {
+    en: {
+      labels: ["Rooms", "Your Stay", "Before Arrival", "Guest Guide", "Book"],
+      hrefs: ["#rooms-en", "#stay-en", "#arrival-en", "#guide-en", "#book-en"],
+      brandHref: "#top-en",
+      guideHref: "#guide-en"
+    },
+    nl: {
+      labels: ["Kamers", "Je Verblijf", "Voor Aankomst", "Gastinformatie", "Boeken"],
+      hrefs: ["#rooms-nl", "#stay-nl", "#arrival-nl", "#guide-nl", "#book-nl"],
+      brandHref: "#top-nl",
+      guideHref: "#guide-nl"
     }
+  };
+
+  const whatsappConfig = {
+    en: {
+      text: '💬 Message Joa',
+      href: 'https://wa.me/31622192645?text=Hi%20Joa,%20I%20have%20a%20question%20about%20my%20stay.'
+    },
+    nl: {
+      text: '💬 Stuur Joa een bericht',
+      href: 'https://wa.me/31622192645?text=Hoi%20Joa,%20ik%20heb%20een%20vraag%20over%20mijn%20verblijf.'
+    }
+  };
+
+  function setLanguage(lang) {
+    document.documentElement.lang = lang;
 
     langButtons.forEach(btn => {
-      btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+      btn.classList.toggle('active', btn.dataset.lang === lang);
     });
 
-    const savedLang = localStorage.getItem('preferredLanguage') || 'en';
-    setLanguage(savedLang);
-
-    window.addEventListener("scroll", function() {
-      const btn = document.getElementById("topBtn");
-      btn.style.display = window.scrollY > 400 ? "block" : "none";
+    contents.forEach(content => {
+      content.classList.toggle('active', content.id === `content-${lang}`);
     });
 
-    const galleries = {
-      cozy: [
-        { src: './assets/room-cozy-1.jpg', caption: 'Cozy Room' },
-        { src: './assets/room-cozy-2.jpg', caption: 'Cozy Room' },
-        { src: './assets/room-cozy-3.jpg', caption: 'Cozy Room' },
-        { src: './assets/room-cozy-4.jpg', caption: 'Cozy Room' },
-        { src: './assets/room-cozy-5.jpg', caption: 'Cozy Room' },
-        { src: './assets/room-cozy-bike.jpg', caption: 'Free bicycle during your stay' }
-      ],
-      spacious: [
-        { src: './assets/room-spacious-1.jpg', caption: 'Spacious Room' },
-        { src: './assets/room-spacious-2.jpg', caption: 'Spacious Room' },
-        { src: './assets/room-spacious-3.jpg', caption: 'Spacious Room' },
-        { src: './assets/room-spacious-4.jpg', caption: 'Spacious Room' },
-        { src: './assets/room-spacious-5.jpg', caption: 'Spacious Room' },
-        { src: './assets/room-spacious-6.jpg', caption: 'Spacious Room' },
-        { src: './assets/room-spacious-7.jpg', caption: 'Spacious Room' },
-        { src: './assets/room-spacious-bike.jpg', caption: 'Free bicycle during your stay' }
-      ],
-      kitchen: [
-        { src: './assets/kitchen-1.jpg', caption: 'Shared kitchen' },
-        { src: './assets/kitchen-2.jpg', caption: 'Shared kitchen' },
-        { src: './assets/kitchen-3.jpg', caption: 'Shared kitchen' },
-        { src: './assets/kitchen-4.jpg', caption: 'Shared kitchen' },
-        { src: './assets/kitchen-5.jpg', caption: 'Shared kitchen' }
-      ],
-      bathroom: [
-        { src: './assets/bathroom-1.jpg', caption: 'Shared bathroom' },
-        { src: './assets/bathroom-2.jpg', caption: 'Shared bathroom' },
-        { src: './assets/bathroom-3.jpg', caption: 'Shared bathroom' },
-        { src: './assets/bathroom-4.jpg', caption: 'Shared bathroom' }
-      ],
-      misc: [
-        { src: './assets/lilly.jpg', caption: 'Lilly' },
-        { src: './assets/front-house.jpg', caption: 'Front of the house' },
-        { src: './assets/misc-1.jpg', caption: 'Shared home' },
-        { src: './assets/misc-2.jpg', caption: 'Shared home' }
-      ]
-    };
+    whatsappBtn.textContent = whatsappConfig[lang].text;
+    whatsappBtn.href = whatsappConfig[lang].href;
 
-    const lightbox = document.getElementById('lightbox');
-    const lightboxImage = document.getElementById('lightboxImage');
-    const lightboxCaption = document.getElementById('lightboxCaption');
-    const lightboxClose = document.getElementById('lightboxClose');
-    const lightboxPrev = document.getElementById('lightboxPrev');
-    const lightboxNext = document.getElementById('lightboxNext');
-
-    let currentGalleryName = null;
-    let currentIndex = 0;
-
-    function renderLightbox() {
-      if (!currentGalleryName || !galleries[currentGalleryName]) return;
-
-      const items = galleries[currentGalleryName];
-      const item = items[currentIndex];
-
-      lightboxImage.src = item.src;
-      lightboxImage.alt = item.caption || '';
-      lightboxCaption.textContent = `${item.caption || ''} (${currentIndex + 1}/${items.length})`;
-    }
-
-    function openLightbox(galleryName, startIndex = 0) {
-      if (!galleries[galleryName] || !galleries[galleryName].length) return;
-
-      currentGalleryName = galleryName;
-      currentIndex = Math.max(0, Math.min(startIndex, galleries[galleryName].length - 1));
-      renderLightbox();
-      lightbox.classList.add('open');
-      lightbox.setAttribute('aria-hidden', 'false');
-      document.body.style.overflow = 'hidden';
-    }
-
-    function closeLightbox() {
-      lightbox.classList.remove('open');
-      lightbox.setAttribute('aria-hidden', 'true');
-      document.body.style.overflow = '';
-      lightboxImage.src = '';
-    }
-
-    function showPrev() {
-      if (!currentGalleryName) return;
-      const items = galleries[currentGalleryName];
-      currentIndex = (currentIndex - 1 + items.length) % items.length;
-      renderLightbox();
-    }
-
-    function showNext() {
-      if (!currentGalleryName) return;
-      const items = galleries[currentGalleryName];
-      currentIndex = (currentIndex + 1) % items.length;
-      renderLightbox();
-    }
-
-    document.querySelectorAll('[data-gallery]').forEach(trigger => {
-      trigger.addEventListener('click', () => {
-        const galleryName = trigger.dataset.gallery;
-        const startIndex = Number(trigger.dataset.start || 0);
-        openLightbox(galleryName, startIndex);
-      });
+    navLinks.forEach((link, index) => {
+      link.textContent = navConfig[lang].labels[index];
+      link.href = navConfig[lang].hrefs[index];
     });
 
-    lightboxClose.addEventListener('click', closeLightbox);
-    lightboxPrev.addEventListener('click', showPrev);
-    lightboxNext.addEventListener('click', showNext);
+    brandLink.href = navConfig[lang].brandHref;
+    heroGuideBtnEn.href = navConfig[lang].guideHref;
+    heroGuideBtnNl.href = navConfig[lang].guideHref;
 
-    lightbox.addEventListener('click', (event) => {
-      if (event.target === lightbox) {
-        closeLightbox();
+    localStorage.setItem('preferredLanguage', lang);
+  }
+
+  langButtons.forEach(btn => {
+    btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+  });
+
+  const savedLang = localStorage.getItem('preferredLanguage') || 'en';
+  setLanguage(savedLang);
+
+  window.addEventListener("scroll", function() {
+    const btn = document.getElementById("topBtn");
+    btn.style.display = window.scrollY > 400 ? "block" : "none";
+  });
+
+  const galleries = {
+    cozy: [
+      { src: './assets/room-cozy-1.jpg', caption: 'Cozy Room' },
+      { src: './assets/room-cozy-2.jpg', caption: 'Cozy Room' },
+      { src: './assets/room-cozy-3.jpg', caption: 'Cozy Room' },
+      { src: './assets/room-cozy-4.jpg', caption: 'Cozy Room' },
+      { src: './assets/room-cozy-5.jpg', caption: 'Cozy Room' },
+      { src: './assets/room-cozy-bike.jpg', caption: 'Free bicycle during your stay' }
+    ],
+    spacious: [
+      { src: './assets/room-spacious-1.jpg', caption: 'Spacious Room' },
+      { src: './assets/room-spacious-2.jpg', caption: 'Spacious Room' },
+      { src: './assets/room-spacious-3.jpg', caption: 'Spacious Room' },
+      { src: './assets/room-spacious-4.jpg', caption: 'Spacious Room' },
+      { src: './assets/room-spacious-5.jpg', caption: 'Spacious Room' },
+      { src: './assets/room-spacious-6.jpg', caption: 'Spacious Room' },
+      { src: './assets/room-spacious-7.jpg', caption: 'Spacious Room' },
+      { src: './assets/room-spacious-bike.jpg', caption: 'Free bicycle during your stay' }
+    ],
+    kitchen: [
+      { src: './assets/kitchen-1.jpg', caption: 'Shared kitchen' },
+      { src: './assets/kitchen-2.jpg', caption: 'Shared kitchen' },
+      { src: './assets/kitchen-3.jpg', caption: 'Shared kitchen' },
+      { src: './assets/kitchen-4.jpg', caption: 'Shared kitchen' },
+      { src: './assets/kitchen-5.jpg', caption: 'Shared kitchen' }
+    ],
+    bathroom: [
+      { src: './assets/bathroom-1.jpg', caption: 'Shared bathroom' },
+      { src: './assets/bathroom-2.jpg', caption: 'Shared bathroom' },
+      { src: './assets/bathroom-3.jpg', caption: 'Shared bathroom' },
+      { src: './assets/bathroom-4.jpg', caption: 'Shared bathroom' }
+    ],
+    misc: [
+      { src: './assets/lilly.jpg', caption: 'Lilly' },
+      { src: './assets/front-house.jpg', caption: 'Front of the house' },
+      { src: './assets/misc-1.jpg', caption: 'Shared home' },
+      { src: './assets/misc-2.jpg', caption: 'Shared home' }
+    ]
+  };
+
+  const lightbox = document.getElementById('lightbox');
+  const lightboxInner = lightbox.querySelector('.lightbox-inner');
+  const lightboxImage = document.getElementById('lightboxImage');
+  const lightboxCaption = document.getElementById('lightboxCaption');
+  const lightboxClose = document.getElementById('lightboxClose');
+  const lightboxPrev = document.getElementById('lightboxPrev');
+  const lightboxNext = document.getElementById('lightboxNext');
+
+  let currentGalleryName = null;
+  let currentIndex = 0;
+  let lockedScrollY = 0;
+
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchEndX = 0;
+  let touchEndY = 0;
+
+  function renderLightbox() {
+    if (!currentGalleryName || !galleries[currentGalleryName]) return;
+
+    const items = galleries[currentGalleryName];
+    const item = items[currentIndex];
+
+    lightboxImage.src = item.src;
+    lightboxImage.alt = item.caption || '';
+    lightboxCaption.textContent = `${item.caption || ''} (${currentIndex + 1}/${items.length})`;
+  }
+
+  function lockBodyScroll() {
+    lockedScrollY = window.scrollY || window.pageYOffset;
+    document.body.style.position = 'fixed';
+    document.body.style.top = `-${lockedScrollY}px`;
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+    document.body.style.overflow = 'hidden';
+  }
+
+  function unlockBodyScroll() {
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    document.body.style.overflow = '';
+    window.scrollTo(0, lockedScrollY);
+  }
+
+  function openLightbox(galleryName, startIndex = 0) {
+    if (!galleries[galleryName] || !galleries[galleryName].length) return;
+
+    currentGalleryName = galleryName;
+    currentIndex = Math.max(0, Math.min(startIndex, galleries[galleryName].length - 1));
+    renderLightbox();
+    lightbox.classList.add('open');
+    lightbox.setAttribute('aria-hidden', 'false');
+    lockBodyScroll();
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove('open');
+    lightbox.setAttribute('aria-hidden', 'true');
+    lightboxImage.src = '';
+    unlockBodyScroll();
+  }
+
+  function showPrev() {
+    if (!currentGalleryName) return;
+    const items = galleries[currentGalleryName];
+    currentIndex = (currentIndex - 1 + items.length) % items.length;
+    renderLightbox();
+  }
+
+  function showNext() {
+    if (!currentGalleryName) return;
+    const items = galleries[currentGalleryName];
+    currentIndex = (currentIndex + 1) % items.length;
+    renderLightbox();
+  }
+
+  document.querySelectorAll('[data-gallery]').forEach(trigger => {
+    trigger.addEventListener('click', () => {
+      const galleryName = trigger.dataset.gallery;
+      const startIndex = Number(trigger.dataset.start || 0);
+      openLightbox(galleryName, startIndex);
+    });
+  });
+
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightboxPrev.addEventListener('click', showPrev);
+  lightboxNext.addEventListener('click', showNext);
+
+  lightbox.addEventListener('click', (event) => {
+    if (event.target === lightbox) {
+      closeLightbox();
+    }
+  });
+
+  document.addEventListener('keydown', (event) => {
+    if (!lightbox.classList.contains('open')) return;
+
+    if (event.key === 'Escape') closeLightbox();
+    if (event.key === 'ArrowLeft') showPrev();
+    if (event.key === 'ArrowRight') showNext();
+  });
+
+  lightboxInner.addEventListener('touchstart', (event) => {
+    if (!lightbox.classList.contains('open')) return;
+
+    const touch = event.changedTouches[0];
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+  }, { passive: true });
+
+  lightboxInner.addEventListener('touchend', (event) => {
+    if (!lightbox.classList.contains('open')) return;
+
+    const touch = event.changedTouches[0];
+    touchEndX = touch.clientX;
+    touchEndY = touch.clientY;
+
+    const deltaX = touchEndX - touchStartX;
+    const deltaY = touchEndY - touchStartY;
+
+    if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
+      if (deltaX < 0) {
+        showNext();
+      } else {
+        showPrev();
       }
-    });
-
-    document.addEventListener('keydown', (event) => {
-      if (!lightbox.classList.contains('open')) return;
-
-      if (event.key === 'Escape') closeLightbox();
-      if (event.key === 'ArrowLeft') showPrev();
-      if (event.key === 'ArrowRight') showNext();
-    });
-  </script>
+    }
+  }, { passive: true });
+</script>
 
 </body>
 </html>
