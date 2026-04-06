@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nijmegen Guest Rooms – Invoice Admin</title>
   <link rel="stylesheet" href="./style.css" />
-  <link rel="icon" type="image/png" href="../assets/favicon.png">
 </head>
 <body>
   <div class="container">
@@ -58,6 +57,16 @@
             <div class="field" data-required="true">
               <label id="labelGuestName" for="guestName">Guest name</label>
               <input id="guestName" type="text" />
+            </div>
+
+            <div class="field">
+              <label id="labelCompanyName" for="companyName">Company name (optional)</label>
+              <input id="companyName" type="text" />
+            </div>
+
+            <div class="field">
+              <label id="labelVatNumber" for="vatNumber">VAT number (optional)</label>
+              <input id="vatNumber" type="text" />
             </div>
 
             <div class="field">
@@ -194,7 +203,12 @@
 
               <div class="invoice-section invoice-block">
                 <h4 id="previewSectionGuest">Guest</h4>
+                <p id="previewCompanyName" class="hidden"></p>
                 <p id="previewGuestName">—</p>
+                <p id="previewVatNumberWrap" class="subtle hidden">
+                  <strong id="previewLabelVatNumber">VAT number:</strong>
+                  <span id="previewVatNumber">—</span>
+                </p>
                 <p id="previewGuestEmail" class="subtle"></p>
                 <p id="previewBookingReferenceWrap" class="subtle hidden">
                   <strong id="previewLabelBookingReference">Booking reference:</strong>
