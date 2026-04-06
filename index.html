@@ -532,7 +532,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
+      overflow: visible;
       touch-action: pan-y;
     }
 
@@ -557,7 +557,7 @@
       cursor: pointer;
       backdrop-filter: blur(6px);
       transition: background 0.2s ease, opacity 0.2s ease;
-      z-index: 2;
+      z-index: 5;
     }
 
     .lightbox-close:hover,
@@ -567,8 +567,8 @@
     }
 
     .lightbox-close {
-      top: -8px;
-      right: -8px;
+      top: 12px;
+      right: 12px;
       width: 44px;
       height: 44px;
       border-radius: 50%;
@@ -588,11 +588,11 @@
     }
 
     .lightbox-prev {
-      left: -18px;
+      left: 12px;
     }
 
     .lightbox-next {
-      right: -18px;
+      right: 12px;
     }
 
     .lightbox-caption {
@@ -612,11 +612,11 @@
       }
 
       .lightbox-prev {
-        left: 6px;
+        left: 8px;
       }
 
       .lightbox-next {
-        right: 6px;
+        right: 8px;
       }
 
       .lightbox-close {
@@ -1551,6 +1551,7 @@
 
   function lockBodyScroll() {
     lockedScrollY = window.scrollY || window.pageYOffset;
+
     document.body.style.position = 'fixed';
     document.body.style.top = `-${lockedScrollY}px`;
     document.body.style.left = '0';
@@ -1566,7 +1567,14 @@
     document.body.style.right = '';
     document.body.style.width = '';
     document.body.style.overflow = '';
+
+    const previousScrollBehavior = document.documentElement.style.scrollBehavior;
+    document.documentElement.style.scrollBehavior = 'auto';
     window.scrollTo(0, lockedScrollY);
+
+    requestAnimationFrame(() => {
+      document.documentElement.style.scrollBehavior = previousScrollBehavior || '';
+    });
   }
 
   function openLightbox(galleryName, startIndex = 0) {
