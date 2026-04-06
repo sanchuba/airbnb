@@ -855,24 +855,39 @@ function updatePreview() {
   document.getElementById('previewInvoiceDate').textContent = formatDateForLang(fields.invoiceDate.value, currentLang);
 
   const companyName = fields.companyName.value.trim();
+  const guestName = fields.guestName.value.trim();
   const vatNumber = fields.vatNumber.value.trim();
   const guestEmail = fields.guestEmail.value.trim();
   const bookingReference = fields.bookingReference.value.trim();
 
   const previewCompanyName = document.getElementById('previewCompanyName');
-  previewCompanyName.textContent = companyName;
-  previewCompanyName.classList.toggle('hidden', !companyName);
+  const previewGuestName = document.getElementById('previewGuestName');
+  const previewVatNumberWrap = document.getElementById('previewVatNumberWrap');
+  const previewGuestEmail = document.getElementById('previewGuestEmail');
+  const previewBookingReferenceWrap = document.getElementById('previewBookingReferenceWrap');
 
-  document.getElementById('previewGuestName').textContent = fields.guestName.value || '—';
+  if (companyName) {
+    previewCompanyName.textContent = companyName;
+    previewCompanyName.classList.remove('hidden');
+    previewCompanyName.style.fontWeight = '700';
+    previewCompanyName.style.color = 'var(--heading)';
+  } else {
+    previewCompanyName.textContent = '';
+    previewCompanyName.classList.add('hidden');
+  }
+
+  previewGuestName.textContent = guestName || '—';
+  previewGuestName.style.fontWeight = companyName ? '400' : '700';
+  previewGuestName.style.color = companyName ? '' : 'var(--heading)';
 
   document.getElementById('previewVatNumber').textContent = vatNumber;
-  document.getElementById('previewVatNumberWrap').classList.toggle('hidden', !vatNumber);
+  previewVatNumberWrap.classList.toggle('hidden', !vatNumber);
 
-  document.getElementById('previewGuestEmail').textContent = guestEmail;
-  document.getElementById('previewGuestEmail').style.display = guestEmail ? 'block' : 'none';
+  previewGuestEmail.textContent = guestEmail;
+  previewGuestEmail.style.display = guestEmail ? 'block' : 'none';
 
   document.getElementById('previewBookingReference').textContent = bookingReference;
-  document.getElementById('previewBookingReferenceWrap').classList.toggle('hidden', !bookingReference);
+  previewBookingReferenceWrap.classList.toggle('hidden', !bookingReference);
 
   document.getElementById('previewRoomName').textContent = getRoomValue() || '—';
   document.getElementById('previewCheckin').textContent = formatDateForLang(fields.checkinDate.value, currentLang);
