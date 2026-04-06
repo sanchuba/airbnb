@@ -5,6 +5,8 @@ const SUPABASE_ANON_KEY = 'sb_publishable_Y94dITMxDgGpH6ZnINbWjw_5w5KMW_c';
 
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
+const PAGE_SIZE = 25;
+
 const translations = {
   en: {
     pageTitle: 'Invoice Generator',
@@ -85,7 +87,10 @@ const translations = {
     invalidAccommodation: 'Accommodation amount cannot be negative',
     invalidCleaning: 'Cleaning fee cannot be negative',
     invalidTouristTax: 'Tourist tax rate cannot be negative',
-    accessDenied: 'Access denied. This email address is not authorized.'
+    accessDenied: 'Access denied. This email address is not authorized.',
+    previous: 'Previous',
+    next: 'Next',
+    pageOf: 'Page {current} of {total}'
   },
   nl: {
     pageTitle: 'Factuurgenerator',
@@ -166,7 +171,10 @@ const translations = {
     invalidAccommodation: 'Verblijfsbedrag mag niet negatief zijn',
     invalidCleaning: 'Schoonmaakkosten mogen niet negatief zijn',
     invalidTouristTax: 'Toeristenbelasting mag niet negatief zijn',
-    accessDenied: 'Toegang geweigerd. Dit e-mailadres is niet geautoriseerd.'
+    accessDenied: 'Toegang geweigerd. Dit e-mailadres is niet geautoriseerd.',
+    previous: 'Vorige',
+    next: 'Volgende',
+    pageOf: 'Pagina {current} van {total}'
   }
 };
 
@@ -174,6 +182,8 @@ let currentLang = 'en';
 let currentInvoiceId = null;
 let manualNightsOverride = false;
 let allInvoices = [];
+let filteredInvoices = [];
+let currentPage = 1;
 
 const loginView = document.getElementById('loginView');
 const appView = document.getElementById('appView');
@@ -189,6 +199,9 @@ const printBtn = document.getElementById('printBtn');
 const invoiceList = document.getElementById('invoiceList');
 const newInvoiceBtn = document.getElementById('newInvoiceBtn');
 const searchInvoicesInput = document.getElementById('searchInvoices');
+const prevPageBtn = document.getElementById('prevPageBtn');
+const nextPageBtn = document.getElementById('nextPageBtn');
+const paginationInfo = document.getElementById('paginationInfo');
 
 const fields = {
   invoiceNumber: document.getElementById('invoiceNumber'),
@@ -541,14 +554,38 @@ async function deleteInvoice() {
   await loadInvoices();
 }
 
-function renderInvoiceList(filteredInvoices = allInvoices) {
+function getTotalPages() {
+  return Math.max(1, Math.ceil(filteredInvoices.length / PAGE_SIZE));
+}
+
+function updatePaginationControls() {
+  const t = translations[currentLang];
+  const totalPages = getTotalPages();
+
+  if (currentPage > totalPages) currentPage = totalPages;
+  if (currentPage < 1) currentPage = 1;
+
+  prevPageBtn.disabled = currentPage <= 1;
+  nextPageBtn.disabled = currentPage >= totalPages;
+
+  paginationInfo.textContent = t.pageOf
+    .replace('{current}', String(currentPage))
+    .replace('{total}', String(totalPages));
+}
+
+function renderInvoiceList() {
   if (!filteredInvoices.length) {
     invoiceList.innerHTML = `<p class="muted">${translations[currentLang].noInvoices}</p>`;
+    updatePaginationControls();
     return;
   }
 
+  const start = (currentPage - 1) * PAGE_SIZE;
+  const end = start + PAGE_SIZE;
+  const pageItems = filteredInvoices.slice(start, end);
+
   invoiceList.innerHTML = '';
-  filteredInvoices.forEach(invoice => {
+  pageItems.forEach(invoice => {
     const item = document.createElement('div');
     item.className = 'invoice-item';
     item.innerHTML = `
@@ -560,28 +597,30 @@ function renderInvoiceList(filteredInvoices = allInvoices) {
     item.addEventListener('click', () => loadInvoiceIntoForm(invoice));
     invoiceList.appendChild(item);
   });
+
+  updatePaginationControls();
 }
 
-function filterInvoices() {
+function filterInvoices(resetPage = true) {
   const query = (searchInvoicesInput.value || '').trim().toLowerCase();
 
   if (!query) {
-    renderInvoiceList(allInvoices);
-    return;
+    filteredInvoices = [...allInvoices];
+  } else {
+    filteredInvoices = allInvoices.filter(invoice => {
+      return [
+        invoice.invoice_number,
+        invoice.guest_name,
+        invoice.guest_email,
+        invoice.booking_reference
+      ]
+        .filter(Boolean)
+        .some(value => String(value).toLowerCase().includes(query));
+    });
   }
 
-  const filtered = allInvoices.filter(invoice => {
-    return [
-      invoice.invoice_number,
-      invoice.guest_name,
-      invoice.guest_email,
-      invoice.booking_reference
-    ]
-      .filter(Boolean)
-      .some(value => String(value).toLowerCase().includes(query));
-  });
-
-  renderInvoiceList(filtered);
+  if (resetPage) currentPage = 1;
+  renderInvoiceList();
 }
 
 async function loadInvoices() {
@@ -599,7 +638,7 @@ async function loadInvoices() {
   }
 
   allInvoices = data || [];
-  filterInvoices();
+  filterInvoices(true);
 }
 
 function loadInvoiceIntoForm(invoice) {
@@ -704,6 +743,8 @@ function updateTexts() {
   document.getElementById('savedInvoicesTitle').textContent = t.savedInvoices;
   document.getElementById('labelSearchInvoices').textContent = t.searchInvoices;
   document.getElementById('searchInvoices').placeholder = t.searchPlaceholder;
+  prevPageBtn.textContent = t.previous;
+  nextPageBtn.textContent = t.next;
 
   const currentRoom = fields.roomName.value;
   fields.roomName.innerHTML = `
@@ -749,6 +790,8 @@ function updateTexts() {
     <option value="included">${t.taxModeIncluded}</option>
     <option value="excluded">${t.taxModeExcluded}</option>
   `;
+
+  updatePaginationControls();
 }
 
 function updatePreview() {
@@ -853,7 +896,21 @@ printBtn.addEventListener('click', () => {
 });
 
 newInvoiceBtn.addEventListener('click', prepareNewInvoice);
-searchInvoicesInput.addEventListener('input', filterInvoices);
+searchInvoicesInput.addEventListener('input', () => filterInvoices(true));
+
+prevPageBtn.addEventListener('click', () => {
+  if (currentPage > 1) {
+    currentPage -= 1;
+    renderInvoiceList();
+  }
+});
+
+nextPageBtn.addEventListener('click', () => {
+  if (currentPage < getTotalPages()) {
+    currentPage += 1;
+    renderInvoiceList();
+  }
+});
 
 document.querySelectorAll('.lang-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -861,7 +918,7 @@ document.querySelectorAll('.lang-btn').forEach(btn => {
     updateTexts();
     toggleCustomFields();
     updatePreview();
-    filterInvoices();
+    renderInvoiceList();
   });
 });
 
