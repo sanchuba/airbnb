@@ -194,6 +194,12 @@ body {
   transform: translateY(-1px);
 }
 
+.action-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}
+
 .muted {
   color: #6f6a64;
   font-size: 14px;
@@ -236,6 +242,20 @@ body {
   color: var(--heading);
 }
 
+.pagination-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.pagination-info {
+  font-size: 14px;
+  color: #6f6a64;
+}
+
 .invoice-preview {
   background: white;
   border: 1px solid var(--border);
@@ -264,24 +284,6 @@ body {
 .invoice-meta p,
 .invoice-block p {
   margin: 0 0 4px;
-}
-
-.brand-with-logo {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-}
-
-.invoice-logo {
-  width: 130px;
-  height: auto;
-  flex-shrink: 0;
-  display: block;
-}
-
-.brand-text {
-  display: flex;
-  flex-direction: column;
 }
 
 .invoice-title {
@@ -348,13 +350,9 @@ body {
     font-size: 28px;
   }
 
-  .brand-with-logo {
+  .pagination-bar {
     flex-direction: column;
-    gap: 12px;
-  }
-
-  .invoice-logo {
-    width: 110px;
+    align-items: stretch;
   }
 }
 
@@ -389,9 +387,5 @@ body {
     border-radius: 0;
     padding: 0;
     box-shadow: none;
-  }
-
-  .invoice-logo {
-    width: 120px;
   }
 }
