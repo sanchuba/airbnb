@@ -5,6 +5,8 @@ const brandLink = document.getElementById('brandLink');
 const navLinks = document.querySelectorAll('.nav a');
 const heroGuideBtnEn = document.getElementById('heroGuideBtnEn');
 const heroGuideBtnNl = document.getElementById('heroGuideBtnNl');
+const menuToggle = document.getElementById('menuToggle');
+const menuPanel = document.getElementById('menuPanel');
 
 let currentLang = localStorage.getItem('preferredLanguage') || 'en';
 
@@ -184,6 +186,29 @@ let touchStartY = 0;
 let touchEndX = 0;
 let touchEndY = 0;
 
+function openMenu() {
+  if (!menuToggle || !menuPanel) return;
+  menuToggle.classList.add('active');
+  menuPanel.classList.add('open');
+  menuToggle.setAttribute('aria-expanded', 'true');
+}
+
+function closeMenu() {
+  if (!menuToggle || !menuPanel) return;
+  menuToggle.classList.remove('active');
+  menuPanel.classList.remove('open');
+  menuToggle.setAttribute('aria-expanded', 'false');
+}
+
+function toggleMenu() {
+  if (!menuPanel) return;
+  if (menuPanel.classList.contains('open')) {
+    closeMenu();
+  } else {
+    openMenu();
+  }
+}
+
 function setLanguage(lang) {
   currentLang = lang;
   document.documentElement.lang = lang;
@@ -213,6 +238,7 @@ function setLanguage(lang) {
   }
 
   localStorage.setItem('preferredLanguage', lang);
+  closeMenu();
 }
 
 function getCaption(galleryName, index) {
@@ -294,8 +320,28 @@ function showNext() {
   renderLightbox();
 }
 
+function openFaqIfHash() {
+  const hash = window.location.hash;
+
+  if (hash === '#faq-en' || hash === '#faq-nl') {
+    const section = document.querySelector(hash);
+    if (!section) return;
+
+    const details = section.querySelector('details');
+    if (details) {
+      details.open = true;
+    }
+  }
+}
+
 langButtons.forEach(btn => {
   btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
+});
+
+navLinks.forEach(link => {
+  link.addEventListener('click', () => {
+    closeMenu();
+  });
 });
 
 document.querySelectorAll('[data-gallery]').forEach(trigger => {
@@ -304,6 +350,28 @@ document.querySelectorAll('[data-gallery]').forEach(trigger => {
     const startIndex = Number(trigger.dataset.start || 0);
     openLightbox(galleryName, startIndex);
   });
+});
+
+if (menuToggle) {
+  menuToggle.addEventListener('click', toggleMenu);
+}
+
+document.addEventListener('click', (event) => {
+  if (!menuPanel || !menuToggle) return;
+  if (window.innerWidth > 620) return;
+
+  const clickedInsidePanel = menuPanel.contains(event.target);
+  const clickedToggle = menuToggle.contains(event.target);
+
+  if (!clickedInsidePanel && !clickedToggle) {
+    closeMenu();
+  }
+});
+
+window.addEventListener('resize', () => {
+  if (window.innerWidth > 620) {
+    closeMenu();
+  }
 });
 
 lightboxClose.addEventListener('click', closeLightbox);
@@ -317,11 +385,16 @@ lightbox.addEventListener('click', (event) => {
 });
 
 document.addEventListener('keydown', (event) => {
-  if (!lightbox.classList.contains('open')) return;
+  if (lightbox.classList.contains('open')) {
+    if (event.key === 'Escape') closeLightbox();
+    if (event.key === 'ArrowLeft') showPrev();
+    if (event.key === 'ArrowRight') showNext();
+    return;
+  }
 
-  if (event.key === 'Escape') closeLightbox();
-  if (event.key === 'ArrowLeft') showPrev();
-  if (event.key === 'ArrowRight') showNext();
+  if (event.key === 'Escape') {
+    closeMenu();
+  }
 });
 
 lightboxInner.addEventListener('touchstart', (event) => {
@@ -355,20 +428,6 @@ window.addEventListener('scroll', () => {
   const btn = document.getElementById('topBtn');
   btn.style.display = window.scrollY > 400 ? 'block' : 'none';
 });
-
-function openFaqIfHash() {
-  const hash = window.location.hash;
-
-  if (hash === '#faq-en' || hash === '#faq-nl') {
-    const section = document.querySelector(hash);
-    if (!section) return;
-
-    const details = section.querySelector('details');
-    if (details) {
-      details.open = true;
-    }
-  }
-}
 
 window.addEventListener('hashchange', openFaqIfHash);
 window.addEventListener('load', openFaqIfHash);
