@@ -108,15 +108,15 @@ const galleryCaptions = {
   misc: {
     en: [
       'Backyard',
-      'Lilly',
       'Front of the house',
+      'Lilly',
       'Shared home',
       'Shared home'
     ],
     nl: [
       'Achtertuin',
-      'Lilly',
       'Voorkant van het huis',
+      'Lilly',
       'Gedeelde woning',
       'Gedeelde woning'
     ]
@@ -157,8 +157,8 @@ const galleries = {
   ],
   misc: [
     { src: './assets/backyard.jpg' },
-    { src: './assets/lilly.jpg' },
     { src: './assets/front-house.jpg' },
+    { src: './assets/lilly.jpg' },
     { src: './assets/misc-1.jpg' },
     { src: './assets/misc-2.jpg' }
   ]
