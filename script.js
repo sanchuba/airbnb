@@ -10,17 +10,17 @@ let currentLang = localStorage.getItem('preferredLanguage') || 'en';
 
 const navConfig = {
   en: {
-    labels: ["Rooms", "Your Stay", "Before Arrival", "Guest Guide", "Book"],
-    hrefs: ["#rooms-en", "#stay-en", "#arrival-en", "#guide-en", "#book-en"],
-    brandHref: "#top-en",
-    guideHref: "#guide-en"
-  },
+  labels: ["Rooms", "Your Stay", "Before Arrival", "Guest Guide", "FAQ", "Book"],
+  hrefs: ["#rooms-en", "#stay-en", "#arrival-en", "#guide-en", "#faq-en", "#book-en"],
+  brandHref: "#top-en",
+  guideHref: "#guide-en"
+},
   nl: {
-    labels: ["Kamers", "Je Verblijf", "Voor Aankomst", "Gastinformatie", "Boeken"],
-    hrefs: ["#rooms-nl", "#stay-nl", "#arrival-nl", "#guide-nl", "#book-nl"],
-    brandHref: "#top-nl",
-    guideHref: "#guide-nl"
-  }
+  labels: ["Kamers", "Je Verblijf", "Voor Aankomst", "Gastinformatie", "FAQ", "Boeken"],
+  hrefs: ["#rooms-nl", "#stay-nl", "#arrival-nl", "#guide-nl", "#faq-nl", "#book-nl"],
+  brandHref: "#top-nl",
+  guideHref: "#guide-nl"
+}
 };
 
 const whatsappConfig = {
