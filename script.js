@@ -356,4 +356,21 @@ window.addEventListener('scroll', () => {
   btn.style.display = window.scrollY > 400 ? 'block' : 'none';
 });
 
+function openFaqIfHash() {
+  const hash = window.location.hash;
+
+  if (hash === '#faq-en' || hash === '#faq-nl') {
+    const section = document.querySelector(hash);
+    if (!section) return;
+
+    const details = section.querySelector('details');
+    if (details) {
+      details.open = true;
+    }
+  }
+}
+
+window.addEventListener('hashchange', openFaqIfHash);
+window.addEventListener('load', openFaqIfHash);
+
 setLanguage(currentLang);
