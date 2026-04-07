@@ -8,712 +8,7 @@
 
   <link rel="icon" type="image/png" href="./assets/favicon.png">
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-
-  <style>
-    :root {
-      --bg: #f4efe7;
-      --card: #ffffff;
-      --text: #3f3f3f;
-      --heading: #5c4638;
-      --accent: #c7b8a3;
-      --highlight: #ece6dc;
-      --line: #ddd3c7;
-    }
-
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-
-    body {
-      margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      line-height: 1.7;
-      font-size: 18px;
-    }
-
-    img {
-      max-width: 100%;
-      display: block;
-    }
-
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 1200;
-      background: rgba(244, 239, 231, 0.92);
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(92, 70, 56, 0.08);
-    }
-
-    .topbar-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 14px 22px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-
-    .brand {
-      font-family: 'Playfair Display', serif;
-      color: var(--heading);
-      font-size: 24px;
-      text-decoration: none;
-      white-space: nowrap;
-    }
-
-    .nav {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-
-    .nav a {
-      color: var(--heading);
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 600;
-      opacity: 0.9;
-    }
-
-    .nav a:hover {
-      opacity: 1;
-    }
-
-    .lang-switch {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .lang-btn {
-      border: none;
-      background: var(--card);
-      color: var(--heading);
-      padding: 10px 16px;
-      border-radius: 999px;
-      font-size: 14px;
-      font-weight: 600;
-      cursor: pointer;
-      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
-      transition: 0.25s ease;
-    }
-
-    .lang-btn:hover {
-      transform: translateY(-1px);
-    }
-
-    .lang-btn.active {
-      background: var(--heading);
-      color: #fff;
-    }
-
-    .container {
-      max-width: 1100px;
-      margin: auto;
-      padding: 36px 22px 120px;
-    }
-
-    .lang-content {
-      display: none;
-    }
-
-    .lang-content.active {
-      display: block;
-    }
-
-    .hero,
-    .section,
-    #top-en,
-    #rooms-en,
-    #arrival-en,
-    #guide-en,
-    #book-en,
-    #top-nl,
-    #rooms-nl,
-    #arrival-nl,
-    #guide-nl,
-    #book-nl,
-    #stay-en,
-    #stay-nl {
-      scroll-margin-top: 110px;
-    }
-
-    .hero {
-      display: grid;
-      grid-template-columns: 1.05fr 0.95fr;
-      gap: 28px;
-      align-items: center;
-      margin-bottom: 36px;
-    }
-
-    .hero-copy {
-      background: var(--card);
-      border-radius: 18px;
-      padding: 36px 32px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    }
-
-    .eyebrow {
-      font-size: 13px;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--heading);
-      opacity: 0.75;
-      margin-bottom: 10px;
-    }
-
-    .hero h1 {
-      font-family: 'Playfair Display', serif;
-      font-size: 48px;
-      line-height: 1.15;
-      color: var(--heading);
-      margin: 0 0 16px;
-    }
-
-    .hero p {
-      margin: 0 0 18px;
-      font-size: 17px;
-      opacity: 0.92;
-    }
-
-    .hero-actions {
-      display: flex;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-top: 24px;
-    }
-
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      text-decoration: none;
-      border: none;
-      border-radius: 999px;
-      padding: 14px 22px;
-      font-size: 15px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: 0.25s ease;
-    }
-
-    .btn:hover {
-      transform: translateY(-1px);
-    }
-
-    .btn-primary {
-      background: var(--heading);
-      color: #fff;
-    }
-
-    .btn-secondary {
-      background: var(--highlight);
-      color: var(--heading);
-    }
-
-    .hero-image {
-      border-radius: 18px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.07);
-      min-height: 420px;
-      background: #e9e0d4;
-    }
-
-    .hero-image img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      min-height: 420px;
-    }
-
-    .section {
-      margin: 0 0 30px;
-    }
-
-    .section-card {
-      background: var(--card);
-      padding: 28px 26px;
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-    }
-
-    .section-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 30px;
-      color: var(--heading);
-      margin: 0 0 12px;
-    }
-
-    .section-intro {
-      margin: 0 0 22px;
-      max-width: 780px;
-      opacity: 0.92;
-    }
-
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 16px;
-      margin-top: 18px;
-    }
-
-    .feature-item {
-      background: var(--highlight);
-      border-radius: 14px;
-      padding: 18px;
-    }
-
-    .feature-item h3 {
-      margin: 0 0 8px;
-      color: var(--heading);
-      font-size: 18px;
-      font-family: 'Playfair Display', serif;
-    }
-
-    .rooms-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 22px;
-    }
-
-    .room-card {
-      background: var(--highlight);
-      border-radius: 16px;
-      overflow: hidden;
-    }
-
-    .room-photo-trigger,
-    .gallery-thumb-trigger {
-      border: none;
-      padding: 0;
-      margin: 0;
-      width: 100%;
-      background: transparent;
-      cursor: pointer;
-      display: block;
-      text-align: left;
-    }
-
-    .room-photo-trigger img,
-    .gallery-thumb-trigger img {
-      transition: transform 0.25s ease, opacity 0.25s ease;
-    }
-
-    .room-photo-trigger:hover img,
-    .gallery-thumb-trigger:hover img {
-      transform: scale(1.015);
-      opacity: 0.97;
-    }
-
-    .room-card img {
-      width: 100%;
-      height: 270px;
-      object-fit: cover;
-    }
-
-    .room-body {
-      padding: 22px;
-    }
-
-    .room-body h3 {
-      margin: 0 0 8px;
-      color: var(--heading);
-      font-size: 24px;
-      font-family: 'Playfair Display', serif;
-    }
-
-    .room-meta {
-      margin: 14px 0 0;
-      padding-left: 18px;
-    }
-
-    .room-meta li {
-      margin-bottom: 6px;
-    }
-
-    .gallery-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 14px;
-      margin-top: 18px;
-    }
-
-    .gallery-grid img {
-      width: 100%;
-      height: 220px;
-      object-fit: cover;
-      border-radius: 14px;
-    }
-
-    .split {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 22px;
-    }
-
-    .mini-card {
-      background: var(--highlight);
-      border-radius: 14px;
-      padding: 20px;
-    }
-
-    .mini-card h3 {
-      margin: 0 0 8px;
-      color: var(--heading);
-      font-size: 20px;
-      font-family: 'Playfair Display', serif;
-    }
-
-    .subtle-link {
-      color: var(--heading);
-      font-weight: 600;
-      text-decoration: none;
-      border-bottom: 1px solid rgba(92,70,56,0.25);
-    }
-
-    .subtle-link:hover {
-      border-bottom-color: rgba(92,70,56,0.6);
-    }
-
-    details.guide-block {
-      background: var(--card);
-      border-radius: 16px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-      margin-bottom: 16px;
-      overflow: hidden;
-    }
-
-    details.guide-block summary {
-      list-style: none;
-      cursor: pointer;
-      padding: 24px 26px;
-      font-family: 'Playfair Display', serif;
-      font-size: 24px;
-      color: var(--heading);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    details.guide-block summary::-webkit-details-marker {
-      display: none;
-    }
-
-    details.guide-block summary::after {
-      content: "+";
-      font-family: 'Inter', sans-serif;
-      font-size: 28px;
-      line-height: 1;
-      opacity: 0.6;
-    }
-
-    details[open].guide-block summary::after {
-      content: "–";
-    }
-
-    .guide-content {
-      padding: 0 26px 26px;
-      border-top: 1px solid rgba(92,70,56,0.08);
-    }
-
-    .guide-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      margin-top: 18px;
-    }
-
-    .guide-box {
-      background: var(--highlight);
-      border-radius: 14px;
-      padding: 18px;
-    }
-
-    .guide-box h3 {
-      margin: 0 0 8px;
-      color: var(--heading);
-      font-size: 19px;
-      font-family: 'Playfair Display', serif;
-    }
-
-    .guide-box ul {
-      padding-left: 18px;
-      margin-top: 8px;
-    }
-
-    .cta-section {
-      background: var(--card);
-      border-radius: 18px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-      padding: 34px 28px;
-      text-align: center;
-    }
-
-    .cta-section h2 {
-      margin: 0 0 12px;
-      color: var(--heading);
-      font-family: 'Playfair Display', serif;
-      font-size: 32px;
-    }
-
-    .cta-section p {
-      max-width: 680px;
-      margin: 0 auto 20px;
-    }
-
-    .footer {
-      text-align: center;
-      margin-top: 60px;
-      font-size: 15px;
-      opacity: 0.78;
-    }
-
-    .floating-btn {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: var(--heading);
-      color: white;
-      padding: 14px 20px;
-      border-radius: 50px;
-      text-decoration: none;
-      font-size: 14px;
-      font-weight: 500;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.25);
-      transition: 0.3s ease;
-      z-index: 1000;
-    }
-
-    .floating-btn:hover {
-      transform: translateY(-3px);
-    }
-
-    #topBtn {
-      position: fixed;
-      bottom: 85px;
-      right: 20px;
-      background: var(--accent);
-      color: white;
-      padding: 10px 14px;
-      border-radius: 50%;
-      font-size: 14px;
-      cursor: pointer;
-      display: none;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      z-index: 1000;
-    }
-
-    .lightbox {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.88);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 3000;
-      padding: 24px;
-      touch-action: none;
-    }
-
-    .lightbox.open {
-      display: flex;
-    }
-
-    .lightbox-inner {
-      position: relative;
-      width: min(1100px, 100%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      overflow: visible;
-      touch-action: pan-y;
-    }
-
-    .lightbox-image {
-      max-width: 100%;
-      max-height: 82vh;
-      border-radius: 14px;
-      box-shadow: 0 14px 40px rgba(0,0,0,0.35);
-      object-fit: contain;
-      background: #111;
-      user-select: none;
-      -webkit-user-drag: none;
-    }
-
-    .lightbox-close,
-    .lightbox-prev,
-    .lightbox-next {
-      position: absolute;
-      border: none;
-      background: rgba(255,255,255,0.14);
-      color: white;
-      cursor: pointer;
-      backdrop-filter: blur(6px);
-      transition: background 0.2s ease, opacity 0.2s ease;
-      z-index: 5;
-    }
-
-    .lightbox-close:hover,
-    .lightbox-prev:hover,
-    .lightbox-next:hover {
-      background: rgba(255,255,255,0.22);
-    }
-
-    .lightbox-close {
-      top: 12px;
-      right: 12px;
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      font-size: 24px;
-      line-height: 1;
-    }
-
-    .lightbox-prev,
-    .lightbox-next {
-      top: 50%;
-      width: 48px;
-      height: 48px;
-      border-radius: 50%;
-      font-size: 28px;
-      line-height: 1;
-      transform: translateY(-50%);
-    }
-
-    .lightbox-prev {
-      left: 12px;
-    }
-
-    .lightbox-next {
-      right: 12px;
-    }
-
-    .lightbox-caption {
-      position: absolute;
-      left: 0;
-      right: 0;
-      bottom: -42px;
-      text-align: center;
-      color: rgba(255,255,255,0.9);
-      font-size: 14px;
-      font-weight: 500;
-    }
-
-    @media (max-width: 620px) {
-      .lightbox {
-        padding: 16px;
-      }
-
-      .lightbox-prev {
-        left: 8px;
-      }
-
-      .lightbox-next {
-        right: 8px;
-      }
-
-      .lightbox-close {
-        top: 8px;
-        right: 8px;
-      }
-
-      .lightbox-image {
-        max-height: 72vh;
-      }
-
-      .lightbox-caption {
-        bottom: -34px;
-        font-size: 13px;
-      }
-    }
-
-    @media (max-width: 920px) {
-      .hero,
-      .rooms-grid,
-      .split,
-      .guide-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .feature-grid,
-      .gallery-grid {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .hero h1 {
-        font-size: 40px;
-      }
-    }
-
-    @media (max-width: 620px) {
-      body {
-        font-size: 17px;
-      }
-
-      .container {
-        padding-top: 24px;
-      }
-
-      .hero h1 {
-        font-size: 34px;
-      }
-
-      .feature-grid,
-      .gallery-grid {
-        grid-template-columns: 1fr;
-      }
-
-      .hero-copy,
-      .section-card,
-      .cta-section,
-      .guide-content,
-      details.guide-block summary {
-        padding-left: 20px;
-        padding-right: 20px;
-      }
-
-      .nav {
-        gap: 12px;
-      }
-
-      .brand {
-        font-size: 21px;
-      }
-
-      .lightbox {
-        padding: 16px;
-      }
-
-      .lightbox-prev {
-        left: 6px;
-      }
-
-      .lightbox-next {
-        right: 6px;
-      }
-
-      .lightbox-close {
-        top: 8px;
-        right: 8px;
-      }
-
-      .lightbox-image {
-        max-height: 72vh;
-      }
-
-      .lightbox-caption {
-        bottom: -34px;
-        font-size: 13px;
-      }
-    }
-  </style>
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
 
@@ -751,8 +46,9 @@
             who appreciate a personal stay rather than a standard hotel.
           </p>
           <p>
-            You will have your own lockable bedroom and share the kitchen and bathroom with the hosts and,
-            at most, one other guest.
+            You will have your own lockable bedroom and share the kitchen and bathroom with the hosts and, at most, one other guest.
+            The house is located in a quiet residential area within walking and cycling distance of the station, Radboud University,
+            HAN and the city centre.
           </p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="https://www.booking.com/hotel/nl/nijmegen-knusse-kamers.html" target="_blank" rel="noopener noreferrer">Book on Booking.com</a>
@@ -784,7 +80,7 @@
             </div>
             <div class="feature-item">
               <h3>Good value</h3>
-              <p>Thoughtful amenities, shared kitchen, and a free bicycle during your stay.</p>
+              <p>Thoughtful amenities, shared kitchen, outdoor space, and a free bicycle during your stay.</p>
             </div>
           </div>
         </div>
@@ -813,6 +109,7 @@
                   <li>Private lockable bedroom</li>
                   <li>Shared kitchen and bathroom</li>
                   <li>Chromecast available</li>
+                  <li>Bed size: 140 × 200 cm</li>
                   <li>Suitable for 1 guest</li>
                 </ul>
               </div>
@@ -832,6 +129,7 @@
                   <li>Private lockable bedroom</li>
                   <li>Shared kitchen and bathroom</li>
                   <li>Chromecast available</li>
+                  <li>Bed size: 140 × 200 cm</li>
                   <li>Suitable for 1 guest</li>
                 </ul>
               </div>
@@ -865,8 +163,10 @@
               <ul>
                 <li>One flight of stairs, no elevator</li>
                 <li>House next to a train track</li>
-                <li>Free parking in the neighborhood</li>
-                <li>Free bicycle available during your stay</li>
+                <li>Backyard with seating area available</li>
+                <li>Sunny south-facing garden</li>
+                <li>Free use of a bicycle during your stay</li>
+                <li>Free parking in front of the house</li>
                 <li>Breakfast not included</li>
               </ul>
             </div>
@@ -942,8 +242,7 @@
             <div class="guide-grid">
               <div class="guide-box">
                 <h3>WiFi</h3>
-                <p>Fast 1 Gbps internet throughout the house.</p>
-                <p>Perfect for streaming 4K content, video calls, and using multiple devices at the same time.</p>
+                <p>Very fast 1 Gbps WiFi, suitable for streaming, video calls, and working on multiple devices.</p>
               </div>
 
               <div class="guide-box">
@@ -971,7 +270,8 @@
                 <ul>
                   <li>Located in the basement</li>
                   <li>Free to use</li>
-                  <li>Do not use washer and dryer at the same time</li>
+                  <li>Detergent and fabric softener provided</li>
+                  <li>Please do not use washer and dryer at the same time</li>
                   <li>Please stay home while the dryer is running</li>
                 </ul>
               </div>
@@ -1074,8 +374,9 @@
             die liever in een echt huis verblijven dan in een standaard hotel.
           </p>
           <p>
-            Je hebt een eigen afsluitbare slaapkamer en deelt de keuken en badkamer met de hosts en,
-            hooguit, één andere gast.
+            Je hebt een eigen afsluitbare slaapkamer en deelt de keuken en badkamer met de hosts en, hooguit, één andere gast.
+            Het huis ligt in een rustige woonwijk op loop- en fietsafstand van het station, Radboud Universiteit,
+            HAN en het centrum.
           </p>
           <div class="hero-actions">
             <a class="btn btn-primary" href="https://www.booking.com/hotel/nl/nijmegen-knusse-kamers.html" target="_blank" rel="noopener noreferrer">Boek via Booking.com</a>
@@ -1107,7 +408,7 @@
             </div>
             <div class="feature-item">
               <h3>Goede prijs-kwaliteit</h3>
-              <p>Doordachte voorzieningen, gedeelde keuken en gratis fiets tijdens je verblijf.</p>
+              <p>Doordachte voorzieningen, gedeelde keuken, buitenruimte en een gratis fiets tijdens je verblijf.</p>
             </div>
           </div>
         </div>
@@ -1136,6 +437,7 @@
                   <li>Privé afsluitbare slaapkamer</li>
                   <li>Gedeelde keuken en badkamer</li>
                   <li>Chromecast aanwezig</li>
+                  <li>Bedmaat: 140 × 200 cm</li>
                   <li>Geschikt voor 1 gast</li>
                 </ul>
               </div>
@@ -1155,6 +457,7 @@
                   <li>Privé afsluitbare slaapkamer</li>
                   <li>Gedeelde keuken en badkamer</li>
                   <li>Chromecast aanwezig</li>
+                  <li>Bedmaat: 140 × 200 cm</li>
                   <li>Geschikt voor 1 gast</li>
                 </ul>
               </div>
@@ -1188,8 +491,10 @@
               <ul>
                 <li>Eén trap, geen lift</li>
                 <li>Huis naast een spoorlijn</li>
-                <li>Gratis parkeren in de buurt</li>
-                <li>Gratis fiets beschikbaar tijdens je verblijf</li>
+                <li>Achtertuin met zitplek beschikbaar</li>
+                <li>Zonnige tuin op het zuiden</li>
+                <li>Gratis fiets tijdens je verblijf</li>
+                <li>Gratis parkeren voor de deur</li>
                 <li>Ontbijt niet inbegrepen</li>
               </ul>
             </div>
@@ -1265,8 +570,7 @@
             <div class="guide-grid">
               <div class="guide-box">
                 <h3>WiFi</h3>
-                <p>Snel 1 Gbps internet in het hele huis.</p>
-                <p>Perfect voor 4K streamen, videobellen en het gebruik van meerdere apparaten tegelijk.</p>
+                <p>Zeer snelle 1 Gbps WiFi, geschikt voor streamen, videobellen en werken op meerdere apparaten.</p>
               </div>
 
               <div class="guide-box">
@@ -1294,6 +598,7 @@
                 <ul>
                   <li>Bevinden zich in de kelder</li>
                   <li>Gratis te gebruiken</li>
+                  <li>Wasmiddel en wasverzachter inbegrepen</li>
                   <li>Gebruik wasmachine en droger niet tegelijk</li>
                   <li>Blijf thuis terwijl de droger aan staat</li>
                 </ul>
@@ -1407,261 +712,7 @@
       <div class="lightbox-caption" id="lightboxCaption"></div>
     </div>
   </div>
-  
-<script>
-  const langButtons = document.querySelectorAll('.lang-btn');
-  const contents = document.querySelectorAll('.lang-content');
-  const whatsappBtn = document.getElementById('whatsappBtn');
-  const brandLink = document.getElementById('brandLink');
-  const navLinks = document.querySelectorAll('.nav a');
-  const heroGuideBtnEn = document.getElementById('heroGuideBtnEn');
-  const heroGuideBtnNl = document.getElementById('heroGuideBtnNl');
 
-  const navConfig = {
-    en: {
-      labels: ["Rooms", "Your Stay", "Before Arrival", "Guest Guide", "Book"],
-      hrefs: ["#rooms-en", "#stay-en", "#arrival-en", "#guide-en", "#book-en"],
-      brandHref: "#top-en",
-      guideHref: "#guide-en"
-    },
-    nl: {
-      labels: ["Kamers", "Je Verblijf", "Voor Aankomst", "Gastinformatie", "Boeken"],
-      hrefs: ["#rooms-nl", "#stay-nl", "#arrival-nl", "#guide-nl", "#book-nl"],
-      brandHref: "#top-nl",
-      guideHref: "#guide-nl"
-    }
-  };
-
-  const whatsappConfig = {
-    en: {
-      text: '💬 Message Joa',
-      href: 'https://wa.me/31622192645?text=Hi%20Joa,%20I%20have%20a%20question%20about%20my%20stay.'
-    },
-    nl: {
-      text: '💬 Stuur Joa een bericht',
-      href: 'https://wa.me/31622192645?text=Hoi%20Joa,%20ik%20heb%20een%20vraag%20over%20mijn%20verblijf.'
-    }
-  };
-
-  function setLanguage(lang) {
-    document.documentElement.lang = lang;
-
-    langButtons.forEach(btn => {
-      btn.classList.toggle('active', btn.dataset.lang === lang);
-    });
-
-    contents.forEach(content => {
-      content.classList.toggle('active', content.id === `content-${lang}`);
-    });
-
-    whatsappBtn.textContent = whatsappConfig[lang].text;
-    whatsappBtn.href = whatsappConfig[lang].href;
-
-    navLinks.forEach((link, index) => {
-      link.textContent = navConfig[lang].labels[index];
-      link.href = navConfig[lang].hrefs[index];
-    });
-
-    brandLink.href = navConfig[lang].brandHref;
-    heroGuideBtnEn.href = navConfig[lang].guideHref;
-    heroGuideBtnNl.href = navConfig[lang].guideHref;
-
-    localStorage.setItem('preferredLanguage', lang);
-  }
-
-  langButtons.forEach(btn => {
-    btn.addEventListener('click', () => setLanguage(btn.dataset.lang));
-  });
-
-  const savedLang = localStorage.getItem('preferredLanguage') || 'en';
-  setLanguage(savedLang);
-
-  window.addEventListener("scroll", function() {
-    const btn = document.getElementById("topBtn");
-    btn.style.display = window.scrollY > 400 ? "block" : "none";
-  });
-
-  const galleries = {
-    cozy: [
-      { src: './assets/room-cozy-1.jpg', caption: 'Cozy Room' },
-      { src: './assets/room-cozy-2.jpg', caption: 'Cozy Room' },
-      { src: './assets/room-cozy-3.jpg', caption: 'Cozy Room' },
-      { src: './assets/room-cozy-4.jpg', caption: 'Cozy Room' },
-      { src: './assets/room-cozy-5.jpg', caption: 'Cozy Room' },
-      { src: './assets/room-cozy-bike.jpg', caption: 'Free bicycle during your stay' }
-    ],
-    spacious: [
-      { src: './assets/room-spacious-1.jpg', caption: 'Spacious Room' },
-      { src: './assets/room-spacious-2.jpg', caption: 'Spacious Room' },
-      { src: './assets/room-spacious-3.jpg', caption: 'Spacious Room' },
-      { src: './assets/room-spacious-4.jpg', caption: 'Spacious Room' },
-      { src: './assets/room-spacious-5.jpg', caption: 'Spacious Room' },
-      { src: './assets/room-spacious-6.jpg', caption: 'Spacious Room' },
-      { src: './assets/room-spacious-7.jpg', caption: 'Spacious Room' },
-      { src: './assets/room-spacious-bike.jpg', caption: 'Free bicycle during your stay' }
-    ],
-    kitchen: [
-      { src: './assets/kitchen-1.jpg', caption: 'Shared kitchen' },
-      { src: './assets/kitchen-2.jpg', caption: 'Shared kitchen' },
-      { src: './assets/kitchen-3.jpg', caption: 'Shared kitchen' },
-      { src: './assets/kitchen-4.jpg', caption: 'Shared kitchen' },
-      { src: './assets/kitchen-5.jpg', caption: 'Shared kitchen' }
-    ],
-    bathroom: [
-      { src: './assets/bathroom-1.jpg', caption: 'Shared bathroom' },
-      { src: './assets/bathroom-2.jpg', caption: 'Shared bathroom' },
-      { src: './assets/bathroom-3.jpg', caption: 'Shared bathroom' },
-      { src: './assets/bathroom-4.jpg', caption: 'Shared bathroom' }
-    ],
-    misc: [
-      { src: './assets/lilly.jpg', caption: 'Lilly' },
-      { src: './assets/front-house.jpg', caption: 'Front of the house' },
-      { src: './assets/misc-1.jpg', caption: 'Shared home' },
-      { src: './assets/misc-2.jpg', caption: 'Shared home' }
-    ]
-  };
-
-  const lightbox = document.getElementById('lightbox');
-  const lightboxInner = lightbox.querySelector('.lightbox-inner');
-  const lightboxImage = document.getElementById('lightboxImage');
-  const lightboxCaption = document.getElementById('lightboxCaption');
-  const lightboxClose = document.getElementById('lightboxClose');
-  const lightboxPrev = document.getElementById('lightboxPrev');
-  const lightboxNext = document.getElementById('lightboxNext');
-
-  let currentGalleryName = null;
-  let currentIndex = 0;
-  let lockedScrollY = 0;
-
-  let touchStartX = 0;
-  let touchStartY = 0;
-  let touchEndX = 0;
-  let touchEndY = 0;
-
-  function renderLightbox() {
-    if (!currentGalleryName || !galleries[currentGalleryName]) return;
-
-    const items = galleries[currentGalleryName];
-    const item = items[currentIndex];
-
-    lightboxImage.src = item.src;
-    lightboxImage.alt = item.caption || '';
-    lightboxCaption.textContent = `${item.caption || ''} (${currentIndex + 1}/${items.length})`;
-  }
-
-  function lockBodyScroll() {
-    lockedScrollY = window.scrollY || window.pageYOffset;
-
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${lockedScrollY}px`;
-    document.body.style.left = '0';
-    document.body.style.right = '0';
-    document.body.style.width = '100%';
-    document.body.style.overflow = 'hidden';
-  }
-
-  function unlockBodyScroll() {
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.left = '';
-    document.body.style.right = '';
-    document.body.style.width = '';
-    document.body.style.overflow = '';
-
-    const previousScrollBehavior = document.documentElement.style.scrollBehavior;
-    document.documentElement.style.scrollBehavior = 'auto';
-    window.scrollTo(0, lockedScrollY);
-
-    requestAnimationFrame(() => {
-      document.documentElement.style.scrollBehavior = previousScrollBehavior || '';
-    });
-  }
-
-  function openLightbox(galleryName, startIndex = 0) {
-    if (!galleries[galleryName] || !galleries[galleryName].length) return;
-
-    currentGalleryName = galleryName;
-    currentIndex = Math.max(0, Math.min(startIndex, galleries[galleryName].length - 1));
-    renderLightbox();
-    lightbox.classList.add('open');
-    lightbox.setAttribute('aria-hidden', 'false');
-    lockBodyScroll();
-  }
-
-  function closeLightbox() {
-    lightbox.classList.remove('open');
-    lightbox.setAttribute('aria-hidden', 'true');
-    lightboxImage.src = '';
-    unlockBodyScroll();
-  }
-
-  function showPrev() {
-    if (!currentGalleryName) return;
-    const items = galleries[currentGalleryName];
-    currentIndex = (currentIndex - 1 + items.length) % items.length;
-    renderLightbox();
-  }
-
-  function showNext() {
-    if (!currentGalleryName) return;
-    const items = galleries[currentGalleryName];
-    currentIndex = (currentIndex + 1) % items.length;
-    renderLightbox();
-  }
-
-  document.querySelectorAll('[data-gallery]').forEach(trigger => {
-    trigger.addEventListener('click', () => {
-      const galleryName = trigger.dataset.gallery;
-      const startIndex = Number(trigger.dataset.start || 0);
-      openLightbox(galleryName, startIndex);
-    });
-  });
-
-  lightboxClose.addEventListener('click', closeLightbox);
-  lightboxPrev.addEventListener('click', showPrev);
-  lightboxNext.addEventListener('click', showNext);
-
-  lightbox.addEventListener('click', (event) => {
-    if (event.target === lightbox) {
-      closeLightbox();
-    }
-  });
-
-  document.addEventListener('keydown', (event) => {
-    if (!lightbox.classList.contains('open')) return;
-
-    if (event.key === 'Escape') closeLightbox();
-    if (event.key === 'ArrowLeft') showPrev();
-    if (event.key === 'ArrowRight') showNext();
-  });
-
-  lightboxInner.addEventListener('touchstart', (event) => {
-    if (!lightbox.classList.contains('open')) return;
-
-    const touch = event.changedTouches[0];
-    touchStartX = touch.clientX;
-    touchStartY = touch.clientY;
-  }, { passive: true });
-
-  lightboxInner.addEventListener('touchend', (event) => {
-    if (!lightbox.classList.contains('open')) return;
-
-    const touch = event.changedTouches[0];
-    touchEndX = touch.clientX;
-    touchEndY = touch.clientY;
-
-    const deltaX = touchEndX - touchStartX;
-    const deltaY = touchEndY - touchStartY;
-
-    if (Math.abs(deltaX) > 50 && Math.abs(deltaX) > Math.abs(deltaY)) {
-      if (deltaX < 0) {
-        showNext();
-      } else {
-        showPrev();
-      }
-    }
-  }, { passive: true });
-</script>
-
+  <script src="./script.js"></script>
 </body>
 </html>
