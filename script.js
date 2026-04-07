@@ -27,18 +27,18 @@ const navConfig = {
 
 const whatsappConfig = {
   en: {
-    text: '💬 Message Joa',
-    href: 'https://wa.me/31622192645?text=Hi%20Joa,%20I%20have%20a%20question%20about%20my%20stay.'
+    text: '💬 Message us',
+    href: 'https://wa.me/31622192645?text=Hi,%20I%20have%20a%20question%20about%20Nijmegen%20Guest%20Rooms.'
   },
   nl: {
-    text: '💬 Stuur Joa een bericht',
-    href: 'https://wa.me/31622192645?text=Hoi%20Joa,%20ik%20heb%20een%20vraag%20over%20mijn%20verblijf.'
+    text: '💬 Stuur ons een bericht',
+    href: 'https://wa.me/31622192645?text=Hoi,%20ik%20heb%20een%20vraag%20over%20Nijmegen%20Guest%20Rooms.'
   }
 };
 
 const galleryCaptions = {
   cozy: {
-    en: [
+    en: 
       'Cozy Room',
       'Cozy Room',
       'Cozy Room',
