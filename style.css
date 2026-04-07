@@ -42,7 +42,7 @@ img {
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  flex-wrap: wrap;
+  position: relative;
 }
 
 .brand {
@@ -51,6 +51,49 @@ img {
   font-size: 24px;
   text-decoration: none;
   white-space: nowrap;
+}
+
+.menu-toggle {
+  display: none;
+  width: 48px;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  background: var(--card);
+  box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+  cursor: pointer;
+  padding: 0;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.menu-toggle span {
+  display: block;
+  width: 20px;
+  height: 2px;
+  background: var(--heading);
+  border-radius: 999px;
+  transition: 0.25s ease;
+}
+
+.menu-toggle.active span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.menu-toggle.active span:nth-child(2) {
+  opacity: 0;
+}
+
+.menu-toggle.active span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.menu-panel {
+  display: flex;
+  align-items: center;
+  gap: 20px;
 }
 
 .nav {
@@ -120,11 +163,13 @@ img {
 #rooms-en,
 #arrival-en,
 #guide-en,
+#faq-en,
 #book-en,
 #top-nl,
 #rooms-nl,
 #arrival-nl,
 #guide-nl,
+#faq-nl,
 #book-nl,
 #stay-en,
 #stay-nl {
@@ -639,12 +684,56 @@ details[open].guide-block summary::after {
     padding-right: 20px;
   }
 
+  .brand {
+    font-size: 21px;
+    max-width: calc(100% - 70px);
+    white-space: normal;
+    line-height: 1.15;
+  }
+
+  .menu-toggle {
+    display: inline-flex;
+    flex-shrink: 0;
+  }
+
+  .menu-panel {
+    display: none;
+    position: absolute;
+    top: calc(100% + 10px);
+    left: 22px;
+    right: 22px;
+    background: var(--card);
+    border-radius: 18px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.10);
+    padding: 18px;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 18px;
+    z-index: 1300;
+  }
+
+  .menu-panel.open {
+    display: flex;
+  }
+
   .nav {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 14px;
+  }
+
+  .nav a {
+    font-size: 18px;
+  }
+
+  .lang-switch {
+    width: 100%;
     gap: 12px;
   }
 
-  .brand {
-    font-size: 21px;
+  .lang-btn {
+    flex: 1;
+    justify-content: center;
   }
 
   .lightbox {
