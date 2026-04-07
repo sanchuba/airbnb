@@ -107,8 +107,8 @@ const galleryCaptions = {
   },
   misc: {
     en: [
-      'Backyard and house view',
-      'Backyard',
+      'Backyard with house view',
+      'Backyard seating area',
       'Front of the house',
       'Lilly',
       'Shared home',
@@ -116,7 +116,7 @@ const galleryCaptions = {
     ],
     nl: [
       'Achtertuin en uitzicht op het huis',
-      'Achtertuin',
+      'Achtertuin met zitplek',
       'Voorkant van het huis',
       'Lilly',
       'Gedeelde woning',
