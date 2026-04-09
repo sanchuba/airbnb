@@ -684,16 +684,12 @@ details[open].guide-block summary::after {
     padding-right: 20px;
   }
 
-  .brand {
-    font-size: 21px;
-    max-width: calc(100% - 70px);
-    white-space: normal;
-    line-height: 1.15;
-  }
-
   .menu-toggle {
     display: inline-flex;
     flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    border-radius: 12px;
   }
 
   .menu-panel {
@@ -736,6 +732,33 @@ details[open].guide-block summary::after {
     justify-content: center;
   }
 
+  .topbar-inner {
+    align-items: center;
+  }
+
+  .brand {
+    font-size: 19px;
+    max-width: calc(100% - 76px);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.1;
+  }
+
+  .floating-btn {
+    right: 14px;
+    bottom: 14px;
+    padding: 12px 16px;
+    font-size: 13px;
+    max-width: calc(100vw - 28px);
+    border-radius: 999px;
+  }
+
+  #topBtn {
+    right: 14px;
+    bottom: 72px;
+  }
+
   .lightbox {
     padding: 16px;
   }
@@ -760,38 +783,5 @@ details[open].guide-block summary::after {
   .lightbox-caption {
     bottom: -34px;
     font-size: 13px;
-  }
-
-  .topbar-inner {
-  align-items: center;
-}
-
-  .brand {
-    font-size: 19px;
-    max-width: calc(100% - 76px);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1.1;
-  }
-  
-  .menu-toggle {
-    width: 46px;
-    height: 46px;
-    border-radius: 12px;
-  }
-  
-  .floating-btn {
-    right: 14px;
-    bottom: 14px;
-    padding: 12px 16px;
-    font-size: 13px;
-    max-width: calc(100vw - 28px);
-    border-radius: 999px;
-  }
-  
-  #topBtn {
-    right: 14px;
-    bottom: 72px;
   }
 }
