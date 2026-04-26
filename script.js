@@ -28,11 +28,11 @@ const navConfig = {
 const whatsappConfig = {
   en: {
     text: '💬 Message us',
-    href: 'https://wa.me/31622192645?text=Hi,%20I%20have%20a%20question%20about%20Nijmegen%20Guest%20Rooms.'
+    href: 'https://wa.me/31640565656?text=Hi,%20I%20have%20a%20question%20about%20Nijmegen%20Guest%20Rooms.'
   },
   nl: {
     text: '💬 Stuur ons een bericht',
-    href: 'https://wa.me/31622192645?text=Hoi,%20ik%20heb%20een%20vraag%20over%20Nijmegen%20Guest%20Rooms.'
+    href: 'https://wa.me/31640565656?text=Hoi,%20ik%20heb%20een%20vraag%20over%20Nijmegen%20Guest%20Rooms.'
   }
 };
 
