@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nijmegen Guest Rooms – Guest Information</title>
+  <link rel="stylesheet" href="./style.css" />
+</head>
+<body>
+  <main class="page-shell">
+    <section class="card">
+      <header class="header">
+        <div>
+          <div class="brand">Nijmegen Guest Rooms</div>
+          <h1 id="pageTitle">Guest Information</h1>
+          <p id="pageIntro">Please complete your guest information before arrival.</p>
+        </div>
+        <div class="lang-switch" aria-label="Language">
+          <button class="lang-btn active" data-lang="en">🇬🇧 English</button>
+          <button class="lang-btn" data-lang="nl">🇳🇱 Nederlands</button>
+        </div>
+      </header>
+
+      <div id="loadingState" class="notice">Loading your registration form…</div>
+      <div id="invalidState" class="notice error hidden"></div>
+      <div id="successState" class="notice success hidden"></div>
+
+      <form id="guestForm" class="hidden" novalidate>
+        <section class="form-section">
+          <h2 id="guestInfoTitle">Guest information</h2>
+
+          <div class="field">
+            <label id="labelFullName" for="fullName">Full name</label>
+            <input id="fullName" autocomplete="name" required maxlength="160" />
+          </div>
+
+          <div class="field">
+            <label id="labelHomeAddress" for="homeAddress">Home address</label>
+            <input id="homeAddress" autocomplete="street-address" required maxlength="240" />
+          </div>
+
+          <div class="grid-2">
+            <div class="field">
+              <label id="labelPostalCode" for="postalCode">Postal code</label>
+              <input id="postalCode" autocomplete="postal-code" required maxlength="40" />
+            </div>
+            <div class="field">
+              <label id="labelCity" for="city">City</label>
+              <input id="city" autocomplete="address-level2" required maxlength="120" />
+            </div>
+          </div>
+
+          <div class="field">
+            <label id="labelCountry" for="country">Country</label>
+            <input id="country" autocomplete="country-name" required maxlength="120" />
+          </div>
+
+          <div class="grid-2 stay-dates">
+            <div class="field">
+              <label id="labelCheckin" for="checkinDate">Check-in date</label>
+              <input id="checkinDate" type="date" readonly />
+            </div>
+            <div class="field">
+              <label id="labelCheckout" for="checkoutDate">Check-out date</label>
+              <input id="checkoutDate" type="date" readonly />
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section">
+          <h2 id="invoiceTitle">Invoice</h2>
+          <label class="check-row">
+            <input id="invoiceRequested" type="checkbox" />
+            <span id="invoiceRequestedText">I would like to receive an invoice by email.</span>
+          </label>
+
+          <div id="invoiceFields" class="conditional hidden">
+            <div class="choice-grid">
+              <label class="choice-card">
+                <input type="radio" name="invoiceType" value="personal" checked />
+                <span id="personalInvoiceText">Personal invoice</span>
+              </label>
+              <label class="choice-card">
+                <input type="radio" name="invoiceType" value="company" />
+                <span id="companyInvoiceText">Company invoice</span>
+              </label>
+            </div>
+
+            <div class="field">
+              <label id="labelEmail" for="email">Email address</label>
+              <input id="email" type="email" autocomplete="email" maxlength="200" />
+            </div>
+
+            <div id="companyFields" class="conditional hidden">
+              <div class="field">
+                <label id="labelCompanyName" for="companyName">Company name</label>
+                <input id="companyName" maxlength="200" />
+              </div>
+              <div class="field">
+                <label id="labelCompanyAddress" for="companyAddress">Company address</label>
+                <textarea id="companyAddress" rows="3" maxlength="400"></textarea>
+              </div>
+              <div class="field">
+                <label id="labelVatNumber" for="vatNumber">VAT number (if applicable)</label>
+                <input id="vatNumber" maxlength="80" />
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="form-section declaration-section">
+          <h2 id="declarationTitle">Guest declaration</h2>
+          <label class="check-row declaration">
+            <input id="declarationAccepted" type="checkbox" required />
+            <span id="declarationText">I confirm that the information I have provided is complete and correct.</span>
+          </label>
+          <p id="privacyText" class="privacy-text">Your information is used for guest registration and administration. Invoice details are used only when an invoice is requested.</p>
+        </section>
+
+        <button id="submitBtn" type="submit" class="primary-btn">Submit guest information</button>
+        <p id="formMessage" class="form-message"></p>
+      </form>
+    </section>
+  </main>
+
+  <script type="module" src="./app.js"></script>
+</body>
+</html>
