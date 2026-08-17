@@ -142,3 +142,18 @@ Object.values(f).filter(v=>v&&v.tagName!=='SELECT').forEach(v=>{if(v.type!=='hid
 
 async function init(){setTexts();toggleRegInvoice();toggleIdOther();toggleInvoiceCustom();const s=await session();if(!s){$('loginView').classList.remove('hidden');$('appView').classList.add('hidden');return;}if(!(await allowed())){await supabaseClient.auth.signOut();$('loginMessage').textContent=tr[currentLang].denied;return;}$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');$('logoutBtn').classList.remove('hidden');await Promise.all([loadRegs(),loadInvoices(),newInvoice()]);}
 init();
+
+
+// Refresh the complete admin page when the title/logo is clicked.
+const refreshTitle = document.getElementById('pageTitle');
+if (refreshTitle) {
+  refreshTitle.setAttribute('role', 'button');
+  refreshTitle.setAttribute('tabindex', '0');
+  refreshTitle.addEventListener('click', () => window.location.reload());
+  refreshTitle.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      window.location.reload();
+    }
+  });
+}
