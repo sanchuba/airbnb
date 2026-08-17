@@ -3,19 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nijmegen Guest Rooms – Invoice Admin</title>
+  <title>Nijmegen Guest Rooms – Admin</title>
   <link rel="stylesheet" href="./style.css" />
 </head>
 <body>
   <div class="container">
     <div class="topbar screen-only">
       <div class="page-title">
-        <h1 id="pageTitle">Invoice Generator</h1>
-        <p id="pageSubtitle">Nijmegen Guest Rooms – Private Invoice Admin</p>
+        <h1 id="pageTitle">Guest & Invoice Admin</h1>
+        <p id="pageSubtitle">Nijmegen Guest Rooms – Private administration</p>
       </div>
-
       <div class="topbar-actions">
-        <div class="lang-switch" id="langSwitch">
+        <div class="lang-switch">
           <button class="lang-btn active" data-lang="en">🇬🇧 English</button>
           <button class="lang-btn" data-lang="nl">🇳🇱 Nederlands</button>
         </div>
@@ -25,11 +24,8 @@
 
     <div id="loginView" class="card login-card">
       <h2 id="loginTitle">Sign in</h2>
-      <p id="loginText">Only authorized users can access the invoice system.</p>
-      <div class="field">
-        <label id="labelLoginEmail" for="loginEmail">Email</label>
-        <input id="loginEmail" type="email" placeholder="you@example.com" />
-      </div>
+      <p id="loginText">Only authorized users can access the administration.</p>
+      <div class="field"><label id="labelLoginEmail" for="loginEmail">Email</label><input id="loginEmail" type="email" placeholder="you@example.com" /></div>
       <button id="loginBtn" class="action-btn primary">Send login link</button>
       <p id="loginMessage" class="muted"></p>
     </div>
@@ -37,241 +33,105 @@
     <div id="appView" class="hidden">
       <div class="layout">
         <div class="left-column">
+          <div class="card screen-only">
+            <div class="section-header"><h2 id="registrationTitle">Guest registrations</h2><button id="newPaperBtn" class="action-btn secondary">Add paper registration</button></div>
+
+            <div class="subcard">
+              <h3 id="inviteTitle">Create secure guest link</h3>
+              <div class="field"><label id="labelInviteBooking" for="inviteBookingReference">Booking reference (optional)</label><input id="inviteBookingReference" /></div>
+              <div class="inline-grid">
+                <div class="field"><label id="labelInviteCheckin" for="inviteCheckin">Check-in</label><input id="inviteCheckin" type="date" /></div>
+                <div class="field"><label id="labelInviteCheckout" for="inviteCheckout">Check-out</label><input id="inviteCheckout" type="date" /></div>
+              </div>
+              <button id="createInviteBtn" class="action-btn primary">Create secure link</button>
+              <div id="inviteResult" class="invite-result hidden"><input id="inviteUrl" readonly /><button id="copyInviteBtn" class="action-btn secondary">Copy link</button></div>
+              <p id="inviteMessage" class="muted"></p>
+            </div>
+
+            <div class="field"><label id="labelRegistrationSearch" for="registrationSearch">Search registrations</label><input id="registrationSearch" placeholder="Search by name, email or booking reference" /></div>
+            <div id="registrationList" class="registration-list"></div>
+          </div>
+
+          <div id="registrationEditor" class="card screen-only hidden">
+            <div class="section-header"><h2 id="registrationEditorTitle">Guest registration</h2><button id="closeRegistrationBtn" class="action-btn secondary">Close</button></div>
+            <input id="registrationId" type="hidden" />
+            <input id="registrationSource" type="hidden" value="paper_manual" />
+            <div class="field"><label id="labelRegName" for="regName">Full name</label><input id="regName" /></div>
+            <div class="field"><label id="labelRegAddress" for="regAddress">Home address</label><input id="regAddress" /></div>
+            <div class="inline-grid"><div class="field"><label id="labelRegPostal" for="regPostal">Postal code</label><input id="regPostal" /></div><div class="field"><label id="labelRegCity" for="regCity">City</label><input id="regCity" /></div></div>
+            <div class="field"><label id="labelRegCountry" for="regCountry">Country</label><input id="regCountry" /></div>
+            <div class="inline-grid"><div class="field"><label id="labelRegCheckin" for="regCheckin">Check-in</label><input id="regCheckin" type="date" /></div><div class="field"><label id="labelRegCheckout" for="regCheckout">Check-out</label><input id="regCheckout" type="date" /></div></div>
+            <div class="field"><label id="labelRegBooking" for="regBookingReference">Booking reference (optional)</label><input id="regBookingReference" /></div>
+
+            <label class="check-row"><input id="regInvoiceRequested" type="checkbox" /><span id="regInvoiceRequestedText">Invoice requested</span></label>
+            <div id="regInvoiceFields" class="conditional hidden">
+              <div class="inline-grid"><div class="field"><label id="labelRegInvoiceType" for="regInvoiceType">Invoice type</label><select id="regInvoiceType"><option value="personal">Personal</option><option value="company">Company</option></select></div><div class="field"><label id="labelRegEmail" for="regEmail">Email</label><input id="regEmail" type="email" /></div></div>
+              <div id="regCompanyFields" class="hidden">
+                <div class="field"><label id="labelRegCompanyName" for="regCompanyName">Company name</label><input id="regCompanyName" /></div>
+                <div class="field"><label id="labelRegCompanyAddress" for="regCompanyAddress">Company address</label><textarea id="regCompanyAddress" rows="2"></textarea></div>
+                <div class="field"><label id="labelRegVat" for="regVat">VAT number (optional)</label><input id="regVat" /></div>
+              </div>
+            </div>
+
+            <div class="subcard identity-box">
+              <h3 id="identityTitle">Identification check – host only</h3>
+              <div class="field"><label id="labelIdType" for="regIdType">Identification shown</label><select id="regIdType"><option value="">Not selected</option><option value="passport">Passport</option><option value="id_card">ID card</option><option value="drivers_licence">Driver's licence</option><option value="other">Other valid ID</option></select></div>
+              <div id="otherIdField" class="field hidden"><label id="labelIdOther" for="regIdOther">Other valid ID</label><input id="regIdOther" /></div>
+              <label class="check-row"><input id="regIdVerified" type="checkbox" /><span id="idVerifiedText">Identity verified</span></label>
+            </div>
+
+            <div class="button-row"><button id="saveRegistrationBtn" class="action-btn primary">Save registration</button><button id="useForInvoiceBtn" class="action-btn secondary">Use for invoice</button></div>
+            <p id="registrationMessage" class="muted"></p>
+          </div>
+
           <div class="card form-card screen-only">
-            <div class="section-header">
-              <h2 id="formTitle">Invoice Details</h2>
-              <button id="newInvoiceBtn" class="action-btn secondary">New invoice</button>
-            </div>
-
-            <div class="inline-grid">
-              <div class="field" data-required="true">
-                <label id="labelInvoiceNumber" for="invoiceNumber">Invoice number</label>
-                <input id="invoiceNumber" type="text" value="2026-001" />
-              </div>
-              <div class="field" data-required="true">
-                <label id="labelInvoiceDate" for="invoiceDate">Invoice date</label>
-                <input id="invoiceDate" type="date" />
-              </div>
-            </div>
-
-            <div class="field" data-required="true">
-              <label id="labelGuestName" for="guestName">Guest name</label>
-              <input id="guestName" type="text" />
-            </div>
-
-            <div class="field">
-              <label id="labelCompanyName" for="companyName">Company name (optional)</label>
-              <input id="companyName" type="text" />
-            </div>
-
-            <div class="field">
-              <label id="labelVatNumber" for="vatNumber">VAT number (optional)</label>
-              <input id="vatNumber" type="text" />
-            </div>
-
-            <div class="field">
-              <label id="labelGuestEmail" for="guestEmail">Guest email (optional)</label>
-              <input id="guestEmail" type="email" />
-            </div>
-
-            <div class="field">
-              <label id="labelBookingReference" for="bookingReference">Booking reference (optional)</label>
-              <input id="bookingReference" type="text" />
-            </div>
-
-            <div class="field" data-required="true">
-              <label id="labelRoomName" for="roomName">Room name</label>
-              <select id="roomName">
-                <option value="Cozy Room (Street Side)">Cozy Room (Street Side)</option>
-                <option value="Spacious Room (Garden View)">Spacious Room (Garden View)</option>
-                <option value="custom">Custom room name...</option>
-              </select>
-            </div>
-
-            <div class="field hidden" id="customRoomField" data-required-when="custom-room">
-              <label id="labelCustomRoomName" for="customRoomName">Custom room name</label>
-              <input id="customRoomName" type="text" />
-            </div>
-
-            <div class="inline-grid">
-              <div class="field" data-required="true">
-                <label id="labelCheckin" for="checkinDate">Check-in</label>
-                <input id="checkinDate" type="date" />
-              </div>
-              <div class="field" data-required="true">
-                <label id="labelCheckout" for="checkoutDate">Check-out</label>
-                <input id="checkoutDate" type="date" />
-              </div>
-            </div>
-
-            <div class="inline-grid">
-              <div class="field" data-required="true">
-                <label id="labelNights" for="nights">Nights</label>
-                <input id="nights" type="number" min="1" />
-              </div>
-              <div class="field" data-required="true">
-                <label id="labelGuests" for="guests">Guests</label>
-                <input id="guests" type="number" min="1" value="1" />
-              </div>
-            </div>
-
-            <div class="inline-grid">
-              <div class="field" data-required="true">
-                <label id="labelAccommodation" for="accommodationAmount">Accommodation (€)</label>
-                <input id="accommodationAmount" type="number" step="0.01" />
-              </div>
-              <div class="field" data-required="true">
-                <label id="labelCleaning" for="cleaningFee">Cleaning fee (€)</label>
-                <input id="cleaningFee" type="number" step="0.01" value="5.00" />
-              </div>
-            </div>
-
-            <div class="inline-grid">
-              <div class="field" data-required="true">
-                <label id="labelTouristTaxRate" for="touristTaxRate">Tourist tax rate (€ per guest per night)</label>
-                <input id="touristTaxRate" type="number" step="0.01" value="3.71" />
-              </div>
-              <div class="field" data-required="true">
-                <label id="labelTaxMode" for="taxMode">Tourist tax handling</label>
-                <select id="taxMode">
-                  <option value="included">Accommodation amount already includes tourist tax</option>
-                  <option value="excluded">Tourist tax should be added on top of accommodation</option>
-                </select>
-              </div>
-            </div>
-
-            <div class="field" data-required="true">
-              <label id="labelPaymentMethod" for="paymentMethod">Payment</label>
-              <select id="paymentMethod">
-                <option value="Paid via Booking.com">Paid via Booking.com</option>
-                <option value="Paid via Airbnb">Paid via Airbnb</option>
-                <option value="custom">Custom payment method...</option>
-              </select>
-            </div>
-
-            <div class="field hidden" id="customPaymentField" data-required-when="custom-payment">
-              <label id="labelCustomPayment" for="customPaymentMethod">Custom payment method</label>
-              <input id="customPaymentMethod" type="text" />
-            </div>
-
-            <div class="button-row">
-              <button id="saveBtn" class="action-btn primary">Save invoice</button>
-              <button id="duplicateBtn" class="action-btn secondary hidden">Duplicate invoice</button>
-              <button id="deleteBtn" class="action-btn danger hidden">Delete invoice</button>
-              <button id="printBtn" class="action-btn secondary">Print / Save as PDF</button>
-            </div>
-
+            <div class="section-header"><h2 id="formTitle">Invoice Details</h2><button id="newInvoiceBtn" class="action-btn secondary">New invoice</button></div>
+            <input id="guestRegistrationId" type="hidden" />
+            <div class="inline-grid"><div class="field" data-required="true"><label id="labelInvoiceNumber" for="invoiceNumber">Invoice number</label><input id="invoiceNumber" /></div><div class="field" data-required="true"><label id="labelInvoiceDate" for="invoiceDate">Invoice date</label><input id="invoiceDate" type="date" /></div></div>
+            <div class="field" data-required="true"><label id="labelGuestName" for="guestName">Guest name</label><input id="guestName" /></div>
+            <div class="field"><label id="labelGuestAddress" for="guestAddress">Guest address</label><input id="guestAddress" /></div>
+            <div class="inline-grid"><div class="field"><label id="labelGuestPostal" for="guestPostalCode">Postal code</label><input id="guestPostalCode" /></div><div class="field"><label id="labelGuestCity" for="guestCity">City</label><input id="guestCity" /></div></div>
+            <div class="field"><label id="labelGuestCountry" for="guestCountry">Country</label><input id="guestCountry" /></div>
+            <div class="field"><label id="labelCompanyName" for="companyName">Company name (optional)</label><input id="companyName" /></div>
+            <div class="field"><label id="labelCompanyAddress" for="companyAddress">Company address (optional)</label><textarea id="companyAddress" rows="2"></textarea></div>
+            <div class="field"><label id="labelVatNumber" for="vatNumber">VAT number (optional)</label><input id="vatNumber" /></div>
+            <div class="field"><label id="labelGuestEmail" for="guestEmail">Guest email (optional)</label><input id="guestEmail" type="email" /></div>
+            <div class="field"><label id="labelBookingReference" for="bookingReference">Booking reference (optional)</label><input id="bookingReference" /></div>
+            <div class="field" data-required="true"><label id="labelRoomName" for="roomName">Room name</label><select id="roomName"><option value="Cozy Room (Street Side)">Cozy Room (Street Side)</option><option value="Spacious Room (Garden View)">Spacious Room (Garden View)</option><option value="custom">Custom room name...</option></select></div>
+            <div class="field hidden" id="customRoomField"><label id="labelCustomRoomName" for="customRoomName">Custom room name</label><input id="customRoomName" /></div>
+            <div class="inline-grid"><div class="field" data-required="true"><label id="labelCheckin" for="checkinDate">Check-in</label><input id="checkinDate" type="date" /></div><div class="field" data-required="true"><label id="labelCheckout" for="checkoutDate">Check-out</label><input id="checkoutDate" type="date" /></div></div>
+            <div class="inline-grid"><div class="field" data-required="true"><label id="labelNights" for="nights">Nights</label><input id="nights" type="number" min="1" /></div><div class="field" data-required="true"><label id="labelGuests" for="guests">Guests</label><input id="guests" type="number" min="1" value="1" /></div></div>
+            <div class="inline-grid"><div class="field" data-required="true"><label id="labelAccommodation" for="accommodationAmount">Accommodation (€)</label><input id="accommodationAmount" type="number" step="0.01" /></div><div class="field" data-required="true"><label id="labelCleaning" for="cleaningFee">Cleaning fee (€)</label><input id="cleaningFee" type="number" step="0.01" value="5.00" /></div></div>
+            <div class="inline-grid"><div class="field" data-required="true"><label id="labelTouristTaxRate" for="touristTaxRate">Tourist tax rate (€ per guest per night)</label><input id="touristTaxRate" type="number" step="0.01" value="3.71" /></div><div class="field" data-required="true"><label id="labelTaxMode" for="taxMode">Tourist tax handling</label><select id="taxMode"><option value="included">Accommodation amount already includes tourist tax</option><option value="excluded">Tourist tax should be added on top of accommodation</option></select></div></div>
+            <div class="field" data-required="true"><label id="labelPaymentMethod" for="paymentMethod">Payment</label><select id="paymentMethod"><option value="Paid via Booking.com">Paid via Booking.com</option><option value="Paid via Airbnb">Paid via Airbnb</option><option value="custom">Custom payment method...</option></select></div>
+            <div class="field hidden" id="customPaymentField"><label id="labelCustomPayment" for="customPaymentMethod">Custom payment method</label><input id="customPaymentMethod" /></div>
+            <div class="button-row"><button id="saveBtn" class="action-btn primary">Save invoice</button><button id="duplicateBtn" class="action-btn secondary hidden">Duplicate invoice</button><button id="deleteBtn" class="action-btn danger hidden">Delete invoice</button><button id="printBtn" class="action-btn secondary">Print / Save as PDF</button></div>
             <p id="saveMessage" class="muted"></p>
           </div>
 
           <div class="card saved-card screen-only">
-            <div class="section-header">
-              <h2 id="savedInvoicesTitle">Saved Invoices</h2>
-            </div>
-
-            <div class="field">
-              <label id="labelSearchInvoices" for="searchInvoices">Search / filter invoices</label>
-              <input id="searchInvoices" type="text" placeholder="Search by invoice number, guest name, email or booking reference" />
-            </div>
-
+            <div class="section-header"><h2 id="savedInvoicesTitle">Saved Invoices</h2></div>
+            <div class="field"><label id="labelSearchInvoices" for="searchInvoices">Search / filter invoices</label><input id="searchInvoices" placeholder="Search by invoice number, guest name, company, email or booking reference" /></div>
             <div id="invoiceList" class="invoice-list"></div>
-
-            <div class="pagination-bar">
-              <button id="prevPageBtn" class="action-btn secondary">Previous</button>
-              <span id="paginationInfo" class="pagination-info">Page 1 of 1</span>
-              <button id="nextPageBtn" class="action-btn secondary">Next</button>
-            </div>
           </div>
         </div>
 
         <div class="right-column">
           <div class="card preview-card" id="previewWrapper">
             <div class="invoice-preview" id="invoicePreview">
-              <div class="invoice-header">
-                <div class="brand">
-                  <h3>Nijmegen Guest Rooms</h3>
-                  <p>Landbouwstraat 15</p>
-                  <p>Nijmegen, The Netherlands</p>
-                </div>
-
-                <div class="invoice-meta">
-                  <p class="invoice-title" id="previewInvoiceTitle">INVOICE</p>
-                  <p><strong id="previewLabelInvoiceNumber">Invoice number:</strong> <span id="previewInvoiceNumber">2026-001</span></p>
-                  <p><strong id="previewLabelInvoiceDate">Date:</strong> <span id="previewInvoiceDate">—</span></p>
-                </div>
-              </div>
-
-              <div class="invoice-section invoice-block">
-                <h4 id="previewSectionGuest">Guest</h4>
-                <p id="previewCompanyName" class="hidden"></p>
-                <p id="previewGuestName">—</p>
-                <p id="previewVatNumberWrap" class="subtle hidden">
-                  <strong id="previewLabelVatNumber">VAT number:</strong>
-                  <span id="previewVatNumber">—</span>
-                </p>
-                <p id="previewGuestEmail" class="subtle"></p>
-                <p id="previewBookingReferenceWrap" class="subtle hidden">
-                  <strong id="previewLabelBookingReference">Booking reference:</strong>
-                  <span id="previewBookingReference">—</span>
-                </p>
-              </div>
-
-              <div class="invoice-section invoice-block">
-                <h4 id="previewSectionStay">Stay Details</h4>
-                <p><strong id="previewLabelRoom">Room:</strong> <span id="previewRoomName">Cozy Room (Street Side)</span></p>
-                <p><strong id="previewLabelCheckin2">Check-in:</strong> <span id="previewCheckin">—</span></p>
-                <p><strong id="previewLabelCheckout2">Check-out:</strong> <span id="previewCheckout">—</span></p>
-                <p><strong id="previewLabelNights2">Nights:</strong> <span id="previewNights">—</span></p>
-                <p><strong id="previewLabelGuests2">Guests:</strong> <span id="previewGuests">1</span></p>
-              </div>
-
-              <div class="invoice-section invoice-block">
-                <h4 id="previewSectionDescription">Description</h4>
-                <p id="previewDescription">Accommodation in private room (shared home)</p>
-              </div>
-
-              <div class="invoice-section">
-                <h4 id="previewSectionPrice">Price Breakdown</h4>
-                <table class="summary-table">
-                  <tr>
-                    <td id="previewLabelAccommodation">Accommodation</td>
-                    <td id="previewAccommodation">€0.00</td>
-                  </tr>
-                  <tr>
-                    <td id="previewLabelCleaning">Cleaning fee</td>
-                    <td id="previewCleaning">€0.00</td>
-                  </tr>
-                  <tr>
-                    <td id="previewLabelTaxRate">Tourist tax rate</td>
-                    <td id="previewTouristTaxRate">€3.71 × 1 × 0</td>
-                  </tr>
-                  <tr>
-                    <td id="previewLabelTaxTotal">Tourist tax included</td>
-                    <td id="previewTouristTax">€0.00</td>
-                  </tr>
-                  <tr class="total-row">
-                    <td id="previewLabelTotal">Total amount paid</td>
-                    <td id="previewTotal">€0.00</td>
-                  </tr>
-                </table>
-              </div>
-
-              <div class="invoice-section invoice-block">
-                <h4 id="previewSectionPayment">Payment</h4>
-                <p id="previewPaymentMethod">Paid via Booking.com</p>
-              </div>
-
-              <div class="invoice-section invoice-block">
-                <p class="subtle"><em id="previewNote">This is a private rental. No VAT is applicable.</em></p>
-              </div>
+              <div class="invoice-header"><div class="brand"><h3>Nijmegen Guest Rooms</h3><p>Landbouwstraat 15</p><p>Nijmegen, The Netherlands</p></div><div class="invoice-meta"><p class="invoice-title" id="previewInvoiceTitle">INVOICE</p><p><strong id="previewLabelInvoiceNumber">Invoice number:</strong> <span id="previewInvoiceNumber">—</span></p><p><strong id="previewLabelInvoiceDate">Date:</strong> <span id="previewInvoiceDate">—</span></p></div></div>
+              <div class="invoice-section invoice-block"><h4 id="previewSectionGuest">Billed to</h4><p id="previewCompanyName" class="hidden"></p><p id="previewGuestName">—</p><p id="previewAddress" class="subtle hidden"></p><p id="previewCityCountry" class="subtle hidden"></p><p id="previewCompanyAddress" class="subtle hidden"></p><p id="previewVatNumberWrap" class="subtle hidden"><strong id="previewLabelVatNumber">VAT number:</strong> <span id="previewVatNumber">—</span></p><p id="previewGuestEmail" class="subtle"></p><p id="previewBookingReferenceWrap" class="subtle hidden"><strong id="previewLabelBookingReference">Booking reference:</strong> <span id="previewBookingReference">—</span></p></div>
+              <div class="invoice-section invoice-block"><h4 id="previewSectionStay">Stay Details</h4><p><strong id="previewLabelRoom">Room:</strong> <span id="previewRoomName">—</span></p><p><strong id="previewLabelCheckin2">Check-in:</strong> <span id="previewCheckin">—</span></p><p><strong id="previewLabelCheckout2">Check-out:</strong> <span id="previewCheckout">—</span></p><p><strong id="previewLabelNights2">Nights:</strong> <span id="previewNights">—</span></p><p><strong id="previewLabelGuests2">Guests:</strong> <span id="previewGuests">1</span></p></div>
+              <div class="invoice-section invoice-block"><h4 id="previewSectionDescription">Description</h4><p id="previewDescription">Accommodation in private room (shared home)</p></div>
+              <div class="invoice-section"><h4 id="previewSectionPrice">Price Breakdown</h4><table class="summary-table"><tr><td id="previewLabelAccommodation">Accommodation</td><td id="previewAccommodation">€0.00</td></tr><tr><td id="previewLabelCleaning">Cleaning fee</td><td id="previewCleaning">€0.00</td></tr><tr><td id="previewLabelTaxRate">Tourist tax rate</td><td id="previewTouristTaxRate">€3.71 × 1 × 0</td></tr><tr><td id="previewLabelTaxTotal">Tourist tax included</td><td id="previewTouristTax">€0.00</td></tr><tr class="total-row"><td id="previewLabelTotal">Total amount paid</td><td id="previewTotal">€0.00</td></tr></table></div>
+              <div class="invoice-section invoice-block"><h4 id="previewSectionPayment">Payment</h4><p id="previewPaymentMethod">Paid via Booking.com</p></div>
+              <div class="invoice-section invoice-block"><p class="subtle"><em id="previewNote">This is a private rental. VAT is not applicable.</em></p></div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
   </div>
-
   <script type="module" src="./app.js"></script>
 </body>
 </html>

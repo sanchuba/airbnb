@@ -389,3 +389,24 @@ body {
     box-shadow: none;
   }
 }
+
+/* Guest registration additions */
+.subcard { background: #faf8f4; border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 18px; }
+.subcard h3 { margin: 0 0 14px; color: var(--heading); font-size: 17px; }
+.registration-list { display: flex; flex-direction: column; gap: 9px; max-height: 420px; overflow: auto; }
+.registration-item { border: 1px solid var(--border); border-radius: 10px; background: #faf8f4; padding: 11px 13px; cursor: pointer; }
+.registration-item:hover { background: #f4ede3; }
+.registration-item strong { color: var(--heading); display: block; }
+.registration-badges { display:flex; flex-wrap:wrap; gap:6px; margin-top:6px; }
+.badge { display:inline-block; border-radius:999px; padding:3px 8px; font-size:11px; font-weight:700; background:var(--highlight); color:var(--heading); }
+.badge.good { background:#e8f4ea; color:#356a46; }
+.badge.warn { background:#fff0d9; color:#845b16; }
+.check-row { display:flex; align-items:flex-start; gap:9px; margin:10px 0 14px; }
+.check-row input { width:auto; margin-top:4px; accent-color:var(--heading); }
+.conditional { padding:14px; border:1px solid var(--border); border-radius:10px; background:#faf8f4; margin:10px 0 14px; }
+.identity-box { margin-top:18px; }
+.invite-result { display:grid; grid-template-columns:1fr auto; gap:8px; margin-top:12px; align-items:center; }
+.invite-result input { width:100%; padding:10px 12px; border:1px solid var(--border); border-radius:9px; }
+textarea { width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:10px; font-size:15px; font-family:inherit; color:var(--text); resize:vertical; }
+textarea:focus { outline:none; border-color:var(--accent); }
+@media (max-width:700px){ .invite-result{grid-template-columns:1fr;} }

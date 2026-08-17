@@ -2,1037 +2,118 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_Y94dITMxDgGpH6ZnINbWjw_5w5KMW_c';
-
+const PUBLIC_FORM_BASE = 'https://nijmegenguestrooms.com/guest-registration/';
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-const PAGE_SIZE = 25;
-
-const translations = {
+const tr = {
   en: {
-    pageTitle: 'Invoice Generator',
-    pageSubtitle: 'Nijmegen Guest Rooms – Private Invoice Admin',
-    loginTitle: 'Sign in',
-    loginText: 'Only authorized users can access the invoice system.',
-    loginEmail: 'Email',
-    loginBtn: 'Send login link',
-    logout: 'Log out',
-    formTitle: 'Invoice Details',
-    newInvoice: 'New invoice',
-    duplicateInvoice: 'Duplicate invoice',
-    invoiceNumber: 'Invoice number',
-    invoiceDate: 'Invoice date',
-    guestName: 'Guest name',
-    companyName: 'Company name (optional)',
-    vatNumber: 'VAT number (optional)',
-    guestEmail: 'Guest email (optional)',
-    bookingReference: 'Booking reference (optional)',
-    roomName: 'Room name',
-    customRoomName: 'Custom room name',
-    checkin: 'Check-in',
-    checkout: 'Check-out',
-    nights: 'Nights',
-    guests: 'Guests',
-    accommodation: 'Accommodation (€)',
-    cleaning: 'Cleaning fee (€)',
-    touristTaxRate: 'Tourist tax rate (€ per guest per night)',
-    taxMode: 'Tourist tax handling',
-    taxModeIncluded: 'Accommodation amount already includes tourist tax',
-    taxModeExcluded: 'Tourist tax should be added on top of accommodation',
-    paymentMethod: 'Payment',
-    customPayment: 'Custom payment method',
-    save: 'Save invoice',
-    delete: 'Delete invoice',
-    print: 'Print / Save as PDF',
-    savedInvoices: 'Saved Invoices',
-    searchInvoices: 'Search / filter invoices',
-    searchPlaceholder: 'Search by invoice number, guest name, company, email or booking reference',
-    invoiceTitle: 'INVOICE',
-    labelInvoiceNumber: 'Invoice number:',
-    labelDate: 'Date:',
-    sectionGuest: 'Billed to',
-    labelVatNumber: 'VAT number:',
-    labelBookingReference: 'Booking reference:',
-    sectionStay: 'Stay Details',
-    labelRoom: 'Room:',
-    labelCheckin: 'Check-in:',
-    labelCheckout: 'Check-out:',
-    labelNights: 'Nights:',
-    labelGuests: 'Guests:',
-    sectionDescription: 'Description',
-    description: 'Accommodation in private room (shared home)',
-    sectionPrice: 'Price Breakdown',
-    labelAccommodation: 'Accommodation',
-    labelCleaning: 'Cleaning fee',
-    labelTaxRate: 'Tourist tax rate',
-    labelTaxIncluded: 'Tourist tax included',
-    labelTaxAdded: 'Tourist tax added',
-    labelTotal: 'Total amount paid',
-    sectionPayment: 'Payment',
-    note: 'This is a private rental. VAT is not applicable.',
-    roomOption1: 'Spacious Room (Garden View)',
-    roomOption2: 'Cozy Room (Street Side)',
-    roomOptionCustom: 'Custom room name...',
-    payBooking: 'Paid via Booking.com',
-    payAirbnb: 'Paid via Airbnb',
-    payCustom: 'Custom payment method...',
-    noInvoices: 'No invoices yet.',
-    loading: 'Loading...',
-    checkEmail: 'Check your email for the login link.',
-    enterEmail: 'Enter your email address.',
-    notLoggedIn: 'You are not logged in.',
-    saved: 'Invoice saved.',
-    deleted: 'Invoice deleted.',
-    duplicated: 'Invoice duplicated. You can now save it as a new invoice.',
-    confirmDelete: 'Are you sure you want to delete this invoice? This cannot be undone.',
-    pleaseFillIn: 'Please fill in',
-    invalidNights: 'Nights must be greater than 0',
-    invalidGuests: 'Guests must be greater than 0',
-    invalidAccommodation: 'Accommodation amount cannot be negative',
-    invalidCleaning: 'Cleaning fee cannot be negative',
-    invalidTouristTax: 'Tourist tax rate cannot be negative',
-    accessDenied: 'Access denied. This email address is not authorized.',
-    previous: 'Previous',
-    next: 'Next',
-    pageOf: 'Page {current} of {total}'
+    pageTitle:'Guest & Invoice Admin',pageSubtitle:'Nijmegen Guest Rooms – Private administration',loginTitle:'Sign in',loginText:'Only authorized users can access the administration.',loginEmail:'Email',loginBtn:'Send login link',logout:'Log out',
+    registrations:'Guest registrations',paper:'Add paper registration',invite:'Create secure guest link',inviteBooking:'Booking reference (optional)',checkin:'Check-in',checkout:'Check-out',createLink:'Create secure link',copy:'Copy link',searchReg:'Search registrations',searchRegPh:'Search by name, email or booking reference',
+    regEditor:'Guest registration',close:'Close',fullName:'Full name',homeAddress:'Home address',postal:'Postal code',city:'City',country:'Country',bookingRef:'Booking reference (optional)',invoiceRequested:'Invoice requested',invoiceType:'Invoice type',personal:'Personal',company:'Company',email:'Email',companyName:'Company name',companyAddress:'Company address',vat:'VAT number (optional)',identity:'Identification check – host only',idShown:'Identification shown',notSelected:'Not selected',passport:'Passport',idCard:'ID card',drivers:'Driver\'s licence',otherId:'Other valid ID',verified:'Identity verified',saveRegistration:'Save registration',useInvoice:'Use for invoice',savedReg:'Registration saved.',linkCreated:'Secure registration link created.',copied:'Link copied.',
+    formTitle:'Invoice Details',newInvoice:'New invoice',duplicate:'Duplicate invoice',invoiceNumber:'Invoice number',invoiceDate:'Invoice date',guestName:'Guest name',guestAddress:'Guest address',guestPostal:'Postal code',guestCity:'City',guestCountry:'Country',guestEmail:'Guest email (optional)',room:'Room name',customRoom:'Custom room name',nights:'Nights',guests:'Guests',accommodation:'Accommodation (€)',cleaning:'Cleaning fee (€)',tourist:'Tourist tax rate (€ per guest per night)',taxMode:'Tourist tax handling',taxIncluded:'Accommodation amount already includes tourist tax',taxExcluded:'Tourist tax should be added on top of accommodation',payment:'Payment',customPayment:'Custom payment method',saveInvoice:'Save invoice',deleteInvoice:'Delete invoice',print:'Print / Save as PDF',savedInvoices:'Saved Invoices',searchInvoices:'Search / filter invoices',searchInvoicePh:'Search by invoice number, guest name, company, email or booking reference',
+    invoiceTitle:'INVOICE',labelInvoiceNumber:'Invoice number:',labelDate:'Date:',billed:'Billed to',labelVat:'VAT number:',labelBooking:'Booking reference:',stay:'Stay Details',labelRoom:'Room:',labelCheckin:'Check-in:',labelCheckout:'Check-out:',labelNights:'Nights:',labelGuests:'Guests:',descriptionTitle:'Description',description:'Accommodation in private room (shared home)',price:'Price Breakdown',labelAccommodation:'Accommodation',labelCleaning:'Cleaning fee',labelTaxRate:'Tourist tax rate',labelTaxIncluded:'Tourist tax included',labelTaxAdded:'Tourist tax added',labelTotal:'Total amount paid',paymentTitle:'Payment',note:'This is a private rental. VAT is not applicable.',
+    cozy:'Cozy Room (Street Side)',spacious:'Spacious Room (Garden View)',customRoomOpt:'Custom room name...',booking:'Paid via Booking.com',airbnb:'Paid via Airbnb',customPayOpt:'Custom payment method...',checkEmail:'Check your email for the login link.',denied:'Access denied. This email address is not authorized.',savedInvoice:'Invoice saved.',deleted:'Invoice deleted.',duplicated:'Invoice duplicated. Save it as a new invoice.',required:'Please fill in all required invoice fields.',noRegs:'No guest registrations yet.',noInvoices:'No invoices yet.',loading:'Loading…'
   },
   nl: {
-    pageTitle: 'Factuurgenerator',
-    pageSubtitle: 'Nijmegen Guest Rooms – Privé factuurbeheer',
-    loginTitle: 'Inloggen',
-    loginText: 'Alleen geautoriseerde gebruikers hebben toegang tot het factuursysteem.',
-    loginEmail: 'E-mailadres',
-    loginBtn: 'Stuur inloglink',
-    logout: 'Uitloggen',
-    formTitle: 'Factuurgegevens',
-    newInvoice: 'Nieuwe factuur',
-    duplicateInvoice: 'Factuur dupliceren',
-    invoiceNumber: 'Factuurnummer',
-    invoiceDate: 'Factuurdatum',
-    guestName: 'Naam gast',
-    companyName: 'Bedrijfsnaam (optioneel)',
-    vatNumber: 'BTW-nummer (optioneel)',
-    guestEmail: 'E-mailadres gast (optioneel)',
-    bookingReference: 'Boekingsreferentie (optioneel)',
-    roomName: 'Kamernaam',
-    customRoomName: 'Aangepaste kamernaam',
-    checkin: 'Inchecken',
-    checkout: 'Uitchecken',
-    nights: 'Aantal nachten',
-    guests: 'Aantal gasten',
-    accommodation: 'Verblijf (€)',
-    cleaning: 'Schoonmaakkosten (€)',
-    touristTaxRate: 'Toeristenbelasting (€ per gast per nacht)',
-    taxMode: 'Verwerking toeristenbelasting',
-    taxModeIncluded: 'Verblijfsbedrag is al inclusief toeristenbelasting',
-    taxModeExcluded: 'Toeristenbelasting moet bovenop het verblijfsbedrag komen',
-    paymentMethod: 'Betaling',
-    customPayment: 'Aangepaste betaalmethode',
-    save: 'Factuur opslaan',
-    delete: 'Factuur verwijderen',
-    print: 'Printen / Opslaan als PDF',
-    savedInvoices: 'Opgeslagen facturen',
-    searchInvoices: 'Zoeken / filteren facturen',
-    searchPlaceholder: 'Zoek op factuurnummer, gastnaam, bedrijfsnaam, e-mail of boekingsreferentie',
-    invoiceTitle: 'FACTUUR',
-    labelInvoiceNumber: 'Factuurnummer:',
-    labelDate: 'Datum:',
-    sectionGuest: 'Factureren aan',
-    labelVatNumber: 'BTW-nummer:',
-    labelBookingReference: 'Boekingsreferentie:',
-    sectionStay: 'Verblijfsgegevens',
-    labelRoom: 'Kamer:',
-    labelCheckin: 'Inchecken:',
-    labelCheckout: 'Uitchecken:',
-    labelNights: 'Aantal nachten:',
-    labelGuests: 'Aantal gasten:',
-    sectionDescription: 'Omschrijving',
-    description: 'Verblijf in privékamer (gedeelde woning)',
-    sectionPrice: 'Prijsopbouw',
-    labelAccommodation: 'Verblijf',
-    labelCleaning: 'Schoonmaakkosten',
-    labelTaxRate: 'Tarief toeristenbelasting',
-    labelTaxIncluded: 'Toeristenbelasting inbegrepen',
-    labelTaxAdded: 'Toeristenbelasting toegevoegd',
-    labelTotal: 'Totaal betaald',
-    sectionPayment: 'Betaling',
-    note: 'Dit betreft particuliere verhuur. BTW is niet van toepassing.',
-    roomOption1: 'Ruime kamer (tuinzijde)',
-    roomOption2: 'Knusse kamer (straatzijde)',
-    roomOptionCustom: 'Aangepaste kamernaam...',
-    payBooking: 'Betaald via Booking.com',
-    payAirbnb: 'Betaald via Airbnb',
-    payCustom: 'Aangepaste betaalmethode...',
-    noInvoices: 'Nog geen facturen.',
-    loading: 'Laden...',
-    checkEmail: 'Controleer je e-mail voor de inloglink.',
-    enterEmail: 'Voer je e-mailadres in.',
-    notLoggedIn: 'Je bent niet ingelogd.',
-    saved: 'Factuur opgeslagen.',
-    deleted: 'Factuur verwijderd.',
-    duplicated: 'Factuur gedupliceerd. Je kunt deze nu opslaan als nieuwe factuur.',
-    confirmDelete: 'Weet je zeker dat je deze factuur wilt verwijderen? Dit kan niet ongedaan worden gemaakt.',
-    pleaseFillIn: 'Vul in',
-    invalidNights: 'Aantal nachten moet groter zijn dan 0',
-    invalidGuests: 'Aantal gasten moet groter zijn dan 0',
-    invalidAccommodation: 'Verblijfsbedrag mag niet negatief zijn',
-    invalidCleaning: 'Schoonmaakkosten mogen niet negatief zijn',
-    invalidTouristTax: 'Toeristenbelasting mag niet negatief zijn',
-    accessDenied: 'Toegang geweigerd. Dit e-mailadres is niet geautoriseerd.',
-    previous: 'Vorige',
-    next: 'Volgende',
-    pageOf: 'Pagina {current} van {total}'
+    pageTitle:'Gasten- & factuurbeheer',pageSubtitle:'Nijmegen Guest Rooms – Privé administratie',loginTitle:'Inloggen',loginText:'Alleen geautoriseerde gebruikers hebben toegang tot de administratie.',loginEmail:'E-mailadres',loginBtn:'Stuur inloglink',logout:'Uitloggen',
+    registrations:'Gastenregistraties',paper:'Papieren registratie toevoegen',invite:'Veilige gastenlink maken',inviteBooking:'Boekingsreferentie (optioneel)',checkin:'Inchecken',checkout:'Uitchecken',createLink:'Veilige link maken',copy:'Link kopiëren',searchReg:'Registraties zoeken',searchRegPh:'Zoek op naam, e-mail of boekingsreferentie',
+    regEditor:'Gastenregistratie',close:'Sluiten',fullName:'Volledige naam',homeAddress:'Woonadres',postal:'Postcode',city:'Woonplaats',country:'Land',bookingRef:'Boekingsreferentie (optioneel)',invoiceRequested:'Factuur aangevraagd',invoiceType:'Type factuur',personal:'Particulier',company:'Zakelijk',email:'E-mailadres',companyName:'Bedrijfsnaam',companyAddress:'Bedrijfsadres',vat:'Btw-identificatienummer (optioneel)',identity:'Identiteitscontrole – alleen host',idShown:'Getoond identiteitsbewijs',notSelected:'Niet geselecteerd',passport:'Paspoort',idCard:'ID-kaart',drivers:'Rijbewijs',otherId:'Ander geldig ID',verified:'Identiteit gecontroleerd',saveRegistration:'Registratie opslaan',useInvoice:'Gebruiken voor factuur',savedReg:'Registratie opgeslagen.',linkCreated:'Veilige registratielink aangemaakt.',copied:'Link gekopieerd.',
+    formTitle:'Factuurgegevens',newInvoice:'Nieuwe factuur',duplicate:'Factuur dupliceren',invoiceNumber:'Factuurnummer',invoiceDate:'Factuurdatum',guestName:'Naam gast',guestAddress:'Adres gast',guestPostal:'Postcode',guestCity:'Woonplaats',guestCountry:'Land',guestEmail:'E-mailadres gast (optioneel)',room:'Kamernaam',customRoom:'Aangepaste kamernaam',nights:'Aantal nachten',guests:'Aantal gasten',accommodation:'Verblijf (€)',cleaning:'Schoonmaakkosten (€)',tourist:'Toeristenbelasting (€ per gast per nacht)',taxMode:'Verwerking toeristenbelasting',taxIncluded:'Verblijfsbedrag is al inclusief toeristenbelasting',taxExcluded:'Toeristenbelasting moet bovenop het verblijfsbedrag komen',payment:'Betaling',customPayment:'Aangepaste betaalmethode',saveInvoice:'Factuur opslaan',deleteInvoice:'Factuur verwijderen',print:'Printen / Opslaan als PDF',savedInvoices:'Opgeslagen facturen',searchInvoices:'Facturen zoeken / filteren',searchInvoicePh:'Zoek op factuurnummer, gastnaam, bedrijf, e-mail of boekingsreferentie',
+    invoiceTitle:'FACTUUR',labelInvoiceNumber:'Factuurnummer:',labelDate:'Datum:',billed:'Factureren aan',labelVat:'Btw-nummer:',labelBooking:'Boekingsreferentie:',stay:'Verblijfsgegevens',labelRoom:'Kamer:',labelCheckin:'Inchecken:',labelCheckout:'Uitchecken:',labelNights:'Aantal nachten:',labelGuests:'Aantal gasten:',descriptionTitle:'Omschrijving',description:'Verblijf in privékamer (gedeelde woning)',price:'Prijsopbouw',labelAccommodation:'Verblijf',labelCleaning:'Schoonmaakkosten',labelTaxRate:'Tarief toeristenbelasting',labelTaxIncluded:'Toeristenbelasting inbegrepen',labelTaxAdded:'Toeristenbelasting toegevoegd',labelTotal:'Totaal betaald',paymentTitle:'Betaling',note:'Dit betreft particuliere verhuur. Btw is niet van toepassing.',
+    cozy:'Knusse kamer (straatzijde)',spacious:'Ruime kamer (tuinzijde)',customRoomOpt:'Aangepaste kamernaam...',booking:'Betaald via Booking.com',airbnb:'Betaald via Airbnb',customPayOpt:'Aangepaste betaalmethode...',checkEmail:'Controleer je e-mail voor de inloglink.',denied:'Toegang geweigerd. Dit e-mailadres is niet geautoriseerd.',savedInvoice:'Factuur opgeslagen.',deleted:'Factuur verwijderd.',duplicated:'Factuur gedupliceerd. Sla deze als nieuwe factuur op.',required:'Vul alle verplichte factuurvelden in.',noRegs:'Nog geen gastenregistraties.',noInvoices:'Nog geen facturen.',loading:'Laden…'
   }
 };
 
-let currentLang = 'en';
-let currentInvoiceId = null;
-let manualNightsOverride = false;
-let allInvoices = [];
-let filteredInvoices = [];
-let currentPage = 1;
+let currentLang='en', currentRegistrationId=null, currentInvoiceId=null, registrations=[], invoices=[], manualNights=false;
+const $=id=>document.getElementById(id);
 
-const loginView = document.getElementById('loginView');
-const appView = document.getElementById('appView');
-const loginBtn = document.getElementById('loginBtn');
-const logoutBtn = document.getElementById('logoutBtn');
-const loginEmail = document.getElementById('loginEmail');
-const loginMessage = document.getElementById('loginMessage');
-const saveBtn = document.getElementById('saveBtn');
-const duplicateBtn = document.getElementById('duplicateBtn');
-const deleteBtn = document.getElementById('deleteBtn');
-const saveMessage = document.getElementById('saveMessage');
-const printBtn = document.getElementById('printBtn');
-const invoiceList = document.getElementById('invoiceList');
-const newInvoiceBtn = document.getElementById('newInvoiceBtn');
-const searchInvoicesInput = document.getElementById('searchInvoices');
-const prevPageBtn = document.getElementById('prevPageBtn');
-const nextPageBtn = document.getElementById('nextPageBtn');
-const paginationInfo = document.getElementById('paginationInfo');
-
-const fields = {
-  invoiceNumber: document.getElementById('invoiceNumber'),
-  invoiceDate: document.getElementById('invoiceDate'),
-  guestName: document.getElementById('guestName'),
-  companyName: document.getElementById('companyName'),
-  vatNumber: document.getElementById('vatNumber'),
-  guestEmail: document.getElementById('guestEmail'),
-  bookingReference: document.getElementById('bookingReference'),
-  roomName: document.getElementById('roomName'),
-  customRoomName: document.getElementById('customRoomName'),
-  checkinDate: document.getElementById('checkinDate'),
-  checkoutDate: document.getElementById('checkoutDate'),
-  nights: document.getElementById('nights'),
-  guests: document.getElementById('guests'),
-  accommodationAmount: document.getElementById('accommodationAmount'),
-  cleaningFee: document.getElementById('cleaningFee'),
-  touristTaxRate: document.getElementById('touristTaxRate'),
-  taxMode: document.getElementById('taxMode'),
-  paymentMethod: document.getElementById('paymentMethod'),
-  customPaymentMethod: document.getElementById('customPaymentMethod')
+const rf={
+  id:$('registrationId'),source:$('registrationSource'),name:$('regName'),address:$('regAddress'),postal:$('regPostal'),city:$('regCity'),country:$('regCountry'),checkin:$('regCheckin'),checkout:$('regCheckout'),booking:$('regBookingReference'),invoiceRequested:$('regInvoiceRequested'),invoiceType:$('regInvoiceType'),email:$('regEmail'),companyName:$('regCompanyName'),companyAddress:$('regCompanyAddress'),vat:$('regVat'),idType:$('regIdType'),idOther:$('regIdOther'),idVerified:$('regIdVerified')
+};
+const f={
+  registrationId:$('guestRegistrationId'),invoiceNumber:$('invoiceNumber'),invoiceDate:$('invoiceDate'),guestName:$('guestName'),guestAddress:$('guestAddress'),guestPostal:$('guestPostalCode'),guestCity:$('guestCity'),guestCountry:$('guestCountry'),companyName:$('companyName'),companyAddress:$('companyAddress'),vat:$('vatNumber'),email:$('guestEmail'),booking:$('bookingReference'),room:$('roomName'),customRoom:$('customRoomName'),checkin:$('checkinDate'),checkout:$('checkoutDate'),nights:$('nights'),guests:$('guests'),accommodation:$('accommodationAmount'),cleaning:$('cleaningFee'),tourist:$('touristTaxRate'),taxMode:$('taxMode'),payment:$('paymentMethod'),customPayment:$('customPaymentMethod')
 };
 
-function todayISO() {
-  return new Date().toISOString().split('T')[0];
+const today=()=>new Date().toISOString().slice(0,10);
+const euro=v=>'€'+Number(v||0).toFixed(2);
+const fmt=d=>d?new Date(d+'T00:00:00').toLocaleDateString(currentLang==='nl'?'nl-NL':'en-GB',{day:'numeric',month:'long',year:'numeric'}):'—';
+const nightsBetween=()=>{ if(!f.checkin.value||!f.checkout.value)return null; const n=Math.round((new Date(f.checkout.value)-new Date(f.checkin.value))/86400000); return n>0?n:null; };
+const roomValue=()=>f.room.value==='custom'?(f.customRoom.value.trim()||tr[currentLang].customRoomOpt):f.room.value;
+const paymentValue=()=>f.payment.value==='custom'?(f.customPayment.value.trim()||tr[currentLang].customPayOpt):f.payment.value;
+
+async function session(){ return (await supabaseClient.auth.getSession()).data.session; }
+async function allowed(){ const {data,error}=await supabaseClient.rpc('is_allowed_user'); return !error&&data===true; }
+async function login(email){ const {error}=await supabaseClient.auth.signInWithOtp({email,options:{emailRedirectTo:'https://nijmegenguestrooms.com/invoice-app/'}}); $('loginMessage').textContent=error?error.message:tr[currentLang].checkEmail; }
+async function logout(){ await supabaseClient.auth.signOut(); location.reload(); }
+
+function toggleRegInvoice(){ $('regInvoiceFields').classList.toggle('hidden',!rf.invoiceRequested.checked); $('regCompanyFields').classList.toggle('hidden',!rf.invoiceRequested.checked||rf.invoiceType.value!=='company'); }
+function toggleIdOther(){ $('otherIdField').classList.toggle('hidden',rf.idType.value!=='other'); }
+function toggleInvoiceCustom(){ $('customRoomField').classList.toggle('hidden',f.room.value!=='custom'); $('customPaymentField').classList.toggle('hidden',f.payment.value!=='custom'); }
+
+function setTexts(){
+  const x=tr[currentLang]; document.documentElement.lang=currentLang;
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===currentLang));
+  const map={pageTitle:'pageTitle',pageSubtitle:'pageSubtitle',loginTitle:'loginTitle',loginText:'loginText',loginEmail:'labelLoginEmail',loginBtn:'loginBtn',logout:'logoutBtn',registrations:'registrationTitle',paper:'newPaperBtn',invite:'inviteTitle',inviteBooking:'labelInviteBooking',checkin:'labelInviteCheckin',checkout:'labelInviteCheckout',createLink:'createInviteBtn',copy:'copyInviteBtn',searchReg:'labelRegistrationSearch',regEditor:'registrationEditorTitle',close:'closeRegistrationBtn',fullName:'labelRegName',homeAddress:'labelRegAddress',postal:'labelRegPostal',city:'labelRegCity',country:'labelRegCountry',bookingRef:'labelRegBooking',invoiceRequested:'regInvoiceRequestedText',invoiceType:'labelRegInvoiceType',email:'labelRegEmail',companyName:'labelRegCompanyName',companyAddress:'labelRegCompanyAddress',vat:'labelRegVat',identity:'identityTitle',idShown:'labelIdType',verified:'idVerifiedText',saveRegistration:'saveRegistrationBtn',useInvoice:'useForInvoiceBtn',formTitle:'formTitle',newInvoice:'newInvoiceBtn',duplicate:'duplicateBtn',invoiceNumber:'labelInvoiceNumber',invoiceDate:'labelInvoiceDate',guestName:'labelGuestName',guestAddress:'labelGuestAddress',guestPostal:'labelGuestPostal',guestCity:'labelGuestCity',guestCountry:'labelGuestCountry',guestEmail:'labelGuestEmail',room:'labelRoomName',customRoom:'labelCustomRoomName',nights:'labelNights',guests:'labelGuests',accommodation:'labelAccommodation',cleaning:'labelCleaning',tourist:'labelTouristTaxRate',taxMode:'labelTaxMode',payment:'labelPaymentMethod',customPayment:'labelCustomPayment',saveInvoice:'saveBtn',deleteInvoice:'deleteBtn',print:'printBtn',savedInvoices:'savedInvoicesTitle',searchInvoices:'labelSearchInvoices'};
+  for(const [k,id] of Object.entries(map)) if($(id)) $(id).textContent=x[k];
+  $('labelCompanyName').textContent=x.companyName+' ('+(currentLang==='nl'?'optioneel':'optional')+')'; $('labelCompanyAddress').textContent=x.companyAddress+' ('+(currentLang==='nl'?'optioneel':'optional')+')'; $('labelVatNumber').textContent=x.vat;
+  $('labelBookingReference').textContent=x.bookingRef; $('labelCheckin').textContent=x.checkin; $('labelCheckout').textContent=x.checkout;
+  $('registrationSearch').placeholder=x.searchRegPh; $('searchInvoices').placeholder=x.searchInvoicePh;
+  rf.invoiceType.options[0].text=x.personal; rf.invoiceType.options[1].text=x.company;
+  rf.idType.options[0].text=x.notSelected; rf.idType.options[1].text=x.passport; rf.idType.options[2].text=x.idCard; rf.idType.options[3].text=x.drivers; rf.idType.options[4].text=x.otherId; $('labelIdOther').textContent=x.otherId;
+  const currentRoom=f.room.value; f.room.innerHTML=`<option value="${x.cozy}">${x.cozy}</option><option value="${x.spacious}">${x.spacious}</option><option value="custom">${x.customRoomOpt}</option>`; if(currentRoom==='custom')f.room.value='custom'; else if(currentRoom.includes('Cozy')||currentRoom.includes('Knusse'))f.room.value=x.cozy; else f.room.value=x.spacious;
+  const currentPay=f.payment.value; f.payment.innerHTML=`<option value="${x.booking}">${x.booking}</option><option value="${x.airbnb}">${x.airbnb}</option><option value="custom">${x.customPayOpt}</option>`; if(currentPay==='custom')f.payment.value='custom'; else if(currentPay.includes('Booking'))f.payment.value=x.booking; else if(currentPay.includes('Airbnb'))f.payment.value=x.airbnb;
+  f.taxMode.innerHTML=`<option value="included">${x.taxIncluded}</option><option value="excluded">${x.taxExcluded}</option>`;
+  renderRegs(); renderInvoices(); updatePreview();
 }
 
-function formatEuro(value) {
-  const number = Number(value || 0);
-  return '€' + number.toFixed(2);
+async function createInvite(){
+  $('inviteMessage').textContent=''; const ci=$('inviteCheckin').value,co=$('inviteCheckout').value;
+  if(!ci||!co||co<=ci){$('inviteMessage').textContent=currentLang==='nl'?'Vul geldige in- en uitcheckdata in.':'Enter valid check-in and check-out dates.';return;}
+  const {data,error}=await supabaseClient.rpc('create_guest_registration_invite',{p_booking_reference:$('inviteBookingReference').value.trim()||null,p_checkin_date:ci,p_checkout_date:co,p_valid_days:30});
+  if(error){$('inviteMessage').textContent=error.message;return;}
+  const row=Array.isArray(data)?data[0]:data; const url=`${PUBLIC_FORM_BASE}?token=${row.token}`; $('inviteUrl').value=url; $('inviteResult').classList.remove('hidden'); $('inviteMessage').textContent=tr[currentLang].linkCreated;
 }
 
-function formatDateForLang(dateString, lang) {
-  if (!dateString) return '—';
-  const date = new Date(dateString + 'T00:00:00');
-  if (isNaN(date)) return dateString;
+function blankRegistration(){
+  currentRegistrationId=null; rf.id.value=''; rf.source.value='paper_manual'; for(const k of ['name','address','postal','city','country','checkin','checkout','booking','email','companyName','companyAddress','vat','idOther'])rf[k].value=''; rf.invoiceRequested.checked=false; rf.invoiceType.value='personal'; rf.idType.value=''; rf.idVerified.checked=false; toggleRegInvoice();toggleIdOther(); $('registrationEditor').classList.remove('hidden'); $('registrationMessage').textContent='';
+}
+function loadReg(r){
+  currentRegistrationId=r.id;rf.id.value=r.id;rf.source.value=r.source||'digital';rf.name.value=r.full_name||'';rf.address.value=r.home_address||'';rf.postal.value=r.postal_code||'';rf.city.value=r.city||'';rf.country.value=r.country||'';rf.checkin.value=r.checkin_date||'';rf.checkout.value=r.checkout_date||'';rf.booking.value=r.booking_reference||'';rf.invoiceRequested.checked=!!r.invoice_requested;rf.invoiceType.value=r.invoice_type||'personal';rf.email.value=r.email||'';rf.companyName.value=r.company_name||'';rf.companyAddress.value=r.company_address||'';rf.vat.value=r.vat_number||'';rf.idType.value=r.id_type||'';rf.idOther.value=r.id_other||'';rf.idVerified.checked=!!r.id_verified;toggleRegInvoice();toggleIdOther();$('registrationEditor').classList.remove('hidden');$('registrationMessage').textContent='';
+}
+async function saveReg(){
+  if(!rf.name.value.trim()||!rf.address.value.trim()||!rf.postal.value.trim()||!rf.city.value.trim()||!rf.country.value.trim()||!rf.checkin.value||!rf.checkout.value){$('registrationMessage').textContent=currentLang==='nl'?'Vul alle gastgegevens en verblijfsdata in.':'Complete all guest information and stay dates.';return;}
+  const s=await session(); const payload={full_name:rf.name.value.trim(),home_address:rf.address.value.trim(),postal_code:rf.postal.value.trim(),city:rf.city.value.trim(),country:rf.country.value.trim(),checkin_date:rf.checkin.value,checkout_date:rf.checkout.value,booking_reference:rf.booking.value.trim()||null,invoice_requested:rf.invoiceRequested.checked,invoice_type:rf.invoiceRequested.checked?rf.invoiceType.value:null,email:rf.invoiceRequested.checked?rf.email.value.trim()||null:null,company_name:rf.invoiceRequested.checked&&rf.invoiceType.value==='company'?rf.companyName.value.trim()||null:null,company_address:rf.invoiceRequested.checked&&rf.invoiceType.value==='company'?rf.companyAddress.value.trim()||null:null,vat_number:rf.invoiceRequested.checked&&rf.invoiceType.value==='company'?rf.vat.value.trim()||null:null,declaration_accepted:true,source:rf.source.value||'paper_manual',id_type:rf.idType.value||null,id_other:rf.idType.value==='other'?rf.idOther.value.trim()||null:null,id_verified:rf.idVerified.checked,id_verified_at:rf.idVerified.checked?new Date().toISOString():null,id_verified_by:rf.idVerified.checked?s.user.id:null};
+  let q=currentRegistrationId?supabaseClient.from('guest_registrations').update(payload).eq('id',currentRegistrationId).select().single():supabaseClient.from('guest_registrations').insert([{...payload,submitted_at:new Date().toISOString()}]).select().single();
+  const {data,error}=await q;if(error){$('registrationMessage').textContent=error.message;return;} currentRegistrationId=data.id;rf.id.value=data.id;$('registrationMessage').textContent=tr[currentLang].savedReg;await loadRegs();
+}
+async function loadRegs(){const {data,error}=await supabaseClient.from('guest_registrations').select('*').order('checkin_date',{ascending:false}).limit(250);if(error){$('registrationList').innerHTML=`<p class="muted">${error.message}</p>`;return;}registrations=data||[];renderRegs();}
+function renderRegs(){const x=tr[currentLang],q=($('registrationSearch').value||'').toLowerCase();const rows=registrations.filter(r=>[r.full_name,r.email,r.booking_reference,r.company_name].filter(Boolean).some(v=>v.toLowerCase().includes(q)));$('registrationList').innerHTML='';if(!rows.length){$('registrationList').innerHTML=`<p class="muted">${x.noRegs}</p>`;return;}rows.forEach(r=>{const d=document.createElement('div');d.className='registration-item';d.innerHTML=`<strong>${escapeHtml(r.full_name)}</strong><span class="muted">${fmt(r.checkin_date)} → ${fmt(r.checkout_date)}</span><div class="registration-badges"><span class="badge ${r.id_verified?'good':'warn'}">${r.id_verified?(currentLang==='nl'?'ID gecontroleerd':'ID verified'):(currentLang==='nl'?'ID nog controleren':'ID to verify')}</span>${r.invoice_requested?`<span class="badge">${currentLang==='nl'?'Factuur gevraagd':'Invoice requested'}</span>`:''}<span class="badge">${r.source==='paper_manual'?(currentLang==='nl'?'Papier':'Paper'):(currentLang==='nl'?'Digitaal':'Digital')}</span></div>`;d.onclick=()=>loadReg(r);$('registrationList').appendChild(d);});}
+function escapeHtml(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
 
-  return date.toLocaleDateString(
-    lang === 'nl' ? 'nl-NL' : 'en-GB',
-    { day: 'numeric', month: 'long', year: 'numeric' }
-  );
+function useRegistrationForInvoice(){
+  f.registrationId.value=currentRegistrationId||'';f.guestName.value=rf.name.value;f.guestAddress.value=rf.address.value;f.guestPostal.value=rf.postal.value;f.guestCity.value=rf.city.value;f.guestCountry.value=rf.country.value;f.companyName.value=rf.invoiceType.value==='company'?rf.companyName.value:'';f.companyAddress.value=rf.invoiceType.value==='company'?rf.companyAddress.value:'';f.vat.value=rf.invoiceType.value==='company'?rf.vat.value:'';f.email.value=rf.email.value;f.booking.value=rf.booking.value;f.checkin.value=rf.checkin.value;f.checkout.value=rf.checkout.value;manualNights=false;autoNights();updatePreview();document.querySelector('.form-card').scrollIntoView({behavior:'smooth'});
 }
 
-function calculateNightsFromDates() {
-  const checkin = fields.checkinDate.value;
-  const checkout = fields.checkoutDate.value;
-  if (!checkin || !checkout) return null;
-
-  const start = new Date(checkin + 'T00:00:00');
-  const end = new Date(checkout + 'T00:00:00');
-  const diff = Math.round((end - start) / (1000 * 60 * 60 * 24));
-  return diff > 0 ? diff : null;
-}
-
-function autoUpdateNights() {
-  if (manualNightsOverride) return;
-  const calculated = calculateNightsFromDates();
-  if (calculated !== null) fields.nights.value = calculated;
-}
-
-function getRoomValue() {
-  return fields.roomName.value === 'custom'
-    ? (fields.customRoomName.value.trim() || (currentLang === 'nl' ? 'Aangepaste kamer' : 'Custom Room'))
-    : fields.roomName.value;
-}
-
-function getPaymentValue() {
-  return fields.paymentMethod.value === 'custom'
-    ? (fields.customPaymentMethod.value.trim() || (currentLang === 'nl' ? 'Aangepaste betaalmethode' : 'Custom payment method'))
-    : fields.paymentMethod.value;
-}
-
-function toggleCustomFields() {
-  document.getElementById('customRoomField').classList.toggle('hidden', fields.roomName.value !== 'custom');
-  document.getElementById('customPaymentField').classList.toggle('hidden', fields.paymentMethod.value !== 'custom');
-}
-
-function clearValidationState() {
-  document.querySelectorAll('.field.invalid').forEach(el => el.classList.remove('invalid'));
-}
-
-function markInvalid(fieldElement) {
-  const wrapper = fieldElement.closest('.field');
-  if (wrapper) wrapper.classList.add('invalid');
-}
-
-function validateRequiredFields() {
-  clearValidationState();
-  const t = translations[currentLang];
-
-  const checks = [
-    { el: fields.invoiceNumber, label: t.invoiceNumber },
-    { el: fields.invoiceDate, label: t.invoiceDate },
-    { el: fields.guestName, label: t.guestName },
-    { el: fields.roomName, label: t.roomName },
-    { el: fields.checkinDate, label: t.checkin },
-    { el: fields.checkoutDate, label: t.checkout },
-    { el: fields.nights, label: t.nights },
-    { el: fields.guests, label: t.guests },
-    { el: fields.accommodationAmount, label: t.accommodation },
-    { el: fields.cleaningFee, label: t.cleaning },
-    { el: fields.touristTaxRate, label: t.touristTaxRate },
-    { el: fields.taxMode, label: t.taxMode },
-    { el: fields.paymentMethod, label: t.paymentMethod }
-  ];
-
-  for (const item of checks) {
-    if (!item.el.value || String(item.el.value).trim() === '') {
-      markInvalid(item.el);
-      return `${t.pleaseFillIn}: ${item.label}`;
-    }
-  }
-
-  if (fields.roomName.value === 'custom' && !fields.customRoomName.value.trim()) {
-    markInvalid(fields.customRoomName);
-    return `${t.pleaseFillIn}: ${t.customRoomName}`;
-  }
-
-  if (fields.paymentMethod.value === 'custom' && !fields.customPaymentMethod.value.trim()) {
-    markInvalid(fields.customPaymentMethod);
-    return `${t.pleaseFillIn}: ${t.customPayment}`;
-  }
-
-  const nights = Number(fields.nights.value || 0);
-  const guests = Number(fields.guests.value || 0);
-  const accommodation = Number(fields.accommodationAmount.value || 0);
-  const cleaning = Number(fields.cleaningFee.value || 0);
-  const touristTaxRate = Number(fields.touristTaxRate.value || 0);
-
-  if (nights <= 0) {
-    markInvalid(fields.nights);
-    return t.invalidNights;
-  }
-  if (guests <= 0) {
-    markInvalid(fields.guests);
-    return t.invalidGuests;
-  }
-  if (accommodation < 0) {
-    markInvalid(fields.accommodationAmount);
-    return t.invalidAccommodation;
-  }
-  if (cleaning < 0) {
-    markInvalid(fields.cleaningFee);
-    return t.invalidCleaning;
-  }
-  if (touristTaxRate < 0) {
-    markInvalid(fields.touristTaxRate);
-    return t.invalidTouristTax;
-  }
-
-  return null;
-}
-
-async function getSession() {
-  const { data } = await supabaseClient.auth.getSession();
-  return data.session;
-}
-
-async function isAuthorizedUser() {
-  const { data, error } = await supabaseClient.rpc('is_allowed_user');
-  if (error) return false;
-  return data === true;
-}
-
-async function sendMagicLink(email) {
-  const { error } = await supabaseClient.auth.signInWithOtp({
-    email,
-    options: {
-      emailRedirectTo: 'https://nijmegenguestrooms.com/invoice-app/'
-    }
-  });
-
-  loginMessage.textContent = error ? error.message : translations[currentLang].checkEmail;
-}
-
-async function signOut() {
-  await supabaseClient.auth.signOut();
-  showLogin();
-}
-
-function showLogin() {
-  loginView.classList.remove('hidden');
-  appView.classList.add('hidden');
-  logoutBtn.classList.add('hidden');
-}
-
-function showApp() {
-  loginView.classList.add('hidden');
-  appView.classList.remove('hidden');
-  logoutBtn.classList.remove('hidden');
-}
-
-function clearForm() {
-  currentInvoiceId = null;
-  manualNightsOverride = false;
-  fields.invoiceDate.value = todayISO();
-  fields.guestName.value = '';
-  fields.companyName.value = '';
-  fields.vatNumber.value = '';
-  fields.guestEmail.value = '';
-  fields.bookingReference.value = '';
-  fields.roomName.value = currentLang === 'nl' ? translations.nl.roomOption2 : translations.en.roomOption2;
-  fields.customRoomName.value = '';
-  fields.checkinDate.value = '';
-  fields.checkoutDate.value = '';
-  fields.nights.value = '';
-  fields.guests.value = 1;
-  fields.accommodationAmount.value = '';
-  fields.cleaningFee.value = '5.00';
-  fields.touristTaxRate.value = '3.71';
-  fields.taxMode.value = 'included';
-  fields.paymentMethod.value = currentLang === 'nl' ? translations.nl.payBooking : translations.en.payBooking;
-  fields.customPaymentMethod.value = '';
-  toggleCustomFields();
-  deleteBtn.classList.add('hidden');
-  duplicateBtn.classList.add('hidden');
-  clearValidationState();
-  updatePreview();
-}
-
-async function getNextInvoiceNumber() {
-  const year = new Date(fields.invoiceDate.value || todayISO()).getFullYear();
-
-  const { data, error } = await supabaseClient
-    .from('invoices')
-    .select('invoice_sequence')
-    .eq('invoice_year', year)
-    .order('invoice_sequence', { ascending: false })
-    .limit(1);
-
-  if (error || !data) return `${year}-001`;
-
-  const nextSequence = data.length ? data[0].invoice_sequence + 1 : 1;
-  return `${year}-${String(nextSequence).padStart(3, '0')}`;
-}
-
-function parseInvoiceNumber(invoiceNumber) {
-  const [yearStr, seqStr] = invoiceNumber.split('-');
-  return {
-    invoice_year: Number(yearStr),
-    invoice_sequence: Number(seqStr)
-  };
-}
-
-async function saveInvoice() {
-  saveMessage.textContent = '';
-
-  const session = await getSession();
-  if (!session) {
-    saveMessage.textContent = translations[currentLang].notLoggedIn;
-    return;
-  }
-
-  const invoiceNumber = fields.invoiceNumber.value.trim();
-  const { invoice_year, invoice_sequence } = parseInvoiceNumber(invoiceNumber);
-
-  const nights = Number(fields.nights.value || 0);
-  const guests = Number(fields.guests.value || 1);
-  const accommodation_amount = Number(fields.accommodationAmount.value || 0);
-  const cleaning_fee = Number(fields.cleaningFee.value || 0);
-  const tourist_tax_rate = Number(fields.touristTaxRate.value || 0);
-  const tourist_tax_total = nights * guests * tourist_tax_rate;
-  const tax_mode = fields.taxMode.value;
-  const total_paid = tax_mode === 'included'
-    ? accommodation_amount + cleaning_fee
-    : accommodation_amount + cleaning_fee + tourist_tax_total;
-
-  const payload = {
-    invoice_number: invoiceNumber,
-    invoice_year,
-    invoice_sequence,
-    invoice_date: fields.invoiceDate.value,
-    guest_name: fields.guestName.value.trim(),
-    company_name: fields.companyName.value.trim(),
-    vat_number: fields.vatNumber.value.trim(),
-    guest_email: fields.guestEmail.value.trim(),
-    booking_reference: fields.bookingReference.value.trim(),
-    room_name: getRoomValue(),
-    checkin_date: fields.checkinDate.value,
-    checkout_date: fields.checkoutDate.value,
-    nights,
-    guests,
-    accommodation_amount,
-    cleaning_fee,
-    tourist_tax_rate,
-    tourist_tax_total,
-    tax_mode,
-    total_paid,
-    payment_method: getPaymentValue(),
-    created_by: session.user.id
-  };
-
-  let result;
-  if (currentInvoiceId) {
-    result = await supabaseClient
-      .from('invoices')
-      .update(payload)
-      .eq('id', currentInvoiceId)
-      .select()
-      .single();
-  } else {
-    result = await supabaseClient
-      .from('invoices')
-      .insert([payload])
-      .select()
-      .single();
-  }
-
-  if (result.error) {
-    saveMessage.textContent = result.error.message;
-    return;
-  }
-
-  currentInvoiceId = result.data.id;
-  deleteBtn.classList.remove('hidden');
-  duplicateBtn.classList.remove('hidden');
-  saveMessage.textContent = translations[currentLang].saved;
-  await loadInvoices();
-}
-
-async function duplicateInvoice() {
-  const validationError = validateRequiredFields();
-  if (validationError) {
-    saveMessage.textContent = validationError;
-    return;
-  }
-
-  currentInvoiceId = null;
-  fields.invoiceDate.value = todayISO();
-  fields.invoiceNumber.value = await getNextInvoiceNumber();
-
-  deleteBtn.classList.add('hidden');
-  duplicateBtn.classList.add('hidden');
-  saveMessage.textContent = translations[currentLang].duplicated;
-  updatePreview();
-}
-
-async function deleteInvoice() {
-  if (!currentInvoiceId) return;
-
-  const confirmed = window.confirm(translations[currentLang].confirmDelete);
-  if (!confirmed) return;
-
-  const { error } = await supabaseClient
-    .from('invoices')
-    .delete()
-    .eq('id', currentInvoiceId);
-
-  if (error) {
-    saveMessage.textContent = error.message;
-    return;
-  }
-
-  saveMessage.textContent = translations[currentLang].deleted;
-  await prepareNewInvoice();
-  await loadInvoices();
-}
-
-function getTotalPages() {
-  return Math.max(1, Math.ceil(filteredInvoices.length / PAGE_SIZE));
-}
-
-function updatePaginationControls() {
-  const t = translations[currentLang];
-  const totalPages = getTotalPages();
-
-  if (currentPage > totalPages) currentPage = totalPages;
-  if (currentPage < 1) currentPage = 1;
-
-  prevPageBtn.disabled = currentPage <= 1;
-  nextPageBtn.disabled = currentPage >= totalPages;
-
-  paginationInfo.textContent = t.pageOf
-    .replace('{current}', String(currentPage))
-    .replace('{total}', String(totalPages));
-}
-
-function renderInvoiceList() {
-  if (!filteredInvoices.length) {
-    invoiceList.innerHTML = `<p class="muted">${translations[currentLang].noInvoices}</p>`;
-    updatePaginationControls();
-    return;
-  }
-
-  const start = (currentPage - 1) * PAGE_SIZE;
-  const end = start + PAGE_SIZE;
-  const pageItems = filteredInvoices.slice(start, end);
-
-  invoiceList.innerHTML = '';
-  pageItems.forEach(invoice => {
-    const item = document.createElement('div');
-    item.className = 'invoice-item';
-    item.innerHTML = `
-      <strong>${invoice.invoice_number}</strong>
-      <span>${invoice.company_name ? invoice.company_name + ' — ' : ''}${invoice.guest_name}</span><br>
-      <span class="muted">${formatDateForLang(invoice.invoice_date, currentLang)} · €${Number(invoice.total_paid).toFixed(2)}</span>
-      ${invoice.booking_reference ? `<br><span class="muted">${invoice.booking_reference}</span>` : ''}
-    `;
-    item.addEventListener('click', () => loadInvoiceIntoForm(invoice));
-    invoiceList.appendChild(item);
-  });
-
-  updatePaginationControls();
-}
-
-function filterInvoices(resetPage = true) {
-  const query = (searchInvoicesInput.value || '').trim().toLowerCase();
-
-  if (!query) {
-    filteredInvoices = [...allInvoices];
-  } else {
-    filteredInvoices = allInvoices.filter(invoice => {
-      return [
-        invoice.invoice_number,
-        invoice.guest_name,
-        invoice.company_name,
-        invoice.vat_number,
-        invoice.guest_email,
-        invoice.booking_reference
-      ]
-        .filter(Boolean)
-        .some(value => String(value).toLowerCase().includes(query));
-    });
-  }
-
-  if (resetPage) currentPage = 1;
-  renderInvoiceList();
-}
-
-async function loadInvoices() {
-  invoiceList.innerHTML = `<p class="muted">${translations[currentLang].loading}</p>`;
-
-  const { data, error } = await supabaseClient
-    .from('invoices')
-    .select('*')
-    .order('invoice_year', { ascending: false })
-    .order('invoice_sequence', { ascending: false });
-
-  if (error) {
-    invoiceList.innerHTML = `<p class="muted">${error.message}</p>`;
-    return;
-  }
-
-  allInvoices = data || [];
-  filterInvoices(true);
-}
-
-function loadInvoiceIntoForm(invoice) {
-  currentInvoiceId = invoice.id;
-  manualNightsOverride = true;
-
-  fields.invoiceNumber.value = invoice.invoice_number;
-  fields.invoiceDate.value = invoice.invoice_date;
-  fields.guestName.value = invoice.guest_name || '';
-  fields.companyName.value = invoice.company_name || '';
-  fields.vatNumber.value = invoice.vat_number || '';
-  fields.guestEmail.value = invoice.guest_email || '';
-  fields.bookingReference.value = invoice.booking_reference || '';
-
-  const knownRooms = [
-    translations.en.roomOption1, translations.en.roomOption2,
-    translations.nl.roomOption1, translations.nl.roomOption2
-  ];
-
-  if (knownRooms.includes(invoice.room_name)) {
-    if (invoice.room_name === translations.en.roomOption2 || invoice.room_name === translations.nl.roomOption2) {
-      fields.roomName.value = currentLang === 'nl' ? translations.nl.roomOption2 : translations.en.roomOption2;
-    } else {
-      fields.roomName.value = currentLang === 'nl' ? translations.nl.roomOption1 : translations.en.roomOption1;
-    }
-    fields.customRoomName.value = '';
-  } else {
-    fields.roomName.value = 'custom';
-    fields.customRoomName.value = invoice.room_name || '';
-  }
-
-  fields.checkinDate.value = invoice.checkin_date;
-  fields.checkoutDate.value = invoice.checkout_date;
-  fields.nights.value = invoice.nights;
-  fields.guests.value = invoice.guests;
-  fields.accommodationAmount.value = invoice.accommodation_amount;
-  fields.cleaningFee.value = invoice.cleaning_fee;
-  fields.touristTaxRate.value = invoice.tourist_tax_rate;
-  fields.taxMode.value = invoice.tax_mode;
-
-  const knownPayments = [
-    translations.en.payBooking, translations.en.payAirbnb,
-    translations.nl.payBooking, translations.nl.payAirbnb
-  ];
-
-  if (knownPayments.includes(invoice.payment_method)) {
-    if (invoice.payment_method === translations.en.payBooking || invoice.payment_method === translations.nl.payBooking) {
-      fields.paymentMethod.value = currentLang === 'nl' ? translations.nl.payBooking : translations.en.payBooking;
-    } else {
-      fields.paymentMethod.value = currentLang === 'nl' ? translations.nl.payAirbnb : translations.en.payAirbnb;
-    }
-    fields.customPaymentMethod.value = '';
-  } else {
-    fields.paymentMethod.value = 'custom';
-    fields.customPaymentMethod.value = invoice.payment_method || '';
-  }
-
-  deleteBtn.classList.remove('hidden');
-  duplicateBtn.classList.remove('hidden');
-  toggleCustomFields();
-  clearValidationState();
-  updatePreview();
-  saveMessage.textContent = '';
-}
-
-function updateTexts() {
-  const t = translations[currentLang];
-
-  document.documentElement.lang = currentLang;
-  document.querySelectorAll('.lang-btn').forEach(btn => {
-    btn.classList.toggle('active', btn.dataset.lang === currentLang);
-  });
-
-  document.getElementById('pageTitle').textContent = t.pageTitle;
-  document.getElementById('pageSubtitle').textContent = t.pageSubtitle;
-  document.getElementById('loginTitle').textContent = t.loginTitle;
-  document.getElementById('loginText').textContent = t.loginText;
-  document.getElementById('labelLoginEmail').textContent = t.loginEmail;
-  document.getElementById('loginBtn').textContent = t.loginBtn;
-  document.getElementById('logoutBtn').textContent = t.logout;
-  document.getElementById('formTitle').textContent = t.formTitle;
-  document.getElementById('newInvoiceBtn').textContent = t.newInvoice;
-  document.getElementById('duplicateBtn').textContent = t.duplicateInvoice;
-  document.getElementById('labelInvoiceNumber').textContent = t.invoiceNumber;
-  document.getElementById('labelInvoiceDate').textContent = t.invoiceDate;
-  document.getElementById('labelGuestName').textContent = t.guestName;
-  document.getElementById('labelCompanyName').textContent = t.companyName;
-  document.getElementById('labelVatNumber').textContent = t.vatNumber;
-  document.getElementById('labelGuestEmail').textContent = t.guestEmail;
-  document.getElementById('labelBookingReference').textContent = t.bookingReference;
-  document.getElementById('labelRoomName').textContent = t.roomName;
-  document.getElementById('labelCustomRoomName').textContent = t.customRoomName;
-  document.getElementById('labelCheckin').textContent = t.checkin;
-  document.getElementById('labelCheckout').textContent = t.checkout;
-  document.getElementById('labelNights').textContent = t.nights;
-  document.getElementById('labelGuests').textContent = t.guests;
-  document.getElementById('labelAccommodation').textContent = t.accommodation;
-  document.getElementById('labelCleaning').textContent = t.cleaning;
-  document.getElementById('labelTouristTaxRate').textContent = t.touristTaxRate;
-  document.getElementById('labelTaxMode').textContent = t.taxMode;
-  document.getElementById('labelPaymentMethod').textContent = t.paymentMethod;
-  document.getElementById('labelCustomPayment').textContent = t.customPayment;
-  document.getElementById('saveBtn').textContent = t.save;
-  document.getElementById('deleteBtn').textContent = t.delete;
-  document.getElementById('printBtn').textContent = t.print;
-  document.getElementById('savedInvoicesTitle').textContent = t.savedInvoices;
-  document.getElementById('labelSearchInvoices').textContent = t.searchInvoices;
-  document.getElementById('searchInvoices').placeholder = t.searchPlaceholder;
-  prevPageBtn.textContent = t.previous;
-  nextPageBtn.textContent = t.next;
-
-  const currentRoom = fields.roomName.value;
-  fields.roomName.innerHTML = `
-    <option value="${t.roomOption2}">${t.roomOption2}</option>
-    <option value="${t.roomOption1}">${t.roomOption1}</option>
-    <option value="custom">${t.roomOptionCustom}</option>
-  `;
-  if (currentRoom === 'custom') {
-    fields.roomName.value = 'custom';
-  } else if (
-    currentRoom === translations.en.roomOption2 ||
-    currentRoom === translations.nl.roomOption2
-  ) {
-    fields.roomName.value = t.roomOption2;
-  } else if (
-    currentRoom === translations.en.roomOption1 ||
-    currentRoom === translations.nl.roomOption1
-  ) {
-    fields.roomName.value = t.roomOption1;
-  }
-
-  const currentPayment = fields.paymentMethod.value;
-  fields.paymentMethod.innerHTML = `
-    <option value="${t.payBooking}">${t.payBooking}</option>
-    <option value="${t.payAirbnb}">${t.payAirbnb}</option>
-    <option value="custom">${t.payCustom}</option>
-  `;
-  if (currentPayment === 'custom') {
-    fields.paymentMethod.value = 'custom';
-  } else if (
-    currentPayment === translations.en.payBooking ||
-    currentPayment === translations.nl.payBooking
-  ) {
-    fields.paymentMethod.value = t.payBooking;
-  } else if (
-    currentPayment === translations.en.payAirbnb ||
-    currentPayment === translations.nl.payAirbnb
-  ) {
-    fields.paymentMethod.value = t.payAirbnb;
-  }
-
-  fields.taxMode.innerHTML = `
-    <option value="included">${t.taxModeIncluded}</option>
-    <option value="excluded">${t.taxModeExcluded}</option>
-  `;
-
-  document.getElementById('previewLabelVatNumber').textContent = t.labelVatNumber;
-  updatePaginationControls();
-}
-
-function updatePreview() {
-  const t = translations[currentLang];
-  autoUpdateNights();
-
-  const nights = Number(fields.nights.value || 0);
-  const guests = Number(fields.guests.value || 1);
-  const accommodation = Number(fields.accommodationAmount.value || 0);
-  const cleaning = Number(fields.cleaningFee.value || 0);
-  const touristTaxRate = Number(fields.touristTaxRate.value || 0);
-  const touristTaxTotal = nights * guests * touristTaxRate;
-  const total = fields.taxMode.value === 'included'
-    ? accommodation + cleaning
-    : accommodation + cleaning + touristTaxTotal;
-
-  document.getElementById('previewInvoiceTitle').textContent = t.invoiceTitle;
-  document.getElementById('previewLabelInvoiceNumber').textContent = t.labelInvoiceNumber;
-  document.getElementById('previewLabelInvoiceDate').textContent = t.labelDate;
-  document.getElementById('previewSectionGuest').textContent = t.sectionGuest;
-  document.getElementById('previewLabelVatNumber').textContent = t.labelVatNumber;
-  document.getElementById('previewLabelBookingReference').textContent = t.labelBookingReference;
-  document.getElementById('previewSectionStay').textContent = t.sectionStay;
-  document.getElementById('previewLabelRoom').textContent = t.labelRoom;
-  document.getElementById('previewLabelCheckin2').textContent = t.labelCheckin;
-  document.getElementById('previewLabelCheckout2').textContent = t.labelCheckout;
-  document.getElementById('previewLabelNights2').textContent = t.labelNights;
-  document.getElementById('previewLabelGuests2').textContent = t.labelGuests;
-  document.getElementById('previewSectionDescription').textContent = t.sectionDescription;
-  document.getElementById('previewDescription').textContent = t.description;
-  document.getElementById('previewSectionPrice').textContent = t.sectionPrice;
-  document.getElementById('previewLabelAccommodation').textContent = t.labelAccommodation;
-  document.getElementById('previewLabelCleaning').textContent = t.labelCleaning;
-  document.getElementById('previewLabelTaxRate').textContent = t.labelTaxRate;
-  document.getElementById('previewLabelTaxTotal').textContent =
-    fields.taxMode.value === 'included' ? t.labelTaxIncluded : t.labelTaxAdded;
-  document.getElementById('previewLabelTotal').textContent = t.labelTotal;
-  document.getElementById('previewSectionPayment').textContent = t.sectionPayment;
-  document.getElementById('previewNote').textContent = t.note;
-
-  document.getElementById('previewInvoiceNumber').textContent = fields.invoiceNumber.value || '—';
-  document.getElementById('previewInvoiceDate').textContent = formatDateForLang(fields.invoiceDate.value, currentLang);
-
-  const companyName = fields.companyName.value.trim();
-  const guestName = fields.guestName.value.trim();
-  const vatNumber = fields.vatNumber.value.trim();
-  const guestEmail = fields.guestEmail.value.trim();
-  const bookingReference = fields.bookingReference.value.trim();
-
-  const previewCompanyName = document.getElementById('previewCompanyName');
-  const previewGuestName = document.getElementById('previewGuestName');
-  const previewVatNumberWrap = document.getElementById('previewVatNumberWrap');
-  const previewGuestEmail = document.getElementById('previewGuestEmail');
-  const previewBookingReferenceWrap = document.getElementById('previewBookingReferenceWrap');
-
-  if (companyName) {
-    previewCompanyName.textContent = companyName;
-    previewCompanyName.classList.remove('hidden');
-    previewCompanyName.style.fontWeight = '700';
-    previewCompanyName.style.color = 'var(--heading)';
-  } else {
-    previewCompanyName.textContent = '';
-    previewCompanyName.classList.add('hidden');
-  }
-
-  previewGuestName.textContent = guestName || '—';
-  previewGuestName.style.fontWeight = companyName ? '400' : '700';
-  previewGuestName.style.color = companyName ? '' : 'var(--heading)';
-
-  document.getElementById('previewVatNumber').textContent = vatNumber;
-  previewVatNumberWrap.classList.toggle('hidden', !vatNumber);
-
-  previewGuestEmail.textContent = guestEmail;
-  previewGuestEmail.style.display = guestEmail ? 'block' : 'none';
-
-  document.getElementById('previewBookingReference').textContent = bookingReference;
-  previewBookingReferenceWrap.classList.toggle('hidden', !bookingReference);
-
-  document.getElementById('previewRoomName').textContent = getRoomValue() || '—';
-  document.getElementById('previewCheckin').textContent = formatDateForLang(fields.checkinDate.value, currentLang);
-  document.getElementById('previewCheckout').textContent = formatDateForLang(fields.checkoutDate.value, currentLang);
-  document.getElementById('previewNights').textContent = nights || '—';
-  document.getElementById('previewGuests').textContent = guests;
-
-  document.getElementById('previewAccommodation').textContent = formatEuro(accommodation);
-  document.getElementById('previewCleaning').textContent = formatEuro(cleaning);
-  document.getElementById('previewTouristTaxRate').textContent = `${formatEuro(touristTaxRate)} × ${guests} × ${nights}`;
-  document.getElementById('previewTouristTax').textContent = formatEuro(touristTaxTotal);
-  document.getElementById('previewTotal').textContent = formatEuro(total);
-  document.getElementById('previewPaymentMethod').textContent = getPaymentValue() || '—';
-}
-
-async function prepareNewInvoice() {
-  clearForm();
-  fields.invoiceDate.value = todayISO();
-  fields.invoiceNumber.value = await getNextInvoiceNumber();
-  updatePreview();
-  saveMessage.textContent = '';
-}
-
-loginBtn.addEventListener('click', async () => {
-  const email = loginEmail.value.trim();
-  if (!email) {
-    loginMessage.textContent = translations[currentLang].enterEmail;
-    return;
-  }
-  await sendMagicLink(email);
-});
-
-logoutBtn.addEventListener('click', signOut);
-
-saveBtn.addEventListener('click', async () => {
-  const validationError = validateRequiredFields();
-  if (validationError) {
-    saveMessage.textContent = validationError;
-    return;
-  }
-  await saveInvoice();
-});
-
-duplicateBtn.addEventListener('click', duplicateInvoice);
-deleteBtn.addEventListener('click', deleteInvoice);
-
-printBtn.addEventListener('click', () => {
-  const validationError = validateRequiredFields();
-  if (validationError) {
-    saveMessage.textContent = validationError;
-    return;
-  }
-  window.print();
-});
-
-newInvoiceBtn.addEventListener('click', prepareNewInvoice);
-searchInvoicesInput.addEventListener('input', () => filterInvoices(true));
-
-prevPageBtn.addEventListener('click', () => {
-  if (currentPage > 1) {
-    currentPage -= 1;
-    renderInvoiceList();
-  }
-});
-
-nextPageBtn.addEventListener('click', () => {
-  if (currentPage < getTotalPages()) {
-    currentPage += 1;
-    renderInvoiceList();
-  }
-});
-
-document.querySelectorAll('.lang-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    currentLang = btn.dataset.lang;
-    updateTexts();
-    toggleCustomFields();
-    updatePreview();
-    renderInvoiceList();
-  });
-});
-
-fields.roomName.addEventListener('change', () => {
-  toggleCustomFields();
-  updatePreview();
-});
-
-fields.paymentMethod.addEventListener('change', () => {
-  toggleCustomFields();
-  updatePreview();
-});
-
-fields.checkinDate.addEventListener('change', () => {
-  manualNightsOverride = false;
-  autoUpdateNights();
-  updatePreview();
-});
-
-fields.checkoutDate.addEventListener('change', () => {
-  manualNightsOverride = false;
-  autoUpdateNights();
-  updatePreview();
-});
-
-fields.nights.addEventListener('input', () => {
-  manualNightsOverride = true;
-  updatePreview();
-});
-
-[
-  'invoiceNumber', 'invoiceDate', 'guestName', 'companyName', 'vatNumber', 'guestEmail', 'bookingReference', 'customRoomName',
-  'guests', 'accommodationAmount', 'cleaningFee', 'touristTaxRate',
-  'taxMode', 'customPaymentMethod'
-].forEach(id => {
-  fields[id].addEventListener('input', () => {
-    clearValidationState();
-    updatePreview();
-  });
-  fields[id].addEventListener('change', () => {
-    clearValidationState();
-    updatePreview();
-  });
-});
-
-async function init() {
-  updateTexts();
-  toggleCustomFields();
-
-  const session = await getSession();
-  if (!session) {
-    showLogin();
-    return;
-  }
-
-  const allowed = await isAuthorizedUser();
-  if (!allowed) {
-    await supabaseClient.auth.signOut();
-    showLogin();
-    loginMessage.textContent = translations[currentLang].accessDenied;
-    return;
-  }
-
-  showApp();
-  await prepareNewInvoice();
-  await loadInvoices();
-}
-
+async function nextInvoice(){const y=new Date(f.invoiceDate.value||today()).getFullYear();const {data}=await supabaseClient.from('invoices').select('invoice_sequence').eq('invoice_year',y).order('invoice_sequence',{ascending:false}).limit(1);const n=data?.length?data[0].invoice_sequence+1:1;return `${y}-${String(n).padStart(3,'0')}`;}
+function autoNights(){if(manualNights)return;const n=nightsBetween();if(n)f.nights.value=n;}
+async function newInvoice(){currentInvoiceId=null;manualNights=false;f.registrationId.value='';f.invoiceDate.value=today();f.invoiceNumber.value=await nextInvoice();for(const k of ['guestName','guestAddress','guestPostal','guestCity','guestCountry','companyName','companyAddress','vat','email','booking','customRoom','checkin','checkout','nights','accommodation','customPayment'])f[k].value='';f.guests.value=1;f.cleaning.value='5.00';f.tourist.value='3.71';f.taxMode.value='included';f.room.value=tr[currentLang].cozy;f.payment.value=tr[currentLang].booking;$('deleteBtn').classList.add('hidden');$('duplicateBtn').classList.add('hidden');toggleInvoiceCustom();updatePreview();$('saveMessage').textContent='';}
+function validateInvoice(){for(const k of ['invoiceNumber','invoiceDate','guestName','room','checkin','checkout','nights','guests','accommodation','cleaning','tourist','taxMode','payment'])if(!String(f[k].value??'').trim())return false;if(f.room.value==='custom'&&!f.customRoom.value.trim())return false;if(f.payment.value==='custom'&&!f.customPayment.value.trim())return false;return Number(f.nights.value)>0&&Number(f.guests.value)>0;}
+async function saveInvoice(){if(!validateInvoice()){$('saveMessage').textContent=tr[currentLang].required;return;}const s=await session();const [year,seq]=f.invoiceNumber.value.split('-');const n=Number(f.nights.value),g=Number(f.guests.value),a=Number(f.accommodation.value||0),c=Number(f.cleaning.value||0),rate=Number(f.tourist.value||0),tax=n*g*rate,total=f.taxMode.value==='included'?a+c:a+c+tax;const payload={invoice_number:f.invoiceNumber.value,invoice_year:Number(year),invoice_sequence:Number(seq),invoice_date:f.invoiceDate.value,guest_name:f.guestName.value.trim(),guest_email:f.email.value.trim(),booking_reference:f.booking.value.trim(),guest_address:f.guestAddress.value.trim(),guest_postal_code:f.guestPostal.value.trim(),guest_city:f.guestCity.value.trim(),guest_country:f.guestCountry.value.trim(),company_name:f.companyName.value.trim(),company_address:f.companyAddress.value.trim(),vat_number:f.vat.value.trim(),guest_registration_id:f.registrationId.value||null,room_name:roomValue(),checkin_date:f.checkin.value,checkout_date:f.checkout.value,nights:n,guests:g,accommodation_amount:a,cleaning_fee:c,tourist_tax_rate:rate,tourist_tax_total:tax,tax_mode:f.taxMode.value,total_paid:total,payment_method:paymentValue(),created_by:s.user.id};const q=currentInvoiceId?supabaseClient.from('invoices').update(payload).eq('id',currentInvoiceId).select().single():supabaseClient.from('invoices').insert([payload]).select().single();const {data,error}=await q;if(error){$('saveMessage').textContent=error.message;return;}currentInvoiceId=data.id;$('deleteBtn').classList.remove('hidden');$('duplicateBtn').classList.remove('hidden');$('saveMessage').textContent=tr[currentLang].savedInvoice;await loadInvoices();}
+async function loadInvoices(){const {data,error}=await supabaseClient.from('invoices').select('*').order('invoice_year',{ascending:false}).order('invoice_sequence',{ascending:false}).limit(300);if(error){$('invoiceList').innerHTML=`<p class="muted">${error.message}</p>`;return;}invoices=data||[];renderInvoices();}
+function renderInvoices(){const x=tr[currentLang],q=($('searchInvoices').value||'').toLowerCase(),rows=invoices.filter(i=>[i.invoice_number,i.guest_name,i.company_name,i.guest_email,i.booking_reference].filter(Boolean).some(v=>String(v).toLowerCase().includes(q)));$('invoiceList').innerHTML='';if(!rows.length){$('invoiceList').innerHTML=`<p class="muted">${x.noInvoices}</p>`;return;}rows.forEach(i=>{const d=document.createElement('div');d.className='invoice-item';d.innerHTML=`<strong>${escapeHtml(i.invoice_number)}</strong><span>${escapeHtml(i.company_name?i.company_name+' — ':'')}${escapeHtml(i.guest_name)}</span><br><span class="muted">${fmt(i.invoice_date)} · €${Number(i.total_paid).toFixed(2)}</span>`;d.onclick=()=>loadInvoice(i);$('invoiceList').appendChild(d);});}
+function loadInvoice(i){currentInvoiceId=i.id;manualNights=true;f.registrationId.value=i.guest_registration_id||'';f.invoiceNumber.value=i.invoice_number;f.invoiceDate.value=i.invoice_date;f.guestName.value=i.guest_name||'';f.guestAddress.value=i.guest_address||'';f.guestPostal.value=i.guest_postal_code||'';f.guestCity.value=i.guest_city||'';f.guestCountry.value=i.guest_country||'';f.companyName.value=i.company_name||'';f.companyAddress.value=i.company_address||'';f.vat.value=i.vat_number||'';f.email.value=i.guest_email||'';f.booking.value=i.booking_reference||'';f.checkin.value=i.checkin_date||'';f.checkout.value=i.checkout_date||'';f.nights.value=i.nights;f.guests.value=i.guests;f.accommodation.value=i.accommodation_amount;f.cleaning.value=i.cleaning_fee;f.tourist.value=i.tourist_tax_rate;f.taxMode.value=i.tax_mode;const room=i.room_name||'';if(room.includes('Cozy')||room.includes('Knusse'))f.room.value=tr[currentLang].cozy;else if(room.includes('Spacious')||room.includes('Ruime'))f.room.value=tr[currentLang].spacious;else{f.room.value='custom';f.customRoom.value=room;}const pay=i.payment_method||'';if(pay.includes('Booking'))f.payment.value=tr[currentLang].booking;else if(pay.includes('Airbnb'))f.payment.value=tr[currentLang].airbnb;else{f.payment.value='custom';f.customPayment.value=pay;}$('deleteBtn').classList.remove('hidden');$('duplicateBtn').classList.remove('hidden');toggleInvoiceCustom();updatePreview();}
+async function deleteInvoice(){if(!currentInvoiceId||!confirm(currentLang==='nl'?'Factuur verwijderen?':'Delete this invoice?'))return;const {error}=await supabaseClient.from('invoices').delete().eq('id',currentInvoiceId);if(error){$('saveMessage').textContent=error.message;return;}$('saveMessage').textContent=tr[currentLang].deleted;await newInvoice();await loadInvoices();}
+async function duplicateInvoice(){currentInvoiceId=null;f.invoiceDate.value=today();f.invoiceNumber.value=await nextInvoice();$('deleteBtn').classList.add('hidden');$('duplicateBtn').classList.add('hidden');$('saveMessage').textContent=tr[currentLang].duplicated;updatePreview();}
+
+function updatePreview(){const x=tr[currentLang];autoNights();const n=Number(f.nights.value||0),g=Number(f.guests.value||1),a=Number(f.accommodation.value||0),c=Number(f.cleaning.value||0),rate=Number(f.tourist.value||0),tax=n*g*rate,total=f.taxMode.value==='included'?a+c:a+c+tax;
+  const labels={previewInvoiceTitle:x.invoiceTitle,previewLabelInvoiceNumber:x.labelInvoiceNumber,previewLabelInvoiceDate:x.labelDate,previewSectionGuest:x.billed,previewLabelVatNumber:x.labelVat,previewLabelBookingReference:x.labelBooking,previewSectionStay:x.stay,previewLabelRoom:x.labelRoom,previewLabelCheckin2:x.labelCheckin,previewLabelCheckout2:x.labelCheckout,previewLabelNights2:x.labelNights,previewLabelGuests2:x.labelGuests,previewSectionDescription:x.descriptionTitle,previewDescription:x.description,previewSectionPrice:x.price,previewLabelAccommodation:x.labelAccommodation,previewLabelCleaning:x.labelCleaning,previewLabelTaxRate:x.labelTaxRate,previewLabelTotal:x.labelTotal,previewSectionPayment:x.paymentTitle,previewNote:x.note};for(const [id,v] of Object.entries(labels))$(id).textContent=v;$('previewLabelTaxTotal').textContent=f.taxMode.value==='included'?x.labelTaxIncluded:x.labelTaxAdded;
+  $('previewInvoiceNumber').textContent=f.invoiceNumber.value||'—';$('previewInvoiceDate').textContent=fmt(f.invoiceDate.value);$('previewGuestName').textContent=f.guestName.value.trim()||'—';const company=f.companyName.value.trim();$('previewCompanyName').textContent=company;$('previewCompanyName').classList.toggle('hidden',!company);$('previewCompanyName').style.fontWeight='700';
+  const personalAddress=f.guestAddress.value.trim();$('previewAddress').textContent=personalAddress;$('previewAddress').classList.toggle('hidden',!personalAddress);const cc=[f.guestPostal.value.trim(),f.guestCity.value.trim()].filter(Boolean).join(' ')+(f.guestCountry.value.trim()?`, ${f.guestCountry.value.trim()}`:'');$('previewCityCountry').textContent=cc;$('previewCityCountry').classList.toggle('hidden',!cc);const ca=f.companyAddress.value.trim();$('previewCompanyAddress').textContent=ca;$('previewCompanyAddress').classList.toggle('hidden',!ca);$('previewVatNumber').textContent=f.vat.value.trim();$('previewVatNumberWrap').classList.toggle('hidden',!f.vat.value.trim());$('previewGuestEmail').textContent=f.email.value.trim();$('previewGuestEmail').style.display=f.email.value.trim()?'block':'none';$('previewBookingReference').textContent=f.booking.value.trim();$('previewBookingReferenceWrap').classList.toggle('hidden',!f.booking.value.trim());
+  $('previewRoomName').textContent=roomValue()||'—';$('previewCheckin').textContent=fmt(f.checkin.value);$('previewCheckout').textContent=fmt(f.checkout.value);$('previewNights').textContent=n||'—';$('previewGuests').textContent=g;$('previewAccommodation').textContent=euro(a);$('previewCleaning').textContent=euro(c);$('previewTouristTaxRate').textContent=`${euro(rate)} × ${g} × ${n}`;$('previewTouristTax').textContent=euro(tax);$('previewTotal').textContent=euro(total);$('previewPaymentMethod').textContent=paymentValue()||'—';}
+
+$('loginBtn').onclick=()=>{const e=$('loginEmail').value.trim();if(e)login(e)};$('logoutBtn').onclick=logout;$('createInviteBtn').onclick=createInvite;$('copyInviteBtn').onclick=async()=>{await navigator.clipboard.writeText($('inviteUrl').value);$('inviteMessage').textContent=tr[currentLang].copied;};$('newPaperBtn').onclick=blankRegistration;$('closeRegistrationBtn').onclick=()=>$('registrationEditor').classList.add('hidden');$('saveRegistrationBtn').onclick=saveReg;$('useForInvoiceBtn').onclick=useRegistrationForInvoice;$('registrationSearch').oninput=renderRegs;rf.invoiceRequested.onchange=toggleRegInvoice;rf.invoiceType.onchange=toggleRegInvoice;rf.idType.onchange=toggleIdOther;
+$('saveBtn').onclick=saveInvoice;$('deleteBtn').onclick=deleteInvoice;$('duplicateBtn').onclick=duplicateInvoice;$('newInvoiceBtn').onclick=newInvoice;$('printBtn').onclick=()=>{if(validateInvoice())window.print();else $('saveMessage').textContent=tr[currentLang].required;};$('searchInvoices').oninput=renderInvoices;f.room.onchange=()=>{toggleInvoiceCustom();updatePreview()};f.payment.onchange=()=>{toggleInvoiceCustom();updatePreview()};f.checkin.onchange=()=>{manualNights=false;autoNights();updatePreview()};f.checkout.onchange=()=>{manualNights=false;autoNights();updatePreview()};f.nights.oninput=()=>{manualNights=true;updatePreview()};
+Object.values(f).filter(v=>v&&v.tagName!=='SELECT').forEach(v=>{if(v.type!=='hidden')v.addEventListener('input',updatePreview)});document.querySelectorAll('.lang-btn').forEach(b=>b.onclick=()=>{currentLang=b.dataset.lang;setTexts();toggleRegInvoice();toggleIdOther();toggleInvoiceCustom();});
+
+async function init(){setTexts();toggleRegInvoice();toggleIdOther();toggleInvoiceCustom();const s=await session();if(!s){$('loginView').classList.remove('hidden');$('appView').classList.add('hidden');return;}if(!(await allowed())){await supabaseClient.auth.signOut();$('loginMessage').textContent=tr[currentLang].denied;return;}$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');$('logoutBtn').classList.remove('hidden');await Promise.all([loadRegs(),loadInvoices(),newInvoice()]);}
 init();
