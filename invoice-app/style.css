@@ -470,3 +470,64 @@ textarea:focus { outline:none; border-color:var(--accent); }
   .list-item-with-action:hover .quick-delete-btn,
   .list-item-with-action .quick-delete-btn:focus-visible { opacity: 1; }
 }
+
+
+/* Sticky section navigation */
+.admin-nav {
+  position: sticky;
+  top: 10px;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 20px;
+  padding: 8px;
+  background: rgba(255,255,255,.92);
+  border: 1px solid rgba(92,70,56,.10);
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0,0,0,.08);
+  backdrop-filter: blur(10px);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.admin-nav::-webkit-scrollbar { display: none; }
+.admin-nav-btn {
+  flex: 0 0 auto;
+  border: 0;
+  background: transparent;
+  color: var(--heading);
+  padding: 10px 14px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 650;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+.admin-nav-btn:hover,
+.admin-nav-btn:focus-visible {
+  background: var(--highlight);
+  outline: none;
+}
+.admin-nav-btn.active {
+  background: var(--heading);
+  color: #fff;
+}
+.admin-nav-btn:active { transform: translateY(1px); }
+#registrationOverview,
+#registrationEditor,
+#invoiceDetailsCard,
+#savedInvoicesCard {
+  scroll-margin-top: 88px;
+}
+@media (max-width:700px){
+  .admin-nav {
+    top: 6px;
+    margin-left: -4px;
+    margin-right: -4px;
+    border-radius: 14px;
+  }
+  .admin-nav-btn { padding: 9px 12px; font-size: 13px; }
+}
+@media print { .admin-nav { display:none !important; } }

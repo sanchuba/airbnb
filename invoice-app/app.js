@@ -9,7 +9,7 @@ const tr = {
   en: {
     pageTitle:'Guest & Invoice Admin',pageSubtitle:'Nijmegen Guest Rooms – Private administration',loginTitle:'Sign in',loginText:'Only authorized users can access the administration.',loginEmail:'Email',loginBtn:'Send login link',logout:'Log out',
     registrations:'Guest registrations',paper:'Add paper registration',invite:'Create secure guest link',inviteBooking:'Booking reference (optional)',checkin:'Check-in',checkout:'Check-out',createLink:'Create secure link',copy:'Copy link',searchReg:'Search registrations',searchRegPh:'Search by name, email or booking reference',
-    regEditor:'Guest registration',close:'Close',fullName:'Full name',homeAddress:'Home address',postal:'Postal code',city:'City',country:'Country',bookingRef:'Booking reference (optional)',invoiceRequested:'Invoice requested',invoiceType:'Invoice type',personal:'Personal',company:'Company',email:'Email',companyName:'Company name',companyAddress:'Company address',vat:'VAT number (optional)',identity:'Identification check – host only',idShown:'Identification shown',notSelected:'Not selected',passport:'Passport',idCard:'ID card',drivers:'Driver\'s licence',otherId:'Other valid ID',verified:'Identity verified',saveRegistration:'Save registration',useInvoice:'Use for invoice',deleteRegistration:'Delete registration',savedReg:'Registration saved.',deletedReg:'Registration deleted.',confirmDeleteReg:'Delete this guest registration? This cannot be undone.',quickDeleteReg:'Delete registration',quickDeleteInvoice:'Delete invoice',linkCreated:'Secure registration link created.',copied:'Link copied.',
+    regEditor:'Guest registration',close:'Close',fullName:'Full name',homeAddress:'Home address',postal:'Postal code',city:'City',country:'Country',bookingRef:'Booking reference (optional)',invoiceRequested:'Invoice requested',invoiceType:'Invoice type',personal:'Personal',company:'Company',email:'Email',companyName:'Company name',companyAddress:'Company address',vat:'VAT number (optional)',identity:'Identification check – host only',idShown:'Identification shown',notSelected:'Not selected',passport:'Passport',idCard:'ID card',drivers:'Driver\'s licence',otherId:'Other valid ID',verified:'Identity verified',saveRegistration:'Save registration',useInvoice:'Use for invoice',deleteRegistration:'Delete registration',savedReg:'Registration saved.',deletedReg:'Registration deleted.',confirmDeleteReg:'Delete this guest registration? This cannot be undone.',quickDeleteReg:'Delete registration',quickDeleteInvoice:'Delete invoice',linkCreated:'Secure registration link created.',copied:'Link copied.',navRegistrations:'Guest registrations',navGuestDetails:'Guest details',navInvoiceDetails:'Invoice details',navSavedInvoices:'Saved invoices',
     formTitle:'Invoice Details',newInvoice:'New invoice',duplicate:'Duplicate invoice',invoiceNumber:'Invoice number',invoiceDate:'Invoice date',guestName:'Guest name',guestAddress:'Guest address',guestPostal:'Postal code',guestCity:'City',guestCountry:'Country',guestEmail:'Guest email (optional)',room:'Room name',customRoom:'Custom room name',nights:'Nights',guests:'Guests',accommodation:'Accommodation (€)',cleaning:'Cleaning fee (€)',tourist:'Tourist tax rate (€ per guest per night)',taxMode:'Tourist tax handling',taxIncluded:'Accommodation amount already includes tourist tax',taxExcluded:'Tourist tax should be added on top of accommodation',payment:'Payment',customPayment:'Custom payment method',saveInvoice:'Save invoice',deleteInvoice:'Delete invoice',print:'Print / Save as PDF',savedInvoices:'Saved Invoices',searchInvoices:'Search / filter invoices',searchInvoicePh:'Search by invoice number, guest name, company, email or booking reference',
     invoiceTitle:'INVOICE',labelInvoiceNumber:'Invoice number:',labelDate:'Date:',billed:'Billed to',labelVat:'VAT number:',labelBooking:'Booking reference:',stay:'Stay Details',labelRoom:'Room:',labelCheckin:'Check-in:',labelCheckout:'Check-out:',labelNights:'Nights:',labelGuests:'Guests:',descriptionTitle:'Description',description:'Accommodation in private room (shared home)',price:'Price Breakdown',labelAccommodation:'Accommodation',labelCleaning:'Cleaning fee',labelTaxRate:'Tourist tax rate',labelTaxIncluded:'Tourist tax included',labelTaxAdded:'Tourist tax added',labelTotal:'Total amount paid',paymentTitle:'Payment',note:'This is a private rental. VAT is not applicable.',
     cozy:'Cozy Room (Street Side)',spacious:'Spacious Room (Garden View)',customRoomOpt:'Custom room name...',booking:'Paid via Booking.com',airbnb:'Paid via Airbnb',customPayOpt:'Custom payment method...',checkEmail:'Check your email for the login link.',denied:'Access denied. This email address is not authorized.',savedInvoice:'Invoice saved.',deleted:'Invoice deleted.',duplicated:'Invoice duplicated. Save it as a new invoice.',required:'Please fill in all required invoice fields.',noRegs:'No guest registrations yet.',noInvoices:'No invoices yet.',loading:'Loading…'
@@ -53,7 +53,7 @@ function toggleInvoiceCustom(){ $('customRoomField').classList.toggle('hidden',f
 function setTexts(){
   const x=tr[currentLang]; document.documentElement.lang=currentLang;
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===currentLang));
-  const map={pageTitle:'pageTitle',pageSubtitle:'pageSubtitle',loginTitle:'loginTitle',loginText:'loginText',loginEmail:'labelLoginEmail',loginBtn:'loginBtn',logout:'logoutBtn',registrations:'registrationTitle',paper:'newPaperBtn',invite:'inviteTitle',inviteBooking:'labelInviteBooking',checkin:'labelInviteCheckin',checkout:'labelInviteCheckout',createLink:'createInviteBtn',copy:'copyInviteBtn',searchReg:'labelRegistrationSearch',regEditor:'registrationEditorTitle',close:'closeRegistrationBtn',fullName:'labelRegName',homeAddress:'labelRegAddress',postal:'labelRegPostal',city:'labelRegCity',country:'labelRegCountry',bookingRef:'labelRegBooking',invoiceRequested:'regInvoiceRequestedText',invoiceType:'labelRegInvoiceType',email:'labelRegEmail',companyName:'labelRegCompanyName',companyAddress:'labelRegCompanyAddress',vat:'labelRegVat',identity:'identityTitle',idShown:'labelIdType',verified:'idVerifiedText',saveRegistration:'saveRegistrationBtn',useInvoice:'useForInvoiceBtn',deleteRegistration:'deleteRegistrationBtn',formTitle:'formTitle',newInvoice:'newInvoiceBtn',duplicate:'duplicateBtn',invoiceNumber:'labelInvoiceNumber',invoiceDate:'labelInvoiceDate',guestName:'labelGuestName',guestAddress:'labelGuestAddress',guestPostal:'labelGuestPostal',guestCity:'labelGuestCity',guestCountry:'labelGuestCountry',guestEmail:'labelGuestEmail',room:'labelRoomName',customRoom:'labelCustomRoomName',nights:'labelNights',guests:'labelGuests',accommodation:'labelAccommodation',cleaning:'labelCleaning',tourist:'labelTouristTaxRate',taxMode:'labelTaxMode',payment:'labelPaymentMethod',customPayment:'labelCustomPayment',saveInvoice:'saveBtn',deleteInvoice:'deleteBtn',print:'printBtn',savedInvoices:'savedInvoicesTitle',searchInvoices:'labelSearchInvoices'};
+  const map={pageTitle:'pageTitle',pageSubtitle:'pageSubtitle',loginTitle:'loginTitle',loginText:'loginText',loginEmail:'labelLoginEmail',loginBtn:'loginBtn',logout:'logoutBtn',registrations:'registrationTitle',paper:'newPaperBtn',invite:'inviteTitle',inviteBooking:'labelInviteBooking',checkin:'labelInviteCheckin',checkout:'labelInviteCheckout',createLink:'createInviteBtn',copy:'copyInviteBtn',searchReg:'labelRegistrationSearch',regEditor:'registrationEditorTitle',close:'closeRegistrationBtn',fullName:'labelRegName',homeAddress:'labelRegAddress',postal:'labelRegPostal',city:'labelRegCity',country:'labelRegCountry',bookingRef:'labelRegBooking',invoiceRequested:'regInvoiceRequestedText',invoiceType:'labelRegInvoiceType',email:'labelRegEmail',companyName:'labelRegCompanyName',companyAddress:'labelRegCompanyAddress',vat:'labelRegVat',identity:'identityTitle',idShown:'labelIdType',verified:'idVerifiedText',saveRegistration:'saveRegistrationBtn',useInvoice:'useForInvoiceBtn',deleteRegistration:'deleteRegistrationBtn',formTitle:'formTitle',newInvoice:'newInvoiceBtn',duplicate:'duplicateBtn',invoiceNumber:'labelInvoiceNumber',invoiceDate:'labelInvoiceDate',guestName:'labelGuestName',guestAddress:'labelGuestAddress',guestPostal:'labelGuestPostal',guestCity:'labelGuestCity',guestCountry:'labelGuestCountry',guestEmail:'labelGuestEmail',room:'labelRoomName',customRoom:'labelCustomRoomName',nights:'labelNights',guests:'labelGuests',accommodation:'labelAccommodation',cleaning:'labelCleaning',tourist:'labelTouristTaxRate',taxMode:'labelTaxMode',payment:'labelPaymentMethod',customPayment:'labelCustomPayment',saveInvoice:'saveBtn',deleteInvoice:'deleteBtn',print:'printBtn',savedInvoices:'savedInvoicesTitle',searchInvoices:'labelSearchInvoices',navRegistrations:'navRegistrations',navGuestDetails:'navGuestDetails',navInvoiceDetails:'navInvoiceDetails',navSavedInvoices:'navSavedInvoices'};
   for(const [k,id] of Object.entries(map)) if($(id)) $(id).textContent=x[k];
   $('labelCompanyName').textContent=x.companyName+' ('+(currentLang==='nl'?'optioneel':'optional')+')'; $('labelCompanyAddress').textContent=x.companyAddress+' ('+(currentLang==='nl'?'optioneel':'optional')+')'; $('labelVatNumber').textContent=x.vat;
   $('labelBookingReference').textContent=x.bookingRef; $('labelCheckin').textContent=x.checkin; $('labelCheckout').textContent=x.checkout;
@@ -64,6 +64,54 @@ function setTexts(){
   const currentPay=f.payment.value; f.payment.innerHTML=`<option value="${x.booking}">${x.booking}</option><option value="${x.airbnb}">${x.airbnb}</option><option value="custom">${x.customPayOpt}</option>`; if(currentPay==='custom')f.payment.value='custom'; else if(currentPay.includes('Booking'))f.payment.value=x.booking; else if(currentPay.includes('Airbnb'))f.payment.value=x.airbnb;
   f.taxMode.innerHTML=`<option value="included">${x.taxIncluded}</option><option value="excluded">${x.taxExcluded}</option>`;
   renderRegs(); renderInvoices(); updatePreview();
+}
+
+function syncGuestDetailsNav(){
+  const editor=$('registrationEditor');
+  const btn=$('navGuestDetails');
+  if(!editor||!btn)return;
+  btn.classList.toggle('hidden',editor.classList.contains('hidden'));
+}
+
+function scrollToAdminSection(targetId){
+  const target=$(targetId);
+  if(!target || target.classList.contains('hidden')) return;
+  target.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function initAdminNav(){
+  document.querySelectorAll('.admin-nav-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>scrollToAdminSection(btn.dataset.target));
+  });
+  syncGuestDetailsNav();
+
+  const editor=$('registrationEditor');
+  if(editor){
+    new MutationObserver(syncGuestDetailsNav).observe(editor,{attributes:true,attributeFilter:['class']});
+  }
+
+  const sectionIds=['registrationOverview','registrationEditor','invoiceDetailsCard','savedInvoicesCard'];
+  const updateActive=()=>{
+    const visibleButtons=[...document.querySelectorAll('.admin-nav-btn:not(.hidden)')];
+    if(!visibleButtons.length)return;
+    const markerY=120;
+    let best=null;
+    let bestDistance=Infinity;
+    for(const btn of visibleButtons){
+      const el=$(btn.dataset.target);
+      if(!el||el.classList.contains('hidden'))continue;
+      const rect=el.getBoundingClientRect();
+      const distance=rect.top<=markerY ? Math.abs(markerY-rect.top) : rect.top-markerY+400;
+      if(distance<bestDistance){bestDistance=distance;best=btn;}
+    }
+    if(best){
+      visibleButtons.forEach(b=>b.classList.toggle('active',b===best));
+      best.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'});
+    }
+  };
+  window.addEventListener('scroll',updateActive,{passive:true});
+  window.addEventListener('resize',updateActive);
+  updateActive();
 }
 
 async function createInvite(){
