@@ -242,6 +242,8 @@ $('loginBtn').onclick=()=>{const e=$('loginEmail').value.trim();if(e)login(e)};$
 $('saveBtn').onclick=saveInvoice;$('deleteBtn').onclick=deleteInvoice;$('duplicateBtn').onclick=duplicateInvoice;$('newInvoiceBtn').onclick=newInvoice;$('printBtn').onclick=()=>{if(validateInvoice())window.print();else $('saveMessage').textContent=tr[currentLang].required;};$('searchInvoices').oninput=renderInvoices;f.room.onchange=()=>{toggleInvoiceCustom();updatePreview()};f.payment.onchange=()=>{toggleInvoiceCustom();updatePreview()};f.checkin.onchange=()=>{manualNights=false;autoNights();updatePreview()};f.checkout.onchange=()=>{manualNights=false;autoNights();updatePreview()};f.nights.oninput=()=>{manualNights=true;updatePreview()};
 Object.values(f).filter(v=>v&&v.tagName!=='SELECT').forEach(v=>{if(v.type!=='hidden')v.addEventListener('input',updatePreview)});document.querySelectorAll('.lang-btn').forEach(b=>b.onclick=()=>{currentLang=b.dataset.lang;setTexts();toggleRegInvoice();toggleIdOther();toggleInvoiceCustom();});
 
+initAdminNav();
+
 async function init(){setTexts();toggleRegInvoice();toggleIdOther();toggleInvoiceCustom();const s=await session();if(!s){$('loginView').classList.remove('hidden');$('appView').classList.add('hidden');return;}if(!(await allowed())){await supabaseClient.auth.signOut();$('loginMessage').textContent=tr[currentLang].denied;return;}$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');$('logoutBtn').classList.remove('hidden');await Promise.all([loadRegs(),loadInvoices(),newInvoice()]);}
 init();
 
