@@ -55,6 +55,10 @@ function setTexts(){
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===currentLang));
   const map={pageTitle:'pageTitle',pageSubtitle:'pageSubtitle',loginTitle:'loginTitle',loginText:'loginText',loginEmail:'labelLoginEmail',loginBtn:'loginBtn',logout:'logoutBtn',registrations:'registrationTitle',paper:'newPaperBtn',invite:'inviteTitle',inviteBooking:'labelInviteBooking',checkin:'labelInviteCheckin',checkout:'labelInviteCheckout',createLink:'createInviteBtn',copy:'copyInviteBtn',searchReg:'labelRegistrationSearch',regEditor:'registrationEditorTitle',close:'closeRegistrationBtn',fullName:'labelRegName',homeAddress:'labelRegAddress',postal:'labelRegPostal',city:'labelRegCity',country:'labelRegCountry',bookingRef:'labelRegBooking',invoiceRequested:'regInvoiceRequestedText',invoiceType:'labelRegInvoiceType',email:'labelRegEmail',companyName:'labelRegCompanyName',companyAddress:'labelRegCompanyAddress',vat:'labelRegVat',identity:'identityTitle',idShown:'labelIdType',verified:'idVerifiedText',saveRegistration:'saveRegistrationBtn',useInvoice:'useForInvoiceBtn',deleteRegistration:'deleteRegistrationBtn',formTitle:'formTitle',newInvoice:'newInvoiceBtn',duplicate:'duplicateBtn',invoiceNumber:'labelInvoiceNumber',invoiceDate:'labelInvoiceDate',guestName:'labelGuestName',guestAddress:'labelGuestAddress',guestPostal:'labelGuestPostal',guestCity:'labelGuestCity',guestCountry:'labelGuestCountry',guestEmail:'labelGuestEmail',room:'labelRoomName',customRoom:'labelCustomRoomName',nights:'labelNights',guests:'labelGuests',accommodation:'labelAccommodation',cleaning:'labelCleaning',tourist:'labelTouristTaxRate',taxMode:'labelTaxMode',payment:'labelPaymentMethod',customPayment:'labelCustomPayment',saveInvoice:'saveBtn',deleteInvoice:'deleteBtn',print:'printBtn',savedInvoices:'savedInvoicesTitle',searchInvoices:'labelSearchInvoices',navRegistrations:'navRegistrations',navGuestDetails:'navGuestDetails',navInvoiceDetails:'navInvoiceDetails',navSavedInvoices:'navSavedInvoices'};
   for(const [k,id] of Object.entries(map)) if($(id)) $(id).textContent=x[k];
+  if($('mobileNavRegistrations')) $('mobileNavRegistrations').textContent=x.navRegistrations;
+  if($('mobileNavGuestDetails')) $('mobileNavGuestDetails').textContent=x.navGuestDetails;
+  if($('mobileNavInvoiceDetails')) $('mobileNavInvoiceDetails').textContent=x.navInvoiceDetails;
+  if($('mobileNavSavedInvoices')) $('mobileNavSavedInvoices').textContent=x.navSavedInvoices;
   $('labelCompanyName').textContent=x.companyName+' ('+(currentLang==='nl'?'optioneel':'optional')+')'; $('labelCompanyAddress').textContent=x.companyAddress+' ('+(currentLang==='nl'?'optioneel':'optional')+')'; $('labelVatNumber').textContent=x.vat;
   $('labelBookingReference').textContent=x.bookingRef; $('labelCheckin').textContent=x.checkin; $('labelCheckout').textContent=x.checkout;
   $('registrationSearch').placeholder=x.searchRegPh; $('searchInvoices').placeholder=x.searchInvoicePh;
@@ -68,9 +72,12 @@ function setTexts(){
 
 function syncGuestDetailsNav(){
   const editor=$('registrationEditor');
-  const btn=$('navGuestDetails');
-  if(!editor||!btn)return;
-  btn.classList.toggle('hidden',editor.classList.contains('hidden'));
+  if(!editor)return;
+  const hidden=editor.classList.contains('hidden');
+  const desktopBtn=$('navGuestDetails');
+  const mobileBtn=$('mobileNavGuestDetails');
+  if(desktopBtn) desktopBtn.classList.toggle('hidden',hidden);
+  if(mobileBtn) mobileBtn.classList.toggle('hidden',hidden);
 }
 
 function scrollToAdminSection(targetId){
@@ -80,24 +87,46 @@ function scrollToAdminSection(targetId){
 }
 
 function initAdminNav(){
-  document.querySelectorAll('.admin-nav-btn').forEach(btn=>{
-    btn.addEventListener('click',()=>scrollToAdminSection(btn.dataset.target));
+  const desktopButtons=[...document.querySelectorAll('.admin-nav-btn')];
+  const mobileButtons=[...document.querySelectorAll('.mobile-nav-btn')];
+  const allNavButtons=[...desktopButtons,...mobileButtons];
+  const menuToggle=$('mobileMenuToggle');
+  const menuPanel=$('mobileMenuPanel');
+
+  const closeMobileMenu=()=>{
+    if(!menuToggle||!menuPanel)return;
+    menuToggle.classList.remove('active');
+    menuPanel.classList.remove('open');
+    menuToggle.setAttribute('aria-expanded','false');
+  };
+  const toggleMobileMenu=()=>{
+    if(!menuToggle||!menuPanel)return;
+    const open=menuPanel.classList.toggle('open');
+    menuToggle.classList.toggle('active',open);
+    menuToggle.setAttribute('aria-expanded',String(open));
+  };
+
+  allNavButtons.forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      scrollToAdminSection(btn.dataset.target);
+      closeMobileMenu();
+    });
   });
+  if(menuToggle) menuToggle.addEventListener('click',(e)=>{ e.stopPropagation(); toggleMobileMenu(); });
+  if(menuPanel) menuPanel.addEventListener('click',e=>e.stopPropagation());
+  document.addEventListener('click',closeMobileMenu);
+  document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeMobileMenu(); });
+
   syncGuestDetailsNav();
-
   const editor=$('registrationEditor');
-  if(editor){
-    new MutationObserver(syncGuestDetailsNav).observe(editor,{attributes:true,attributeFilter:['class']});
-  }
+  if(editor) new MutationObserver(syncGuestDetailsNav).observe(editor,{attributes:true,attributeFilter:['class']});
 
-  const sectionIds=['registrationOverview','registrationEditor','invoiceDetailsCard','savedInvoicesCard'];
   const updateActive=()=>{
-    const visibleButtons=[...document.querySelectorAll('.admin-nav-btn:not(.hidden)')];
-    if(!visibleButtons.length)return;
-    const markerY=120;
-    let best=null;
-    let bestDistance=Infinity;
-    for(const btn of visibleButtons){
+    const visibleDesktop=desktopButtons.filter(b=>!b.classList.contains('hidden'));
+    if(!visibleDesktop.length)return;
+    const markerY=window.innerWidth<=700 ? 80 : 120;
+    let best=null,bestDistance=Infinity;
+    for(const btn of visibleDesktop){
       const el=$(btn.dataset.target);
       if(!el||el.classList.contains('hidden'))continue;
       const rect=el.getBoundingClientRect();
@@ -105,12 +134,14 @@ function initAdminNav(){
       if(distance<bestDistance){bestDistance=distance;best=btn;}
     }
     if(best){
-      visibleButtons.forEach(b=>b.classList.toggle('active',b===best));
-      best.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'});
+      const target=best.dataset.target;
+      desktopButtons.forEach(b=>b.classList.toggle('active',b.dataset.target===target));
+      mobileButtons.forEach(b=>b.classList.toggle('active',b.dataset.target===target));
+      if(window.innerWidth>700) best.scrollIntoView({behavior:'smooth',block:'nearest',inline:'nearest'});
     }
   };
   window.addEventListener('scroll',updateActive,{passive:true});
-  window.addEventListener('resize',updateActive);
+  window.addEventListener('resize',()=>{ updateActive(); if(window.innerWidth>700) closeMobileMenu(); });
   updateActive();
 }
 

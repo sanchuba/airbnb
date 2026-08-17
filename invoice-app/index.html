@@ -31,6 +31,17 @@
     </div>
 
     <div id="appView" class="hidden">
+      <div class="mobile-admin-menu screen-only" id="mobileAdminMenu">
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileMenuPanel">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="mobile-menu-panel" id="mobileMenuPanel">
+          <button class="mobile-nav-btn active" type="button" data-target="registrationOverview" id="mobileNavRegistrations">Guest registrations</button>
+          <button class="mobile-nav-btn hidden" type="button" data-target="registrationEditor" id="mobileNavGuestDetails">Guest details</button>
+          <button class="mobile-nav-btn" type="button" data-target="invoiceDetailsCard" id="mobileNavInvoiceDetails">Invoice details</button>
+          <button class="mobile-nav-btn" type="button" data-target="savedInvoicesCard" id="mobileNavSavedInvoices">Saved invoices</button>
+        </div>
+      </div>
       <nav class="admin-nav screen-only" id="adminNav" aria-label="Admin sections">
         <button class="admin-nav-btn active" type="button" data-target="registrationOverview" id="navRegistrations">Guest registrations</button>
         <button class="admin-nav-btn hidden" type="button" data-target="registrationEditor" id="navGuestDetails">Guest details</button>
