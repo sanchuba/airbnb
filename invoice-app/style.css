@@ -410,3 +410,45 @@ body {
 textarea { width:100%; padding:12px 14px; border:1px solid var(--border); border-radius:10px; font-size:15px; font-family:inherit; color:var(--text); resize:vertical; }
 textarea:focus { outline:none; border-color:var(--accent); }
 @media (max-width:700px){ .invite-result{grid-template-columns:1fr;} }
+
+/* Quick delete actions in saved lists */
+.list-item-with-action {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 10px;
+}
+.list-item-content {
+  min-width: 0;
+  cursor: pointer;
+}
+.quick-delete-btn {
+  width: 36px;
+  height: 36px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  background: transparent;
+  color: #8a8178;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+  opacity: 0.72;
+  transition: background .2s ease, color .2s ease, border-color .2s ease, opacity .2s ease, transform .2s ease;
+}
+.quick-delete-btn:hover,
+.quick-delete-btn:focus-visible {
+  background: var(--danger-bg);
+  border-color: rgba(161,77,77,.18);
+  color: var(--danger);
+  opacity: 1;
+  transform: translateY(-1px);
+  outline: none;
+}
+@media (hover: hover) and (pointer: fine) {
+  .list-item-with-action .quick-delete-btn { opacity: .34; }
+  .list-item-with-action:hover .quick-delete-btn,
+  .list-item-with-action .quick-delete-btn:focus-visible { opacity: 1; }
+}
