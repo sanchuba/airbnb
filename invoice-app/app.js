@@ -132,8 +132,30 @@ async function duplicateInvoice(){currentInvoiceId=null;f.invoiceDate.value=toda
 
 function updatePreview(){const x=tr[currentLang];autoNights();const n=Number(f.nights.value||0),g=Number(f.guests.value||1),a=Number(f.accommodation.value||0),c=Number(f.cleaning.value||0),rate=Number(f.tourist.value||0),tax=n*g*rate,total=f.taxMode.value==='included'?a+c:a+c+tax;
   const labels={previewInvoiceTitle:x.invoiceTitle,previewLabelInvoiceNumber:x.labelInvoiceNumber,previewLabelInvoiceDate:x.labelDate,previewSectionGuest:x.billed,previewLabelVatNumber:x.labelVat,previewLabelBookingReference:x.labelBooking,previewSectionStay:x.stay,previewLabelRoom:x.labelRoom,previewLabelCheckin2:x.labelCheckin,previewLabelCheckout2:x.labelCheckout,previewLabelNights2:x.labelNights,previewLabelGuests2:x.labelGuests,previewSectionDescription:x.descriptionTitle,previewDescription:x.description,previewSectionPrice:x.price,previewLabelAccommodation:x.labelAccommodation,previewLabelCleaning:x.labelCleaning,previewLabelTaxRate:x.labelTaxRate,previewLabelTotal:x.labelTotal,previewSectionPayment:x.paymentTitle,previewNote:x.note};for(const [id,v] of Object.entries(labels))$(id).textContent=v;$('previewLabelTaxTotal').textContent=f.taxMode.value==='included'?x.labelTaxIncluded:x.labelTaxAdded;
-  $('previewInvoiceNumber').textContent=f.invoiceNumber.value||'—';$('previewInvoiceDate').textContent=fmt(f.invoiceDate.value);$('previewGuestName').textContent=f.guestName.value.trim()||'—';const company=f.companyName.value.trim();$('previewCompanyName').textContent=company;$('previewCompanyName').classList.toggle('hidden',!company);$('previewCompanyName').style.fontWeight='700';
-  const personalAddress=f.guestAddress.value.trim();$('previewAddress').textContent=personalAddress;$('previewAddress').classList.toggle('hidden',!personalAddress);const cc=[f.guestPostal.value.trim(),f.guestCity.value.trim()].filter(Boolean).join(' ')+(f.guestCountry.value.trim()?`, ${f.guestCountry.value.trim()}`:'');$('previewCityCountry').textContent=cc;$('previewCityCountry').classList.toggle('hidden',!cc);const ca=f.companyAddress.value.trim();$('previewCompanyAddress').textContent=ca;$('previewCompanyAddress').classList.toggle('hidden',!ca);$('previewVatNumber').textContent=f.vat.value.trim();$('previewVatNumberWrap').classList.toggle('hidden',!f.vat.value.trim());$('previewGuestEmail').textContent=f.email.value.trim();$('previewGuestEmail').style.display=f.email.value.trim()?'block':'none';$('previewBookingReference').textContent=f.booking.value.trim();$('previewBookingReferenceWrap').classList.toggle('hidden',!f.booking.value.trim());
+  $('previewInvoiceNumber').textContent=f.invoiceNumber.value||'—';$('previewInvoiceDate').textContent=fmt(f.invoiceDate.value);
+  // Invoice recipient layout: personal invoices show only the guest name. Company invoices
+  // show company details (plus VAT when supplied). Personal home-address data remains
+  // stored in the admin/database, but is deliberately not rendered on the invoice/PDF.
+  const company=f.companyName.value.trim();
+  const isCompanyInvoice=Boolean(company);
+  $('previewCompanyName').textContent=company;
+  $('previewCompanyName').classList.toggle('hidden',!isCompanyInvoice);
+  $('previewCompanyName').style.fontWeight='700';
+  $('previewGuestName').textContent=f.guestName.value.trim()||'—';
+  $('previewGuestName').classList.toggle('hidden',isCompanyInvoice);
+  $('previewAddress').textContent='';
+  $('previewAddress').classList.add('hidden');
+  $('previewCityCountry').textContent='';
+  $('previewCityCountry').classList.add('hidden');
+  const ca=f.companyAddress.value.trim();
+  $('previewCompanyAddress').textContent=ca;
+  $('previewCompanyAddress').classList.toggle('hidden',!isCompanyInvoice||!ca);
+  $('previewVatNumber').textContent=f.vat.value.trim();
+  $('previewVatNumberWrap').classList.toggle('hidden',!isCompanyInvoice||!f.vat.value.trim());
+  $('previewGuestEmail').textContent=f.email.value.trim();
+  $('previewGuestEmail').style.display=f.email.value.trim()?'block':'none';
+  $('previewBookingReference').textContent=f.booking.value.trim();
+  $('previewBookingReferenceWrap').classList.toggle('hidden',!f.booking.value.trim());
   $('previewRoomName').textContent=roomValue()||'—';$('previewCheckin').textContent=fmt(f.checkin.value);$('previewCheckout').textContent=fmt(f.checkout.value);$('previewNights').textContent=n||'—';$('previewGuests').textContent=g;$('previewAccommodation').textContent=euro(a);$('previewCleaning').textContent=euro(c);$('previewTouristTaxRate').textContent=`${euro(rate)} × ${g} × ${n}`;$('previewTouristTax').textContent=euro(tax);$('previewTotal').textContent=euro(total);$('previewPaymentMethod').textContent=paymentValue()||'—';}
 
 $('loginBtn').onclick=()=>{const e=$('loginEmail').value.trim();if(e)login(e)};$('logoutBtn').onclick=logout;$('createInviteBtn').onclick=createInvite;$('copyInviteBtn').onclick=async()=>{await navigator.clipboard.writeText($('inviteUrl').value);$('inviteMessage').textContent=tr[currentLang].copied;};$('newPaperBtn').onclick=blankRegistration;$('closeRegistrationBtn').onclick=()=>$('registrationEditor').classList.add('hidden');$('saveRegistrationBtn').onclick=saveReg;$('useForInvoiceBtn').onclick=useRegistrationForInvoice;$('deleteRegistrationBtn').onclick=deleteRegistration;$('registrationSearch').oninput=renderRegs;rf.invoiceRequested.onchange=toggleRegInvoice;rf.invoiceType.onchange=toggleRegInvoice;rf.idType.onchange=toggleIdOther;
