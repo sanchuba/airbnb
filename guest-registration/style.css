@@ -89,6 +89,23 @@ input[readonly] { background: #f7f4ef; color: #69645d; }
 .notice { padding: 15px 16px; border-radius: 12px; background: var(--highlight); }
 .notice.error { background: var(--error-bg); color: var(--error); }
 .notice.success { background: var(--success-bg); color: var(--success); }
+.notice.success p { margin: 0; }
+.home-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 14px;
+  border-radius: 999px;
+  padding: 11px 17px;
+  background: var(--heading);
+  color: #fff;
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 700;
+  transition: transform .2s ease, opacity .2s ease;
+}
+.home-btn:hover { transform: translateY(-1px); opacity: .94; }
+.home-btn:focus-visible { outline: 3px solid rgba(92,70,56,.2); outline-offset: 3px; }
 .form-message { min-height: 22px; color: var(--error); font-size: 14px; }
 .hidden { display: none !important; }
 .invalid input, .invalid textarea { border-color: var(--error); background: var(--error-bg); }

@@ -12,7 +12,7 @@ const t = {
     guestInfo: 'Guest information', fullName: 'Full name', homeAddress: 'Home address', postalCode: 'Postal code', city: 'City', country: 'Country', checkin: 'Check-in date', checkout: 'Check-out date',
     invoice: 'Invoice', wantInvoice: 'I would like to receive an invoice by email.', personal: 'Personal invoice', company: 'Company invoice', email: 'Email address', companyName: 'Company name', companyAddress: 'Company address', vat: 'VAT number (if applicable)',
     declaration: 'Guest declaration', declarationText: 'I confirm that the information I have provided is complete and correct.', privacy: 'Your information is used for guest registration and administration. Invoice details are used only when an invoice is requested.',
-    submit: 'Submit guest information', required: 'Please complete all required fields.', invoiceEmail: 'Please enter the email address where the invoice should be sent.', companyRequired: 'Please enter the company name.', declarationRequired: 'Please confirm that the information is complete and correct.', submitting: 'Submitting…'
+    submit: 'Submit guest information', required: 'Please complete all required fields.', invoiceEmail: 'Please enter the email address where the invoice should be sent.', companyRequired: 'Please enter the company name.', declarationRequired: 'Please confirm that the information is complete and correct.', submitting: 'Submitting…', homeButton: 'Visit Nijmegen Guest Rooms'
   },
   nl: {
     pageTitle: 'Gasteninformatie', intro: 'Vul je gastgegevens vóór aankomst in.',
@@ -21,7 +21,7 @@ const t = {
     guestInfo: 'Gastgegevens', fullName: 'Volledige naam', homeAddress: 'Woonadres', postalCode: 'Postcode', city: 'Woonplaats', country: 'Land', checkin: 'Incheckdatum', checkout: 'Uitcheckdatum',
     invoice: 'Factuur', wantInvoice: 'Ik wil graag een factuur per e-mail ontvangen.', personal: 'Particuliere factuur', company: 'Zakelijke factuur', email: 'E-mailadres', companyName: 'Bedrijfsnaam', companyAddress: 'Bedrijfsadres', vat: 'Btw-identificatienummer (indien van toepassing)',
     declaration: 'Verklaring van de gast', declarationText: 'Ik bevestig dat de door mij ingevulde gegevens volledig en correct zijn.', privacy: 'Je gegevens worden gebruikt voor gastenregistratie en administratieve doeleinden. Factuurgegevens worden alleen gebruikt wanneer een factuur wordt aangevraagd.',
-    submit: 'Gastgegevens verzenden', required: 'Vul alle verplichte velden in.', invoiceEmail: 'Vul het e-mailadres in waar de factuur naartoe moet.', companyRequired: 'Vul de bedrijfsnaam in.', declarationRequired: 'Bevestig dat de gegevens volledig en correct zijn.', submitting: 'Verzenden…'
+    submit: 'Gastgegevens verzenden', required: 'Vul alle verplichte velden in.', invoiceEmail: 'Vul het e-mailadres in waar de factuur naartoe moet.', companyRequired: 'Vul de bedrijfsnaam in.', declarationRequired: 'Bevestig dat de gegevens volledig en correct zijn.', submitting: 'Verzenden…', homeButton: 'Naar Nijmegen Guest Rooms'
   }
 };
 
@@ -52,7 +52,7 @@ function setLanguage(lang) {
   el('labelCheckin').textContent=x.checkin; el('labelCheckout').textContent=x.checkout;
   el('invoiceTitle').textContent=x.invoice; el('invoiceRequestedText').textContent=x.wantInvoice; el('personalInvoiceText').textContent=x.personal; el('companyInvoiceText').textContent=x.company;
   el('labelEmail').textContent=x.email; el('labelCompanyName').textContent=x.companyName; el('labelCompanyAddress').textContent=x.companyAddress; el('labelVatNumber').textContent=x.vat;
-  el('declarationTitle').textContent=x.declaration; el('declarationText').textContent=x.declarationText; el('privacyText').textContent=x.privacy; el('submitBtn').textContent=x.submit;
+  el('declarationTitle').textContent=x.declaration; el('declarationText').textContent=x.declarationText; el('privacyText').textContent=x.privacy; el('submitBtn').textContent=x.submit; el('successHomeBtn').textContent=x.homeButton;
   if (!form.classList.contains('hidden')) return;
   if (!el('loadingState').classList.contains('hidden')) el('loadingState').textContent=x.loading;
 }
@@ -88,7 +88,7 @@ async function loadInvite() {
   el('loadingState').classList.add('hidden');
   const invite = Array.isArray(data) ? data[0] : null;
   if (error || !invite) { el('invalidState').textContent=x.invalid; el('invalidState').classList.remove('hidden'); return; }
-  if (invite.already_submitted) { el('successState').textContent=x.already; el('successState').classList.remove('hidden'); return; }
+  if (invite.already_submitted) { el('successText').textContent=x.already; el('successState').classList.remove('hidden'); return; }
   if (!invite.valid) { el('invalidState').textContent=x.invalid; el('invalidState').classList.remove('hidden'); return; }
   fields.checkinDate.value = invite.checkin_date || '';
   fields.checkoutDate.value = invite.checkout_date || '';
@@ -116,7 +116,7 @@ form.addEventListener('submit', async e => {
   if (error) {
     el('formMessage').textContent=error.message; el('submitBtn').disabled=false; el('submitBtn').textContent=x.submit; return;
   }
-  form.classList.add('hidden'); el('successState').textContent=x.success; el('successState').classList.remove('hidden');
+  form.classList.add('hidden'); el('successText').textContent=x.success; el('successState').classList.remove('hidden');
   window.scrollTo({top:0,behavior:'smooth'});
 });
 
