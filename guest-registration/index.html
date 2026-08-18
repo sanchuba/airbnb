@@ -38,24 +38,13 @@
           </div>
 
           <div class="field">
-            <label id="labelHomeAddress" for="homeAddress">Home address</label>
-            <input id="homeAddress" autocomplete="street-address" required maxlength="240" />
-          </div>
-
-          <div class="grid-2">
-            <div class="field">
-              <label id="labelPostalCode" for="postalCode">Postal code</label>
-              <input id="postalCode" autocomplete="postal-code" required maxlength="40" />
-            </div>
-            <div class="field">
-              <label id="labelCity" for="city">City</label>
-              <input id="city" autocomplete="address-level2" required maxlength="120" />
-            </div>
+            <label id="labelCity" for="city">City</label>
+            <input id="city" autocomplete="address-level2" required maxlength="120" />
           </div>
 
           <div class="field">
             <label id="labelCountry" for="country">Country</label>
-            <input id="country" autocomplete="country-name" required maxlength="120" />
+            <select id="country" autocomplete="country-name" required><option value="">Select a country</option></select>
           </div>
 
           <div class="grid-2 stay-dates">
