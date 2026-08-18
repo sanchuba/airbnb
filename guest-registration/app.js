@@ -11,7 +11,7 @@ const t = {
     already: 'This registration has already been submitted. Thank you!', success: 'Thank you! Your guest information has been submitted successfully. We look forward to welcoming you to Nijmegen Guest Rooms.',
     guestInfo: 'Guest information', fullName: 'Full name', city: 'City', country: 'Country', checkin: 'Check-in date', checkout: 'Check-out date',
     invoice: 'Invoice', wantInvoice: 'I would like to receive an invoice by email.', personal: 'Personal invoice', company: 'Company invoice', email: 'Email address', companyName: 'Company name', companyAddress: 'Company address', vat: 'VAT number (if applicable)',
-    declaration: 'Guest declaration', declarationText: 'I confirm that the information I have provided is complete and correct.', privacy: 'Your information is used for guest registration and administration. Invoice details are used only when an invoice is requested.',
+    declaration: 'Guest declaration', declarationText: 'I confirm that the information I have provided is complete and correct.', privacy: 'Your information is used for guest registration and administration. Invoice details are used only when an invoice is requested.', airbnbPrivacy: 'Your information is used for guest registration and administration.',
     submit: 'Submit guest information', requiredHint: 'Required field', optionalLabel: 'optional', required: 'Please complete all required fields.', invoiceEmail: 'Please enter the email address where the invoice should be sent.', companyRequired: 'Please enter the company name.', declarationRequired: 'Please confirm that the information is complete and correct.', submitting: 'Submitting…', homeButton: 'Visit Nijmegen Guest Rooms'
   },
   nl: {
@@ -20,13 +20,14 @@ const t = {
     already: 'Deze registratie is al ingevuld. Bedankt!', success: 'Bedankt! Je gastgegevens zijn succesvol verzonden. We kijken ernaar uit je te verwelkomen bij Nijmegen Guest Rooms.',
     guestInfo: 'Gastgegevens', fullName: 'Volledige naam', city: 'Woonplaats', country: 'Land', checkin: 'Incheckdatum', checkout: 'Uitcheckdatum',
     invoice: 'Factuur', wantInvoice: 'Ik wil graag een factuur per e-mail ontvangen.', personal: 'Particuliere factuur', company: 'Zakelijke factuur', email: 'E-mailadres', companyName: 'Bedrijfsnaam', companyAddress: 'Bedrijfsadres', vat: 'Btw-identificatienummer (indien van toepassing)',
-    declaration: 'Verklaring van de gast', declarationText: 'Ik bevestig dat de door mij ingevulde gegevens volledig en correct zijn.', privacy: 'Je gegevens worden gebruikt voor gastenregistratie en administratieve doeleinden. Factuurgegevens worden alleen gebruikt wanneer een factuur wordt aangevraagd.',
+    declaration: 'Verklaring van de gast', declarationText: 'Ik bevestig dat de door mij ingevulde gegevens volledig en correct zijn.', privacy: 'Je gegevens worden gebruikt voor gastenregistratie en administratieve doeleinden. Factuurgegevens worden alleen gebruikt wanneer een factuur wordt aangevraagd.', airbnbPrivacy: 'Je gegevens worden gebruikt voor gastenregistratie en administratieve doeleinden.',
     submit: 'Gastgegevens verzenden', requiredHint: 'Verplicht veld', optionalLabel: 'optioneel', required: 'Vul alle verplichte velden in.', invoiceEmail: 'Vul het e-mailadres in waar de factuur naartoe moet.', companyRequired: 'Vul de bedrijfsnaam in.', declarationRequired: 'Bevestig dat de gegevens volledig en correct zijn.', submitting: 'Verzenden…', homeButton: 'Naar Nijmegen Guest Rooms'
   }
 };
 
 let currentLang = localStorage.getItem('guestRegistrationLanguage') || 'en';
 let token = new URLSearchParams(window.location.search).get('token');
+let invitePlatform = null;
 
 const el = id => document.getElementById(id);
 const form = el('guestForm');
@@ -69,14 +70,34 @@ function setLanguage(lang) {
   el('labelCompanyName').innerHTML=x.companyName+requiredStar;
   el('labelCompanyAddress').innerHTML=optional(x.companyAddress);
   el('labelVatNumber').innerHTML=optional(currentLang==='nl'?'Btw-identificatienummer':'VAT number');
-  el('declarationTitle').textContent=x.declaration; el('declarationText').innerHTML=x.declarationText+requiredStar; el('privacyText').textContent=x.privacy; el('submitBtn').textContent=x.submit; el('successHomeBtn').textContent=x.homeButton;
+  el('declarationTitle').textContent=x.declaration; el('declarationText').innerHTML=x.declarationText+requiredStar; el('privacyText').textContent=isAirbnbInvite()?x.airbnbPrivacy:x.privacy; el('submitBtn').textContent=x.submit; el('successHomeBtn').textContent=x.homeButton;
   if (!form.classList.contains('hidden')) return;
   if (!el('loadingState').classList.contains('hidden')) el('loadingState').textContent=x.loading;
 }
 
+function isAirbnbInvite() { return invitePlatform === 'airbnb'; }
+
+function applyPlatformRules() {
+  const airbnb = isAirbnbInvite();
+  el('invoiceSection').classList.toggle('hidden', airbnb);
+  if (airbnb) {
+    fields.invoiceRequested.checked = false;
+    fields.email.value = '';
+    fields.companyName.value = '';
+    fields.companyAddress.value = '';
+    fields.vatNumber.value = '';
+    const personal = document.querySelector('input[name="invoiceType"][value="personal"]');
+    if (personal) personal.checked = true;
+  }
+  toggleInvoiceFields();
+  const x=t[currentLang];
+  el('privacyText').textContent = airbnb ? x.airbnbPrivacy : x.privacy;
+}
+
 function toggleInvoiceFields() {
-  el('invoiceFields').classList.toggle('hidden', !fields.invoiceRequested.checked);
-  el('companyFields').classList.toggle('hidden', !fields.invoiceRequested.checked || invoiceType() !== 'company');
+  const show = !isAirbnbInvite() && fields.invoiceRequested.checked;
+  el('invoiceFields').classList.toggle('hidden', !show);
+  el('companyFields').classList.toggle('hidden', !show || invoiceType() !== 'company');
 }
 
 function clearInvalid() { document.querySelectorAll('.invalid').forEach(n => n.classList.remove('invalid')); }
@@ -88,7 +109,7 @@ function validate() {
   for (const f of [fields.fullName,fields.city,fields.country]) {
     if (!f.value.trim()) { markInvalid(f); return x.required; }
   }
-  if (fields.invoiceRequested.checked) {
+  if (!isAirbnbInvite() && fields.invoiceRequested.checked) {
     if (!fields.email.value.trim() || !fields.email.validity.valid) { markInvalid(fields.email); return x.invoiceEmail; }
     if (invoiceType()==='company' && !fields.companyName.value.trim()) { markInvalid(fields.companyName); return x.companyRequired; }
   }
@@ -107,8 +128,10 @@ async function loadInvite() {
   if (error || !invite) { el('invalidState').textContent=x.invalid; el('invalidState').classList.remove('hidden'); return; }
   if (invite.already_submitted) { el('successText').textContent=x.already; el('successState').classList.remove('hidden'); return; }
   if (!invite.valid) { el('invalidState').textContent=x.invalid; el('invalidState').classList.remove('hidden'); return; }
+  invitePlatform = invite.platform || null;
   fields.checkinDate.value = invite.checkin_date || '';
   fields.checkoutDate.value = invite.checkout_date || '';
+  applyPlatformRules();
   form.classList.remove('hidden');
 }
 
@@ -121,12 +144,12 @@ form.addEventListener('submit', async e => {
   const params = {
     p_token: token,
     p_full_name: fields.fullName.value.trim(), p_home_address: '', p_postal_code: '',
-    p_city: fields.city.value.trim(), p_country: fields.country.value.trim(), p_invoice_requested: fields.invoiceRequested.checked,
-    p_invoice_type: fields.invoiceRequested.checked ? invoiceType() : null,
-    p_email: fields.invoiceRequested.checked ? fields.email.value.trim() : null,
-    p_company_name: fields.invoiceRequested.checked && invoiceType()==='company' ? fields.companyName.value.trim() : null,
-    p_company_address: fields.invoiceRequested.checked && invoiceType()==='company' ? fields.companyAddress.value.trim() : null,
-    p_vat_number: fields.invoiceRequested.checked && invoiceType()==='company' ? fields.vatNumber.value.trim() : null,
+    p_city: fields.city.value.trim(), p_country: fields.country.value.trim(), p_invoice_requested: !isAirbnbInvite() && fields.invoiceRequested.checked,
+    p_invoice_type: !isAirbnbInvite() && fields.invoiceRequested.checked ? invoiceType() : null,
+    p_email: !isAirbnbInvite() && fields.invoiceRequested.checked ? fields.email.value.trim() : null,
+    p_company_name: !isAirbnbInvite() && fields.invoiceRequested.checked && invoiceType()==='company' ? fields.companyName.value.trim() : null,
+    p_company_address: !isAirbnbInvite() && fields.invoiceRequested.checked && invoiceType()==='company' ? fields.companyAddress.value.trim() : null,
+    p_vat_number: !isAirbnbInvite() && fields.invoiceRequested.checked && invoiceType()==='company' ? fields.vatNumber.value.trim() : null,
     p_declaration_accepted: fields.declarationAccepted.checked
   };
   const { error } = await supabaseClient.rpc('submit_guest_registration', params);
@@ -143,5 +166,5 @@ document.querySelectorAll('.lang-btn').forEach(b=>b.addEventListener('click',()=
 Object.values(fields).forEach(f=>f?.addEventListener('input',()=>{ f.closest('.field')?.classList.remove('invalid'); el('formMessage').textContent=''; }));
 
 setLanguage(currentLang);
-toggleInvoiceFields();
+applyPlatformRules();
 loadInvite();
