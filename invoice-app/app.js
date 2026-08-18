@@ -147,7 +147,9 @@ function renderReservations(){
     } else if(r.status==='active') {
       if(exactCandidates.length===1){ const candidate=exactCandidates[0]; const b=document.createElement('button'); b.className='action-btn primary'; b.textContent=x.linkSuggestedGuest.replace('{name}',candidate.full_name); b.onclick=()=>linkExistingRegistration(r,candidate); actions.appendChild(b); }
       else if(exactCandidates.length>1){ const b=document.createElement('button'); b.className='action-btn primary'; b.textContent=x.linkExistingGuest; b.onclick=()=>showExistingRegistrationPicker(r,d,true); actions.appendChild(b); }
-      const create=document.createElement('button'); create.className=exactCandidates.length?'action-btn secondary':'action-btn primary'; create.textContent=x.createRegistrationLink; create.onclick=()=>createReservationInvite(r,create,d); actions.appendChild(create);
+      if(!inv){
+        const create=document.createElement('button'); create.className=exactCandidates.length?'action-btn secondary':'action-btn primary'; create.textContent=x.createRegistrationLink; create.onclick=()=>createReservationInvite(r,create,d); actions.appendChild(create);
+      }
       const manual=document.createElement('button'); manual.className='action-btn secondary'; manual.textContent=x.linkExistingGuest; manual.onclick=()=>showExistingRegistrationPicker(r,d,false); actions.appendChild(manual);
       if(inv) addReservationLinkBox(actions,inv);
     }
