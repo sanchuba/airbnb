@@ -53,6 +53,29 @@
           <div class="card screen-only" id="registrationOverview">
             <div class="section-header"><h2 id="registrationTitle">Guest registrations</h2><button id="newPaperBtn" class="action-btn secondary">Add paper registration</button></div>
 
+            <div class="attention-panel" id="attentionPanel">
+              <div class="attention-heading">
+                <div>
+                  <h3 id="attentionTitle">Needs attention</h3>
+                  <p id="attentionSubtitle" class="muted">Quick overview of upcoming and unfinished guest tasks.</p>
+                </div>
+              </div>
+              <div class="attention-grid">
+                <button type="button" class="attention-card" data-filter="arrivingSoon">
+                  <span class="attention-number" id="attentionArrivingCount">0</span>
+                  <span class="attention-label" id="attentionArrivingLabel">Arriving soon</span>
+                </button>
+                <button type="button" class="attention-card" data-filter="idToVerify">
+                  <span class="attention-number" id="attentionIdCount">0</span>
+                  <span class="attention-label" id="attentionIdLabel">ID to verify</span>
+                </button>
+                <button type="button" class="attention-card" data-filter="invoiceToCreate">
+                  <span class="attention-number" id="attentionInvoiceCount">0</span>
+                  <span class="attention-label" id="attentionInvoiceLabel">Invoices to create</span>
+                </button>
+              </div>
+            </div>
+
             <div class="subcard">
               <h3 id="inviteTitle">Create secure guest link</h3>
               <div class="field"><label id="labelInviteBooking" for="inviteBookingReference">Booking reference (optional)</label><input id="inviteBookingReference" /></div>
@@ -66,6 +89,15 @@
             </div>
 
             <div class="field"><label id="labelRegistrationSearch" for="registrationSearch">Search registrations</label><input id="registrationSearch" placeholder="Search by name, email or booking reference" /></div>
+            <div class="registration-filters" id="registrationFilters" aria-label="Registration filters">
+              <button type="button" class="filter-pill active" data-filter="all" id="filterAll">All</button>
+              <button type="button" class="filter-pill" data-filter="arrivingSoon" id="filterArrivingSoon">Arriving soon</button>
+              <button type="button" class="filter-pill" data-filter="upcoming" id="filterUpcoming">Upcoming</button>
+              <button type="button" class="filter-pill" data-filter="staying" id="filterStaying">Staying now</button>
+              <button type="button" class="filter-pill" data-filter="past" id="filterPast">Past</button>
+              <button type="button" class="filter-pill" data-filter="idToVerify" id="filterId">ID to verify</button>
+              <button type="button" class="filter-pill" data-filter="invoiceToCreate" id="filterInvoice">Invoice to create</button>
+            </div>
             <div id="registrationList" class="registration-list"></div>
           </div>
 
