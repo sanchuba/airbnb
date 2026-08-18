@@ -472,6 +472,40 @@ textarea:focus { outline:none; border-color:var(--accent); }
 }
 
 
+
+/* Floating back-to-top shortcut */
+.back-to-top-btn {
+  position: fixed;
+  right: 22px;
+  bottom: calc(22px + env(safe-area-inset-bottom, 0px));
+  z-index: 1900;
+  width: 48px;
+  height: 48px;
+  border: 1px solid rgba(92,70,56,.12);
+  border-radius: 50%;
+  background: rgba(255,255,255,.96);
+  color: var(--heading);
+  box-shadow: 0 8px 24px rgba(0,0,0,.14);
+  backdrop-filter: blur(10px);
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity .2s ease, transform .2s ease, background .2s ease, visibility .2s ease;
+}
+.back-to-top-btn.visible { opacity: 1; visibility: visible; transform: translateY(0); }
+.back-to-top-btn:hover,
+.back-to-top-btn:focus-visible { background: var(--highlight); outline: none; transform: translateY(-1px); }
+@media (max-width:700px) {
+  .back-to-top-btn { right: 14px; bottom: calc(14px + env(safe-area-inset-bottom, 0px)); width: 46px; height: 46px; }
+}
+
 /* Desktop sticky section navigation */
 .admin-nav {
   position: sticky;
@@ -591,5 +625,6 @@ textarea:focus { outline:none; border-color:var(--accent); }
 
 @media print {
   .admin-nav,
-  .mobile-admin-menu { display: none !important; }
+  .mobile-admin-menu,
+  .back-to-top-btn { display: none !important; }
 }
