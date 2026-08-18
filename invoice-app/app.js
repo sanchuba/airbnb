@@ -37,7 +37,7 @@ const f={
 const today=()=>new Date().toISOString().slice(0,10);
 const euro=v=>'€'+Number(v||0).toFixed(2);
 const fmt=d=>d?new Date(d+'T00:00:00').toLocaleDateString(currentLang==='nl'?'nl-NL':'en-GB',{day:'numeric',month:'long',year:'numeric'}):'—';
-const nightsBetween=()=>{ if(!f.checkin.value||!f.checkout.value)return null; const n=Math.round((new Date(f.checkout.value)-new Date(f.checkin.value))/86400000); return n>0?n:null; };
+const invoiceNightsBetween=()=>{ if(!f.checkin.value||!f.checkout.value)return null; const n=Math.round((new Date(f.checkout.value)-new Date(f.checkin.value))/86400000); return n>0?n:null; };
 const roomValue=()=>f.room.value==='custom'?(f.customRoom.value.trim()||tr[currentLang].customRoomOpt):f.room.value;
 const paymentValue=()=>f.payment.value==='custom'?(f.customPayment.value.trim()||tr[currentLang].customPayOpt):f.payment.value;
 const localToday=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
@@ -63,7 +63,7 @@ function roomLabel(key){ return key==='cozy'?tr[currentLang].roomCozyShort:tr[cu
 function reservationRegistration(resId){ return registrations.find(r=>r.reservation_id===resId)||null; }
 function reservationInvite(resId){ return reservationInvites.find(i=>i.reservation_id===resId && !i.used_at && new Date(i.expires_at)>new Date())||null; }
 function reservationLink(inv){ return `${PUBLIC_FORM_BASE}?token=${encodeURIComponent(inv.token)}`; }
-function nightsBetween(a,b){ const A=new Date(`${a}T12:00:00`),B=new Date(`${b}T12:00:00`); return Math.max(0,Math.round((B-A)/86400000)); }
+function reservationNightsBetween(a,b){ const A=new Date(`${a}T12:00:00`),B=new Date(`${b}T12:00:00`); return Math.max(0,Math.round((B-A)/86400000)); }
 
 async function loadReservations(){
   const [{data:r,error:re},{data:iv,error:ie}]=await Promise.all([
@@ -96,7 +96,7 @@ function renderReservations(){
   const box=$('reservationList'); if(!box)return; box.innerHTML='';
   if(!rows.length){ box.innerHTML=`<p class="muted">${x.noReservations}</p>`; return; }
   rows.forEach(r=>{
-    const reg=reservationRegistration(r.id), inv=reservationInvite(r.id), n=nightsBetween(r.checkin_date,r.checkout_date);
+    const reg=reservationRegistration(r.id), inv=reservationInvite(r.id), n=reservationNightsBetween(r.checkin_date,r.checkout_date);
     const d=document.createElement('div'); d.className='reservation-item'+(r.status!=='active'?' removed':'');
     const platformClass=r.platform==='airbnb'?'airbnb':'booking';
     const platformLabel=r.platform==='airbnb'?'Airbnb':'Booking.com';
@@ -356,7 +356,7 @@ function useRegistrationForInvoice(){
 }
 
 async function nextInvoice(){const y=new Date(f.invoiceDate.value||today()).getFullYear();const {data}=await supabaseClient.from('invoices').select('invoice_sequence').eq('invoice_year',y).order('invoice_sequence',{ascending:false}).limit(1);const n=data?.length?data[0].invoice_sequence+1:1;return `${y}-${String(n).padStart(3,'0')}`;}
-function autoNights(){if(manualNights)return;const n=nightsBetween();if(n)f.nights.value=n;}
+function autoNights(){if(manualNights)return;const n=invoiceNightsBetween();if(n)f.nights.value=n;}
 async function newInvoice(force=false){if(!force&&!guardUnsaved('invoice'))return; suppressDirty=true;currentInvoiceId=null;manualNights=false;f.registrationId.value='';f.invoiceDate.value=today();f.invoiceNumber.value=await nextInvoice();for(const k of ['guestName','guestAddress','guestPostal','guestCity','guestCountry','companyName','companyAddress','vat','email','booking','customRoom','checkin','checkout','nights','accommodation','customPayment'])f[k].value='';f.guests.value=1;f.cleaning.value='5.00';f.tourist.value='3.71';f.taxMode.value='included';f.room.value=tr[currentLang].cozy;f.payment.value=tr[currentLang].booking;$('deleteBtn').classList.add('hidden');$('duplicateBtn').classList.add('hidden');toggleInvoiceCustom();updatePreview();$('saveMessage').textContent='';invoiceDirty=false;suppressDirty=false;}
 function validateInvoice(){for(const k of ['invoiceNumber','invoiceDate','guestName','room','checkin','checkout','nights','guests','accommodation','cleaning','tourist','taxMode','payment'])if(!String(f[k].value??'').trim())return false;if(f.room.value==='custom'&&!f.customRoom.value.trim())return false;if(f.payment.value==='custom'&&!f.customPayment.value.trim())return false;return Number(f.nights.value)>0&&Number(f.guests.value)>0;}
 async function saveInvoice(){if(!validateInvoice()){$('saveMessage').textContent=tr[currentLang].required;return;}const s=await session();const [year,seq]=f.invoiceNumber.value.split('-');const n=Number(f.nights.value),g=Number(f.guests.value),a=Number(f.accommodation.value||0),c=Number(f.cleaning.value||0),rate=Number(f.tourist.value||0),tax=n*g*rate,total=f.taxMode.value==='included'?a+c:a+c+tax;const payload={invoice_number:f.invoiceNumber.value,invoice_year:Number(year),invoice_sequence:Number(seq),invoice_date:f.invoiceDate.value,guest_name:f.guestName.value.trim(),guest_email:f.email.value.trim(),booking_reference:f.booking.value.trim(),guest_address:f.guestAddress.value.trim(),guest_postal_code:f.guestPostal.value.trim(),guest_city:f.guestCity.value.trim(),guest_country:f.guestCountry.value.trim(),company_name:f.companyName.value.trim(),company_address:f.companyAddress.value.trim(),vat_number:f.vat.value.trim(),guest_registration_id:f.registrationId.value||null,room_name:roomValue(),checkin_date:f.checkin.value,checkout_date:f.checkout.value,nights:n,guests:g,accommodation_amount:a,cleaning_fee:c,tourist_tax_rate:rate,tourist_tax_total:tax,tax_mode:f.taxMode.value,total_paid:total,payment_method:paymentValue(),created_by:s.user.id};const q=currentInvoiceId?supabaseClient.from('invoices').update(payload).eq('id',currentInvoiceId).select().single():supabaseClient.from('invoices').insert([payload]).select().single();const {data,error}=await q;if(error){$('saveMessage').textContent=error.message;return;}currentInvoiceId=data.id;invoiceDirty=false;$('deleteBtn').classList.remove('hidden');$('duplicateBtn').classList.remove('hidden');$('saveMessage').textContent=tr[currentLang].savedInvoice;await loadInvoices();renderAttention();renderRegs();}
@@ -428,7 +428,11 @@ window.addEventListener('beforeunload',e=>{if(registrationDirty||invoiceDirty){e
 initAdminNav();
 
 async function init(){setTexts();toggleRegInvoice();toggleIdOther();toggleInvoiceCustom();const s=await session();if(!s){$('loginView').classList.remove('hidden');$('appView').classList.add('hidden');return;}if(!(await allowed())){await supabaseClient.auth.signOut();$('loginMessage').textContent=tr[currentLang].denied;return;}$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');$('logoutBtn').classList.remove('hidden');await Promise.all([loadRegs(),loadInvoices(),loadReservations(),newInvoice(true)]); await autoSyncCalendars();}
-init();
+init().catch(err=>{
+  console.error('Admin initialization failed:', err);
+  const msg=document.getElementById('loginMessage');
+  if(msg) msg.textContent='The admin app could not start. Please refresh the page. If this continues, check the browser console.';
+});
 
 
 // Refresh the complete admin page when the title/logo is clicked.
