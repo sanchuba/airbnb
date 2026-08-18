@@ -73,6 +73,24 @@ input[readonly] { background: #f7f4ef; color: #69645d; }
 .choice-card { display: flex; gap: 9px; align-items: center; padding: 12px; background: #fff; border: 1px solid var(--border); border-radius: 10px; cursor: pointer; }
 .declaration-section { background: var(--highlight); border: 0; border-radius: 14px; padding: 18px; }
 .privacy-text { color: #6f6a64; font-size: 13px; margin: 14px 0 0; }
+
+.required-hint {
+  margin: -10px 0 18px;
+  color: #766f67;
+  font-size: 12.5px;
+}
+.required-star {
+  color: #b54b4b;
+  font-weight: 800;
+  margin-left: 2px;
+}
+.required-hint .required-star { margin-left: 0; margin-right: 3px; }
+.optional-label {
+  color: #8a8178;
+  font-weight: 500;
+  font-size: 12px;
+}
+
 .primary-btn {
   width: 100%;
   margin-top: 22px;
