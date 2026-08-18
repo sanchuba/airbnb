@@ -36,18 +36,45 @@
           <span></span><span></span><span></span>
         </button>
         <div class="mobile-menu-panel" id="mobileMenuPanel">
-          <button class="mobile-nav-btn active" type="button" data-target="registrationOverview" id="mobileNavRegistrations">Guest registrations</button>
+          <button class="mobile-nav-btn active" type="button" data-target="reservationsOverview" id="mobileNavReservations">Reservations</button>
+          <button class="mobile-nav-btn" type="button" data-target="registrationOverview" id="mobileNavRegistrations">Guest registrations</button>
           <button class="mobile-nav-btn hidden" type="button" data-target="registrationEditor" id="mobileNavGuestDetails">Guest details</button>
           <button class="mobile-nav-btn" type="button" data-target="invoiceDetailsCard" id="mobileNavInvoiceDetails">Invoice details</button>
           <button class="mobile-nav-btn" type="button" data-target="savedInvoicesCard" id="mobileNavSavedInvoices">Saved invoices</button>
         </div>
       </div>
       <nav class="admin-nav screen-only" id="adminNav" aria-label="Admin sections">
-        <button class="admin-nav-btn active" type="button" data-target="registrationOverview" id="navRegistrations">Guest registrations</button>
+        <button class="admin-nav-btn active" type="button" data-target="reservationsOverview" id="navReservations">Reservations</button>
+        <button class="admin-nav-btn" type="button" data-target="registrationOverview" id="navRegistrations">Guest registrations</button>
         <button class="admin-nav-btn hidden" type="button" data-target="registrationEditor" id="navGuestDetails">Guest details</button>
         <button class="admin-nav-btn" type="button" data-target="invoiceDetailsCard" id="navInvoiceDetails">Invoice details</button>
         <button class="admin-nav-btn" type="button" data-target="savedInvoicesCard" id="navSavedInvoices">Saved invoices</button>
       </nav>
+      <div class="card screen-only reservations-card" id="reservationsOverview">
+        <div class="section-header">
+          <div>
+            <h2 id="reservationsTitle">Reservations</h2>
+            <p id="reservationsSubtitle" class="muted">Read-only overview from Airbnb and Booking.com calendars.</p>
+          </div>
+          <button id="syncCalendarsBtn" class="action-btn secondary" type="button">Sync calendars</button>
+        </div>
+        <div class="reservation-toolbar">
+          <div class="reservation-legend">
+            <span class="platform-pill airbnb">Airbnb</span>
+            <span class="platform-pill booking">Booking.com</span>
+          </div>
+          <span id="calendarSyncStatus" class="muted"></span>
+        </div>
+        <div class="reservation-filters" id="reservationFilters" aria-label="Reservation filters">
+          <button type="button" class="filter-pill active" data-reservation-filter="upcoming" id="reservationFilterUpcoming">Upcoming</button>
+          <button type="button" class="filter-pill" data-reservation-filter="staying" id="reservationFilterStaying">Staying now</button>
+          <button type="button" class="filter-pill" data-reservation-filter="past" id="reservationFilterPast">Past</button>
+          <button type="button" class="filter-pill" data-reservation-filter="removed" id="reservationFilterRemoved">Removed / cancelled</button>
+          <button type="button" class="filter-pill" data-reservation-filter="all" id="reservationFilterAll">All</button>
+        </div>
+        <div id="reservationList" class="reservation-list"></div>
+      </div>
+
       <div class="layout">
         <div class="left-column">
           <div class="card screen-only" id="registrationOverview">

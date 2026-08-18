@@ -723,3 +723,34 @@ textarea:focus { outline:none; border-color:var(--accent); }
   .registration-filters { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 3px; scrollbar-width: thin; }
   .filter-pill { flex: 0 0 auto; }
 }
+
+/* v3.0 — Reservations / iCal */
+.reservations-card { margin-bottom: 24px; }
+.reservations-card .section-header > div:first-child { min-width: 0; }
+.reservations-card .section-header p { margin: -10px 0 0; }
+.reservation-toolbar { display:flex; justify-content:space-between; align-items:center; gap:12px; margin: 4px 0 16px; flex-wrap:wrap; }
+.reservation-legend { display:flex; gap:8px; flex-wrap:wrap; }
+.platform-pill { display:inline-flex; align-items:center; border-radius:999px; padding:4px 9px; font-size:12px; font-weight:700; }
+.platform-pill.airbnb { background:#fff0f2; color:#a13b4d; }
+.platform-pill.booking { background:#eef5ff; color:#245b98; }
+.reservation-list { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:12px; }
+.reservation-item { border:1px solid var(--border); border-radius:14px; padding:16px; background:#fff; display:flex; flex-direction:column; gap:10px; }
+.reservation-item.removed { opacity:.55; }
+.reservation-top { display:flex; justify-content:space-between; gap:10px; align-items:flex-start; }
+.reservation-title { display:flex; gap:8px; align-items:center; flex-wrap:wrap; }
+.reservation-title strong { color:var(--heading); }
+.reservation-meta { font-size:14px; line-height:1.5; }
+.reservation-actions { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+.reservation-actions .action-btn { padding:8px 11px; font-size:13px; }
+.reservation-status { font-size:12px; font-weight:700; border-radius:999px; padding:4px 9px; background:var(--highlight); color:var(--heading); }
+.reservation-status.done { background:#e8f5ea; color:#2f6c3d; }
+.reservation-status.pending { background:#fff4dd; color:#8a6518; }
+.reservation-link-box { display:flex; gap:8px; width:100%; }
+.reservation-link-box input { min-width:0; flex:1; padding:9px 10px; border:1px solid var(--border); border-radius:9px; font-size:12px; }
+@media (max-width: 800px) {
+  .reservation-list { grid-template-columns:1fr; }
+  .reservations-card { padding-top:64px; }
+}
+
+.reservation-filters { display:flex; gap:8px; flex-wrap:wrap; margin:0 0 16px; }
+.reservation-status.removed-status { background:#f1eeee; color:#6d6460; }
