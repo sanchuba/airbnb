@@ -54,7 +54,7 @@ h1 { margin: 4px 0 7px; color: var(--heading); font-family: Georgia, serif; font
 h2 { color: var(--heading); font-family: Georgia, serif; margin: 0 0 18px; font-size: 23px; }
 .field { margin-bottom: 15px; }
 .field label { display: block; margin-bottom: 6px; font-size: 14px; font-weight: 650; color: var(--heading); }
-input, textarea {
+input, textarea, select {
   width: 100%;
   border: 1px solid var(--border);
   background: #fff;
@@ -63,7 +63,7 @@ input, textarea {
   font: inherit;
   color: var(--text);
 }
-input:focus, textarea:focus { outline: none; border-color: #a89176; box-shadow: 0 0 0 3px rgba(199,184,163,.22); }
+input:focus, textarea:focus, select:focus { outline: none; border-color: #a89176; box-shadow: 0 0 0 3px rgba(199,184,163,.22); }
 input[readonly] { background: #f7f4ef; color: #69645d; }
 .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 .check-row { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
@@ -108,7 +108,7 @@ input[readonly] { background: #f7f4ef; color: #69645d; }
 .home-btn:focus-visible { outline: 3px solid rgba(92,70,56,.2); outline-offset: 3px; }
 .form-message { min-height: 22px; color: var(--error); font-size: 14px; }
 .hidden { display: none !important; }
-.invalid input, .invalid textarea { border-color: var(--error); background: var(--error-bg); }
+.invalid input, .invalid textarea, .invalid select { border-color: var(--error); background: var(--error-bg); }
 @media (max-width: 620px) {
   body { padding: 10px 8px 36px; }
   .card { padding: 20px 16px; border-radius: 14px; }
@@ -117,3 +117,5 @@ input[readonly] { background: #f7f4ef; color: #69645d; }
   .lang-switch { width: 100%; }
   .lang-btn { flex: 1; }
 }
+
+select { min-height: 46px; cursor: pointer; }
