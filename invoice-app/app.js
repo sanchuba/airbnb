@@ -54,7 +54,7 @@ function registrationMatchesFilter(r,filter){
   if(filter==='staying') return r.checkin_date<=t && r.checkout_date>t;
   if(filter==='past') return r.checkout_date<=t;
   if(filter==='idToVerify') return !r.id_verified && r.checkin_date<=t && r.checkout_date>t;
-  if(filter==='invoiceToCreate') return !!r.invoice_requested && !invoice;
+  if(filter==='invoiceToCreate') return !!r.invoice_requested && !invoice && r.checkout_date<=t;
   if(filter==='arrivingSoon') return r.checkin_date>=t && r.checkin_date<=addDaysIso(t,3);
   return true;
 }
@@ -62,7 +62,7 @@ function renderAttention(){
   const t=localToday();
   const arriving=registrations.filter(r=>r.checkin_date>=t&&r.checkin_date<=addDaysIso(t,3)).length;
   const ids=registrations.filter(r=>!r.id_verified&&r.checkin_date<=t&&r.checkout_date>t).length;
-  const inv=registrations.filter(r=>r.invoice_requested&&!linkedInvoiceForRegistration(r.id)).length;
+  const inv=registrations.filter(r=>r.invoice_requested&&!linkedInvoiceForRegistration(r.id)&&r.checkout_date<=t).length;
   if($('attentionArrivingCount'))$('attentionArrivingCount').textContent=arriving;
   if($('attentionIdCount'))$('attentionIdCount').textContent=ids;
   if($('attentionInvoiceCount'))$('attentionInvoiceCount').textContent=inv;
