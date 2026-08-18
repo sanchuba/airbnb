@@ -443,7 +443,7 @@ function renderRegs(){
       : (r.invoice_requested?`<span class="badge invoice-pending">${escapeHtml(x.invoicePending)}</span>`:'');
     const d=document.createElement('div'); d.className='registration-item list-item-with-action';
     d.innerHTML=`<div class="list-item-content"><strong>${escapeHtml(r.full_name)}</strong><span class="muted">${fmt(r.checkin_date)} → ${fmt(r.checkout_date)}</span><div class="registration-badges"><span class="badge ${r.id_verified?'good':'warn'}">${r.id_verified?(currentLang==='nl'?'ID gecontroleerd':'ID verified'):(currentLang==='nl'?'ID nog controleren':'ID to verify')}</span>${invoiceBadge}<span class="badge">${r.source==='paper_manual'?(currentLang==='nl'?'Papier':'Paper'):(currentLang==='nl'?'Digitaal':'Digital')}</span></div></div><button type="button" class="quick-delete-btn" title="${escapeHtml(x.quickDeleteReg)}" aria-label="${escapeHtml(x.quickDeleteReg)}">🗑</button>`;
-    d.querySelector('.list-item-content').onclick=(e)=>{ if(e.target.closest('.linked-invoice-badge'))return; loadReg(r); };
+    d.querySelector('.list-item-content').onclick=(e)=>{ if(e.target.closest('.linked-invoice-badge'))return; loadReg(r,'heading'); };
     const badge=d.querySelector('.linked-invoice-badge'); if(badge) badge.onclick=e=>{e.stopPropagation();const opened=loadInvoice(linked);if(opened&&window.innerWidth>1000){requestAnimationFrame(()=>$('invoiceDetailsCard').scrollIntoView({behavior:'smooth',block:'start'}));}};
     d.querySelector('.quick-delete-btn').onclick=e=>{e.stopPropagation();quickDeleteRegistration(r);};
     $('registrationList').appendChild(d);
