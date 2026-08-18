@@ -628,3 +628,44 @@ textarea:focus { outline:none; border-color:var(--accent); }
   .mobile-admin-menu,
   .back-to-top-btn { display: none !important; }
 }
+
+/* v2.9.3 desktop dashboard alignment
+   Guest registrations and saved invoices stay on the left.
+   Their editable forms are aligned on the right. */
+@media (min-width: 1001px) {
+  .layout {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-auto-rows: auto;
+    align-items: start;
+  }
+
+  .left-column,
+  .right-column {
+    display: contents;
+  }
+
+  #registrationOverview {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  #registrationEditor {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  #savedInvoicesCard {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  #invoiceDetailsCard {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  #previewWrapper {
+    grid-column: 2;
+    grid-row: 3;
+  }
+}
