@@ -141,7 +141,7 @@ function renderReservations(){
     d.innerHTML=`<div class="reservation-top"><div><div class="reservation-title"><span class="platform-pill ${platformClass}">${platformLabel}</span><strong>${escapeHtml(displayName)}</strong></div><div class="reservation-meta">${escapeHtml(roomLabel(r.room_key))}<br>${fmt(r.checkin_date)} → ${fmt(r.checkout_date)} · ${n} ${escapeHtml(x.nightsWord)}</div></div>${status}</div>${reservationGuestBadges(reg)}<div class="reservation-actions"></div>`;
     const actions=d.querySelector('.reservation-actions');
     if(reg){
-      const b=document.createElement('button'); b.className='action-btn secondary'; b.textContent=x.openGuest; b.onclick=()=>loadReg(reg); actions.appendChild(b);
+      const b=document.createElement('button'); b.className='action-btn secondary'; b.textContent=x.openGuest; b.onclick=()=>loadReg(reg,'heading'); actions.appendChild(b);
       const invoiceBadge=d.querySelector('.reservation-invoice-badge');
       if(invoiceBadge){ const linked=linkedInvoiceForRegistration(reg.id); invoiceBadge.onclick=e=>{ e.stopPropagation(); const opened=loadInvoice(linked); if(opened) requestAnimationFrame(()=>$('invoiceDetailsCard').scrollIntoView({behavior:'smooth',block:'start'})); }; }
     } else if(r.status==='active') {
@@ -376,12 +376,21 @@ function blankRegistration(){
   registrationDirty=false; suppressDirty=false;
   requestAnimationFrame(()=>{ if(window.innerWidth>1000){ $('registrationEditor').scrollIntoView({behavior:'smooth',block:'end'}); } else { $('registrationEditor').scrollIntoView({behavior:'smooth',block:'start'}); } });
 }
-function loadReg(r){
+function loadReg(r,scrollMode='default'){
   if(!guardUnsaved('registration'))return;
   suppressDirty=true;
   currentRegistrationId=r.id;rf.id.value=r.id;rf.source.value=r.source||'digital';rf.name.value=r.full_name||'';rf.city.value=r.city||'';populateCountries(rf.country,r.country||'');rf.checkin.value=r.checkin_date||'';rf.checkout.value=r.checkout_date||'';rf.booking.value=r.booking_reference||'';rf.invoiceRequested.checked=!!r.invoice_requested;rf.invoiceType.value=r.invoice_type||'personal';rf.email.value=r.email||'';rf.companyName.value=r.company_name||'';rf.companyAddress.value=r.company_address||'';rf.vat.value=r.vat_number||'';rf.idType.value=r.id_type||'';rf.idOther.value=r.id_other||'';rf.idVerified.checked=!!r.id_verified;toggleRegInvoice();toggleIdOther();$('deleteRegistrationBtn').classList.remove('hidden');$('registrationEditor').classList.remove('hidden');$('registrationMessage').textContent='';
   registrationDirty=false; suppressDirty=false;
-  requestAnimationFrame(()=>{ if(window.innerWidth>1000){ $('registrationEditor').scrollIntoView({behavior:'smooth',block:'end'}); } else { $('registrationEditor').scrollIntoView({behavior:'smooth',block:'start'}); } });
+  requestAnimationFrame(()=>{
+    if(scrollMode==='heading'){
+      const heading=$('registrationEditorTitle')||$('registrationEditor');
+      heading.scrollIntoView({behavior:'smooth',block:'start'});
+    } else if(window.innerWidth>1000){
+      $('registrationEditor').scrollIntoView({behavior:'smooth',block:'end'});
+    } else {
+      $('registrationEditor').scrollIntoView({behavior:'smooth',block:'start'});
+    }
+  });
 }
 async function saveReg(){
   if(!rf.name.value.trim()||!rf.city.value.trim()||!rf.country.value.trim()||!rf.checkin.value||!rf.checkout.value){$('registrationMessage').textContent=currentLang==='nl'?'Vul alle gastgegevens en verblijfsdata in.':'Complete all guest information and stay dates.';return;}
