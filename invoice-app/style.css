@@ -754,3 +754,18 @@ textarea:focus { outline:none; border-color:var(--accent); }
 
 .reservation-filters { display:flex; gap:8px; flex-wrap:wrap; margin:0 0 16px; }
 .reservation-status.removed-status { background:#f1eeee; color:#6d6460; }
+
+/* v3.0.3 — link pre-iCal guest registrations to imported reservations */
+.reservation-status.match { background:#fff4dd; color:#7b5610; }
+.existing-registration-picker {
+  width:100%; display:flex; gap:8px; align-items:center; padding:10px;
+  border:1px solid var(--border); border-radius:11px; background:var(--highlight);
+}
+.existing-registration-picker select {
+  min-width:0; flex:1; padding:9px 36px 9px 10px; border:1px solid var(--border);
+  border-radius:9px; background:#fff; color:var(--text); font:inherit; font-size:13px;
+}
+@media (max-width:700px){
+  .existing-registration-picker { flex-direction:column; align-items:stretch; }
+  .existing-registration-picker .action-btn { width:100%; }
+}
