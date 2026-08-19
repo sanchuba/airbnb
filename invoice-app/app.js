@@ -75,12 +75,15 @@ function platformDisplay(platform){
   return '';
 }
 function applyRegistrationPlatformField(reg=null){
-  const linked=!!reg?.reservation_id;
   const reservation=linkedReservationForRegistration(reg);
   const value=reg?.booking_platform || reservation?.platform || '';
   rf.platform.value=value;
-  rf.platform.disabled=linked;
-  $('regPlatformHint').classList.toggle('hidden',!linked);
+  rf.platform.disabled=false;
+
+  // This control is only an input for registrations that you create manually.
+  // Digital registrations (including iCal-linked guests) never need to show it.
+  const isManual = !reg || reg.source==='paper_manual';
+  $('regPlatformField').classList.toggle('hidden',!isManual);
 }
 function applyReservationRoomToInvoice(registrationId){
   if(!registrationId)return false;
@@ -313,7 +316,7 @@ document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.
   $('labelBookingReference').textContent=x.bookingRef; $('labelCheckin').textContent=x.checkin; $('labelCheckout').textContent=x.checkout;
   $('registrationSearch').placeholder=x.searchRegPh; $('searchInvoices').placeholder=x.searchInvoicePh;
   rf.invoiceType.options[0].text=x.personal; rf.invoiceType.options[1].text=x.company;
-  rf.platform.options[0].text=x.platformNotSelected; rf.platform.options[1].text='Airbnb'; rf.platform.options[2].text='Booking.com'; rf.platform.options[3].text=x.platformDirectOther; $('regPlatformHint').textContent=x.platformLinkedHint;
+  rf.platform.options[0].text=x.platformNotSelected; rf.platform.options[1].text='Airbnb'; rf.platform.options[2].text='Booking.com'; rf.platform.options[3].text=x.platformDirectOther;
   rf.idType.options[0].text=x.notSelected; rf.idType.options[1].text=x.passport; rf.idType.options[2].text=x.idCard; rf.idType.options[3].text=x.drivers; rf.idType.options[4].text=x.otherId; $('labelIdOther').textContent=x.otherId;
   const currentRoom=f.room.value; f.room.innerHTML=`<option value="${x.cozy}">${x.cozy}</option><option value="${x.spacious}">${x.spacious}</option><option value="custom">${x.customRoomOpt}</option>`; if(currentRoom==='custom')f.room.value='custom'; else if(currentRoom.includes('Cozy')||currentRoom.includes('Knusse'))f.room.value=x.cozy; else f.room.value=x.spacious;
   const currentPay=f.payment.value; f.payment.innerHTML=`<option value="${x.booking}">${x.booking}</option><option value="${x.airbnb}">${x.airbnb}</option><option value="custom">${x.customPayOpt}</option>`; if(currentPay==='custom')f.payment.value='custom'; else if(currentPay.includes('Booking'))f.payment.value=x.booking; else if(currentPay.includes('Airbnb'))f.payment.value=x.airbnb;
