@@ -73,6 +73,19 @@ function applyReservationRoomToInvoice(registrationId){
   toggleInvoiceCustom();
   return true;
 }
+function applyReservationPaymentToInvoice(registrationId){
+  if(!registrationId)return false;
+  const reg=registrations.find(g=>g.id===registrationId);
+  if(!reg?.reservation_id)return false;
+  const reservation=reservations.find(r=>r.id===reg.reservation_id);
+  if(!reservation)return false;
+  if(reservation.platform==='booking') f.payment.value=tr[currentLang].booking;
+  else if(reservation.platform==='airbnb') f.payment.value=tr[currentLang].airbnb;
+  else return false;
+  f.customPayment.value='';
+  toggleInvoiceCustom();
+  return true;
+}
 function reservationRegistration(resId){ return registrations.find(r=>r.reservation_id===resId)||null; }
 function reservationInvite(resId){ return reservationInvites.find(i=>i.reservation_id===resId && !i.used_at && new Date(i.expires_at)>new Date())||null; }
 function reservationLink(inv){ return `${PUBLIC_FORM_BASE}?token=${encodeURIComponent(inv.token)}`; }
@@ -457,7 +470,7 @@ function useRegistrationForInvoice(){
   if(!guardUnsaved('invoice'))return;
   suppressDirty=true;
   currentInvoiceId=null;
-  f.registrationId.value=currentRegistrationId||'';f.guestName.value=rf.name.value;f.guestAddress.value='';f.guestPostal.value='';f.guestCity.value=rf.city.value;f.guestCountry.value=rf.country.value;f.companyName.value=rf.invoiceType.value==='company'?rf.companyName.value:'';f.companyAddress.value=rf.invoiceType.value==='company'?rf.companyAddress.value:'';f.vat.value=rf.invoiceType.value==='company'?rf.vat.value:'';f.email.value=rf.email.value;f.booking.value=rf.booking.value;f.checkin.value=rf.checkin.value;f.checkout.value=rf.checkout.value;applyReservationRoomToInvoice(currentRegistrationId);manualNights=false;autoNights();$('deleteBtn').classList.add('hidden');$('duplicateBtn').classList.add('hidden');updatePreview();invoiceDirty=true;suppressDirty=false;document.querySelector('.form-card').scrollIntoView({behavior:'smooth'});
+  f.registrationId.value=currentRegistrationId||'';f.guestName.value=rf.name.value;f.guestAddress.value='';f.guestPostal.value='';f.guestCity.value=rf.city.value;f.guestCountry.value=rf.country.value;f.companyName.value=rf.invoiceType.value==='company'?rf.companyName.value:'';f.companyAddress.value=rf.invoiceType.value==='company'?rf.companyAddress.value:'';f.vat.value=rf.invoiceType.value==='company'?rf.vat.value:'';f.email.value=rf.email.value;f.booking.value=rf.booking.value;f.checkin.value=rf.checkin.value;f.checkout.value=rf.checkout.value;applyReservationRoomToInvoice(currentRegistrationId);applyReservationPaymentToInvoice(currentRegistrationId);manualNights=false;autoNights();$('deleteBtn').classList.add('hidden');$('duplicateBtn').classList.add('hidden');updatePreview();invoiceDirty=true;suppressDirty=false;document.querySelector('.form-card').scrollIntoView({behavior:'smooth'});
 }
 
 async function nextInvoice(){const y=new Date(f.invoiceDate.value||today()).getFullYear();const {data}=await supabaseClient.from('invoices').select('invoice_sequence').eq('invoice_year',y).order('invoice_sequence',{ascending:false}).limit(1);const n=data?.length?data[0].invoice_sequence+1:1;return `${y}-${String(n).padStart(3,'0')}`;}
