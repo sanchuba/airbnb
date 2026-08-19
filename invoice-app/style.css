@@ -1001,3 +1001,10 @@ body.qr-modal-open{
     width:min(84vw,330px);
   }
 }
+
+/* v3.5.0 PWA safe areas */
+@media (display-mode: standalone){
+ .topbar{padding-top:max(12px,env(safe-area-inset-top))}
+ .mobile-menu-toggle{top:max(14px,env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right))}
+ .back-to-top-btn{right:max(18px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom))}
+}
