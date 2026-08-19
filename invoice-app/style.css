@@ -859,3 +859,13 @@ textarea:focus { outline:none; border-color:var(--accent); }
   background:#edf5ff;
   color:#075ba8;
 }
+
+/* v3.3.0 — reservation-based registration fallback */
+.reservation-actions .action-btn{
+  white-space:normal;
+}
+@media(max-width:700px){
+  .reservation-actions .action-btn{
+    flex:1 1 100%;
+  }
+}

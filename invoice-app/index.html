@@ -125,6 +125,15 @@
                 <button id="closeManualInviteBtn" type="button" class="text-action-btn">Cancel</button>
               </div>
               <div class="field"><label id="labelInviteBooking" for="inviteBookingReference">Booking reference (optional)</label><input id="inviteBookingReference" /></div>
+              <div class="field">
+                <label id="labelInvitePlatform" for="inviteBookingPlatform">Booking platform</label>
+                <select id="inviteBookingPlatform">
+                  <option value="">Not selected</option>
+                  <option value="airbnb">Airbnb</option>
+                  <option value="booking">Booking.com</option>
+                  <option value="direct_other">Direct / Other</option>
+                </select>
+              </div>
               <div class="inline-grid">
                 <div class="field"><label id="labelInviteCheckin" for="inviteCheckin">Check-in</label><input id="inviteCheckin" type="date" /></div>
                 <div class="field"><label id="labelInviteCheckout" for="inviteCheckout">Check-out</label><input id="inviteCheckout" type="date" /></div>
