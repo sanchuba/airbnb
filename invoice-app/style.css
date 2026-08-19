@@ -839,3 +839,23 @@ textarea:focus { outline:none; border-color:var(--accent); }
     gap:10px;
   }
 }
+
+/* v3.2.2 — persisted booking platform in guest administration */
+.field-hint{
+  margin:6px 2px 0;
+  font-size:.82rem;
+  color:var(--muted);
+}
+#regBookingPlatform:disabled{
+  opacity:1;
+  cursor:not-allowed;
+  background:var(--soft);
+}
+.badge.platform-archive.airbnb{
+  background:#fff0f3;
+  color:#9d2342;
+}
+.badge.platform-archive.booking{
+  background:#edf5ff;
+  color:#075ba8;
+}

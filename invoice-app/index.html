@@ -156,6 +156,16 @@
             <div class="field"><label id="labelRegCountry" for="regCountry">Country</label><select id="regCountry"><option value="">Select a country</option></select></div>
             <div class="inline-grid"><div class="field"><label id="labelRegCheckin" for="regCheckin">Check-in</label><input id="regCheckin" type="date" /></div><div class="field"><label id="labelRegCheckout" for="regCheckout">Check-out</label><input id="regCheckout" type="date" /></div></div>
             <div class="field"><label id="labelRegBooking" for="regBookingReference">Booking reference (optional)</label><input id="regBookingReference" /></div>
+            <div class="field">
+              <label id="labelRegPlatform" for="regBookingPlatform">Booking platform</label>
+              <select id="regBookingPlatform">
+                <option value="">Not selected</option>
+                <option value="airbnb">Airbnb</option>
+                <option value="booking">Booking.com</option>
+                <option value="direct_other">Direct / Other</option>
+              </select>
+              <p id="regPlatformHint" class="field-hint hidden">Automatically linked from the reservation.</p>
+            </div>
 
             <label class="check-row"><input id="regInvoiceRequested" type="checkbox" /><span id="regInvoiceRequestedText">Invoice requested</span></label>
             <div id="regInvoiceFields" class="conditional hidden">
