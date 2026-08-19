@@ -66,7 +66,7 @@ function linkedReservationForRegistration(reg){
 }
 function effectiveRegistrationPlatform(reg){
   const reservation=linkedReservationForRegistration(reg);
-  return reservation?.platform || reg?.booking_platform || '';
+  return reg?.booking_platform || reservation?.platform || '';
 }
 function platformDisplay(platform){
   if(platform==='airbnb')return 'Airbnb';
@@ -75,10 +75,11 @@ function platformDisplay(platform){
   return '';
 }
 function applyRegistrationPlatformField(reg=null){
-  const linked=linkedReservationForRegistration(reg);
-  const value=linked?.platform || reg?.booking_platform || '';
+  const linked=!!reg?.reservation_id;
+  const reservation=linkedReservationForRegistration(reg);
+  const value=reg?.booking_platform || reservation?.platform || '';
   rf.platform.value=value;
-  rf.platform.disabled=!!linked;
+  rf.platform.disabled=linked;
   $('regPlatformHint').classList.toggle('hidden',!linked);
 }
 function applyReservationRoomToInvoice(registrationId){
@@ -228,7 +229,7 @@ async function linkExistingRegistration(reservation,guest){
   const x=tr[currentLang];
   if(!guest||guest.reservation_id)return;
   if(!confirm(x.confirmLinkGuest.replace('{name}',guest.full_name)))return;
-  const {data,error}=await supabaseClient.from('guest_registrations').update({reservation_id:reservation.id}).eq('id',guest.id).is('reservation_id',null).select('id').maybeSingle();
+  const {data,error}=await supabaseClient.from('guest_registrations').update({reservation_id:reservation.id,booking_platform:reservation.platform||null}).eq('id',guest.id).is('reservation_id',null).select('id').maybeSingle();
   if(error){ alert(error.message); return; }
   if(!data){ alert(currentLang==='nl'?'Deze registratie is inmiddels al aan een reservering gekoppeld.':'This registration has already been linked to a reservation.'); await loadRegs(); return; }
   // Invalidate any still-unused reservation link so it cannot create a duplicate registration later.
@@ -454,7 +455,7 @@ function loadReg(r,scrollMode='default'){
 }
 async function saveReg(){
   if(!rf.name.value.trim()||!rf.city.value.trim()||!rf.country.value.trim()||!rf.checkin.value||!rf.checkout.value){$('registrationMessage').textContent=currentLang==='nl'?'Vul alle gastgegevens en verblijfsdata in.':'Complete all guest information and stay dates.';return;}
-  const s=await session(); const payload={full_name:rf.name.value.trim(),home_address:null,postal_code:null,city:rf.city.value.trim(),country:rf.country.value.trim(),checkin_date:rf.checkin.value,checkout_date:rf.checkout.value,booking_reference:rf.booking.value.trim()||null,booking_platform:(currentRegistrationId&&registrations.find(g=>g.id===currentRegistrationId)?.reservation_id)?null:(rf.platform.value||null),invoice_requested:rf.invoiceRequested.checked,invoice_type:rf.invoiceRequested.checked?rf.invoiceType.value:null,email:rf.invoiceRequested.checked?rf.email.value.trim()||null:null,company_name:rf.invoiceRequested.checked&&rf.invoiceType.value==='company'?rf.companyName.value.trim()||null:null,company_address:rf.invoiceRequested.checked&&rf.invoiceType.value==='company'?rf.companyAddress.value.trim()||null:null,vat_number:rf.invoiceRequested.checked&&rf.invoiceType.value==='company'?rf.vat.value.trim()||null:null,declaration_accepted:true,source:rf.source.value||'paper_manual',id_type:rf.idType.value||null,id_other:rf.idType.value==='other'?rf.idOther.value.trim()||null:null,id_verified:rf.idVerified.checked,id_verified_at:rf.idVerified.checked?new Date().toISOString():null,id_verified_by:rf.idVerified.checked?s.user.id:null};
+  const s=await session(); const payload={full_name:rf.name.value.trim(),home_address:null,postal_code:null,city:rf.city.value.trim(),country:rf.country.value.trim(),checkin_date:rf.checkin.value,checkout_date:rf.checkout.value,booking_reference:rf.booking.value.trim()||null,booking_platform:rf.platform.value||null,invoice_requested:rf.invoiceRequested.checked,invoice_type:rf.invoiceRequested.checked?rf.invoiceType.value:null,email:rf.invoiceRequested.checked?rf.email.value.trim()||null:null,company_name:rf.invoiceRequested.checked&&rf.invoiceType.value==='company'?rf.companyName.value.trim()||null:null,company_address:rf.invoiceRequested.checked&&rf.invoiceType.value==='company'?rf.companyAddress.value.trim()||null:null,vat_number:rf.invoiceRequested.checked&&rf.invoiceType.value==='company'?rf.vat.value.trim()||null:null,declaration_accepted:true,source:rf.source.value||'paper_manual',id_type:rf.idType.value||null,id_other:rf.idType.value==='other'?rf.idOther.value.trim()||null:null,id_verified:rf.idVerified.checked,id_verified_at:rf.idVerified.checked?new Date().toISOString():null,id_verified_by:rf.idVerified.checked?s.user.id:null};
   let q=currentRegistrationId?supabaseClient.from('guest_registrations').update(payload).eq('id',currentRegistrationId).select().single():supabaseClient.from('guest_registrations').insert([{...payload,submitted_at:new Date().toISOString()}]).select().single();
   const {data,error}=await q;if(error){$('registrationMessage').textContent=error.message;return;} currentRegistrationId=data.id;rf.id.value=data.id;registrationDirty=false;$('deleteRegistrationBtn').classList.remove('hidden');$('registrationMessage').textContent=tr[currentLang].savedReg;await loadRegs();
 }
