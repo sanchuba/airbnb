@@ -410,7 +410,10 @@ function blankRegistration(){
   suppressDirty=true;
   currentRegistrationId=null; rf.id.value=''; rf.source.value='paper_manual'; for(const k of ['name','city','country','checkin','checkout','booking','email','companyName','companyAddress','vat','idOther'])rf[k].value=''; populateCountries(rf.country,''); rf.invoiceRequested.checked=false; rf.invoiceType.value='personal'; rf.idType.value=''; rf.idVerified.checked=false; toggleRegInvoice();toggleIdOther(); $('deleteRegistrationBtn').classList.add('hidden'); $('registrationEditor').classList.remove('hidden'); $('registrationMessage').textContent='';
   registrationDirty=false; suppressDirty=false;
-  requestAnimationFrame(()=>{ if(window.innerWidth>1000){ $('registrationEditor').scrollIntoView({behavior:'smooth',block:'end'}); } else { $('registrationEditor').scrollIntoView({behavior:'smooth',block:'start'}); } });
+  requestAnimationFrame(()=>{
+    const heading=$('registrationEditorTitle')||$('registrationEditor');
+    heading.scrollIntoView({behavior:'smooth',block:'start'});
+  });
 }
 function loadReg(r,scrollMode='default'){
   if(!guardUnsaved('registration'))return;
