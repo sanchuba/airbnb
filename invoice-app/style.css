@@ -1009,5 +1009,27 @@ body.qr-modal-open{
  .back-to-top-btn{right:max(18px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom))}
 }
 
-.otp-login-step{margin-top:14px;display:grid;gap:10px}.otp-login-step.hidden{display:none!important}
-#loginCode{font-size:24px;font-weight:700;letter-spacing:.28em;text-align:center;font-variant-numeric:tabular-nums}
+/* v3.5.1 — PWA-friendly email OTP login */
+.login-code-intro{
+  margin:0 0 14px;
+  color:var(--muted);
+}
+.otp-input{
+  font-size:1.35rem;
+  font-weight:700;
+  letter-spacing:.22em;
+  text-align:center;
+  font-variant-numeric:tabular-nums;
+}
+.login-secondary-actions{
+  display:flex;
+  justify-content:center;
+  gap:18px;
+  flex-wrap:wrap;
+  margin-top:12px;
+}
+.login-card .action-btn:disabled,
+.login-card .text-action-btn:disabled{
+  opacity:.55;
+  cursor:wait;
+}
