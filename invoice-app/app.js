@@ -304,7 +304,10 @@ function renderReservations(){
       }
       const complete=document.createElement('button'); complete.className='action-btn secondary'; complete.textContent=x.completeManually; complete.onclick=()=>beginManualRegistrationForReservation(r); actions.appendChild(complete);
       const print=document.createElement('button'); print.className='action-btn secondary'; print.textContent=x.printPaperForm; print.onclick=()=>printPrefilledRegistrationForm(r); actions.appendChild(print);
-      const manual=document.createElement('button'); manual.className='action-btn secondary'; manual.textContent=x.linkExistingGuest; manual.onclick=()=>showExistingRegistrationPicker(r,d,false); actions.appendChild(manual);
+      const linkableGuests=unlinkedRegistrations();
+      if(linkableGuests.length){
+        const manual=document.createElement('button'); manual.className='action-btn secondary'; manual.textContent=x.linkExistingGuest; manual.onclick=()=>showExistingRegistrationPicker(r,d,false); actions.appendChild(manual);
+      }
       if(inv) addReservationLinkBox(actions,inv);
     }
     if(r.platform==='airbnb'&&r.reservation_url){ const a=document.createElement('a'); a.className='action-btn secondary'; a.href=r.reservation_url; a.target='_blank'; a.rel='noopener'; a.textContent=x.openAirbnb; actions.appendChild(a); }
