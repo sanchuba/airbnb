@@ -137,3 +137,13 @@ input[readonly] { background: #f7f4ef; color: #69645d; }
 }
 
 select { min-height: 46px; cursor: pointer; }
+
+/* v3.3.4 — stay dates are display-only on all devices, including iOS Safari */
+#checkinDate:disabled,
+#checkoutDate:disabled {
+  opacity: 1;
+  -webkit-text-fill-color: currentColor;
+  color: inherit;
+  cursor: default;
+  pointer-events: none;
+}
