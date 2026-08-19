@@ -247,8 +247,17 @@ function printPrefilledRegistrationForm(reservation){
     <div><strong>${nl?'Land':'Country'}</strong><div class="line"></div></div>
   </div>
   <h2>${nl?'Factuur':'Invoice'}</h2>
-  <div class="checks"><span class="box"></span>${nl?'Ja, ik wil een factuur ontvangen':'Yes, I would like to receive an invoice'} &nbsp;&nbsp;&nbsp; <span class="box"></span>${nl?'Nee':'No'}</div>
+  <div class="checks">
+    <span class="box"></span>${nl?'Geen factuur':'No invoice'} &nbsp;&nbsp;&nbsp;
+    <span class="box"></span>${nl?'Persoonlijke factuur':'Personal invoice'} &nbsp;&nbsp;&nbsp;
+    <span class="box"></span>${nl?'Zakelijke factuur':'Company invoice'}
+  </div>
   <div><strong>${nl?'E-mailadres (alleen bij factuur)':'Email address (invoice only)'}</strong><div class="line"></div></div>
+  <div class="company-print-section">
+    <div><strong>${nl?'Bedrijfsnaam (verplicht bij zakelijke factuur)':'Company name (required for company invoice)'}</strong><div class="line"></div></div>
+    <div><strong>${nl?'Bedrijfsadres (optioneel)':'Company address (optional)'}</strong><div class="line"></div></div>
+    <div><strong>${nl?'Btw-nummer (optioneel)':'VAT number (optional)'}</strong><div class="line"></div></div>
+  </div>
   <div class="declaration">${nl
     ? 'Ik verklaar dat de hierboven verstrekte gegevens volledig en naar waarheid zijn ingevuld.'
     : 'I confirm that the information provided above is complete and truthful.'}</div>
