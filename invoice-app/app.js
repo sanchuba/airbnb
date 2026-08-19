@@ -462,7 +462,20 @@ function renderAttention(){
 
 async function session(){ return (await supabaseClient.auth.getSession()).data.session; }
 async function allowed(){ const {data,error}=await supabaseClient.rpc('is_allowed_user'); return !error&&data===true; }
-async function login(email){ const {error}=await supabaseClient.auth.signInWithOtp({email,options:{emailRedirectTo:'https://nijmegenguestrooms.com/invoice-app/'}}); $('loginMessage').textContent=error?error.message:tr[currentLang].checkEmail; }
+async function login(email){
+ const {error}=await supabaseClient.auth.signInWithOtp({email,options:{shouldCreateUser:false}});
+ if(error){$('loginMessage').textContent=error.message;return;}
+ $('otpLoginStep').classList.remove('hidden');$('loginBtn').classList.add('hidden');$('loginEmail').readOnly=true;
+ $('loginMessage').textContent=currentLang==='nl'?'We hebben een 6-cijferige inlogcode naar je e-mail gestuurd. Vul de code hieronder in.':'We sent a 6-digit login code to your email. Enter it below.';
+ $('loginCode').focus();
+}
+async function verifyLoginCode(){
+ const email=$('loginEmail').value.trim(),token=$('loginCode').value.replace(/\D/g,'').slice(0,6);
+ if(token.length!==6){$('loginMessage').textContent=currentLang==='nl'?'Vul de volledige 6-cijferige code in.':'Enter the complete 6-digit code.';return;}
+ const {error}=await supabaseClient.auth.verifyOtp({email,token,type:'email'});
+ if(error)$('loginMessage').textContent=currentLang==='nl'?'De code is ongeldig of verlopen.':'The code is invalid or expired.';
+}
+
 async function logout(){ if(!guardUnsaved())return; registrationDirty=false; invoiceDirty=false; await supabaseClient.auth.signOut(); location.reload(); }
 
 function toggleRegInvoice(){ $('regInvoiceFields').classList.toggle('hidden',!rf.invoiceRequested.checked); $('regCompanyFields').classList.toggle('hidden',!rf.invoiceRequested.checked||rf.invoiceType.value!=='company'); }
@@ -748,7 +761,11 @@ function updatePreview(){const x=tr[currentLang];autoNights();const n=Number(f.n
   $('previewRoomName').textContent=roomValue()||'—';$('previewCheckin').textContent=fmt(f.checkin.value);$('previewCheckout').textContent=fmt(f.checkout.value);$('previewNights').textContent=n||'—';$('previewGuests').textContent=g;$('previewAccommodation').textContent=euro(a);$('previewCleaning').textContent=euro(c);$('previewTouristTaxRate').textContent=`${euro(rate)} × ${g} × ${n}`;$('previewTouristTax').textContent=euro(tax);$('previewTotal').textContent=euro(total);$('previewPaymentMethod').textContent=paymentValue()||'—';}
 
 $('syncCalendarsBtn').onclick=()=>syncCalendars(true);
-$('loginBtn').onclick=()=>{const e=$('loginEmail').value.trim();if(e)login(e)};$('logoutBtn').onclick=logout;$('manualInviteToggleBtn').onclick=()=>setManualInviteOpen($('manualInvitePanel').classList.contains('hidden'));$('closeManualInviteBtn').onclick=()=>setManualInviteOpen(false);$('createInviteBtn').onclick=createInvite;$('copyInviteBtn').onclick=async()=>{await navigator.clipboard.writeText($('inviteUrl').value);$('inviteMessage').textContent=tr[currentLang].copied;};$('newPaperBtn').onclick=blankRegistration;$('closeRegistrationBtn').onclick=()=>{if(!guardUnsaved('registration'))return;registrationDirty=false;currentDraftReservationId=null;$('registrationEditor').classList.add('hidden');};$('saveRegistrationBtn').onclick=saveReg;$('useForInvoiceBtn').onclick=useRegistrationForInvoice;$('deleteRegistrationBtn').onclick=deleteRegistration;$('registrationSearch').oninput=renderRegs;rf.invoiceRequested.onchange=toggleRegInvoice;rf.invoiceType.onchange=toggleRegInvoice;rf.idType.onchange=toggleIdOther;
+$('loginBtn').onclick=()=>{const e=$('loginEmail').value.trim();if(e)login(e)};
+$('verifyCodeBtn').onclick=verifyLoginCode;
+$('resendCodeBtn').onclick=()=>{const e=$('loginEmail').value.trim();if(e)login(e)};
+$('loginCode').oninput=e=>e.target.value=e.target.value.replace(/\D/g,'').slice(0,6);
+$('loginCode').onkeydown=e=>{if(e.key==='Enter')verifyLoginCode()};$('logoutBtn').onclick=logout;$('manualInviteToggleBtn').onclick=()=>setManualInviteOpen($('manualInvitePanel').classList.contains('hidden'));$('closeManualInviteBtn').onclick=()=>setManualInviteOpen(false);$('createInviteBtn').onclick=createInvite;$('copyInviteBtn').onclick=async()=>{await navigator.clipboard.writeText($('inviteUrl').value);$('inviteMessage').textContent=tr[currentLang].copied;};$('newPaperBtn').onclick=blankRegistration;$('closeRegistrationBtn').onclick=()=>{if(!guardUnsaved('registration'))return;registrationDirty=false;currentDraftReservationId=null;$('registrationEditor').classList.add('hidden');};$('saveRegistrationBtn').onclick=saveReg;$('useForInvoiceBtn').onclick=useRegistrationForInvoice;$('deleteRegistrationBtn').onclick=deleteRegistration;$('registrationSearch').oninput=renderRegs;rf.invoiceRequested.onchange=toggleRegInvoice;rf.invoiceType.onchange=toggleRegInvoice;rf.idType.onchange=toggleIdOther;
 document.querySelectorAll('.filter-pill').forEach(b=>b.onclick=()=>setRegistrationFilter(b.dataset.filter));
 document.querySelectorAll('[data-reservation-attention]').forEach(b=>b.onclick=()=>{setReservationFilter(b.dataset.reservationAttention);$('reservationsOverview').scrollIntoView({behavior:'smooth',block:'start'});});
 $('saveBtn').onclick=saveInvoice;$('deleteBtn').onclick=deleteInvoice;$('duplicateBtn').onclick=duplicateInvoice;$('newInvoiceBtn').onclick=()=>newInvoice();$('printBtn').onclick=()=>{if(validateInvoice())window.print();else $('saveMessage').textContent=tr[currentLang].required;};$('searchInvoices').oninput=renderInvoices;f.room.onchange=()=>{toggleInvoiceCustom();updatePreview()};f.payment.onchange=()=>{toggleInvoiceCustom();updatePreview()};f.taxMode.onchange=()=>updatePreview();f.checkin.onchange=()=>{manualNights=false;autoNights();updatePreview()};f.checkout.onchange=()=>{manualNights=false;autoNights();updatePreview()};f.nights.oninput=()=>{manualNights=true;updatePreview()};

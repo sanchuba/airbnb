@@ -1008,3 +1008,6 @@ body.qr-modal-open{
  .mobile-menu-toggle{top:max(14px,env(safe-area-inset-top));right:max(14px,env(safe-area-inset-right))}
  .back-to-top-btn{right:max(18px,env(safe-area-inset-right));bottom:max(18px,env(safe-area-inset-bottom))}
 }
+
+.otp-login-step{margin-top:14px;display:grid;gap:10px}.otp-login-step.hidden{display:none!important}
+#loginCode{font-size:24px;font-weight:700;letter-spacing:.28em;text-align:center;font-variant-numeric:tabular-nums}
