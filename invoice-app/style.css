@@ -869,3 +869,135 @@ textarea:focus { outline:none; border-color:var(--accent); }
     flex:1 1 100%;
   }
 }
+
+
+/* v3.4.0 — tappable reservation cards + on-device QR handoff */
+.reservation-item.clickable{
+  cursor:pointer;
+  transition:box-shadow .16s ease, transform .16s ease, border-color .16s ease;
+}
+.reservation-item.clickable:hover{
+  box-shadow:0 7px 22px rgba(60,42,29,.08);
+  border-color:#cdb9a9;
+}
+.reservation-item.clickable:focus-visible{
+  outline:3px solid rgba(102,72,54,.22);
+  outline-offset:2px;
+}
+.reservation-item.clickable:active{
+  transform:scale(.995);
+}
+.reservation-link-box{
+  flex-wrap:wrap;
+}
+.reservation-link-box input{
+  flex:1 1 260px;
+}
+.reservation-link-box .action-btn{
+  flex:0 0 auto;
+}
+
+.qr-modal{
+  position:fixed;
+  inset:0;
+  z-index:10000;
+  background:#fff;
+  color:#171717;
+  min-height:100dvh;
+  overflow:auto;
+  overscroll-behavior:contain;
+}
+.qr-modal.hidden{display:none!important}
+html.qr-modal-open,
+body.qr-modal-open{
+  overflow:hidden!important;
+  background:#fff!important;
+}
+.qr-modal-toolbar{
+  position:absolute;
+  top:max(14px,env(safe-area-inset-top));
+  right:max(14px,env(safe-area-inset-right));
+  z-index:2;
+}
+.qr-close-btn{
+  width:46px;
+  height:46px;
+  border-radius:50%;
+  border:1px solid #ded7d1;
+  background:#fff;
+  color:#4f3627;
+  font-size:31px;
+  line-height:1;
+  cursor:pointer;
+  box-shadow:0 3px 14px rgba(0,0,0,.08);
+}
+.qr-modal-content{
+  min-height:100dvh;
+  padding:calc(68px + env(safe-area-inset-top)) 22px calc(28px + env(safe-area-inset-bottom));
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+}
+.qr-modal-brand{
+  font-size:12px;
+  letter-spacing:.12em;
+  font-weight:800;
+  color:#6b4b38;
+  margin-bottom:13px;
+}
+.qr-modal-content h2{
+  max-width:580px;
+  margin:0 0 8px;
+  color:#4f3627;
+  font-size:clamp(24px,5vw,38px);
+}
+.qr-modal-content>p{
+  margin:0 0 24px;
+  color:#695d55;
+  font-size:16px;
+}
+.qr-code-container{
+  width:min(78vw,340px);
+  aspect-ratio:1;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#fff;
+  border:14px solid #fff;
+  border-radius:18px;
+  box-shadow:0 8px 35px rgba(0,0,0,.12);
+}
+.qr-code-container img,
+.qr-code-container canvas{
+  width:100%!important;
+  height:100%!important;
+  image-rendering:pixelated;
+}
+.qr-reservation-info{
+  margin:20px 0 14px;
+  color:#5d5149;
+  font-size:14px;
+  font-weight:600;
+}
+.qr-copy-btn{
+  min-width:210px;
+}
+@media(max-width:700px){
+  .reservation-item.clickable:hover{box-shadow:none}
+  .reservation-link-box input{
+    flex-basis:100%;
+  }
+  .reservation-link-box .action-btn{
+    flex:1 1 calc(50% - 5px);
+  }
+  .qr-modal-content{
+    justify-content:center;
+    padding-left:18px;
+    padding-right:18px;
+  }
+  .qr-code-container{
+    width:min(84vw,330px);
+  }
+}

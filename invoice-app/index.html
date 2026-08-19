@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nijmegen Guest Rooms – Admin</title>
-  <link rel="stylesheet" href="./style.css" />
+  <link rel="stylesheet" href="./style.css?v=3.4.0" />
 </head>
 <body>
   <div class="container">
@@ -244,7 +244,21 @@
       </div>
     </div>
   </div>
+  <div id="qrModal" class="qr-modal hidden screen-only" role="dialog" aria-modal="true" aria-labelledby="qrModalTitle">
+    <div class="qr-modal-toolbar">
+      <button id="closeQrModalBtn" class="qr-close-btn" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="qr-modal-content">
+      <div class="qr-modal-brand">NIJMEGEN GUEST ROOMS</div>
+      <h2 id="qrModalTitle">Scan to complete your guest registration</h2>
+      <p id="qrModalSubtitle">Open your camera and scan the QR code.</p>
+      <div id="qrCodeContainer" class="qr-code-container" aria-label="Guest registration QR code"></div>
+      <div id="qrReservationInfo" class="qr-reservation-info"></div>
+      <button id="copyQrLinkBtn" class="action-btn secondary qr-copy-btn" type="button">Copy registration link</button>
+    </div>
+  </div>
   <button id="backToTopBtn" class="back-to-top-btn screen-only" type="button" aria-label="Back to top" title="Back to top">↑</button>
-  <script type="module" src="./app.js"></script>
+  <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+  <script type="module" src="./app.js?v=3.4.0"></script>
 </body>
 </html>
