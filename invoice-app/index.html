@@ -8,11 +8,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="NGR Admin" />
-  <link rel="manifest" href="./manifest.webmanifest?v=3.5.2" />
+  <link rel="manifest" href="./manifest.webmanifest?v=3.5.3" />
   <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=3.5.0" />
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=3.5.0" />
   <title>Nijmegen Guest Rooms – Admin</title>
-  <link rel="stylesheet" href="./style.css?v=3.5.2" />
+  <link rel="stylesheet" href="./style.css?v=3.5.3" />
 </head>
 <body>
   <div class="container">
@@ -254,7 +254,7 @@
         <div class="right-column">
           <div class="card preview-card" id="previewWrapper">
             <div class="invoice-preview" id="invoicePreview">
-              <div class="invoice-header"><div class="brand"><h3>Nijmegen Guest Rooms</h3><p>Landbouwstraat 15</p><p>Nijmegen, The Netherlands</p></div><div class="invoice-meta"><p class="invoice-title" id="previewInvoiceTitle">INVOICE</p><p><strong id="previewLabelInvoiceNumber">Invoice number:</strong> <span id="previewInvoiceNumber">—</span></p><p><strong id="previewLabelInvoiceDate">Date:</strong> <span id="previewInvoiceDate">—</span></p></div></div>
+              <div class="invoice-header"><div class="brand"><h3><span translate="no">Nijmegen Guest Rooms</span></h3><p>Landbouwstraat 15</p><p>Nijmegen, The Netherlands</p></div><div class="invoice-meta"><p class="invoice-title" id="previewInvoiceTitle">INVOICE</p><p><strong id="previewLabelInvoiceNumber">Invoice number:</strong> <span id="previewInvoiceNumber">—</span></p><p><strong id="previewLabelInvoiceDate">Date:</strong> <span id="previewInvoiceDate">—</span></p></div></div>
               <div class="invoice-section invoice-block"><h4 id="previewSectionGuest">Billed to</h4><p id="previewCompanyName" class="hidden"></p><p id="previewGuestName">—</p><p id="previewAddress" class="subtle hidden"></p><p id="previewCityCountry" class="subtle hidden"></p><p id="previewCompanyAddress" class="subtle hidden"></p><p id="previewVatNumberWrap" class="subtle hidden"><strong id="previewLabelVatNumber">VAT number:</strong> <span id="previewVatNumber">—</span></p><p id="previewGuestEmail" class="subtle"></p><p id="previewBookingReferenceWrap" class="subtle hidden"><strong id="previewLabelBookingReference">Booking reference:</strong> <span id="previewBookingReference">—</span></p></div>
               <div class="invoice-section invoice-block"><h4 id="previewSectionStay">Stay Details</h4><p><strong id="previewLabelRoom">Room:</strong> <span id="previewRoomName">—</span></p><p><strong id="previewLabelCheckin2">Check-in:</strong> <span id="previewCheckin">—</span></p><p><strong id="previewLabelCheckout2">Check-out:</strong> <span id="previewCheckout">—</span></p><p><strong id="previewLabelNights2">Nights:</strong> <span id="previewNights">—</span></p><p><strong id="previewLabelGuests2">Guests:</strong> <span id="previewGuests">1</span></p></div>
               <div class="invoice-section invoice-block"><h4 id="previewSectionDescription">Description</h4><p id="previewDescription">Accommodation in private room (shared home)</p></div>
@@ -282,10 +282,10 @@
   </div>
   <button id="backToTopBtn" class="back-to-top-btn screen-only" type="button" aria-label="Back to top" title="Back to top">↑</button>
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-  <script type="module" src="./app.js?v=3.5.2"></script>
+  <script type="module" src="./app.js?v=3.5.3"></script>
   <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.5.2').catch(() => {}));
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.5.3').catch(() => {}));
   }
   </script>
 </body>
