@@ -1033,3 +1033,45 @@ body.qr-modal-open{
   opacity:.55;
   cursor:wait;
 }
+
+
+/* v3.5.4 — stable mobile/tablet width and zoom behaviour
+   Keep reservation cards single-column for the entire one-column app layout.
+   This prevents iOS page zoom from crossing the old 800px reservation breakpoint
+   while the Guest registrations section is still in the 1000px one-column layout. */
+@media (max-width: 1000px) {
+  .reservation-list {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .reservations-card,
+  .layout,
+  .left-column,
+  .right-column,
+  #registrationOverview {
+    min-width: 0;
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* Horizontal filter rows may scroll internally, but must never enlarge the page. */
+.registration-filters,
+.reservation-filters {
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Defensive overflow handling for long dynamic content on small screens. */
+@media (max-width: 700px) {
+  html, body {
+    max-width: 100%;
+    overflow-x: clip;
+  }
+  .container,
+  .card,
+  .reservation-item,
+  .registration-item {
+    min-width: 0;
+    max-width: 100%;
+  }
+}
