@@ -209,8 +209,9 @@ function printPrefilledRegistrationForm(reservation){
   const lang=currentLang;
   const nl=lang==='nl';
   const title=nl?'Gastenregistratie':'Guest registration';
-  const w=window.open('','_blank','noopener,noreferrer');
+  const w=window.open('','_blank');
   if(!w){ alert(nl?'Sta pop-ups toe om het formulier te printen.':'Allow pop-ups to print the form.'); return; }
+  try { w.opener=null; } catch(e) {}
   const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const date=d=>esc(fmt(d));
   const html=`<!doctype html><html lang="${nl?'nl':'en'}"><head><meta charset="utf-8">
@@ -262,7 +263,7 @@ function printPrefilledRegistrationForm(reservation){
       <span class="box"></span>${nl?'Rijbewijs':'Driver’s licence'}
     </div>
   </div>
-  <script>setTimeout(()=>window.print(),250)<\/script></body></html>`;
+  <script>window.addEventListener('load',()=>setTimeout(()=>window.print(),350));<\/script></body></html>`;
   w.document.open(); w.document.write(html); w.document.close();
 }
 
