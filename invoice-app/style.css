@@ -782,3 +782,60 @@ textarea:focus { outline:none; border-color:var(--accent); }
 /* v3.1.3: Open Guest lands neatly at the Guest registration heading */
 #registrationEditorTitle{scroll-margin-top:110px;}
 @media(max-width:700px){#registrationEditorTitle{scroll-margin-top:82px;}}
+
+
+/* v3.2 — compact manual guest-link workflow */
+.registration-header-actions{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+}
+.manual-invite-panel{
+  margin-top:4px;
+  margin-bottom:18px;
+}
+.manual-invite-panel-header{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:16px;
+  margin-bottom:4px;
+}
+.manual-invite-panel-header h3{
+  margin-bottom:2px;
+}
+.manual-invite-hint{
+  margin:0;
+  max-width:560px;
+}
+.text-action-btn{
+  border:0;
+  background:transparent;
+  color:var(--heading);
+  font:inherit;
+  font-weight:600;
+  padding:4px 0;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.text-action-btn:hover{
+  text-decoration:underline;
+}
+@media(max-width:700px){
+  .registration-header{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+  .registration-header-actions{
+    width:100%;
+    justify-content:flex-start;
+  }
+  .registration-header-actions .action-btn{
+    flex:1 1 auto;
+    text-align:center;
+  }
+  .manual-invite-panel-header{
+    gap:10px;
+  }
+}
