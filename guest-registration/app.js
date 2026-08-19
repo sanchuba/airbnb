@@ -51,7 +51,7 @@ function invoiceType() {
 
 function setLanguage(lang) {
   currentLang = lang;
-  localStorage.setItem('guestRegistrationLanguage', lang);
+  localStorage.setItem(GUEST_LANGUAGE_KEY, lang);
   document.documentElement.lang = lang;
   document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === lang));
   const x = t[lang];
