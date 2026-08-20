@@ -8,11 +8,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="NGR Admin" />
-  <link rel="manifest" href="./manifest.webmanifest?v=3.7.2" />
+  <link rel="manifest" href="./manifest.webmanifest?v=3.7.3" />
   <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=3.5.0" />
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=3.5.0" />
   <title>Nijmegen Guest Rooms – Admin</title>
-  <link rel="stylesheet" href="./style.css?v=3.7.2" />
+  <link rel="stylesheet" href="./style.css?v=3.7.3" />
 </head>
 <body>
   <div class="container">
@@ -232,7 +232,21 @@
                   <div class="field"><label id="labelOvernightRate" for="overnightRate">Additional guest fee (€ per night, incl. tourist tax)</label><input id="overnightRate" type="number" min="0" step="0.01" value="20.00" /></div>
                   <div class="field"><label id="labelOvernightPayment" for="overnightPayment">Payment method</label><select id="overnightPayment"><option value="">Not selected</option><option value="cash">Cash</option><option value="paypal">PayPal</option><option value="airbnb">Airbnb</option></select></div>
                 </div>
-                <div class="overnight-checks"><label class="check-row"><input id="overnightPaid" type="checkbox" /><span id="overnightPaidText">Fee paid</span></label><label class="check-row"><input id="overnightIdVerified" type="checkbox" /><span id="overnightIdVerifiedText">ID checked</span></label></div>
+                <div class="field">
+                  <label id="labelOvernightIdType" for="overnightIdType">Identification shown</label>
+                  <select id="overnightIdType">
+                    <option value="">Not selected</option>
+                    <option value="passport">Passport</option>
+                    <option value="id_card">ID card</option>
+                    <option value="drivers_licence">Driver's licence</option>
+                    <option value="other">Other valid ID</option>
+                  </select>
+                </div>
+                <div id="overnightOtherIdField" class="field hidden">
+                  <label id="labelOvernightIdOther" for="overnightIdOther">Other valid ID</label>
+                  <input id="overnightIdOther" />
+                </div>
+                <div class="overnight-checks"><label class="check-row"><input id="overnightPaid" type="checkbox" /><span id="overnightPaidText">Fee paid</span></label><label class="check-row"><input id="overnightIdVerified" type="checkbox" /><span id="overnightIdVerifiedText">Identity verified</span></label></div>
                 <div class="button-row overnight-actions">
                   <button id="saveOvernightGuestBtn" type="button" class="action-btn primary">Save overnight guest</button>
                   <button id="createOvernightQrBtn" type="button" class="action-btn secondary">Show QR code</button><button id="copyOvernightLinkBtn" type="button" class="action-btn secondary">Copy registration link</button>
@@ -323,10 +337,10 @@
   </div>
   <button id="backToTopBtn" class="back-to-top-btn screen-only" type="button" aria-label="Back to top" title="Back to top">↑</button>
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-  <script type="module" src="./app.js?v=3.7.2"></script>
+  <script type="module" src="./app.js?v=3.7.3"></script>
   <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.7.2').catch(() => {}));
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.7.3').catch(() => {}));
   }
   </script>
 </body>
