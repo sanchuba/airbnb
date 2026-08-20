@@ -25,7 +25,12 @@ const t = {
   }
 };
 
-let currentLang = localStorage.getItem('guestRegistrationLanguage') || 'en';
+const GUEST_LANGUAGE_KEY='guestRegistrationLanguage';
+function browserDefaultLanguage(){
+  const preferred=(navigator.languages&&navigator.languages.length?navigator.languages[0]:navigator.language||'en').toLowerCase();
+  return preferred==='nl'||preferred.startsWith('nl-')?'nl':'en';
+}
+let currentLang = localStorage.getItem(GUEST_LANGUAGE_KEY) || browserDefaultLanguage();
 let token = new URLSearchParams(window.location.search).get('token');
 
 const el = id => document.getElementById(id);
