@@ -548,7 +548,7 @@ document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.
   $('labelBookingReference').textContent=x.bookingRef; $('labelCheckin').textContent=x.checkin; $('labelCheckout').textContent=x.checkout;
   $('registrationSearch').placeholder=x.searchRegPh; $('searchInvoices').placeholder=x.searchInvoicePh;
   rf.invoiceType.options[0].text=x.personal; rf.invoiceType.options[1].text=x.company;
-  rf.platform.options[0].text=x.platformNotSelected; $('overnightPayment').options[0].text=x.notSelected;$('overnightPayment').options[1].text=x.cash;$('overnightPayment').options[2].text=x.paypal;$('overnightPayment').options[3].text=x.otherPayment; rf.platform.options[1].text='Airbnb'; rf.platform.options[2].text='Booking.com'; rf.platform.options[3].text=x.platformDirectOther;
+  rf.platform.options[0].text=x.platformNotSelected; $('overnightPayment').options[0].text=x.notSelected;$('overnightPayment').options[1].text=x.cash;$('overnightPayment').options[2].text=x.paypal;$('overnightPayment').options[3].text='Airbnb'; rf.platform.options[1].text='Airbnb'; rf.platform.options[2].text='Booking.com'; rf.platform.options[3].text=x.platformDirectOther;
   $('inviteBookingPlatform').options[0].text=x.platformNotSelected; $('inviteBookingPlatform').options[1].text='Airbnb'; $('inviteBookingPlatform').options[2].text='Booking.com'; $('inviteBookingPlatform').options[3].text=x.platformDirectOther;
   rf.idType.options[0].text=x.notSelected; rf.idType.options[1].text=x.passport; rf.idType.options[2].text=x.idCard; rf.idType.options[3].text=x.drivers; rf.idType.options[4].text=x.otherId; $('labelIdOther').textContent=x.otherId;
   const currentRoom=f.room.value; f.room.innerHTML=`<option value="${x.cozy}">${x.cozy}</option><option value="${x.spacious}">${x.spacious}</option><option value="custom">${x.customRoomOpt}</option>`; if(currentRoom==='custom')f.room.value='custom'; else if(currentRoom.includes('Cozy')||currentRoom.includes('Knusse'))f.room.value=x.cozy; else f.room.value=x.spacious;
@@ -775,7 +775,7 @@ async function saveOvernightGuest(){
   const name=$('overnightName').value.trim(), city=$('overnightCity').value.trim(), country=$('overnightCountry').value.trim();
   const ci=$('overnightCheckin').value,co=$('overnightCheckout').value;
   if(!name||!city||!country||!ci||!co||co<=ci){$('overnightGuestMessage').textContent=currentLang==='nl'?'Vul naam, woonplaats, land en geldige verblijfsdata in.':'Enter name, city, country and valid stay dates.';return;}
-  const payload={guest_registration_id:currentRegistrationId,full_name:name,city,country,checkin_date:ci,checkout_date:co,fee_per_night:Number($('overnightRate').value||20),fee_includes_tourist_tax:true,payment_method:$('overnightPayment').value||null,fee_paid:$('overnightPaid').checked,id_verified:$('overnightIdVerified').checked,source:'manual'};
+  const payload={guest_registration_id:currentRegistrationId,full_name:name,city,country,checkin_date:ci,checkout_date:co,fee_per_night:Number($('overnightRate').value||20),fee_includes_tourist_tax:true,payment_method:['cash','paypal','airbnb'].includes($('overnightPayment').value)?$('overnightPayment').value:null,fee_paid:$('overnightPaid').checked,id_verified:$('overnightIdVerified').checked,source:'manual'};
   const id=$('overnightGuestId').value;
   const q=id?supabaseClient.from('additional_overnight_guests').update(payload).eq('id',id).select().single():supabaseClient.from('additional_overnight_guests').insert([payload]).select().single();
   const {data,error}=await q;
@@ -876,6 +876,61 @@ function renderRegs(){
 }
 function escapeHtml(s){return String(s??'').replace(/[&<>'"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',"'":'&#39;','"':'&quot;'}[c]));}
 
+
+function mainPaymentForRegistration(registrationId){
+  const reg=registrations.find(g=>g.id===registrationId);
+  if(!reg)return '';
+  const platform=effectiveRegistrationPlatform(reg);
+  if(platform==='booking')return tr[currentLang].booking;
+  if(platform==='airbnb')return tr[currentLang].airbnb;
+  return '';
+}
+function additionalPaymentLabel(method){
+  if(method==='cash')return currentLang==='nl'?'Contant':'Cash';
+  if(method==='paypal')return 'PayPal';
+  if(method==='airbnb')return 'Airbnb';
+  return '';
+}
+function buildInvoicePaymentText(registrationId,extras){
+  const main=mainPaymentForRegistration(registrationId);
+  const methods=[...new Set((extras||[]).map(g=>g.payment_method).filter(Boolean))];
+
+  // If every charge was paid via Airbnb, one concise line is enough.
+  if(main===tr[currentLang].airbnb && methods.length===1 && methods[0]==='airbnb'){
+    return tr[currentLang].airbnb;
+  }
+  if(!methods.length)return main;
+
+  const mainText=main
+    ? `${currentLang==='nl'?'Accommodatie':'Accommodation'}: ${main}`
+    : '';
+
+  const extraTexts=methods.map(m=>{
+    const label=additionalPaymentLabel(m);
+    if(m==='airbnb') return `${currentLang==='nl'?'Extra overnachtende gast':'Additional overnight guest'}: ${tr[currentLang].airbnb}`;
+    if(m==='paypal') return `${currentLang==='nl'?'Extra overnachtende gast':'Additional overnight guest'}: ${currentLang==='nl'?'Betaald via PayPal':'Paid via PayPal'}`;
+    if(m==='cash') return `${currentLang==='nl'?'Extra overnachtende gast':'Additional overnight guest'}: ${currentLang==='nl'?'Contant betaald':'Paid in cash'}`;
+    return `${currentLang==='nl'?'Extra overnachtende gast':'Additional overnight guest'}: ${label}`;
+  });
+
+  return [mainText,...extraTexts].filter(Boolean).join('\n');
+}
+function applyCombinedPaymentToInvoice(registrationId,extras){
+  const text=buildInvoicePaymentText(registrationId,extras);
+  if(!text)return false;
+
+  // Keep the normal platform dropdown when there is only one platform payment.
+  if(text===tr[currentLang].booking){
+    f.payment.value=tr[currentLang].booking;f.customPayment.value='';
+  }else if(text===tr[currentLang].airbnb){
+    f.payment.value=tr[currentLang].airbnb;f.customPayment.value='';
+  }else{
+    f.payment.value='custom';f.customPayment.value=text;
+  }
+  toggleInvoiceCustom();
+  return true;
+}
+
 function useRegistrationForInvoice(){
   const linked=currentRegistrationId?linkedInvoiceForRegistration(currentRegistrationId):null;
   if(linked){ loadInvoice(linked); return; }
@@ -883,15 +938,12 @@ function useRegistrationForInvoice(){
   suppressDirty=true;
   currentInvoiceId=null;
   f.registrationId.value=currentRegistrationId||'';f.guestName.value=rf.name.value;f.guestAddress.value='';f.guestPostal.value='';f.guestCity.value=rf.city.value;f.guestCountry.value=rf.country.value;f.companyName.value=rf.invoiceType.value==='company'?rf.companyName.value:'';f.companyAddress.value=rf.invoiceType.value==='company'?rf.companyAddress.value:'';f.vat.value=rf.invoiceType.value==='company'?rf.vat.value:'';f.email.value=rf.email.value;f.booking.value=rf.booking.value;f.checkin.value=rf.checkin.value;f.checkout.value=rf.checkout.value;applyReservationRoomToInvoice(currentRegistrationId);applyReservationPaymentToInvoice(currentRegistrationId);
-  const extras=paidOvernightForRegistration(currentRegistrationId);
+  const extras=overnightForRegistration(currentRegistrationId);
   const extraFee=extras.reduce((sum,g)=>sum+overnightFeeTotal(g),0);
   const extraNights=extras.reduce((sum,g)=>sum+overnightNights(g),0);
   f.additionalGuestFee.value=extraFee.toFixed(2);f.additionalGuestNights.value=extraNights;f.guests.value=extras.length?2:1;
   $('additionalGuestInvoiceFields').classList.toggle('hidden',!extras.length);
-  if(extras.length){
-    const methods=[...new Set(extras.map(g=>g.payment_method).filter(Boolean))];
-    if(methods.length){f.payment.value='custom';f.customPayment.value=`${paymentValue().replace(tr[currentLang].customPayOpt,'')} + ${methods.map(m=>m==='cash'?(currentLang==='nl'?'contant':'cash'):m==='paypal'?'PayPal':m).join(' / ')}`.replace(/^ \+ /,'');}
-  }
+  applyCombinedPaymentToInvoice(currentRegistrationId,extras);
   manualNights=false;autoNights();$('deleteBtn').classList.add('hidden');$('duplicateBtn').classList.add('hidden');updatePreview();invoiceDirty=true;suppressDirty=false;document.querySelector('.form-card').scrollIntoView({behavior:'smooth'});
 }
 
