@@ -1,1 +1,333 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Additional guest registration</title><link rel="stylesheet" href="style.css?v=3.6.0"></head><body><main><div class="card"><div class="brand">NIJMEGEN GUEST ROOMS</div><div class="langs"><button id="en">🇬🇧 English</button><button id="nl">🇳🇱 Nederlands</button></div><h1 id="title">Additional overnight guest</h1><p id="intro">Please register before staying overnight.</p><div id="form" class="hidden"><label id="nameL">Full name</label><input id="name"><label id="cityL">City / place of residence</label><input id="city"><label id="countryL">Country</label><select id="country"><option value="">Select a country</option></select><div class="dates"><div><label id="inL">Arrival</label><input id="in" type="date"></div><div><label id="outL">Departure</label><input id="out" type="date"></div></div><p id="fee"></p><label class="check"><input id="decl" type="checkbox"><span id="declT">I confirm that the information is complete and correct.</span></label><button id="submit">Submit guest registration</button></div><div id="msg"></div><div id="success" class="success hidden"><strong id="successTitle">Registration complete</strong><p id="successText">Thank you. Your guest registration has been submitted.</p><a id="websiteBtn" class="website-btn" href="https://nijmegenguestrooms.com/">Visit Nijmegen Guest Rooms</a></div></div></main><script type="module" src="app.js?v=3.6.0"></script></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#f7f2ed" />
+  <meta name="application-name" content="NGR Admin" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="apple-mobile-web-app-title" content="NGR Admin" />
+  <link rel="manifest" href="./manifest.webmanifest?v=3.7.2" />
+  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=3.5.0" />
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=3.5.0" />
+  <title>Nijmegen Guest Rooms – Admin</title>
+  <link rel="stylesheet" href="./style.css?v=3.7.2" />
+</head>
+<body>
+  <div class="container">
+    <div class="topbar screen-only">
+      <div class="page-title">
+        <h1 id="pageTitle" class="refresh-title" title="Refresh page" aria-label="Refresh page">Guest & Invoice Admin</h1>
+        <p id="pageSubtitle">Nijmegen Guest Rooms – Private administration</p>
+      </div>
+      <div class="topbar-actions">
+        <div class="lang-switch">
+          <button class="lang-btn active" data-lang="en">🇬🇧 English</button>
+          <button class="lang-btn" data-lang="nl">🇳🇱 Nederlands</button>
+        </div>
+        <button id="logoutBtn" class="action-btn secondary hidden">Log out</button>
+      </div>
+    </div>
+
+    <div id="loginView" class="card login-card">
+      <h2 id="loginTitle">Sign in</h2>
+      <p id="loginText">Only authorized users can access the administration.</p>
+      <form id="loginEmailForm">
+        <div id="loginEmailStep">
+          <div class="field"><label id="labelLoginEmail" for="loginEmail">Email</label><input id="loginEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" /></div>
+          <button id="loginBtn" type="submit" class="action-btn primary">Send verification code</button>
+        </div>
+      </form>
+      <form id="loginCodeForm">
+        <div id="loginCodeStep" class="hidden">
+          <p id="loginCodeIntro" class="login-code-intro">Enter the verification code sent to your email.</p>
+          <div class="field"><label id="labelLoginCode" for="loginCode">Verification code</label><input id="loginCode" class="otp-input" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" maxlength="8" placeholder="12345678" /></div>
+          <button id="verifyLoginBtn" type="submit" class="action-btn primary">Verify & sign in</button>
+          <div class="login-secondary-actions">
+            <button id="resendLoginCodeBtn" class="text-action-btn" type="button">Resend code</button>
+            <button id="changeLoginEmailBtn" class="text-action-btn" type="button">Use another email</button>
+          </div>
+        </div>
+      </form>
+      <p id="loginMessage" class="muted"></p>
+    </div>
+
+    <div id="appView" class="hidden">
+      <div class="mobile-admin-menu screen-only" id="mobileAdminMenu">
+        <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileMenuPanel">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="mobile-menu-panel" id="mobileMenuPanel">
+          <button class="mobile-nav-btn active" type="button" data-target="reservationsOverview" id="mobileNavReservations">Reservations</button>
+          <button class="mobile-nav-btn" type="button" data-target="registrationOverview" id="mobileNavRegistrations">Guest registrations</button>
+          <button class="mobile-nav-btn hidden" type="button" data-target="registrationEditor" id="mobileNavGuestDetails">Guest details</button>
+          <button class="mobile-nav-btn" type="button" data-target="invoiceDetailsCard" id="mobileNavInvoiceDetails">Invoice details</button>
+          <button class="mobile-nav-btn" type="button" data-target="savedInvoicesCard" id="mobileNavSavedInvoices">Saved invoices</button>
+        </div>
+      </div>
+      <nav class="admin-nav screen-only" id="adminNav" aria-label="Admin sections">
+        <button class="admin-nav-btn active" type="button" data-target="reservationsOverview" id="navReservations">Reservations</button>
+        <button class="admin-nav-btn" type="button" data-target="registrationOverview" id="navRegistrations">Guest registrations</button>
+        <button class="admin-nav-btn hidden" type="button" data-target="registrationEditor" id="navGuestDetails">Guest details</button>
+        <button class="admin-nav-btn" type="button" data-target="invoiceDetailsCard" id="navInvoiceDetails">Invoice details</button>
+        <button class="admin-nav-btn" type="button" data-target="savedInvoicesCard" id="navSavedInvoices">Saved invoices</button>
+      </nav>
+      <div class="card screen-only reservations-card" id="reservationsOverview">
+        <div class="section-header">
+          <div>
+            <h2 id="reservationsTitle">Reservations</h2>
+            <p id="reservationsSubtitle" class="muted">Read-only overview from Airbnb and Booking.com calendars.</p>
+          </div>
+          <button id="syncCalendarsBtn" class="action-btn secondary" type="button">Sync calendars</button>
+        </div>
+
+        <div class="attention-panel reservations-attention" id="attentionPanel">
+          <div class="attention-heading">
+            <div>
+              <h3 id="attentionTitle">Needs attention</h3>
+              <p id="attentionSubtitle" class="muted">Quick overview of upcoming and unfinished guest tasks.</p>
+            </div>
+          </div>
+          <div class="attention-grid">
+            <button type="button" class="attention-card" data-reservation-attention="arrivingSoon">
+              <span class="attention-number" id="attentionArrivingCount">0</span>
+              <span class="attention-label" id="attentionArrivingLabel">Arriving soon</span>
+            </button>
+            <button type="button" class="attention-card" data-reservation-attention="idToVerify">
+              <span class="attention-number" id="attentionIdCount">0</span>
+              <span class="attention-label" id="attentionIdLabel">ID to verify</span>
+            </button>
+            <button type="button" class="attention-card" data-reservation-attention="invoiceToCreate">
+              <span class="attention-number" id="attentionInvoiceCount">0</span>
+              <span class="attention-label" id="attentionInvoiceLabel">Invoices to create</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="reservation-toolbar">
+          <div class="reservation-legend">
+            <span class="platform-pill airbnb">Airbnb</span>
+            <span class="platform-pill booking">Booking.com</span>
+          </div>
+          <span id="calendarSyncStatus" class="muted"></span>
+        </div>
+        <div class="reservation-filters" id="reservationFilters" aria-label="Reservation filters">
+          <button type="button" class="filter-pill active" data-reservation-filter="upcoming" id="reservationFilterUpcoming">Upcoming</button>
+          <button type="button" class="filter-pill" data-reservation-filter="arrivingSoon" id="reservationFilterArrivingSoon">Arriving soon</button>
+          <button type="button" class="filter-pill" data-reservation-filter="staying" id="reservationFilterStaying">Staying now</button>
+          <button type="button" class="filter-pill" data-reservation-filter="idToVerify" id="reservationFilterId">ID to verify</button>
+          <button type="button" class="filter-pill" data-reservation-filter="invoiceToCreate" id="reservationFilterInvoice">Invoice to create</button>
+          <button type="button" class="filter-pill" data-reservation-filter="past" id="reservationFilterPast">Past</button>
+          <button type="button" class="filter-pill" data-reservation-filter="all" id="reservationFilterAll">All</button>
+          <button type="button" class="filter-pill" data-reservation-filter="removed" id="reservationFilterRemoved">Removed / cancelled</button>
+        </div>
+        <div id="reservationList" class="reservation-list"></div>
+      </div>
+
+      <div class="layout">
+        <div class="left-column">
+          <div class="card screen-only" id="registrationOverview">
+            <div class="section-header registration-header">
+              <div>
+                <h2 id="registrationTitle">Guest registrations</h2>
+                <p id="registrationArchiveSubtitle" class="muted section-subtitle">Detailed guest administration and archive.</p>
+              </div>
+              <div class="registration-header-actions">
+                <button id="newPaperBtn" class="action-btn secondary">Add paper registration</button>
+                <button id="manualInviteToggleBtn" class="action-btn secondary" aria-expanded="false" aria-controls="manualInvitePanel">＋ Create manual guest link</button>
+              </div>
+            </div>
+
+            <div id="manualInvitePanel" class="subcard manual-invite-panel hidden">
+              <div class="manual-invite-panel-header">
+                <div>
+                  <h3 id="inviteTitle">Create manual guest link</h3>
+                  <p id="manualInviteHint" class="muted manual-invite-hint">Use this only for a guest without an Airbnb or Booking.com reservation.</p>
+                </div>
+                <button id="closeManualInviteBtn" type="button" class="text-action-btn">Cancel</button>
+              </div>
+              <div class="field"><label id="labelInviteBooking" for="inviteBookingReference">Booking reference (optional)</label><input id="inviteBookingReference" /></div>
+              <div class="field">
+                <label id="labelInvitePlatform" for="inviteBookingPlatform">Booking platform</label>
+                <select id="inviteBookingPlatform">
+                  <option value="">Not selected</option>
+                  <option value="airbnb">Airbnb</option>
+                  <option value="booking">Booking.com</option>
+                  <option value="direct_other">Direct / Other</option>
+                </select>
+              </div>
+              <div class="inline-grid">
+                <div class="field"><label id="labelInviteCheckin" for="inviteCheckin">Check-in</label><input id="inviteCheckin" type="date" /></div>
+                <div class="field"><label id="labelInviteCheckout" for="inviteCheckout">Check-out</label><input id="inviteCheckout" type="date" /></div>
+              </div>
+              <button id="createInviteBtn" class="action-btn primary">Create secure link</button>
+              <div id="inviteResult" class="invite-result hidden"><input id="inviteUrl" readonly /><button id="copyInviteBtn" class="action-btn secondary">Copy link</button></div>
+              <p id="inviteMessage" class="muted"></p>
+            </div>
+
+            <div class="field"><label id="labelRegistrationSearch" for="registrationSearch">Search registrations</label><input id="registrationSearch" placeholder="Search by name, email or booking reference" /></div>
+            <div class="registration-filters" id="registrationFilters" aria-label="Registration filters">
+              <button type="button" class="filter-pill active" data-filter="all" id="filterAll">All</button>
+              <button type="button" class="filter-pill" data-filter="arrivingSoon" id="filterArrivingSoon">Arriving soon</button>
+              <button type="button" class="filter-pill" data-filter="upcoming" id="filterUpcoming">Upcoming</button>
+              <button type="button" class="filter-pill" data-filter="staying" id="filterStaying">Staying now</button>
+              <button type="button" class="filter-pill" data-filter="past" id="filterPast">Past</button>
+              <button type="button" class="filter-pill" data-filter="idToVerify" id="filterId">ID to verify</button>
+              <button type="button" class="filter-pill" data-filter="invoiceToCreate" id="filterInvoice">Invoice to create</button>
+            </div>
+            <div id="registrationList" class="registration-list"></div>
+          </div>
+
+          <div id="registrationEditor" class="card screen-only hidden">
+            <div class="section-header"><h2 id="registrationEditorTitle">Guest registration</h2><button id="closeRegistrationBtn" class="action-btn secondary">Close</button></div>
+            <input id="registrationId" type="hidden" />
+            <input id="registrationSource" type="hidden" value="paper_manual" />
+            <div class="field"><label id="labelRegName" for="regName">Full name</label><input id="regName" /></div>
+            <div class="field"><label id="labelRegCity" for="regCity">City</label><input id="regCity" /></div>
+            <div class="field"><label id="labelRegCountry" for="regCountry">Country</label><select id="regCountry"><option value="">Select a country</option></select></div>
+            <div class="inline-grid"><div class="field"><label id="labelRegCheckin" for="regCheckin">Check-in</label><input id="regCheckin" type="date" /></div><div class="field"><label id="labelRegCheckout" for="regCheckout">Check-out</label><input id="regCheckout" type="date" /></div></div>
+            <div class="field"><label id="labelRegBooking" for="regBookingReference">Booking reference (optional)</label><input id="regBookingReference" /></div>
+            <div id="regPlatformField" class="field">
+              <label id="labelRegPlatform" for="regBookingPlatform">Booking platform</label>
+              <select id="regBookingPlatform">
+                <option value="">Not selected</option>
+                <option value="airbnb">Airbnb</option>
+                <option value="booking">Booking.com</option>
+                <option value="direct_other">Direct / Other</option>
+              </select>
+            </div>
+
+            <label class="check-row"><input id="regInvoiceRequested" type="checkbox" /><span id="regInvoiceRequestedText">Invoice requested</span></label>
+            <div id="regInvoiceFields" class="conditional hidden">
+              <div class="inline-grid"><div class="field"><label id="labelRegInvoiceType" for="regInvoiceType">Invoice type</label><select id="regInvoiceType"><option value="personal">Personal</option><option value="company">Company</option></select></div><div class="field"><label id="labelRegEmail" for="regEmail">Email</label><input id="regEmail" type="email" /></div></div>
+              <div id="regCompanyFields" class="hidden">
+                <div class="field"><label id="labelRegCompanyName" for="regCompanyName">Company name</label><input id="regCompanyName" /></div>
+                <div class="field"><label id="labelRegCompanyAddress" for="regCompanyAddress">Company address</label><textarea id="regCompanyAddress" rows="2"></textarea></div>
+                <div class="field"><label id="labelRegVat" for="regVat">VAT number (optional)</label><input id="regVat" /></div>
+              </div>
+            </div>
+
+            <div id="overnightGuestsBox" class="subcard overnight-guests-box">
+              <div class="section-header compact-section-header">
+                <div>
+                  <h3 id="overnightGuestsTitle">Overnight guests</h3>
+                  <p id="overnightGuestsSummary" class="muted overnight-summary">1 registered guest</p>
+                </div>
+                <button id="addOvernightGuestBtn" type="button" class="action-btn secondary">+ Add overnight guest</button>
+              </div>
+              <div id="overnightGuestList"></div>
+              <div id="overnightGuestEditor" class="overnight-editor hidden">
+                <input id="overnightGuestId" type="hidden" />
+                <div class="field"><label id="labelOvernightName" for="overnightName">Full name</label><input id="overnightName" /></div>
+                <div class="inline-grid">
+                  <div class="field"><label id="labelOvernightCity" for="overnightCity">City / place of residence</label><input id="overnightCity" /></div>
+                  <div class="field"><label id="labelOvernightCountry" for="overnightCountry">Country</label><select id="overnightCountry"><option value="">Select a country</option></select></div>
+                </div>
+                <div class="inline-grid">
+                  <div class="field"><label id="labelOvernightCheckin" for="overnightCheckin">Arrival</label><input id="overnightCheckin" type="date" /></div>
+                  <div class="field"><label id="labelOvernightCheckout" for="overnightCheckout">Departure</label><input id="overnightCheckout" type="date" /></div>
+                </div>
+                <div class="inline-grid">
+                  <div class="field"><label id="labelOvernightRate" for="overnightRate">Additional guest fee (€ per night, incl. tourist tax)</label><input id="overnightRate" type="number" min="0" step="0.01" value="20.00" /></div>
+                  <div class="field"><label id="labelOvernightPayment" for="overnightPayment">Payment method</label><select id="overnightPayment"><option value="">Not selected</option><option value="cash">Cash</option><option value="paypal">PayPal</option><option value="airbnb">Airbnb</option></select></div>
+                </div>
+                <div class="overnight-checks"><label class="check-row"><input id="overnightPaid" type="checkbox" /><span id="overnightPaidText">Fee paid</span></label><label class="check-row"><input id="overnightIdVerified" type="checkbox" /><span id="overnightIdVerifiedText">ID checked</span></label></div>
+                <div class="button-row overnight-actions">
+                  <button id="saveOvernightGuestBtn" type="button" class="action-btn primary">Save overnight guest</button>
+                  <button id="createOvernightQrBtn" type="button" class="action-btn secondary">Show QR code</button><button id="copyOvernightLinkBtn" type="button" class="action-btn secondary">Copy registration link</button>
+                  <button id="printOvernightFormBtn" type="button" class="action-btn secondary">Print paper form</button>
+                  <button id="cancelOvernightGuestBtn" type="button" class="action-btn secondary">Cancel</button>
+                  <button id="deleteOvernightGuestBtn" type="button" class="action-btn danger hidden">Delete</button>
+                </div>
+                <p id="overnightGuestMessage" class="muted"></p>
+              </div>
+            </div>
+
+            <div class="subcard identity-box">
+              <h3 id="identityTitle">Identification check – host only</h3>
+              <div class="field"><label id="labelIdType" for="regIdType">Identification shown</label><select id="regIdType"><option value="">Not selected</option><option value="passport">Passport</option><option value="id_card">ID card</option><option value="drivers_licence">Driver's licence</option><option value="other">Other valid ID</option></select></div>
+              <div id="otherIdField" class="field hidden"><label id="labelIdOther" for="regIdOther">Other valid ID</label><input id="regIdOther" /></div>
+              <label class="check-row"><input id="regIdVerified" type="checkbox" /><span id="idVerifiedText">Identity verified</span></label>
+            </div>
+
+            <div class="button-row"><button id="saveRegistrationBtn" class="action-btn primary">Save registration</button><button id="useForInvoiceBtn" class="action-btn secondary">Use for invoice</button><button id="deleteRegistrationBtn" class="action-btn danger hidden">Delete registration</button></div>
+            <p id="registrationMessage" class="muted"></p>
+          </div>
+
+          <div class="card form-card screen-only" id="invoiceDetailsCard">
+            <div class="section-header"><h2 id="formTitle">Invoice Details</h2><button id="newInvoiceBtn" class="action-btn secondary">New invoice</button></div>
+            <input id="guestRegistrationId" type="hidden" />
+            <div class="inline-grid"><div class="field" data-required="true"><label id="labelInvoiceNumber" for="invoiceNumber">Invoice number</label><input id="invoiceNumber" /></div><div class="field" data-required="true"><label id="labelInvoiceDate" for="invoiceDate">Invoice date</label><input id="invoiceDate" type="date" /></div></div>
+            <div class="field" data-required="true"><label id="labelGuestName" for="guestName">Guest name</label><input id="guestName" /></div>
+            <div class="field"><label id="labelGuestAddress" for="guestAddress">Guest address</label><input id="guestAddress" /></div>
+            <div class="inline-grid"><div class="field"><label id="labelGuestPostal" for="guestPostalCode">Postal code</label><input id="guestPostalCode" /></div><div class="field"><label id="labelGuestCity" for="guestCity">City</label><input id="guestCity" /></div></div>
+            <div class="field"><label id="labelGuestCountry" for="guestCountry">Country</label><input id="guestCountry" /></div>
+            <div class="field"><label id="labelCompanyName" for="companyName">Company name (optional)</label><input id="companyName" /></div>
+            <div class="field"><label id="labelCompanyAddress" for="companyAddress">Company address (optional)</label><textarea id="companyAddress" rows="2"></textarea></div>
+            <div class="field"><label id="labelVatNumber" for="vatNumber">VAT number (optional)</label><input id="vatNumber" /></div>
+            <div class="field"><label id="labelGuestEmail" for="guestEmail">Guest email (optional)</label><input id="guestEmail" type="email" /></div>
+            <div class="field"><label id="labelBookingReference" for="bookingReference">Booking reference (optional)</label><input id="bookingReference" /></div>
+            <div class="field" data-required="true"><label id="labelRoomName" for="roomName">Room name</label><select id="roomName"><option value="Cozy Room (Street Side)">Cozy Room (Street Side)</option><option value="Spacious Room (Garden View)">Spacious Room (Garden View)</option><option value="custom">Custom room name...</option></select></div>
+            <div class="field hidden" id="customRoomField"><label id="labelCustomRoomName" for="customRoomName">Custom room name</label><input id="customRoomName" /></div>
+            <div class="inline-grid"><div class="field" data-required="true"><label id="labelCheckin" for="checkinDate">Check-in</label><input id="checkinDate" type="date" /></div><div class="field" data-required="true"><label id="labelCheckout" for="checkoutDate">Check-out</label><input id="checkoutDate" type="date" /></div></div>
+            <div class="inline-grid"><div class="field" data-required="true"><label id="labelNights" for="nights">Nights</label><input id="nights" type="number" min="1" /></div><div class="field" data-required="true"><label id="labelGuests" for="guests">Guests</label><input id="guests" type="number" min="1" value="1" /></div></div>
+            <div class="field" data-required="true"><label id="labelAccommodation" for="accommodationAmount">Accommodation (€)</label><input id="accommodationAmount" type="number" step="0.01" /></div>
+            <div id="additionalGuestInvoiceFields" class="inline-grid hidden">
+              <div class="field"><label id="labelAdditionalGuestFee" for="additionalGuestFee">Additional overnight guest fee (€)</label><input id="additionalGuestFee" type="number" min="0" step="0.01" value="0.00" /></div>
+              <div class="field"><label id="labelAdditionalGuestNights" for="additionalGuestNights">Additional guest nights</label><input id="additionalGuestNights" type="number" min="0" step="1" value="0" /></div>
+            </div>
+            <div class="field" data-required="true"><label id="labelCleaning" for="cleaningFee">Cleaning fee (€)</label><input id="cleaningFee" type="number" step="0.01" value="5.00" /></div>
+            <div class="inline-grid"><div class="field" data-required="true"><label id="labelTouristTaxRate" for="touristTaxRate">Tourist tax rate (€ per guest per night)</label><input id="touristTaxRate" type="number" step="0.01" value="3.71" /></div><div class="field" data-required="true"><label id="labelTaxMode" for="taxMode">Tourist tax handling</label><select id="taxMode"><option value="included">Accommodation amount already includes tourist tax</option><option value="excluded">Tourist tax should be added on top of accommodation</option></select></div></div>
+            <div class="field" data-required="true"><label id="labelPaymentMethod" for="paymentMethod">Payment</label><select id="paymentMethod"><option value="Paid via Booking.com">Paid via Booking.com</option><option value="Paid via Airbnb">Paid via Airbnb</option><option value="custom">Custom payment method...</option></select></div>
+            <div class="field hidden" id="customPaymentField"><label id="labelCustomPayment" for="customPaymentMethod">Custom payment method</label><input id="customPaymentMethod" /></div>
+            <div class="button-row"><button id="saveBtn" class="action-btn primary">Save invoice</button><button id="duplicateBtn" class="action-btn secondary hidden">Duplicate invoice</button><button id="deleteBtn" class="action-btn danger hidden">Delete invoice</button><button id="printBtn" class="action-btn secondary">Print / Save as PDF</button></div>
+            <p id="saveMessage" class="muted"></p>
+          </div>
+
+          <div class="card saved-card screen-only" id="savedInvoicesCard">
+            <div class="section-header"><h2 id="savedInvoicesTitle">Saved Invoices</h2></div>
+            <div class="field"><label id="labelSearchInvoices" for="searchInvoices">Search / filter invoices</label><input id="searchInvoices" placeholder="Search by invoice number, guest name, company, email or booking reference" /></div>
+            <div id="invoiceList" class="invoice-list"></div>
+          </div>
+        </div>
+
+        <div class="right-column">
+          <div class="card preview-card" id="previewWrapper">
+            <div class="invoice-preview" id="invoicePreview">
+              <div class="invoice-header"><div class="brand"><h3><span translate="no">Nijmegen Guest Rooms</span></h3><p>Landbouwstraat 15</p><p>Nijmegen, The Netherlands</p></div><div class="invoice-meta"><p class="invoice-title" id="previewInvoiceTitle">INVOICE</p><p><strong id="previewLabelInvoiceNumber">Invoice number:</strong> <span id="previewInvoiceNumber">—</span></p><p><strong id="previewLabelInvoiceDate">Date:</strong> <span id="previewInvoiceDate">—</span></p></div></div>
+              <div class="invoice-section invoice-block"><h4 id="previewSectionGuest">Billed to</h4><p id="previewCompanyName" class="hidden"></p><p id="previewGuestName">—</p><p id="previewAddress" class="subtle hidden"></p><p id="previewCityCountry" class="subtle hidden"></p><p id="previewCompanyAddress" class="subtle hidden"></p><p id="previewVatNumberWrap" class="subtle hidden"><strong id="previewLabelVatNumber">VAT number:</strong> <span id="previewVatNumber">—</span></p><p id="previewGuestEmail" class="subtle"></p><p id="previewBookingReferenceWrap" class="subtle hidden"><strong id="previewLabelBookingReference">Booking reference:</strong> <span id="previewBookingReference">—</span></p></div>
+              <div class="invoice-section invoice-block"><h4 id="previewSectionStay">Stay Details</h4><p><strong id="previewLabelRoom">Room:</strong> <span id="previewRoomName">—</span></p><p><strong id="previewLabelCheckin2">Check-in:</strong> <span id="previewCheckin">—</span></p><p><strong id="previewLabelCheckout2">Check-out:</strong> <span id="previewCheckout">—</span></p><p><strong id="previewLabelNights2">Nights:</strong> <span id="previewNights">—</span></p><p><strong id="previewLabelGuests2">Guests:</strong> <span id="previewGuests">1</span></p></div>
+              <div class="invoice-section invoice-block"><h4 id="previewSectionDescription">Description</h4><p id="previewDescription">Accommodation in private room (shared home)</p></div>
+              <div class="invoice-section"><h4 id="previewSectionPrice">Price Breakdown</h4><table class="summary-table"><tr><td id="previewLabelAccommodation">Accommodation</td><td id="previewAccommodation">€0.00</td></tr><tr id="previewAdditionalGuestRow" class="hidden"><td id="previewLabelAdditionalGuest">Additional overnight guest</td><td id="previewAdditionalGuest">€0.00</td></tr><tr><td id="previewLabelCleaning">Cleaning fee</td><td id="previewCleaning">€0.00</td></tr><tr><td id="previewLabelTaxRate">Tourist tax rate</td><td id="previewTouristTaxRate">€3.71 × 1 × 0</td></tr><tr><td id="previewLabelTaxTotal">Tourist tax included</td><td id="previewTouristTax">€0.00</td></tr><tr class="total-row"><td id="previewLabelTotal">Total amount paid</td><td id="previewTotal">€0.00</td></tr></table></div>
+              <div class="invoice-section invoice-block"><h4 id="previewSectionPayment">Payment</h4><p id="previewPaymentMethod">Paid via Booking.com</p></div>
+              <div class="invoice-section invoice-block"><p class="subtle"><em id="previewNote">This is a private rental. VAT is not applicable.</em></p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="qrModal" class="qr-modal hidden screen-only" role="dialog" aria-modal="true" aria-labelledby="qrModalTitle">
+    <div class="qr-modal-toolbar">
+      <button id="closeQrModalBtn" class="qr-close-btn" type="button" aria-label="Close">×</button>
+    </div>
+    <div class="qr-modal-content">
+      <div class="qr-modal-brand">NIJMEGEN GUEST ROOMS</div>
+      <h2 id="qrModalTitle">Scan to complete your guest registration</h2>
+      <p id="qrModalSubtitle">Open your camera and scan the QR code.</p>
+      <div id="qrCodeContainer" class="qr-code-container" aria-label="Guest registration QR code"></div>
+      <div id="qrReservationInfo" class="qr-reservation-info"></div>
+      <button id="copyQrLinkBtn" class="action-btn secondary qr-copy-btn" type="button">Copy registration link</button>
+    </div>
+  </div>
+  <button id="backToTopBtn" class="back-to-top-btn screen-only" type="button" aria-label="Back to top" title="Back to top">↑</button>
+  <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
+  <script type="module" src="./app.js?v=3.7.2"></script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.7.2').catch(() => {}));
+  }
+  </script>
+</body>
+</html>
