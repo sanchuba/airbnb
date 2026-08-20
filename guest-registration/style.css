@@ -174,3 +174,10 @@ select { min-height: 46px; cursor: pointer; }
 @media (max-width: 620px) {
   .invoice-timing-hint { margin-left: 0; }
 }
+
+/* v3.10.0 — clearer validation */
+.check-row.invalid-check{
+  outline:2px solid rgba(171,66,66,.42);
+  outline-offset:6px;
+  border-radius:8px;
+}

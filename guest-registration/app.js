@@ -92,14 +92,23 @@ function validate() {
   clearInvalid();
   const x=t[currentLang];
   for (const f of [fields.fullName,fields.city,fields.country]) {
-    if (!f.value.trim()) { markInvalid(f); return x.required; }
+    if (!f.value.trim()) { markInvalid(f); return {message:x.required,field:f}; }
   }
   if (fields.invoiceRequested.checked) {
-    if (!fields.email.value.trim() || !fields.email.validity.valid) { markInvalid(fields.email); return x.invoiceEmail; }
-    if (invoiceType()==='company' && !fields.companyName.value.trim()) { markInvalid(fields.companyName); return x.companyRequired; }
+    if (!fields.email.value.trim() || !fields.email.validity.valid) { markInvalid(fields.email); return {message:x.invoiceEmail,field:fields.email}; }
+    if (invoiceType()==='company' && !fields.companyName.value.trim()) { markInvalid(fields.companyName); return {message:x.companyRequired,field:fields.companyName}; }
   }
-  if (!fields.declarationAccepted.checked) return x.declarationRequired;
+  if (!fields.declarationAccepted.checked) {
+    fields.declarationAccepted.closest('.check-row')?.classList.add('invalid-check');
+    return {message:x.declarationRequired,field:fields.declarationAccepted};
+  }
   return null;
+}
+function focusInvalidField(field){
+  if(!field)return;
+  const target=field.closest('.field,.check-row')||field;
+  target.scrollIntoView({behavior:'smooth',block:'center'});
+  setTimeout(()=>{try{field.focus({preventScroll:true});}catch(e){field.focus();}},320);
 }
 
 async function loadInvite() {
@@ -121,7 +130,7 @@ async function loadInvite() {
 form.addEventListener('submit', async e => {
   e.preventDefault();
   const validation = validate();
-  if (validation) { el('formMessage').textContent=validation; return; }
+  if (validation) { el('formMessage').textContent=validation.message; focusInvalidField(validation.field); return; }
   const x=t[currentLang];
   el('formMessage').textContent=''; el('submitBtn').disabled=true; el('submitBtn').textContent=x.submitting;
   const params = {
@@ -146,6 +155,7 @@ form.addEventListener('submit', async e => {
 });
 
 fields.invoiceRequested.addEventListener('change',toggleInvoiceFields);
+fields.declarationAccepted.addEventListener('change',()=>{fields.declarationAccepted.closest('.check-row')?.classList.remove('invalid-check');el('formMessage').textContent='';});
 document.querySelectorAll('input[name="invoiceType"]').forEach(r=>r.addEventListener('change',toggleInvoiceFields));
 document.querySelectorAll('.lang-btn').forEach(b=>b.addEventListener('click',()=>setLanguage(b.dataset.lang)));
 Object.values(fields).forEach(f=>f?.addEventListener('input',()=>{ f.closest('.field')?.classList.remove('invalid'); el('formMessage').textContent=''; }));

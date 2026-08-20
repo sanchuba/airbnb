@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nijmegen Guest Rooms – Guest Information</title>
-  <link rel="stylesheet" href="./style.css?v=3.8.2" />
+  <link rel="stylesheet" href="./style.css?v=3.10.0" />
 </head>
 <body>
   <main class="page-shell">
@@ -92,11 +92,11 @@
             <div id="companyFields" class="conditional hidden">
               <div class="field">
                 <label id="labelCompanyName" for="companyName">Company name</label>
-                <input id="companyName" maxlength="200" />
+                <input id="companyName" autocomplete="organization" maxlength="200" />
               </div>
               <div class="field">
                 <label id="labelCompanyAddress" for="companyAddress">Company address</label>
-                <textarea id="companyAddress" rows="3" maxlength="400"></textarea>
+                <textarea id="companyAddress" autocomplete="street-address" rows="3" maxlength="400"></textarea>
               </div>
               <div class="field">
                 <label id="labelVatNumber" for="vatNumber">VAT number (if applicable)</label>
@@ -121,6 +121,6 @@
     </section>
   </main>
 
-  <script type="module" src="./app.js?v=3.8.2"></script>
+  <script type="module" src="./app.js?v=3.10.0"></script>
 </body>
 </html>
