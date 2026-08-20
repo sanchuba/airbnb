@@ -147,3 +147,30 @@ select { min-height: 46px; cursor: pointer; }
   cursor: default;
   pointer-events: none;
 }
+
+/* v3.8.2 — invoice timing communication */
+.invoice-timing-hint {
+  margin: 8px 0 0 34px;
+  color: #766f67;
+  font-size: 13px;
+  line-height: 1.45;
+}
+.success-invoice-note {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(53,106,70,.22);
+  border-radius: 10px;
+  background: rgba(255,255,255,.48);
+}
+.success-invoice-note strong {
+  color: var(--success);
+}
+.success-invoice-note span {
+  color: #496a52;
+}
+@media (max-width: 620px) {
+  .invoice-timing-hint { margin-left: 0; }
+}

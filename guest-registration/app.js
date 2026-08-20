@@ -10,7 +10,7 @@ const t = {
     loading: 'Loading your registration form…', invalid: 'This registration link is invalid, expired, or has already been used. Please contact your hosts for a new link.',
     already: 'This registration has already been submitted. Thank you!', success: 'Thank you! Your guest information has been submitted successfully. We look forward to welcoming you to Nijmegen Guest Rooms.',
     guestInfo: 'Guest information', fullName: 'Full name', city: 'City', country: 'Country', checkin: 'Check-in date', checkout: 'Check-out date',
-    invoice: 'Invoice', wantInvoice: 'I would like to receive an invoice by email.', personal: 'Personal invoice', company: 'Company invoice', email: 'Email address', companyName: 'Company name', companyAddress: 'Company address', vat: 'VAT number (if applicable)',
+    invoice: 'Invoice', wantInvoice: 'I would like to receive an invoice by email.', invoiceTiming: 'The invoice will be sent by email after check-out.', successInvoiceTitle: 'Invoice requested', successInvoiceText: 'Your invoice will be sent by email after check-out.', personal: 'Personal invoice', company: 'Company invoice', email: 'Email address', companyName: 'Company name', companyAddress: 'Company address', vat: 'VAT number (if applicable)',
     declaration: 'Guest declaration', declarationText: 'I confirm that the information I have provided is complete and correct.', privacy: 'Your information is used for guest registration and administration. Invoice details are used only when an invoice is requested.',
     submit: 'Submit guest information', requiredHint: 'Required field', optionalLabel: 'optional', required: 'Please complete all required fields.', invoiceEmail: 'Please enter the email address where the invoice should be sent.', companyRequired: 'Please enter the company name.', declarationRequired: 'Please confirm that the information is complete and correct.', submitting: 'Submitting…', homeButton: 'Visit Nijmegen Guest Rooms'
   },
@@ -19,7 +19,7 @@ const t = {
     loading: 'Je registratieformulier wordt geladen…', invalid: 'Deze registratielink is ongeldig, verlopen of al gebruikt. Neem contact op met je hosts voor een nieuwe link.',
     already: 'Deze registratie is al ingevuld. Bedankt!', success: 'Bedankt! Je gastgegevens zijn succesvol verzonden. We kijken ernaar uit je te verwelkomen bij Nijmegen Guest Rooms.',
     guestInfo: 'Gastgegevens', fullName: 'Volledige naam', city: 'Woonplaats', country: 'Land', checkin: 'Incheckdatum', checkout: 'Uitcheckdatum',
-    invoice: 'Factuur', wantInvoice: 'Ik wil graag een factuur per e-mail ontvangen.', personal: 'Particuliere factuur', company: 'Zakelijke factuur', email: 'E-mailadres', companyName: 'Bedrijfsnaam', companyAddress: 'Bedrijfsadres', vat: 'Btw-identificatienummer (indien van toepassing)',
+    invoice: 'Factuur', wantInvoice: 'Ik wil graag een factuur per e-mail ontvangen.', invoiceTiming: 'De factuur wordt na het uitchecken per e-mail verstuurd.', successInvoiceTitle: 'Factuur aangevraagd', successInvoiceText: 'Je ontvangt de factuur na het uitchecken per e-mail.', personal: 'Particuliere factuur', company: 'Zakelijke factuur', email: 'E-mailadres', companyName: 'Bedrijfsnaam', companyAddress: 'Bedrijfsadres', vat: 'Btw-identificatienummer (indien van toepassing)',
     declaration: 'Verklaring van de gast', declarationText: 'Ik bevestig dat de door mij ingevulde gegevens volledig en correct zijn.', privacy: 'Je gegevens worden gebruikt voor gastenregistratie en administratieve doeleinden. Factuurgegevens worden alleen gebruikt wanneer een factuur wordt aangevraagd.',
     submit: 'Gastgegevens verzenden', requiredHint: 'Verplicht veld', optionalLabel: 'optioneel', required: 'Vul alle verplichte velden in.', invoiceEmail: 'Vul het e-mailadres in waar de factuur naartoe moet.', companyRequired: 'Vul de bedrijfsnaam in.', declarationRequired: 'Bevestig dat de gegevens volledig en correct zijn.', submitting: 'Verzenden…', homeButton: 'Naar Nijmegen Guest Rooms'
   }
@@ -69,7 +69,8 @@ function setLanguage(lang) {
   el('labelCity').innerHTML=x.city+requiredStar;
   el('labelCountry').innerHTML=x.country+requiredStar; populateCountries(fields.country, fields.country.value);
   el('labelCheckin').textContent=x.checkin; el('labelCheckout').textContent=x.checkout;
-  el('invoiceTitle').textContent=x.invoice; el('invoiceRequestedText').textContent=x.wantInvoice; el('personalInvoiceText').textContent=x.personal; el('companyInvoiceText').textContent=x.company;
+  el('invoiceTitle').textContent=x.invoice; el('invoiceRequestedText').textContent=x.wantInvoice; el('invoiceTimingHint').textContent=x.invoiceTiming; el('personalInvoiceText').textContent=x.personal; el('companyInvoiceText').textContent=x.company;
+  el('successInvoiceTitle').textContent=x.successInvoiceTitle; el('successInvoiceText').textContent=x.successInvoiceText;
   el('labelEmail').innerHTML=x.email+requiredStar;
   el('labelCompanyName').innerHTML=x.companyName+requiredStar;
   el('labelCompanyAddress').innerHTML=optional(x.companyAddress);
@@ -138,7 +139,9 @@ form.addEventListener('submit', async e => {
   if (error) {
     el('formMessage').textContent=error.message; el('submitBtn').disabled=false; el('submitBtn').textContent=x.submit; return;
   }
-  form.classList.add('hidden'); el('successText').textContent=x.success; el('successState').classList.remove('hidden');
+  form.classList.add('hidden'); el('successText').textContent=x.success;
+  el('successInvoiceNote').classList.toggle('hidden', !fields.invoiceRequested.checked);
+  el('successState').classList.remove('hidden');
   window.scrollTo({top:0,behavior:'smooth'});
 });
 

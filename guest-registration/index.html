@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Nijmegen Guest Rooms – Guest Information</title>
-  <link rel="stylesheet" href="./style.css?v=3.6.2" />
+  <link rel="stylesheet" href="./style.css?v=3.8.2" />
 </head>
 <body>
   <main class="page-shell">
@@ -25,6 +25,10 @@
       <div id="invalidState" class="notice error hidden"></div>
       <div id="successState" class="notice success hidden">
         <p id="successText"></p>
+        <div id="successInvoiceNote" class="success-invoice-note hidden">
+          <strong id="successInvoiceTitle">Invoice requested</strong>
+          <span id="successInvoiceText">Your invoice will be sent by email after check-out.</span>
+        </div>
         <a id="successHomeBtn" class="home-btn" href="https://nijmegenguestrooms.com/">Visit Nijmegen Guest Rooms</a>
       </div>
 
@@ -66,6 +70,7 @@
             <input id="invoiceRequested" type="checkbox" />
             <span id="invoiceRequestedText">I would like to receive an invoice by email.</span>
           </label>
+          <p id="invoiceTimingHint" class="invoice-timing-hint">The invoice will be sent by email after check-out.</p>
 
           <div id="invoiceFields" class="conditional hidden">
             <div class="choice-grid">
@@ -116,6 +121,6 @@
     </section>
   </main>
 
-  <script type="module" src="./app.js?v=3.6.2"></script>
+  <script type="module" src="./app.js?v=3.8.2"></script>
 </body>
 </html>
