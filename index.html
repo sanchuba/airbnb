@@ -2,332 +2,1063 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <meta name="theme-color" content="#f7f2ed" />
-  <meta name="application-name" content="NGR Admin" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-  <meta name="apple-mobile-web-app-title" content="NGR Admin" />
-  <link rel="manifest" href="./manifest.webmanifest?v=3.7.2" />
-  <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=3.5.0" />
-  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=3.5.0" />
-  <title>Nijmegen Guest Rooms – Admin</title>
-  <link rel="stylesheet" href="./style.css?v=3.7.2" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nijmegen Guest Rooms</title>
+  <meta name="description" content="Cozy private guest rooms in Nijmegen, in a shared home with warm hospitality, practical comfort, and easy access to the city." />
+
+  <link rel="icon" type="image/png" href="./assets/favicon.png">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-  <div class="container">
-    <div class="topbar screen-only">
-      <div class="page-title">
-        <h1 id="pageTitle" class="refresh-title" title="Refresh page" aria-label="Refresh page">Guest & Invoice Admin</h1>
-        <p id="pageSubtitle">Nijmegen Guest Rooms – Private administration</p>
-      </div>
-      <div class="topbar-actions">
+
+  <div class="topbar">
+    <div class="topbar-inner">
+      <a href="#top-en" class="brand" id="brandLink">Nijmegen Guest Rooms</a>
+
+      <button
+        class="menu-toggle"
+        id="menuToggle"
+        type="button"
+        aria-label="Open menu"
+        aria-expanded="false"
+        aria-controls="menuPanel"
+      >
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+
+      <div class="menu-panel" id="menuPanel">
+        <nav class="nav">
+          <a href="#rooms-en">Rooms</a>
+          <a href="#stay-en">Your Stay</a>
+          <a href="#arrival-en">Before Arrival</a>
+          <a href="#guide-en">Guest Guide</a>
+          <a href="#faq-en">FAQ</a>
+          <a href="#book-en">Book</a>
+        </nav>
+
         <div class="lang-switch">
           <button class="lang-btn active" data-lang="en">🇬🇧 English</button>
           <button class="lang-btn" data-lang="nl">🇳🇱 Nederlands</button>
         </div>
-        <button id="logoutBtn" class="action-btn secondary hidden">Log out</button>
-      </div>
-    </div>
-
-    <div id="loginView" class="card login-card">
-      <h2 id="loginTitle">Sign in</h2>
-      <p id="loginText">Only authorized users can access the administration.</p>
-      <form id="loginEmailForm">
-        <div id="loginEmailStep">
-          <div class="field"><label id="labelLoginEmail" for="loginEmail">Email</label><input id="loginEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com" /></div>
-          <button id="loginBtn" type="submit" class="action-btn primary">Send verification code</button>
-        </div>
-      </form>
-      <form id="loginCodeForm">
-        <div id="loginCodeStep" class="hidden">
-          <p id="loginCodeIntro" class="login-code-intro">Enter the verification code sent to your email.</p>
-          <div class="field"><label id="labelLoginCode" for="loginCode">Verification code</label><input id="loginCode" class="otp-input" type="text" inputmode="numeric" autocomplete="one-time-code" pattern="[0-9]*" maxlength="8" placeholder="12345678" /></div>
-          <button id="verifyLoginBtn" type="submit" class="action-btn primary">Verify & sign in</button>
-          <div class="login-secondary-actions">
-            <button id="resendLoginCodeBtn" class="text-action-btn" type="button">Resend code</button>
-            <button id="changeLoginEmailBtn" class="text-action-btn" type="button">Use another email</button>
-          </div>
-        </div>
-      </form>
-      <p id="loginMessage" class="muted"></p>
-    </div>
-
-    <div id="appView" class="hidden">
-      <div class="mobile-admin-menu screen-only" id="mobileAdminMenu">
-        <button class="mobile-menu-toggle" id="mobileMenuToggle" type="button" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobileMenuPanel">
-          <span></span><span></span><span></span>
-        </button>
-        <div class="mobile-menu-panel" id="mobileMenuPanel">
-          <button class="mobile-nav-btn active" type="button" data-target="reservationsOverview" id="mobileNavReservations">Reservations</button>
-          <button class="mobile-nav-btn" type="button" data-target="registrationOverview" id="mobileNavRegistrations">Guest registrations</button>
-          <button class="mobile-nav-btn hidden" type="button" data-target="registrationEditor" id="mobileNavGuestDetails">Guest details</button>
-          <button class="mobile-nav-btn" type="button" data-target="invoiceDetailsCard" id="mobileNavInvoiceDetails">Invoice details</button>
-          <button class="mobile-nav-btn" type="button" data-target="savedInvoicesCard" id="mobileNavSavedInvoices">Saved invoices</button>
-        </div>
-      </div>
-      <nav class="admin-nav screen-only" id="adminNav" aria-label="Admin sections">
-        <button class="admin-nav-btn active" type="button" data-target="reservationsOverview" id="navReservations">Reservations</button>
-        <button class="admin-nav-btn" type="button" data-target="registrationOverview" id="navRegistrations">Guest registrations</button>
-        <button class="admin-nav-btn hidden" type="button" data-target="registrationEditor" id="navGuestDetails">Guest details</button>
-        <button class="admin-nav-btn" type="button" data-target="invoiceDetailsCard" id="navInvoiceDetails">Invoice details</button>
-        <button class="admin-nav-btn" type="button" data-target="savedInvoicesCard" id="navSavedInvoices">Saved invoices</button>
-      </nav>
-      <div class="card screen-only reservations-card" id="reservationsOverview">
-        <div class="section-header">
-          <div>
-            <h2 id="reservationsTitle">Reservations</h2>
-            <p id="reservationsSubtitle" class="muted">Read-only overview from Airbnb and Booking.com calendars.</p>
-          </div>
-          <button id="syncCalendarsBtn" class="action-btn secondary" type="button">Sync calendars</button>
-        </div>
-
-        <div class="attention-panel reservations-attention" id="attentionPanel">
-          <div class="attention-heading">
-            <div>
-              <h3 id="attentionTitle">Needs attention</h3>
-              <p id="attentionSubtitle" class="muted">Quick overview of upcoming and unfinished guest tasks.</p>
-            </div>
-          </div>
-          <div class="attention-grid">
-            <button type="button" class="attention-card" data-reservation-attention="arrivingSoon">
-              <span class="attention-number" id="attentionArrivingCount">0</span>
-              <span class="attention-label" id="attentionArrivingLabel">Arriving soon</span>
-            </button>
-            <button type="button" class="attention-card" data-reservation-attention="idToVerify">
-              <span class="attention-number" id="attentionIdCount">0</span>
-              <span class="attention-label" id="attentionIdLabel">ID to verify</span>
-            </button>
-            <button type="button" class="attention-card" data-reservation-attention="invoiceToCreate">
-              <span class="attention-number" id="attentionInvoiceCount">0</span>
-              <span class="attention-label" id="attentionInvoiceLabel">Invoices to create</span>
-            </button>
-          </div>
-        </div>
-
-        <div class="reservation-toolbar">
-          <div class="reservation-legend">
-            <span class="platform-pill airbnb">Airbnb</span>
-            <span class="platform-pill booking">Booking.com</span>
-          </div>
-          <span id="calendarSyncStatus" class="muted"></span>
-        </div>
-        <div class="reservation-filters" id="reservationFilters" aria-label="Reservation filters">
-          <button type="button" class="filter-pill active" data-reservation-filter="upcoming" id="reservationFilterUpcoming">Upcoming</button>
-          <button type="button" class="filter-pill" data-reservation-filter="arrivingSoon" id="reservationFilterArrivingSoon">Arriving soon</button>
-          <button type="button" class="filter-pill" data-reservation-filter="staying" id="reservationFilterStaying">Staying now</button>
-          <button type="button" class="filter-pill" data-reservation-filter="idToVerify" id="reservationFilterId">ID to verify</button>
-          <button type="button" class="filter-pill" data-reservation-filter="invoiceToCreate" id="reservationFilterInvoice">Invoice to create</button>
-          <button type="button" class="filter-pill" data-reservation-filter="past" id="reservationFilterPast">Past</button>
-          <button type="button" class="filter-pill" data-reservation-filter="all" id="reservationFilterAll">All</button>
-          <button type="button" class="filter-pill" data-reservation-filter="removed" id="reservationFilterRemoved">Removed / cancelled</button>
-        </div>
-        <div id="reservationList" class="reservation-list"></div>
-      </div>
-
-      <div class="layout">
-        <div class="left-column">
-          <div class="card screen-only" id="registrationOverview">
-            <div class="section-header registration-header">
-              <div>
-                <h2 id="registrationTitle">Guest registrations</h2>
-                <p id="registrationArchiveSubtitle" class="muted section-subtitle">Detailed guest administration and archive.</p>
-              </div>
-              <div class="registration-header-actions">
-                <button id="newPaperBtn" class="action-btn secondary">Add paper registration</button>
-                <button id="manualInviteToggleBtn" class="action-btn secondary" aria-expanded="false" aria-controls="manualInvitePanel">＋ Create manual guest link</button>
-              </div>
-            </div>
-
-            <div id="manualInvitePanel" class="subcard manual-invite-panel hidden">
-              <div class="manual-invite-panel-header">
-                <div>
-                  <h3 id="inviteTitle">Create manual guest link</h3>
-                  <p id="manualInviteHint" class="muted manual-invite-hint">Use this only for a guest without an Airbnb or Booking.com reservation.</p>
-                </div>
-                <button id="closeManualInviteBtn" type="button" class="text-action-btn">Cancel</button>
-              </div>
-              <div class="field"><label id="labelInviteBooking" for="inviteBookingReference">Booking reference (optional)</label><input id="inviteBookingReference" /></div>
-              <div class="field">
-                <label id="labelInvitePlatform" for="inviteBookingPlatform">Booking platform</label>
-                <select id="inviteBookingPlatform">
-                  <option value="">Not selected</option>
-                  <option value="airbnb">Airbnb</option>
-                  <option value="booking">Booking.com</option>
-                  <option value="direct_other">Direct / Other</option>
-                </select>
-              </div>
-              <div class="inline-grid">
-                <div class="field"><label id="labelInviteCheckin" for="inviteCheckin">Check-in</label><input id="inviteCheckin" type="date" /></div>
-                <div class="field"><label id="labelInviteCheckout" for="inviteCheckout">Check-out</label><input id="inviteCheckout" type="date" /></div>
-              </div>
-              <button id="createInviteBtn" class="action-btn primary">Create secure link</button>
-              <div id="inviteResult" class="invite-result hidden"><input id="inviteUrl" readonly /><button id="copyInviteBtn" class="action-btn secondary">Copy link</button></div>
-              <p id="inviteMessage" class="muted"></p>
-            </div>
-
-            <div class="field"><label id="labelRegistrationSearch" for="registrationSearch">Search registrations</label><input id="registrationSearch" placeholder="Search by name, email or booking reference" /></div>
-            <div class="registration-filters" id="registrationFilters" aria-label="Registration filters">
-              <button type="button" class="filter-pill active" data-filter="all" id="filterAll">All</button>
-              <button type="button" class="filter-pill" data-filter="arrivingSoon" id="filterArrivingSoon">Arriving soon</button>
-              <button type="button" class="filter-pill" data-filter="upcoming" id="filterUpcoming">Upcoming</button>
-              <button type="button" class="filter-pill" data-filter="staying" id="filterStaying">Staying now</button>
-              <button type="button" class="filter-pill" data-filter="past" id="filterPast">Past</button>
-              <button type="button" class="filter-pill" data-filter="idToVerify" id="filterId">ID to verify</button>
-              <button type="button" class="filter-pill" data-filter="invoiceToCreate" id="filterInvoice">Invoice to create</button>
-            </div>
-            <div id="registrationList" class="registration-list"></div>
-          </div>
-
-          <div id="registrationEditor" class="card screen-only hidden">
-            <div class="section-header"><h2 id="registrationEditorTitle">Guest registration</h2><button id="closeRegistrationBtn" class="action-btn secondary">Close</button></div>
-            <input id="registrationId" type="hidden" />
-            <input id="registrationSource" type="hidden" value="paper_manual" />
-            <div class="field"><label id="labelRegName" for="regName">Full name</label><input id="regName" /></div>
-            <div class="field"><label id="labelRegCity" for="regCity">City</label><input id="regCity" /></div>
-            <div class="field"><label id="labelRegCountry" for="regCountry">Country</label><select id="regCountry"><option value="">Select a country</option></select></div>
-            <div class="inline-grid"><div class="field"><label id="labelRegCheckin" for="regCheckin">Check-in</label><input id="regCheckin" type="date" /></div><div class="field"><label id="labelRegCheckout" for="regCheckout">Check-out</label><input id="regCheckout" type="date" /></div></div>
-            <div class="field"><label id="labelRegBooking" for="regBookingReference">Booking reference (optional)</label><input id="regBookingReference" /></div>
-            <div id="regPlatformField" class="field">
-              <label id="labelRegPlatform" for="regBookingPlatform">Booking platform</label>
-              <select id="regBookingPlatform">
-                <option value="">Not selected</option>
-                <option value="airbnb">Airbnb</option>
-                <option value="booking">Booking.com</option>
-                <option value="direct_other">Direct / Other</option>
-              </select>
-            </div>
-
-            <label class="check-row"><input id="regInvoiceRequested" type="checkbox" /><span id="regInvoiceRequestedText">Invoice requested</span></label>
-            <div id="regInvoiceFields" class="conditional hidden">
-              <div class="inline-grid"><div class="field"><label id="labelRegInvoiceType" for="regInvoiceType">Invoice type</label><select id="regInvoiceType"><option value="personal">Personal</option><option value="company">Company</option></select></div><div class="field"><label id="labelRegEmail" for="regEmail">Email</label><input id="regEmail" type="email" /></div></div>
-              <div id="regCompanyFields" class="hidden">
-                <div class="field"><label id="labelRegCompanyName" for="regCompanyName">Company name</label><input id="regCompanyName" /></div>
-                <div class="field"><label id="labelRegCompanyAddress" for="regCompanyAddress">Company address</label><textarea id="regCompanyAddress" rows="2"></textarea></div>
-                <div class="field"><label id="labelRegVat" for="regVat">VAT number (optional)</label><input id="regVat" /></div>
-              </div>
-            </div>
-
-            <div id="overnightGuestsBox" class="subcard overnight-guests-box">
-              <div class="section-header compact-section-header">
-                <div>
-                  <h3 id="overnightGuestsTitle">Overnight guests</h3>
-                  <p id="overnightGuestsSummary" class="muted overnight-summary">1 registered guest</p>
-                </div>
-                <button id="addOvernightGuestBtn" type="button" class="action-btn secondary">+ Add overnight guest</button>
-              </div>
-              <div id="overnightGuestList"></div>
-              <div id="overnightGuestEditor" class="overnight-editor hidden">
-                <input id="overnightGuestId" type="hidden" />
-                <div class="field"><label id="labelOvernightName" for="overnightName">Full name</label><input id="overnightName" /></div>
-                <div class="inline-grid">
-                  <div class="field"><label id="labelOvernightCity" for="overnightCity">City / place of residence</label><input id="overnightCity" /></div>
-                  <div class="field"><label id="labelOvernightCountry" for="overnightCountry">Country</label><select id="overnightCountry"><option value="">Select a country</option></select></div>
-                </div>
-                <div class="inline-grid">
-                  <div class="field"><label id="labelOvernightCheckin" for="overnightCheckin">Arrival</label><input id="overnightCheckin" type="date" /></div>
-                  <div class="field"><label id="labelOvernightCheckout" for="overnightCheckout">Departure</label><input id="overnightCheckout" type="date" /></div>
-                </div>
-                <div class="inline-grid">
-                  <div class="field"><label id="labelOvernightRate" for="overnightRate">Additional guest fee (€ per night, incl. tourist tax)</label><input id="overnightRate" type="number" min="0" step="0.01" value="20.00" /></div>
-                  <div class="field"><label id="labelOvernightPayment" for="overnightPayment">Payment method</label><select id="overnightPayment"><option value="">Not selected</option><option value="cash">Cash</option><option value="paypal">PayPal</option><option value="airbnb">Airbnb</option></select></div>
-                </div>
-                <div class="overnight-checks"><label class="check-row"><input id="overnightPaid" type="checkbox" /><span id="overnightPaidText">Fee paid</span></label><label class="check-row"><input id="overnightIdVerified" type="checkbox" /><span id="overnightIdVerifiedText">ID checked</span></label></div>
-                <div class="button-row overnight-actions">
-                  <button id="saveOvernightGuestBtn" type="button" class="action-btn primary">Save overnight guest</button>
-                  <button id="createOvernightQrBtn" type="button" class="action-btn secondary">Show QR code</button><button id="copyOvernightLinkBtn" type="button" class="action-btn secondary">Copy registration link</button>
-                  <button id="printOvernightFormBtn" type="button" class="action-btn secondary">Print paper form</button>
-                  <button id="cancelOvernightGuestBtn" type="button" class="action-btn secondary">Cancel</button>
-                  <button id="deleteOvernightGuestBtn" type="button" class="action-btn danger hidden">Delete</button>
-                </div>
-                <p id="overnightGuestMessage" class="muted"></p>
-              </div>
-            </div>
-
-            <div class="subcard identity-box">
-              <h3 id="identityTitle">Identification check – host only</h3>
-              <div class="field"><label id="labelIdType" for="regIdType">Identification shown</label><select id="regIdType"><option value="">Not selected</option><option value="passport">Passport</option><option value="id_card">ID card</option><option value="drivers_licence">Driver's licence</option><option value="other">Other valid ID</option></select></div>
-              <div id="otherIdField" class="field hidden"><label id="labelIdOther" for="regIdOther">Other valid ID</label><input id="regIdOther" /></div>
-              <label class="check-row"><input id="regIdVerified" type="checkbox" /><span id="idVerifiedText">Identity verified</span></label>
-            </div>
-
-            <div class="button-row"><button id="saveRegistrationBtn" class="action-btn primary">Save registration</button><button id="useForInvoiceBtn" class="action-btn secondary">Use for invoice</button><button id="deleteRegistrationBtn" class="action-btn danger hidden">Delete registration</button></div>
-            <p id="registrationMessage" class="muted"></p>
-          </div>
-
-          <div class="card form-card screen-only" id="invoiceDetailsCard">
-            <div class="section-header"><h2 id="formTitle">Invoice Details</h2><button id="newInvoiceBtn" class="action-btn secondary">New invoice</button></div>
-            <input id="guestRegistrationId" type="hidden" />
-            <div class="inline-grid"><div class="field" data-required="true"><label id="labelInvoiceNumber" for="invoiceNumber">Invoice number</label><input id="invoiceNumber" /></div><div class="field" data-required="true"><label id="labelInvoiceDate" for="invoiceDate">Invoice date</label><input id="invoiceDate" type="date" /></div></div>
-            <div class="field" data-required="true"><label id="labelGuestName" for="guestName">Guest name</label><input id="guestName" /></div>
-            <div class="field"><label id="labelGuestAddress" for="guestAddress">Guest address</label><input id="guestAddress" /></div>
-            <div class="inline-grid"><div class="field"><label id="labelGuestPostal" for="guestPostalCode">Postal code</label><input id="guestPostalCode" /></div><div class="field"><label id="labelGuestCity" for="guestCity">City</label><input id="guestCity" /></div></div>
-            <div class="field"><label id="labelGuestCountry" for="guestCountry">Country</label><input id="guestCountry" /></div>
-            <div class="field"><label id="labelCompanyName" for="companyName">Company name (optional)</label><input id="companyName" /></div>
-            <div class="field"><label id="labelCompanyAddress" for="companyAddress">Company address (optional)</label><textarea id="companyAddress" rows="2"></textarea></div>
-            <div class="field"><label id="labelVatNumber" for="vatNumber">VAT number (optional)</label><input id="vatNumber" /></div>
-            <div class="field"><label id="labelGuestEmail" for="guestEmail">Guest email (optional)</label><input id="guestEmail" type="email" /></div>
-            <div class="field"><label id="labelBookingReference" for="bookingReference">Booking reference (optional)</label><input id="bookingReference" /></div>
-            <div class="field" data-required="true"><label id="labelRoomName" for="roomName">Room name</label><select id="roomName"><option value="Cozy Room (Street Side)">Cozy Room (Street Side)</option><option value="Spacious Room (Garden View)">Spacious Room (Garden View)</option><option value="custom">Custom room name...</option></select></div>
-            <div class="field hidden" id="customRoomField"><label id="labelCustomRoomName" for="customRoomName">Custom room name</label><input id="customRoomName" /></div>
-            <div class="inline-grid"><div class="field" data-required="true"><label id="labelCheckin" for="checkinDate">Check-in</label><input id="checkinDate" type="date" /></div><div class="field" data-required="true"><label id="labelCheckout" for="checkoutDate">Check-out</label><input id="checkoutDate" type="date" /></div></div>
-            <div class="inline-grid"><div class="field" data-required="true"><label id="labelNights" for="nights">Nights</label><input id="nights" type="number" min="1" /></div><div class="field" data-required="true"><label id="labelGuests" for="guests">Guests</label><input id="guests" type="number" min="1" value="1" /></div></div>
-            <div class="field" data-required="true"><label id="labelAccommodation" for="accommodationAmount">Accommodation (€)</label><input id="accommodationAmount" type="number" step="0.01" /></div>
-            <div id="additionalGuestInvoiceFields" class="inline-grid hidden">
-              <div class="field"><label id="labelAdditionalGuestFee" for="additionalGuestFee">Additional overnight guest fee (€)</label><input id="additionalGuestFee" type="number" min="0" step="0.01" value="0.00" /></div>
-              <div class="field"><label id="labelAdditionalGuestNights" for="additionalGuestNights">Additional guest nights</label><input id="additionalGuestNights" type="number" min="0" step="1" value="0" /></div>
-            </div>
-            <div class="field" data-required="true"><label id="labelCleaning" for="cleaningFee">Cleaning fee (€)</label><input id="cleaningFee" type="number" step="0.01" value="5.00" /></div>
-            <div class="inline-grid"><div class="field" data-required="true"><label id="labelTouristTaxRate" for="touristTaxRate">Tourist tax rate (€ per guest per night)</label><input id="touristTaxRate" type="number" step="0.01" value="3.71" /></div><div class="field" data-required="true"><label id="labelTaxMode" for="taxMode">Tourist tax handling</label><select id="taxMode"><option value="included">Accommodation amount already includes tourist tax</option><option value="excluded">Tourist tax should be added on top of accommodation</option></select></div></div>
-            <div class="field" data-required="true"><label id="labelPaymentMethod" for="paymentMethod">Payment</label><select id="paymentMethod"><option value="Paid via Booking.com">Paid via Booking.com</option><option value="Paid via Airbnb">Paid via Airbnb</option><option value="custom">Custom payment method...</option></select></div>
-            <div class="field hidden" id="customPaymentField"><label id="labelCustomPayment" for="customPaymentMethod">Custom payment method</label><input id="customPaymentMethod" /></div>
-            <div class="button-row"><button id="saveBtn" class="action-btn primary">Save invoice</button><button id="duplicateBtn" class="action-btn secondary hidden">Duplicate invoice</button><button id="deleteBtn" class="action-btn danger hidden">Delete invoice</button><button id="printBtn" class="action-btn secondary">Print / Save as PDF</button></div>
-            <p id="saveMessage" class="muted"></p>
-          </div>
-
-          <div class="card saved-card screen-only" id="savedInvoicesCard">
-            <div class="section-header"><h2 id="savedInvoicesTitle">Saved Invoices</h2></div>
-            <div class="field"><label id="labelSearchInvoices" for="searchInvoices">Search / filter invoices</label><input id="searchInvoices" placeholder="Search by invoice number, guest name, company, email or booking reference" /></div>
-            <div id="invoiceList" class="invoice-list"></div>
-          </div>
-        </div>
-
-        <div class="right-column">
-          <div class="card preview-card" id="previewWrapper">
-            <div class="invoice-preview" id="invoicePreview">
-              <div class="invoice-header"><div class="brand"><h3><span translate="no">Nijmegen Guest Rooms</span></h3><p>Landbouwstraat 15</p><p>Nijmegen, The Netherlands</p></div><div class="invoice-meta"><p class="invoice-title" id="previewInvoiceTitle">INVOICE</p><p><strong id="previewLabelInvoiceNumber">Invoice number:</strong> <span id="previewInvoiceNumber">—</span></p><p><strong id="previewLabelInvoiceDate">Date:</strong> <span id="previewInvoiceDate">—</span></p></div></div>
-              <div class="invoice-section invoice-block"><h4 id="previewSectionGuest">Billed to</h4><p id="previewCompanyName" class="hidden"></p><p id="previewGuestName">—</p><p id="previewAddress" class="subtle hidden"></p><p id="previewCityCountry" class="subtle hidden"></p><p id="previewCompanyAddress" class="subtle hidden"></p><p id="previewVatNumberWrap" class="subtle hidden"><strong id="previewLabelVatNumber">VAT number:</strong> <span id="previewVatNumber">—</span></p><p id="previewGuestEmail" class="subtle"></p><p id="previewBookingReferenceWrap" class="subtle hidden"><strong id="previewLabelBookingReference">Booking reference:</strong> <span id="previewBookingReference">—</span></p></div>
-              <div class="invoice-section invoice-block"><h4 id="previewSectionStay">Stay Details</h4><p><strong id="previewLabelRoom">Room:</strong> <span id="previewRoomName">—</span></p><p><strong id="previewLabelCheckin2">Check-in:</strong> <span id="previewCheckin">—</span></p><p><strong id="previewLabelCheckout2">Check-out:</strong> <span id="previewCheckout">—</span></p><p><strong id="previewLabelNights2">Nights:</strong> <span id="previewNights">—</span></p><p><strong id="previewLabelGuests2">Guests:</strong> <span id="previewGuests">1</span></p></div>
-              <div class="invoice-section invoice-block"><h4 id="previewSectionDescription">Description</h4><p id="previewDescription">Accommodation in private room (shared home)</p></div>
-              <div class="invoice-section"><h4 id="previewSectionPrice">Price Breakdown</h4><table class="summary-table"><tr><td id="previewLabelAccommodation">Accommodation</td><td id="previewAccommodation">€0.00</td></tr><tr id="previewAdditionalGuestRow" class="hidden"><td id="previewLabelAdditionalGuest">Additional overnight guest</td><td id="previewAdditionalGuest">€0.00</td></tr><tr><td id="previewLabelCleaning">Cleaning fee</td><td id="previewCleaning">€0.00</td></tr><tr><td id="previewLabelTaxRate">Tourist tax rate</td><td id="previewTouristTaxRate">€3.71 × 1 × 0</td></tr><tr><td id="previewLabelTaxTotal">Tourist tax included</td><td id="previewTouristTax">€0.00</td></tr><tr class="total-row"><td id="previewLabelTotal">Total amount paid</td><td id="previewTotal">€0.00</td></tr></table></div>
-              <div class="invoice-section invoice-block"><h4 id="previewSectionPayment">Payment</h4><p id="previewPaymentMethod">Paid via Booking.com</p></div>
-              <div class="invoice-section invoice-block"><p class="subtle"><em id="previewNote">This is a private rental. VAT is not applicable.</em></p></div>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </div>
-  <div id="qrModal" class="qr-modal hidden screen-only" role="dialog" aria-modal="true" aria-labelledby="qrModalTitle">
-    <div class="qr-modal-toolbar">
-      <button id="closeQrModalBtn" class="qr-close-btn" type="button" aria-label="Close">×</button>
+
+  <div class="container">
+
+    <!-- ENGLISH -->
+    <div id="content-en" class="lang-content active">
+
+      <section class="hero" id="top-en">
+        <div class="hero-copy">
+          <div class="eyebrow">Private rooms in Nijmegen</div>
+          <h1>Cozy guest rooms in a warm shared home</h1>
+          <p>
+            Stay in a comfortable private room in Nijmegen, the oldest city in the Netherlands.
+            Our home is calm, practical, and welcoming. Ideal for city visitors, cyclists, and travelers
+            who appreciate a personal stay rather than a standard hotel.
+          </p>
+          <p>
+            You will have your own lockable bedroom and share the kitchen and bathroom with the hosts and, at most, one other guest.
+            The house is located in a quiet residential area within walking and cycling distance of the station, Radboud University,
+            HAN and the city centre. You stay just outside the busy centre, which means more peace and less noise, while the free bicycle
+            lets you reach the city centre in about 10 minutes.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="https://www.booking.com/hotel/nl/nijmegen-knusse-kamers.html" target="_blank" rel="noopener noreferrer">Book on Booking.com</a>
+            <a class="btn btn-secondary" id="heroGuideBtnEn" href="#guide-en">Guest information</a>
+          </div>
+        </div>
+
+        <div class="hero-image">
+          <img src="./assets/hero-1.jpg" alt="Nijmegen Guest Rooms interior or exterior">
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-card">
+          <h2 class="section-title">Why stay here</h2>
+          <p class="section-intro">
+            Nijmegen Guest Rooms is best suited for travelers looking for a peaceful and personal stay.
+            We focus on comfort, cleanliness, clarity, and a warm welcome in a real home environment.
+          </p>
+
+          <div class="feature-grid">
+            <div class="feature-item">
+              <h3>Private room</h3>
+              <p>Your own lockable bedroom in a shared home.</p>
+            </div>
+            <div class="feature-item">
+              <h3>Warm hospitality</h3>
+              <p>Friendly hosts, practical information, and a relaxed atmosphere.</p>
+            </div>
+            <div class="feature-item">
+              <h3>Good value</h3>
+              <p>Thoughtful amenities, shared kitchen, outdoor space, and a free bicycle during your stay.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="rooms-en">
+        <div class="section-card">
+          <h2 class="section-title">Our rooms</h2>
+          <p class="section-intro">
+            We offer two private guest rooms in our home. Both rooms are suitable for guests who appreciate a cozy,
+            quiet, and straightforward stay in Nijmegen.
+          </p>
+
+          <div class="rooms-grid">
+            <div class="room-card">
+              <button class="room-photo-trigger" type="button" data-gallery="cozy" data-start="0" aria-label="Open Cozy Room photo gallery">
+                <img src="./assets/room-cozy-1.jpg" alt="Cozy Room at Nijmegen Guest Rooms">
+              </button>
+              <div class="room-body">
+                <h3>Cozy Room</h3>
+                <p>
+                  A comfortable private room with a warm and practical atmosphere. This room is on the street side and
+                  closer to the railway, so it may feel a little livelier than our quieter room on the garden side.
+                </p>
+                <ul class="room-meta">
+                  <li>Private lockable bedroom</li>
+                  <li>Shared kitchen and bathroom</li>
+                  <li>Chromecast available</li>
+                  <li>Bed size: 140 × 200 cm</li>
+                  <li>Suitable for 1 guest</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="room-card">
+              <button class="room-photo-trigger" type="button" data-gallery="spacious" data-start="0" aria-label="Open Spacious Room photo gallery">
+                <img src="./assets/room-spacious-1.jpg" alt="Spacious Room at Nijmegen Guest Rooms">
+              </button>
+              <div class="room-body">
+                <h3>Spacious Room</h3>
+                <p>
+                  A larger private room with more space to settle in. Located on the garden side, this room is generally
+                  quieter and a good choice for guests who value extra calm and comfort.
+                </p>
+                <ul class="room-meta">
+                  <li>Private lockable bedroom</li>
+                  <li>Shared kitchen and bathroom</li>
+                  <li>Chromecast available</li>
+                  <li>Bed size: 140 × 200 cm</li>
+                  <li>Suitable for 1 guest</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="stay-en">
+        <div class="section-card">
+          <h2 class="section-title">A stay in a shared home</h2>
+          <p class="section-intro">
+            This is not a hotel. It is a homestay: a private room in a shared home. That means a more personal atmosphere,
+            direct contact with the hosts, and a stay that feels more local and lived-in.
+          </p>
+
+          <div class="split">
+            <div class="mini-card">
+              <h3>What to expect</h3>
+              <ul>
+                <li>Your own private lockable bedroom</li>
+                <li>Shared bathroom and shared kitchen</li>
+                <li>Hosts living in the home</li>
+                <li>Possibly one other guest in the second room</li>
+                <li>Quiet hours from 23:00 to 07:00</li>
+              </ul>
+            </div>
+
+            <div class="mini-card">
+              <h3>Good to know</h3>
+              <ul>
+                <li>One flight of stairs, no elevator</li>
+                <li>Home near a train track</li>
+                <li>Backyard with seating area available</li>
+                <li>Sunny south-facing garden</li>
+                <li>Free use of a bicycle during your stay</li>
+                <li>Free parking in front of the house</li>
+                <li>Breakfast not included</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-card">
+          <h2 class="section-title">A few impressions</h2>
+
+          <div class="gallery-grid">
+            <button class="gallery-thumb-trigger" type="button" data-gallery="kitchen" data-start="0" aria-label="Open kitchen gallery">
+              <img src="./assets/kitchen-1.jpg" alt="A welcoming kitchen space with coffee, tea, and everything needed for simple meals during your stay.">
+            </button>
+
+            <button class="gallery-thumb-trigger" type="button" data-gallery="bathroom" data-start="0" aria-label="Open bathroom gallery">
+              <img src="./assets/bathroom-1.jpg" alt="A clean and comfortable shared bathroom, used by the hosts and possibly one other guest.">
+            </button>
+
+            <button class="gallery-thumb-trigger" type="button" data-gallery="misc" data-start="0" aria-label="Open shared impressions gallery">
+              <img src="./assets/backyard-1.jpg" alt="Sunny backyard with seating area and view of the house.">
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="arrival-en">
+        <div class="section-card">
+          <h2 class="section-title">Before your arrival</h2>
+          <p class="section-intro">
+            We live in the house, so check-in is always arranged in communication with you. Clear arrival information helps us
+            welcome you smoothly.
+          </p>
+
+          <div class="split">
+            <div class="mini-card">
+              <h3>Check-in</h3>
+              <p>
+                Check-in is either in person or via self check-in, depending on time and availability.
+                After 23:00, check-in is always self check-in.
+              </p>
+              <p>
+                Please message us your expected arrival time as early as possible on the day of arrival.
+              </p>
+            </div>
+
+            <div class="mini-card">
+              <h3>Address</h3>
+              <p><strong>Landbouwstraat 15, Nijmegen</strong></p>
+              <p>
+                <a
+                  class="subtle-link"
+                  href="https://www.google.com/maps/search/?api=1&query=Landbouwstraat+15+Nijmegen"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Open in Google Maps
+                </a>
+              </p>
+              <p>
+                Need a ride within Nijmegen? We may be able to help, depending on availability.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="guide-en">
+        <details class="guide-block" open>
+          <summary>Guest guide — during your stay</summary>
+          <div class="guide-content">
+            <div class="guide-grid">
+              <div class="guide-box">
+                <h3>WiFi</h3>
+                <p>Very fast 1 Gbps WiFi, perfect for streaming 4K content, video calls, and using multiple devices at the same time.</p>
+              </div>
+
+               <div class="guide-box">
+                <h3>Kitchen use</h3>
+                <p>Coffee and tea are free of charge.</p>
+                <ul>
+                  <li>Pots & pans</li>
+                  <li>Plates & cutlery</li>
+                  <li>Seasoning & oil</li>
+                  <li>You have your own numbered section in the kitchen cabinet</li>
+                  <li>You have your own numbered section in the fridge</li>
+                  <li>The dishwasher may be used</li>
+                  <li>Dirty dishes can be placed inside</li>
+                  <li>You do not need to start it</li>
+                  <li>You can also wash dishes by hand</li>
+                </ul>
+              </div>
+
+              <div class="guide-box">
+                <h3>Towels & bedding</h3>
+                <ul>
+                  <li>Extra towels and bedding are in the closet</li>
+                  <li>Used towels or bedding can be placed in the laundry basket outside your room</li>
+                  <li>Need fresh towels? Just send us a message</li>
+                </ul>
+              </div>
+
+              <div class="guide-box">
+                <h3>Washing machine & dryer</h3>
+                <ul>
+                  <li>Located in the basement</li>
+                  <li>Free to use</li>
+                  <li>Detergent and fabric softener are dispensed automatically, so you do not need to add them manually</li>
+                  <li>Please stay home while the dryer is running</li>
+                </ul>
+              </div>
+
+              <div class="guide-box">
+                <h3>Quiet hours</h3>
+                <p>23:00 – 07:00</p>
+                <p>Please be mindful of other guests who may be resting.</p>
+              </div>
+
+              <div class="guide-box">
+                <h3>Front door & back door</h3>
+                <p><strong>Front door:</strong> it locks automatically when closed. From outside, use the key to open it. From inside, you do not need to lock it.</p>
+                <p><strong>Back door:</strong> please always lock the back door, both when entering and when leaving.</p>
+              </div>
+
+              <div class="guide-box">
+                <h3>Train track nearby</h3>
+                <p>
+                  The house is located next to a train track. Most guests do not experience this as disturbing.
+                  If you are a light sleeper, closing the window and air vent at night can help reduce sound.
+                </p>
+              </div>
+
+              <div class="guide-box">
+                <h3>Supermarket nearby</h3>
+                <p>
+                  Albert Heijn is about a 10-minute walk away. Your key includes an Albert Heijn Bonus Card,
+                  which you can scan at checkout for discounts on selected products.
+                </p>
+              </div>
+
+              <div class="guide-box">
+                <h3>Bicycle & locks</h3>
+                <p>A free bicycle is available during your stay.</p>
+                <p>The bicycle has two locks: a built-in wheel lock and an additional chain lock. Please use both when parking.</p>
+              </div>
+
+              <div class="guide-box">
+                <h3>Meet Lilly</h3>
+                <p>Our cat Lilly loves attention and pets.</p>
+                <p><strong>She is not allowed inside your room.</strong></p>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details class="guide-block">
+          <summary>Visitors, check-out & practical notes</summary>
+          <div class="guide-content">
+            <div class="guide-grid">
+              <div class="guide-box">
+                <h3>Guests & visitors</h3>
+                <p>Visitors are welcome with prior notice.</p>
+                <p>If a visitor wishes to stay overnight, they must be registered as an additional guest (€20 per night).</p>
+              </div>
+
+              <div class="guide-box">
+                <h3>Check-out</h3>
+                <ul>
+                  <li>Close all windows</li>
+                  <li>Turn off the heater</li>
+                  <li>Leave through the front door</li>
+                  <li>Drop the keys in the mailbox inside</li>
+                </ul>
+              </div>
+
+              <div class="guide-box">
+                <h3>Cleaning & housekeeping</h3>
+              
+                <p>For stays of 5 nights or longer, we offer complimentary housekeeping in consultation.</p>
+              
+                <ul>
+                  <li>We always respect your privacy</li>
+                  <li>We never enter your room without your permission</li>
+                  <li>We will always agree on a suitable time first</li>
+                </ul>
+              
+                <p>Your room has a trash bin.</p>
+              
+                <ul>
+                  <li>If housekeeping is included, we empty the trash</li>
+                  <li>If not, you can dispose of it yourself in the grey bin in the front garden</li>
+                  <li>Extra trash bags are inside the bin</li>
+                  <li>We keep the full roll inside the bin for convenience</li>
+                  <li>When replacing, take a new bag from the roll and leave the roll in the bin</li>
+                </ul>
+              
+                <p>Cleaning supplies available if you prefer to clean yourself:</p>
+              
+                <ul>
+                  <li>Vacuum cleaner: main floor, near basement door</li>
+                  <li>Cleaning supplies: under the kitchen sink</li>
+                </ul>
+              </div>
+
+              <div class="guide-box">
+                <h3>Need help?</h3>
+                <p>For urgent questions during your stay, please send us a WhatsApp message.</p>
+              </div>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <section class="section" id="faq-en">
+        <details class="guide-block">
+          <summary>Frequently asked questions</summary>
+          <div class="guide-content">
+            <div class="guide-grid">
+
+            <div class="guide-box">
+            <h3>Check-in & check-out</h3>
+            <p>Check-in from 16:00. Earlier in consultation. Personal welcome or self check-in. After 23:00 always self check-in.</p>
+            <p>Check-out before 12:00.</p>
+            </div>
+            
+            <div class="guide-box">
+            <h3>Private apartment?</h3>
+            <p>No. This is a private room in a shared home with the hosts and possibly one other guest.</p>
+            <p>The kitchen and bathroom are shared.</p>
+            </div>
+            
+            <div class="guide-box">
+            <h3>Is the house quiet?</h3>
+            <p>The house is located near a train track. Most guests do not find this disturbing.</p>
+            </div>
+            
+            <div class="guide-box">
+            <h3>Parking</h3>
+            <p>Parking is free on the street and there is usually space in front of the house.</p>
+            </div>
+            
+            <div class="guide-box">
+            <h3>Bicycle storage</h3>
+            <p>If you travel by bicycle, you can safely store it in our backyard.</p>
+            <p>For extra security, it is also possible to store your bike inside our lockable shed.</p>
+            </div>
+            
+            <div class="guide-box">
+            <h3>Breakfast</h3>
+            <p>Breakfast is not included. Guests can use the shared kitchen.</p>
+            </div>
+            
+            <div class="guide-box">
+            <h3>Kitchen use</h3>
+            <p>The shared kitchen is available for preparing simple meals.</p>
+            </div>
+            
+            <div class="guide-box">
+            <h3>Washing machine & dryer</h3>
+            <p>Available free of charge in the basement. Detergent and fabric softener are dispensed automatically, so you do not need to add them manually.</p>
+            </div>
+            
+            <div class="guide-box">
+            <h3>Price & invoice</h3>
+            <p>The price includes all costs, including tourist tax.</p>
+            <p>There are no additional fees, except for an extra overnight guest.</p>
+            <p>Invoices are available on request. Please send us the email address where the invoice should be sent.</p>
+            <p>Invoices are sent after check-out.</p>
+            <p>The rental is exempt from VAT. Therefore, no VAT is shown on the invoice.</p>
+            </div>
+            
+            <div class="guide-box">
+            <h3>Payment</h3>
+            <p>Bookings are currently handled via Booking.com only. Payment on location is not available.</p>
+            </div>
+            
+              <div class="guide-box">
+              <h3>Food delivery</h3>
+              <p>Yes, you can order food and have it delivered to our address.</p>
+              <p>If your delivery is expected after 23:00, please wait for the courier outside or clearly instruct them not to ring the doorbell, so other guests and residents are not disturbed during quiet hours.</p>
+              </div>
+              
+            <div class="guide-box">
+            <h3>Visitors</h3>
+            <p>Visitors are welcome with prior notice.</p>
+            </div>
+            
+            <div class="guide-box">
+            <h3>Children</h3>
+            <p>The accommodation is suitable for adults only (18+). Children are not allowed.</p>
+            </div>
+            
+
+            <div class="guide-box">
+            <h3>Long-term stays</h3>
+            <p>We do not offer long-term rentals. Stays are possible for a maximum of 45 days.</p>
+            </div>
+            
+            <div class="guide-box">
+            <h3>Pets</h3>
+            <p>No, pets are not allowed.</p>
+            </div>
+                        <div class="guide-box">
+            <h3>Accessibility</h3>
+            <p>The house has one flight of stairs and no elevator.</p>
+            </div>
+            
+            <div class="guide-box">
+            <h3>Air conditioning</h3>
+            <p>There is no air conditioning. A fan is available during warmer months.</p>
+            </div>
+            
+            <div class="guide-box">
+            <h3>Heating</h3>
+            <p>Each room has adjustable heating.</p>
+            </div>
+            
+            <div class="guide-box">
+            <h3>Hairdryer</h3>
+            <p>A hairdryer is available in the bathroom cabinet.</p>
+            </div>
+            
+            <div class="guide-box">
+            <h3>Ironing facilities</h3>
+            <p>An iron and ironing board are available on request.</p>
+            </div>
+            
+            <div class="guide-box">
+            <h3>Contact</h3>
+            <p>Message us via Booking.com or WhatsApp. For urgent matters, please call. We usually respond quickly.</p>
+            </div>
+            
+            <div class="guide-box">
+            <h3>Parties & events</h3>
+            <p>Parties and events are not allowed.</p>
+            </div>
+            
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <section class="section" id="book-en">
+        <div class="cta-section">
+          <h2>Ready to stay in Nijmegen?</h2>
+          <p>
+            If our place feels like a good fit for your trip, you can book directly through our Booking.com listing.
+          </p>
+          <a class="btn btn-primary" href="https://www.booking.com/hotel/nl/nijmegen-knusse-kamers.html" target="_blank" rel="noopener noreferrer">Book on Booking.com</a>
+        </div>
+      </section>
+
+      <div class="footer">
+        Your hosts,<br>
+        <strong>Joa & Danilo</strong>
+      </div>
     </div>
-    <div class="qr-modal-content">
-      <div class="qr-modal-brand">NIJMEGEN GUEST ROOMS</div>
-      <h2 id="qrModalTitle">Scan to complete your guest registration</h2>
-      <p id="qrModalSubtitle">Open your camera and scan the QR code.</p>
-      <div id="qrCodeContainer" class="qr-code-container" aria-label="Guest registration QR code"></div>
-      <div id="qrReservationInfo" class="qr-reservation-info"></div>
-      <button id="copyQrLinkBtn" class="action-btn secondary qr-copy-btn" type="button">Copy registration link</button>
+
+    <!-- DUTCH -->
+    <div id="content-nl" class="lang-content">
+      <section class="hero" id="top-nl">
+        <div class="hero-copy">
+          <div class="eyebrow">Privékamers in Nijmegen</div>
+          <h1>Gezellige gastenkamers in een warme gedeelde woning</h1>
+          <p>
+            Verblijf in een comfortabele privékamer in Nijmegen, de oudste stad van Nederland.
+            Ons huis is rustig, praktisch en gastvrij. Ideaal voor stadsbezoekers, fietsers en reizigers
+            die liever in een echt huis verblijven dan in een standaard hotel.
+          </p>
+          <p>
+            Je hebt een eigen afsluitbare slaapkamer en deelt de keuken en badkamer met de hosts en, hooguit, één andere gast.
+            Het huis ligt in een rustige woonwijk op loop- en fietsafstand van het station, Radboud Universiteit,
+            HAN en het centrum. Je verblijft net buiten de drukte van het centrum, waardoor je meer rust hebt, terwijl je met de gratis fiets
+            in ongeveer 10 minuten in de binnenstad bent.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="https://www.booking.com/hotel/nl/nijmegen-knusse-kamers.html" target="_blank" rel="noopener noreferrer">Boek via Booking.com</a>
+            <a class="btn btn-secondary" id="heroGuideBtnNl" href="#guide-nl">Gastinformatie</a>
+          </div>
+        </div>
+
+        <div class="hero-image">
+          <img src="./assets/hero-1.jpg" alt="Nijmegen Guest Rooms interieur of exterieur">
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-card">
+          <h2 class="section-title">Waarom hier verblijven</h2>
+          <p class="section-intro">
+            Nijmegen Guest Rooms is ideaal voor reizigers die op zoek zijn naar een rustig en persoonlijk verblijf.
+            We focussen op comfort, netheid, duidelijke communicatie en een warm welkom in een echte woonomgeving.
+          </p>
+
+          <div class="feature-grid">
+            <div class="feature-item">
+              <h3>Privékamer</h3>
+              <p>Je eigen afsluitbare slaapkamer in een gedeelde woning.</p>
+            </div>
+            <div class="feature-item">
+              <h3>Persoonlijke gastvrijheid</h3>
+              <p>Vriendelijke hosts, heldere informatie en een ontspannen sfeer.</p>
+            </div>
+            <div class="feature-item">
+              <h3>Goede prijs-kwaliteit</h3>
+              <p>Doordachte voorzieningen, gedeelde keuken, buitenruimte en een gratis fiets tijdens je verblijf.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="rooms-nl">
+        <div class="section-card">
+          <h2 class="section-title">Onze kamers</h2>
+          <p class="section-intro">
+            We bieden twee privégastenkamers aan in ons huis. Beide kamers zijn geschikt voor gasten
+            die houden van een knus, rustig en praktisch verblijf in Nijmegen.
+          </p>
+
+          <div class="rooms-grid">
+            <div class="room-card">
+              <button class="room-photo-trigger" type="button" data-gallery="cozy" data-start="0" aria-label="Open galerij van de knusse kamer">
+                <img src="./assets/room-cozy-1.jpg" alt="Knusse kamer bij Nijmegen Guest Rooms">
+              </button>
+              <div class="room-body">
+                <h3>Knusse kamer</h3>
+                <p>
+                  Een comfortabele privékamer met een warme en praktische sfeer. Deze kamer ligt aan de straatzijde en
+                  dichter bij het spoor, waardoor hij iets levendiger kan aanvoelen dan onze rustigere kamer aan de tuinzijde.
+                </p>
+                <ul class="room-meta">
+                  <li>Privé afsluitbare slaapkamer</li>
+                  <li>Gedeelde keuken en badkamer</li>
+                  <li>Chromecast aanwezig</li>
+                  <li>Bedmaat: 140 × 200 cm</li>
+                  <li>Geschikt voor 1 gast</li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="room-card">
+              <button class="room-photo-trigger" type="button" data-gallery="spacious" data-start="0" aria-label="Open galerij van de ruime kamer">
+                <img src="./assets/room-spacious-1.jpg" alt="Ruime kamer bij Nijmegen Guest Rooms">
+              </button>
+              <div class="room-body">
+                <h3>Ruime kamer</h3>
+                <p>
+                  Een grotere privékamer met meer ruimte om comfortabel te verblijven. Deze kamer ligt aan de tuinzijde,
+                  is over het algemeen rustiger en is een fijne keuze voor gasten die extra rust en comfort waarderen.
+                </p>
+                <ul class="room-meta">
+                  <li>Privé afsluitbare slaapkamer</li>
+                  <li>Gedeelde keuken en badkamer</li>
+                  <li>Chromecast aanwezig</li>
+                  <li>Bedmaat: 140 × 200 cm</li>
+                  <li>Geschikt voor 1 gast</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="stay-nl">
+        <div class="section-card">
+          <h2 class="section-title">Een verblijf in een gedeelde woning</h2>
+          <p class="section-intro">
+            Dit is geen hotel. Het is een homestay: een privékamer in een gedeeld huis. Dat betekent een persoonlijkere sfeer,
+            direct contact met de hosts en een verblijf dat lokaler en huiselijker aanvoelt.
+          </p>
+
+          <div class="split">
+            <div class="mini-card">
+              <h3>Wat je kunt verwachten</h3>
+              <ul>
+                <li>Je eigen privé afsluitbare slaapkamer</li>
+                <li>Gedeelde badkamer en gedeelde keuken</li>
+                <li>Hosts wonen in het huis</li>
+                <li>Mogelijk één andere gast in de tweede kamer</li>
+                <li>Stille uren van 23:00 tot 07:00</li>
+              </ul>
+            </div>
+
+            <div class="mini-card">
+              <h3>Goed om te weten</h3>
+              <ul>
+                <li>Eén trap, geen lift</li>
+                <li>Huis naast een spoorlijn</li>
+                <li>Achtertuin met zitplek beschikbaar</li>
+                <li>Zonnige tuin op het zuiden</li>
+                <li>Gratis fiets tijdens je verblijf</li>
+                <li>Gratis parkeren voor de deur</li>
+                <li>Ontbijt niet inbegrepen</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-card">
+          <h2 class="section-title">Sfeerimpressie</h2>
+
+          <div class="gallery-grid">
+            <button class="gallery-thumb-trigger" type="button" data-gallery="kitchen" data-start="0" aria-label="Open keukengalerij">
+              <img src="./assets/kitchen-1.jpg" alt="Een fijne gedeelde keuken met koffie, thee en alles wat je nodig hebt voor een eenvoudige maaltijd tijdens je verblijf.">
+            </button>
+
+            <button class="gallery-thumb-trigger" type="button" data-gallery="bathroom" data-start="0" aria-label="Open badkamergalerij">
+              <img src="./assets/bathroom-1.jpg" alt="Een schone en comfortabele gedeelde badkamer, gebruikt door de hosts en mogelijk nog één andere gast.">
+            </button>
+
+            <button class="gallery-thumb-trigger" type="button" data-gallery="misc" data-start="0" aria-label="Open galerij met sfeerfoto's">
+              <img src="./assets/backyard-1.jpg" alt="Zonnige achtertuin met zitplek en uitzicht op het huis.">
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="arrival-nl">
+        <div class="section-card">
+          <h2 class="section-title">Voor aankomst</h2>
+          <p class="section-intro">
+            We wonen in het huis, dus inchecken wordt altijd in communicatie met jou geregeld.
+            Een duidelijke aankomsttijd helpt ons om je soepel te ontvangen.
+          </p>
+
+          <div class="split">
+            <div class="mini-card">
+              <h3>Inchecken</h3>
+              <p>
+                Inchecken is persoonlijk of via self check-in, afhankelijk van het tijdstip en de beschikbaarheid.
+                Na 23:00 is inchecken altijd via self check-in.
+              </p>
+              <p>
+                Stuur ons je verwachte aankomsttijd graag zo vroeg mogelijk op de dag van aankomst.
+              </p>
+            </div>
+
+            <div class="mini-card">
+              <h3>Adres</h3>
+              <p><strong>Landbouwstraat 15, Nijmegen</strong></p>
+              <p>
+                <a
+                  class="subtle-link"
+                  href="https://www.google.com/maps/search/?api=1&query=Landbouwstraat+15+Nijmegen"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Open in Google Maps
+                </a>
+              </p>
+              <p>
+                Een rit binnen Nijmegen nodig? Mogelijk kunnen we helpen, afhankelijk van beschikbaarheid.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" id="guide-nl">
+        <details class="guide-block" open>
+          <summary>Gastinformatie — tijdens je verblijf</summary>
+          <div class="guide-content">
+            <div class="guide-grid">
+              <div class="guide-box">
+                <h3>WiFi</h3>
+                <p>Zeer snelle 1 Gbps WiFi, perfect voor het streamen van 4K-content, videobellen en werken op meerdere apparaten tegelijk.</p>
+              </div>
+
+              <div class="guide-box">
+                <h3>Gebruik van de keuken</h3>
+                <p>Koffie en thee zijn gratis.</p>
+                <ul>
+                  <li>Pannen</li>
+                  <li>Borden & bestek</li>
+                  <li>Kruiden & olie</li>
+                  <li>Je hebt een eigen genummerd vak in het keukenkastje</li>
+                  <li>Je hebt een eigen genummerd vak in de koelkast</li>
+                  <li>De vaatwasser mag gebruikt worden</li>
+                  <li>Vieze borden mogen daarin geplaatst worden</li>
+                  <li>Je hoeft hem niet zelf aan te zetten</li>
+                  <li>Je mag uiteraard ook zelf afwassen</li>
+                </ul>
+              </div>
+
+              <div class="guide-box">
+                <h3>Handdoeken & beddengoed</h3>
+                <ul>
+                  <li>Extra handdoeken en beddengoed liggen in de kast</li>
+                  <li>Gebruikte handdoeken of beddengoed mogen in de wasmand buiten je kamer</li>
+                  <li>Extra handdoeken nodig? Stuur gerust een bericht</li>
+                </ul>
+              </div>
+
+              <div class="guide-box">
+                <h3>Wasmachine & droger</h3>
+                <ul>
+                  <li>Bevinden zich in de kelder</li>
+                  <li>Gratis te gebruiken</li>
+                  <li>Wasmiddel en wasverzachter worden automatisch gedoseerd, dus je hoeft dit niet zelf toe te voegen</li>
+                  <li>Blijf thuis terwijl de droger aan staat</li>
+                </ul>
+              </div>
+
+              <div class="guide-box">
+                <h3>Stille uren</h3>
+                <p>23:00 – 07:00</p>
+                <p>Houd alsjeblieft rekening met andere gasten die rusten.</p>
+              </div>
+
+              <div class="guide-box">
+                <h3>Voor- en achterdeur</h3>
+                <p><strong>Voordeur:</strong> de voordeur valt automatisch in het slot. Van buiten open je hem met de sleutel. Van binnen hoef je hem niet op slot te doen.</p>
+                <p><strong>Achterdeur:</strong> doe de achterdeur altijd op slot, zowel bij binnenkomen als bij weggaan.</p>
+              </div>
+
+              <div class="guide-box">
+                <h3>Spoorlijn in de buurt</h3>
+                <p>
+                  Het huis ligt naast een spoorlijn. De meeste gasten ervaren dit niet als storend.
+                  Ben je een lichte slaper, dan kan het helpen om ’s nachts het raam en het luchtrooster te sluiten.
+                </p>
+              </div>
+
+              <div class="guide-box">
+                <h3>Supermarkt in de buurt</h3>
+                <p>
+                  Albert Heijn ligt op ongeveer 10 minuten loopafstand. Aan je sleutel hangt een Albert Heijn Bonuskaart,
+                  die je bij het afrekenen kunt scannen voor winkelkorting.
+                </p>
+              </div>
+
+              <div class="guide-box">
+                <h3>Fiets & sloten</h3>
+                <p>Een gratis fiets is beschikbaar tijdens je verblijf.</p>
+                <p>De fiets heeft twee sloten: een ingebouwd ringslot en een extra kettingslot. Gebruik bij voorkeur beide sloten wanneer je de fiets parkeert.</p>
+              </div>
+
+              <div class="guide-box">
+                <h3>Maak kennis met Lilly</h3>
+                <p>Onze kat Lilly houdt van aandacht en knuffels.</p>
+                <p><strong>Ze mag niet in jouw kamer komen.</strong></p>
+              </div>
+            </div>
+          </div>
+        </details>
+
+        <details class="guide-block">
+          <summary>Bezoekers, uitchecken & praktische info</summary>
+          <div class="guide-content">
+            <div class="guide-grid">
+              <div class="guide-box">
+                <h3>Gasten & bezoekers</h3>
+                <p>Bezoekers zijn welkom in overleg.</p>
+                <p>Als een bezoeker wil overnachten, moet deze als extra gast geregistreerd worden (€20 per nacht).</p>
+              </div>
+
+              <div class="guide-box">
+                <h3>Uitchecken</h3>
+                <ul>
+                  <li>Sluit alle ramen</li>
+                  <li>Zet de verwarming uit</li>
+                  <li>Verlaat het huis via de voordeur</li>
+                  <li>Doe de sleutels in de brievenbus binnen</li>
+                </ul>
+              </div>
+
+              <div class="guide-box">
+                <h3>Schoonmaken & housekeeping</h3>
+              
+                <p>Bij een verblijf van 5 nachten of langer bieden we gratis housekeeping aan in overleg.</p>
+              
+                <ul>
+                  <li>We respecteren altijd je privacy</li>
+                  <li>We betreden je kamer nooit zonder toestemming</li>
+                  <li>We spreken altijd eerst een geschikt moment af</li>
+                </ul>
+              
+                <p>Op je kamer staat een prullenbak.</p>
+              
+                <ul>
+                  <li>Bij housekeeping legen wij de prullenbak</li>
+                  <li>Anders kun je deze zelf legen in de grijze container in de voortuin</li>
+                  <li>Extra vuilniszakken zitten in de prullenbak</li>
+                  <li>De hele rol blijft in de prullenbak liggen</li>
+                  <li>Bij vervangen pak je een nieuwe zak van de rol en laat je de rol in de bak</li>
+                </ul>
+              
+                <p>Schoonmaakspullen als je zelf wilt schoonmaken:</p>
+              
+                <ul>
+                  <li>Stofzuiger: begane grond, bij de kelderdeur</li>
+                  <li>Schoonmaakspullen: onder de gootsteen in de keuken</li>
+                </ul>
+              </div>
+
+              <div class="guide-box">
+                <h3>Hulp nodig?</h3>
+                <p>Voor dringende vragen tijdens je verblijf kun je het beste een WhatsApp-bericht sturen.</p>
+              </div>
+            </div>
+          </div>
+        </details>
+      </section>
+
+      <section class="section" id="faq-nl">
+        <details class="guide-block">
+          <summary>Veelgestelde vragen</summary>
+          <div class="guide-content">
+            <div class="guide-grid">
+
+              <div class="guide-box">
+              <h3>Inchecken & uitchecken</h3>
+              <p>Inchecken vanaf 16:00. Eerder in overleg. Persoonlijk welkom of self check-in. Na 23:00 altijd self check-in.</p>
+              <p>Uitchecken vóór 12:00.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Privé appartement?</h3>
+              <p>Nee. Dit is een privékamer in een gedeelde woning met de hosts en mogelijk één andere gast.</p>
+              <p>De keuken en badkamer worden gedeeld.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Is het rustig?</h3>
+              <p>Het huis ligt naast een spoorlijn. De meeste gasten ervaren dit niet als storend.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Parkeren</h3>
+              <p>Parkeren is gratis in de straat en meestal is er plek voor de deur.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Fiets stallen</h3>
+              <p>Kom je met de fiets? Dan kun je deze veilig stallen in onze achtertuin.</p>
+              <p>Voor extra veiligheid is het ook mogelijk om de fiets in onze afsluitbare schuur te plaatsen.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Ontbijt</h3>
+              <p>Ontbijt is niet inbegrepen. Gasten kunnen gebruikmaken van de gedeelde keuken.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Gebruik van de keuken</h3>
+              <p>De gedeelde keuken is beschikbaar voor het bereiden van eenvoudige maaltijden.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Wasmachine & droger</h3>
+              <p>Gratis beschikbaar in de kelder. Wasmiddel en wasverzachter worden automatisch gedoseerd, dus je hoeft dit niet zelf toe te voegen.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Prijs & factuur</h3>
+              <p>De prijs is inclusief alle kosten, inclusief toeristenbelasting.</p>
+              <p>Er zijn geen extra kosten, behalve voor een extra overnachtende gast.</p>
+              <p>Facturen zijn beschikbaar op verzoek. Stuur ons het e-mailadres waar we de factuur naartoe kunnen sturen.</p>
+              <p>Facturen worden na het uitchecken verstuurd.</p>
+              <p>De verhuur is vrijgesteld van btw. Daarom wordt er geen btw vermeld op de factuur.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Betaling</h3>
+              <p>Boekingen verlopen momenteel via Booking.com. Betalen op locatie is niet mogelijk.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Eten laten bezorgen</h3>
+              <p>Ja, je kunt eten bestellen en dit op ons adres laten bezorgen.</p>
+              <p>Wordt je bestelling na 23:00 bezorgd? Wacht dan buiten op de bezorger of geef duidelijk aan dat er niet aangebeld mag worden, zodat andere gasten en bewoners tijdens de nachtrust niet worden gestoord.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Bezoekers</h3>
+              <p>Bezoekers zijn welkom in overleg.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Kinderen</h3>
+              <p>De accommodatie is alleen geschikt voor volwassenen (18+). Kinderen zijn niet toegestaan.</p>
+              </div>
+              
+
+              <div class="guide-box">
+              <h3>Lang verblijf</h3>
+              <p>Wij verhuren niet langdurig. Een verblijf is mogelijk tot maximaal 45 dagen.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Huisdieren</h3>
+              <p>Nee, huisdieren zijn niet toegestaan.</p>
+              </div>
+                            <div class="guide-box">
+              <h3>Toegankelijkheid</h3>
+              <p>De woning heeft één trap en geen lift.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Airconditioning</h3>
+              <p>Er is geen airco. In de zomer is er een ventilator beschikbaar.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Verwarming</h3>
+              <p>Elke kamer heeft een eigen regelbare verwarming.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Föhn</h3>
+              <p>Een föhn ligt in de kast in de badkamer.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Strijkfaciliteiten</h3>
+              <p>Een strijkijzer en strijkplank zijn beschikbaar op verzoek.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Contact</h3>
+              <p>Stuur een bericht via Booking.com of WhatsApp. Voor urgente zaken graag bellen. We reageren meestal snel.</p>
+              </div>
+              
+              <div class="guide-box">
+              <h3>Feesten & evenementen</h3>
+              <p>Feesten en evenementen zijn niet toegestaan.</p>
+              </div>
+              
+              </div>
+          </div>
+        </details>
+      </section>
+
+      <section class="section" id="book-nl">
+        <div class="cta-section">
+          <h2>Klaar om in Nijmegen te verblijven?</h2>
+          <p>
+            Als onze plek goed past bij jouw reis, kun je direct boeken via onze Booking.com-pagina.
+          </p>
+          <a class="btn btn-primary" href="https://www.booking.com/hotel/nl/nijmegen-knusse-kamers.html" target="_blank" rel="noopener noreferrer">Boek via Booking.com</a>
+        </div>
+      </section>
+
+      <div class="footer">
+        Jouw hosts,<br>
+        <strong>Joa & Danilo</strong>
+      </div>
     </div>
   </div>
-  <button id="backToTopBtn" class="back-to-top-btn screen-only" type="button" aria-label="Back to top" title="Back to top">↑</button>
-  <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-  <script type="module" src="./app.js?v=3.7.2"></script>
-  <script>
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.7.2').catch(() => {}));
-  }
-  </script>
+
+  <a
+    id="whatsappBtn"
+    href="https://wa.me/31640565656?text=Hi,%20I%20have%20a%20question%20about%20Nijmegen%20Guest%20Rooms."
+    class="floating-btn"
+    target="_blank"
+    rel="noopener noreferrer"
+  >
+    💬 Message us
+  </a>
+
+  <div id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+
+  <div class="lightbox" id="lightbox" aria-hidden="true">
+    <div class="lightbox-inner">
+      <button class="lightbox-close" id="lightboxClose" type="button" aria-label="Close gallery">×</button>
+      <button class="lightbox-prev" id="lightboxPrev" type="button" aria-label="Previous image">‹</button>
+      <img class="lightbox-image" id="lightboxImage" src="" alt="">
+      <button class="lightbox-next" id="lightboxNext" type="button" aria-label="Next image">›</button>
+      <div class="lightbox-caption" id="lightboxCaption"></div>
+    </div>
+  </div>
+
+  <script src="./script.js"></script>
 </body>
 </html>
