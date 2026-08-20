@@ -1076,25 +1076,6 @@ body.qr-modal-open{
   }
 }
 
-/* v3.6.0 — additional overnight guests */
-.overnight-guests-box{margin-top:18px}
-.compact-section-header{align-items:flex-start}
-.overnight-summary{margin:3px 0 0}
-.overnight-guest-row{
- width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;
- border:1px solid var(--border);background:var(--soft);border-radius:12px;padding:12px 14px;
- color:inherit;text-align:left;cursor:pointer;margin-top:9px
-}
-.overnight-guest-row strong,.overnight-guest-row small{display:block}
-.overnight-guest-row small{margin-top:4px;color:var(--muted)}
-.overnight-editor{border-top:1px solid var(--border);margin-top:14px;padding-top:14px}
-@media(max-width:700px){
- .overnight-guest-row{align-items:flex-start;flex-direction:column}
- .overnight-actions .action-btn{flex:1 1 100%}
-}
-
-.overnight-checks{display:flex;gap:20px;flex-wrap:wrap;margin:10px 0}.overnight-guest-row>span:last-child{display:flex;gap:6px;flex-wrap:wrap}
-
 /* v3.7.1 — mixed payment presentation */
 #previewPaymentMethod{
   white-space:pre-line;
@@ -1199,3 +1180,36 @@ body.qr-modal-open{
     bottom:calc(86px + env(safe-area-inset-bottom));
   }
 }
+
+
+/* v3.10.0 — interaction polish */
+.attention-clear-state{
+  display:flex;align-items:center;gap:10px;min-height:58px;padding:12px 14px;
+  border:1px solid #cce2d2;border-radius:13px;background:#f0f8f2;color:#2f6941;font-weight:700;
+}
+.attention-clear-state.hidden{display:none!important}
+.attention-clear-icon{
+  width:30px;height:30px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;
+  background:#dcefe1;color:#27613a;font-size:17px;font-weight:900;
+}
+#calendarSyncStatus{text-align:right;font-size:.78rem;line-height:1.35}
+
+.item-menu{position:relative;align-self:center}
+.item-menu-toggle{
+  width:38px;height:38px;border:1px solid transparent;border-radius:10px;background:transparent;color:#756b63;
+  font:700 22px/1 inherit;cursor:pointer;display:flex;align-items:center;justify-content:center;
+}
+.item-menu-toggle:hover,.item-menu-toggle:focus-visible,.item-menu.open .item-menu-toggle{
+  background:#f5f1ed;border-color:#e3dad2;outline:none;
+}
+.item-menu-popover{
+  display:none;position:absolute;z-index:3000;right:0;top:calc(100% + 5px);min-width:170px;padding:6px;
+  border:1px solid #e0d8d1;border-radius:12px;background:#fff;box-shadow:0 10px 30px rgba(0,0,0,.14);
+}
+.item-menu.open .item-menu-popover{display:block}
+.item-delete-action{
+  width:100%;border:0;border-radius:8px;padding:10px 12px;background:transparent;color:var(--danger);
+  text-align:left;font:700 13px/1.35 inherit;cursor:pointer;
+}
+.item-delete-action:hover,.item-delete-action:focus-visible{background:var(--danger-bg);outline:none}
+@media(max-width:700px){#calendarSyncStatus{width:100%;text-align:left}}
