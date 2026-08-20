@@ -1100,3 +1100,12 @@ body.qr-modal-open{
   white-space:pre-line;
   line-height:1.65;
 }
+
+/* v3.8.0 — privacy-minimal occupancy model */
+.guest-occupancy-box{margin-top:18px}
+.occupancy-hint{margin:4px 0 16px;max-width:720px}
+.readonly-value{
+  min-height:48px;display:flex;align-items:center;padding:0 14px;
+  border:1px solid var(--border);border-radius:12px;background:var(--soft);
+  font-weight:700;color:var(--heading)
+}

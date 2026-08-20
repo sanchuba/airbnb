@@ -9,7 +9,7 @@ const tr = {
   en: {
     pageTitle:'Guest & Invoice Admin',pageSubtitle:'Nijmegen Guest Rooms – Private administration',loginTitle:'Sign in',loginText:'Only authorized users can access the administration.',loginEmail:'Email',loginBtn:'Send verification code',loginCode:'Verification code',loginCodeIntro:'Enter the verification code sent to your email.',verifyLogin:'Verify & sign in',resendCode:'Resend code',changeEmail:'Use another email',codeSent:'Verification code sent. Check your email.',codeResent:'A new verification code has been sent.',invalidCode:'The verification code is invalid or has expired.',logout:'Log out',
     reservations:'Reservations',reservationsSubtitle:'Read-only overview from Airbnb and Booking.com calendars.',syncCalendars:'Sync calendars',syncingCalendars:'Syncing calendars…',syncedCalendars:'Calendars synced.',syncFailed:'Calendar sync failed',registrationNotCreated:'Registration not created',registrationLinkReady:'Registration link ready',registrationSubmitted:'Registration submitted',createRegistrationLink:'Create registration link',copyRegistrationLink:'Copy link',showQr:'Show QR code',qrTitle:'Scan to complete your guest registration',qrSubtitle:'Open your camera and scan the QR code.',qrCopy:'Copy registration link',completeManually:'Complete registration manually',printPaperForm:'Print prefilled paper form',manualFromReservation:'Manual registration linked to this reservation.',openGuest:'Open guest',openAirbnb:'Open in Airbnb ↗',roomCozyShort:'Cozy room',roomSpaciousShort:'Spacious room',nightsWord:'nights',navReservations:'Reservations',noReservations:'No reservations match this view.',reservationFilterUpcoming:'Upcoming',reservationFilterArrivingSoon:'Arriving soon',reservationFilterStaying:'Staying now',reservationFilterId:'ID to verify',reservationFilterInvoice:'Invoice to create',reservationFilterPast:'Past',reservationFilterRemoved:'Removed / cancelled',reservationFilterAll:'All',reservationRemoved:'Removed / cancelled',possibleExistingRegistration:'Possible existing registration',linkExistingGuest:'Link existing guest',linkSuggestedGuest:'Link {name}',selectExistingGuest:'Select an existing guest registration',confirmLinkGuest:'Link {name} to this reservation?',linkedExistingGuest:'Existing guest registration linked.',noUnlinkedGuests:'No unlinked guest registrations are available.',exactMatch:'Exact dates',registrations:'Guest registrations',registrationArchiveSubtitle:'Detailed guest administration and archive.',paper:'Add paper registration',manualInvite:'＋ Create manual guest link',invite:'Create manual guest link',manualInviteHint:'Use this only for a guest without an Airbnb or Booking.com reservation.',cancel:'Cancel',inviteBooking:'Booking reference (optional)',invitePlatform:'Booking platform',checkin:'Check-in',checkout:'Check-out',createLink:'Create secure link',copy:'Copy link',searchReg:'Search registrations',searchRegPh:'Search by name, email or booking reference',
-    regEditor:'Guest registration',close:'Close',fullName:'Full name',homeAddress:'Home address',postal:'Postal code',city:'City',country:'Country',bookingRef:'Booking reference (optional)',bookingPlatform:'Booking platform',platformNotSelected:'Not selected',platformDirectOther:'Direct / Other',platformLinkedHint:'Automatically linked from the reservation.',invoiceRequested:'Invoice requested',invoiceType:'Invoice type',personal:'Personal',company:'Company',email:'Email',companyName:'Company name',companyAddress:'Company address',vat:'VAT number (optional)',overnightGuests:'Overnight guests',overnightSummaryOne:'1 registered guest',overnightSummaryMany:'{count} registered guests',addOvernightGuest:'+ Add overnight guest',overnightCity:'City / place of residence',overnightArrival:'Arrival',overnightDeparture:'Departure',overnightRate:'Additional guest fee (€ per night, incl. tourist tax)',overnightPayment:'Payment method',overnightPaid:'Fee paid',overnightIdType:'Identification shown',overnightIdOther:'Other valid ID',overnightIdVerified:'Identity verified',saveOvernight:'Save overnight guest',createOvernightQr:'Show QR code',copyOvernightLink:'Copy registration link',printOvernight:'Print paper form',cancelOvernight:'Cancel',deleteOvernight:'Delete',cash:'Cash',paypal:'PayPal',otherPayment:'Other',additionalGuestFee:'Additional overnight guest fee (€)',additionalGuestNights:'Additional guest nights',additionalGuestLine:'Additional overnight guest',overnightSaved:'Overnight guest saved.',overnightDeleted:'Overnight guest deleted.',overnightQrCreated:'QR registration created.',identity:'Identification check – host only',idShown:'Identification shown',notSelected:'Not selected',passport:'Passport',idCard:'ID card',drivers:'Driver\'s licence',otherId:'Other valid ID',verified:'Identity verified',saveRegistration:'Save registration',useInvoice:'Use for invoice',deleteRegistration:'Delete registration',savedReg:'Registration saved.',deletedReg:'Registration deleted.',confirmDeleteReg:'Delete this guest registration? This cannot be undone.',quickDeleteReg:'Delete registration',quickDeleteInvoice:'Delete invoice',linkCreated:'Secure registration link created.',copied:'Link copied.',navRegistrations:'Guest registrations',navGuestDetails:'Guest details',navInvoiceDetails:'Invoice details',navSavedInvoices:'Saved invoices',
+    regEditor:'Guest registration',close:'Close',fullName:'Full name',homeAddress:'Home address',postal:'Postal code',city:'City',country:'Country',bookingRef:'Booking reference (optional)',bookingPlatform:'Booking platform',platformNotSelected:'Not selected',platformDirectOther:'Direct / Other',platformLinkedHint:'Automatically linked from the reservation.',invoiceRequested:'Invoice requested',invoiceType:'Invoice type',personal:'Personal',company:'Company',email:'Email',companyName:'Company name',companyAddress:'Company address',vat:'VAT number (optional)',guestOccupancy:'Stay occupancy',guestOccupancyHint:'Register only the number of overnight guests. No personal details are required for additional guests.',guestCount:'Number of guests',guestOne:'1 guest',guestTwo:'2 guests',regAdditionalGuestNights:'Additional guest nights',additionalGuestNightsHint:'Defaults to the main guest\'s full stay, but can be reduced.',regAdditionalGuestRate:'Additional guest fee (€ per night, incl. tourist tax)',regAdditionalGuestPayment:'Additional guest payment',regAdditionalGuestTotal:'Additional guest total',regAdditionalGuestPaid:'Additional guest fee paid',overnightGuests:'Overnight guests',overnightSummaryOne:'1 registered guest',overnightSummaryMany:'{count} registered guests',addOvernightGuest:'+ Add overnight guest',overnightCity:'City / place of residence',overnightArrival:'Arrival',overnightDeparture:'Departure',overnightRate:'Additional guest fee (€ per night, incl. tourist tax)',overnightPayment:'Payment method',overnightPaid:'Fee paid',overnightIdType:'Identification shown',overnightIdOther:'Other valid ID',overnightIdVerified:'Identity verified',saveOvernight:'Save overnight guest',createOvernightQr:'Show QR code',copyOvernightLink:'Copy registration link',printOvernight:'Print paper form',cancelOvernight:'Cancel',deleteOvernight:'Delete',cash:'Cash',paypal:'PayPal',otherPayment:'Other',additionalGuestFee:'Additional overnight guest fee (€)',additionalGuestNights:'Additional guest nights',additionalGuestLine:'Additional overnight guest',overnightSaved:'Overnight guest saved.',overnightDeleted:'Overnight guest deleted.',overnightQrCreated:'QR registration created.',identity:'Identification check – host only',idShown:'Identification shown',notSelected:'Not selected',passport:'Passport',idCard:'ID card',drivers:'Driver\'s licence',otherId:'Other valid ID',verified:'Identity verified',saveRegistration:'Save registration',useInvoice:'Use for invoice',deleteRegistration:'Delete registration',savedReg:'Registration saved.',deletedReg:'Registration deleted.',confirmDeleteReg:'Delete this guest registration? This cannot be undone.',quickDeleteReg:'Delete registration',quickDeleteInvoice:'Delete invoice',linkCreated:'Secure registration link created.',copied:'Link copied.',navRegistrations:'Guest registrations',navGuestDetails:'Guest details',navInvoiceDetails:'Invoice details',navSavedInvoices:'Saved invoices',
     formTitle:'Invoice Details',newInvoice:'New invoice',duplicate:'Duplicate invoice',invoiceNumber:'Invoice number',invoiceDate:'Invoice date',guestName:'Guest name',guestAddress:'Guest address',guestPostal:'Postal code',guestCity:'City',guestCountry:'Country',guestEmail:'Guest email (optional)',room:'Room name',customRoom:'Custom room name',nights:'Nights',guests:'Guests',accommodation:'Accommodation (€)',cleaning:'Cleaning fee (€)',tourist:'Tourist tax rate (€ per guest per night)',taxMode:'Tourist tax handling',taxIncluded:'Accommodation amount already includes tourist tax',taxExcluded:'Tourist tax should be added on top of accommodation',payment:'Payment',customPayment:'Custom payment method',saveInvoice:'Save invoice',deleteInvoice:'Delete invoice',print:'Print / Save as PDF',savedInvoices:'Saved Invoices',searchInvoices:'Search / filter invoices',searchInvoicePh:'Search by invoice number, guest name, company, email or booking reference',
     invoiceTitle:'INVOICE',labelInvoiceNumber:'Invoice number:',labelDate:'Date:',billed:'Billed to',labelVat:'VAT number:',labelBooking:'Booking reference:',stay:'Stay Details',labelRoom:'Room:',labelCheckin:'Check-in:',labelCheckout:'Check-out:',labelNights:'Nights:',labelGuests:'Guests:',descriptionTitle:'Description',description:'Accommodation in private room (shared home)',price:'Price Breakdown',labelAccommodation:'Accommodation',labelCleaning:'Cleaning fee',labelTaxRate:'Tourist tax rate',labelTaxIncluded:'Tourist tax included',labelTaxAdded:'Tourist tax added',labelTotal:'Total amount paid',paymentTitle:'Payment',note:'This is a private rental. VAT is not applicable.',
     cozy:'Cozy Room (Street Side)',spacious:'Spacious Room (Garden View)',customRoomOpt:'Custom room name...',booking:'Paid via Booking.com',airbnb:'Paid via Airbnb',customPayOpt:'Custom payment method...',checkEmail:'Check your email for the login link.',denied:'Access denied. This email address is not authorized.',savedInvoice:'Invoice saved.',deleted:'Invoice deleted.',duplicated:'Invoice duplicated. Save it as a new invoice.',required:'Please fill in all required invoice fields.',noRegs:'No guest registrations match this view.',noInvoices:'No invoices yet.',loading:'Loading…',backToTop:'Back to top',attentionTitle:'Needs attention',attentionSubtitle:'Quick overview of upcoming and unfinished guest tasks.',attentionArriving:'Arriving soon',attentionId:'ID to verify',attentionInvoices:'Invoices to create',filterAll:'All',filterArrivingSoon:'Arriving soon',filterUpcoming:'Upcoming',filterStaying:'Staying now',filterPast:'Past',filterId:'ID to verify',filterInvoice:'Invoice to create',invoiceCreated:'Invoice created',invoicePending:'Invoice requested',openInvoice:'Open linked invoice',unsaved:'You have unsaved changes. Continue without saving?' 
@@ -17,18 +17,18 @@ const tr = {
   nl: {
     pageTitle:'Gasten- & factuurbeheer',pageSubtitle:'Nijmegen Guest Rooms – Privé administratie',loginTitle:'Inloggen',loginText:'Alleen geautoriseerde gebruikers hebben toegang tot de administratie.',loginEmail:'E-mailadres',loginBtn:'Stuur verificatiecode',loginCode:'Verificatiecode',loginCodeIntro:'Vul de verificatiecode in die naar je e-mailadres is gestuurd.',verifyLogin:'Verifiëren & inloggen',resendCode:'Code opnieuw sturen',changeEmail:'Ander e-mailadres gebruiken',codeSent:'Verificatiecode verzonden. Controleer je e-mail.',codeResent:'Er is een nieuwe verificatiecode verzonden.',invalidCode:'De verificatiecode is ongeldig of verlopen.',logout:'Uitloggen',
     reservations:'Reserveringen',reservationsSubtitle:'Alleen-lezen overzicht uit de kalenders van Airbnb en Booking.com.',syncCalendars:'Kalenders synchroniseren',syncingCalendars:'Kalenders synchroniseren…',syncedCalendars:'Kalenders gesynchroniseerd.',syncFailed:'Kalendersynchronisatie mislukt',registrationNotCreated:'Registratie nog niet aangemaakt',registrationLinkReady:'Registratielink gereed',registrationSubmitted:'Registratie ingediend',createRegistrationLink:'Registratielink maken',copyRegistrationLink:'Link kopiëren',showQr:'Toon QR-code',qrTitle:'Scan om je gastenregistratie in te vullen',qrSubtitle:'Open de camera en scan de QR-code.',qrCopy:'Kopieer registratielink',completeManually:'Registratie handmatig voltooien',printPaperForm:'Vooringevuld papieren formulier printen',manualFromReservation:'Handmatige registratie gekoppeld aan deze reservering.',openGuest:'Gast openen',openAirbnb:'Openen in Airbnb ↗',roomCozyShort:'Knusse kamer',roomSpaciousShort:'Ruime kamer',nightsWord:'nachten',navReservations:'Reserveringen',noReservations:'Geen reserveringen in deze weergave.',reservationFilterUpcoming:'Aankomend',reservationFilterArrivingSoon:'Binnenkort',reservationFilterStaying:'Nu verblijvend',reservationFilterId:'ID nog controleren',reservationFilterInvoice:'Factuur te maken',reservationFilterPast:'Verleden',reservationFilterRemoved:'Verwijderd / geannuleerd',reservationFilterAll:'Alles',reservationRemoved:'Verwijderd / geannuleerd',possibleExistingRegistration:'Mogelijk bestaande registratie',linkExistingGuest:'Bestaande gast koppelen',linkSuggestedGuest:'Koppel {name}',selectExistingGuest:'Selecteer een bestaande gastenregistratie',confirmLinkGuest:'{name} aan deze reservering koppelen?',linkedExistingGuest:'Bestaande gastenregistratie gekoppeld.',noUnlinkedGuests:'Er zijn geen ongekoppelde gastenregistraties beschikbaar.',exactMatch:'Exacte data',registrations:'Gastenregistraties',registrationArchiveSubtitle:'Gedetailleerde gastenadministratie en archief.',paper:'Papieren registratie toevoegen',manualInvite:'＋ Handmatige gastenlink maken',invite:'Handmatige gastenlink maken',manualInviteHint:'Gebruik dit alleen voor een gast zonder Airbnb- of Booking.com-reservering.',cancel:'Annuleren',inviteBooking:'Boekingsreferentie (optioneel)',invitePlatform:'Boekingsplatform',checkin:'Inchecken',checkout:'Uitchecken',createLink:'Veilige link maken',copy:'Link kopiëren',searchReg:'Registraties zoeken',searchRegPh:'Zoek op naam, e-mail of boekingsreferentie',
-    regEditor:'Gastenregistratie',close:'Sluiten',fullName:'Volledige naam',homeAddress:'Woonadres',postal:'Postcode',city:'Woonplaats',country:'Land',bookingRef:'Boekingsreferentie (optioneel)',bookingPlatform:'Boekingsplatform',platformNotSelected:'Niet geselecteerd',platformDirectOther:'Direct / Anders',platformLinkedHint:'Automatisch gekoppeld vanuit de reservering.',invoiceRequested:'Factuur aangevraagd',invoiceType:'Type factuur',personal:'Particulier',company:'Zakelijk',email:'E-mailadres',companyName:'Bedrijfsnaam',companyAddress:'Bedrijfsadres',vat:'Btw-identificatienummer (optioneel)',overnightGuests:'Overnachtende gasten',overnightSummaryOne:'1 geregistreerde gast',overnightSummaryMany:'{count} geregistreerde gasten',addOvernightGuest:'+ Overnachtende gast toevoegen',overnightCity:'Woonplaats',overnightArrival:'Aankomst',overnightDeparture:'Vertrek',overnightRate:'Toeslag extra gast (€ per nacht, incl. toeristenbelasting)',overnightPayment:'Betaalmethode',overnightPaid:'Toeslag betaald',overnightIdType:'Getoond identiteitsbewijs',overnightIdOther:'Ander geldig identiteitsbewijs',overnightIdVerified:'Identiteit gecontroleerd',saveOvernight:'Overnachtende gast opslaan',createOvernightQr:'QR-code tonen',copyOvernightLink:'Registratielink kopiëren',printOvernight:'Papieren formulier printen',cancelOvernight:'Annuleren',deleteOvernight:'Verwijderen',cash:'Contant',paypal:'PayPal',otherPayment:'Anders',additionalGuestFee:'Toeslag extra overnachtende gast (€)',additionalGuestNights:'Extra gastnachten',additionalGuestLine:'Extra overnachtende gast',overnightSaved:'Overnachtende gast opgeslagen.',overnightDeleted:'Overnachtende gast verwijderd.',overnightQrCreated:'QR-registratie aangemaakt.',identity:'Identiteitscontrole – alleen host',idShown:'Getoond identiteitsbewijs',notSelected:'Niet geselecteerd',passport:'Paspoort',idCard:'ID-kaart',drivers:'Rijbewijs',otherId:'Ander geldig ID',verified:'Identiteit gecontroleerd',saveRegistration:'Registratie opslaan',useInvoice:'Gebruiken voor factuur',deleteRegistration:'Registratie verwijderen',savedReg:'Registratie opgeslagen.',deletedReg:'Registratie verwijderd.',confirmDeleteReg:'Deze gastenregistratie verwijderen? Dit kan niet ongedaan worden gemaakt.',quickDeleteReg:'Registratie verwijderen',quickDeleteInvoice:'Factuur verwijderen',linkCreated:'Veilige registratielink aangemaakt.',copied:'Link gekopieerd.',navRegistrations:'Gastenregistraties',navGuestDetails:'Gastgegevens',navInvoiceDetails:'Factuurgegevens',navSavedInvoices:'Opgeslagen facturen',
+    regEditor:'Gastenregistratie',close:'Sluiten',fullName:'Volledige naam',homeAddress:'Woonadres',postal:'Postcode',city:'Woonplaats',country:'Land',bookingRef:'Boekingsreferentie (optioneel)',bookingPlatform:'Boekingsplatform',platformNotSelected:'Niet geselecteerd',platformDirectOther:'Direct / Anders',platformLinkedHint:'Automatisch gekoppeld vanuit de reservering.',invoiceRequested:'Factuur aangevraagd',invoiceType:'Type factuur',personal:'Particulier',company:'Zakelijk',email:'E-mailadres',companyName:'Bedrijfsnaam',companyAddress:'Bedrijfsadres',vat:'Btw-identificatienummer (optioneel)',guestOccupancy:'Bezetting verblijf',guestOccupancyHint:'Registreer alleen het aantal overnachtende gasten. Van extra gasten zijn geen persoonsgegevens nodig.',guestCount:'Aantal gasten',guestOne:'1 gast',guestTwo:'2 gasten',regAdditionalGuestNights:'Nachten extra gast',additionalGuestNightsHint:'Standaard gelijk aan het volledige verblijf van de hoofdgast, maar kan worden verlaagd.',regAdditionalGuestRate:'Toeslag extra gast (€ per nacht, incl. toeristenbelasting)',regAdditionalGuestPayment:'Betaling extra gast',regAdditionalGuestTotal:'Totaal extra gast',regAdditionalGuestPaid:'Toeslag extra gast betaald',overnightGuests:'Overnachtende gasten',overnightSummaryOne:'1 geregistreerde gast',overnightSummaryMany:'{count} geregistreerde gasten',addOvernightGuest:'+ Overnachtende gast toevoegen',overnightCity:'Woonplaats',overnightArrival:'Aankomst',overnightDeparture:'Vertrek',overnightRate:'Toeslag extra gast (€ per nacht, incl. toeristenbelasting)',overnightPayment:'Betaalmethode',overnightPaid:'Toeslag betaald',overnightIdType:'Getoond identiteitsbewijs',overnightIdOther:'Ander geldig identiteitsbewijs',overnightIdVerified:'Identiteit gecontroleerd',saveOvernight:'Overnachtende gast opslaan',createOvernightQr:'QR-code tonen',copyOvernightLink:'Registratielink kopiëren',printOvernight:'Papieren formulier printen',cancelOvernight:'Annuleren',deleteOvernight:'Verwijderen',cash:'Contant',paypal:'PayPal',otherPayment:'Anders',additionalGuestFee:'Toeslag extra overnachtende gast (€)',additionalGuestNights:'Extra gastnachten',additionalGuestLine:'Extra overnachtende gast',overnightSaved:'Overnachtende gast opgeslagen.',overnightDeleted:'Overnachtende gast verwijderd.',overnightQrCreated:'QR-registratie aangemaakt.',identity:'Identiteitscontrole – alleen host',idShown:'Getoond identiteitsbewijs',notSelected:'Niet geselecteerd',passport:'Paspoort',idCard:'ID-kaart',drivers:'Rijbewijs',otherId:'Ander geldig ID',verified:'Identiteit gecontroleerd',saveRegistration:'Registratie opslaan',useInvoice:'Gebruiken voor factuur',deleteRegistration:'Registratie verwijderen',savedReg:'Registratie opgeslagen.',deletedReg:'Registratie verwijderd.',confirmDeleteReg:'Deze gastenregistratie verwijderen? Dit kan niet ongedaan worden gemaakt.',quickDeleteReg:'Registratie verwijderen',quickDeleteInvoice:'Factuur verwijderen',linkCreated:'Veilige registratielink aangemaakt.',copied:'Link gekopieerd.',navRegistrations:'Gastenregistraties',navGuestDetails:'Gastgegevens',navInvoiceDetails:'Factuurgegevens',navSavedInvoices:'Opgeslagen facturen',
     formTitle:'Factuurgegevens',newInvoice:'Nieuwe factuur',duplicate:'Factuur dupliceren',invoiceNumber:'Factuurnummer',invoiceDate:'Factuurdatum',guestName:'Naam gast',guestAddress:'Adres gast',guestPostal:'Postcode',guestCity:'Woonplaats',guestCountry:'Land',guestEmail:'E-mailadres gast (optioneel)',room:'Kamernaam',customRoom:'Aangepaste kamernaam',nights:'Aantal nachten',guests:'Aantal gasten',accommodation:'Verblijf (€)',cleaning:'Schoonmaakkosten (€)',tourist:'Toeristenbelasting (€ per gast per nacht)',taxMode:'Verwerking toeristenbelasting',taxIncluded:'Verblijfsbedrag is al inclusief toeristenbelasting',taxExcluded:'Toeristenbelasting moet bovenop het verblijfsbedrag komen',payment:'Betaling',customPayment:'Aangepaste betaalmethode',saveInvoice:'Factuur opslaan',deleteInvoice:'Factuur verwijderen',print:'Printen / Opslaan als PDF',savedInvoices:'Opgeslagen facturen',searchInvoices:'Facturen zoeken / filteren',searchInvoicePh:'Zoek op factuurnummer, gastnaam, bedrijf, e-mail of boekingsreferentie',
     invoiceTitle:'FACTUUR',labelInvoiceNumber:'Factuurnummer:',labelDate:'Datum:',billed:'Factureren aan',labelVat:'Btw-nummer:',labelBooking:'Boekingsreferentie:',stay:'Verblijfsgegevens',labelRoom:'Kamer:',labelCheckin:'Inchecken:',labelCheckout:'Uitchecken:',labelNights:'Aantal nachten:',labelGuests:'Aantal gasten:',descriptionTitle:'Omschrijving',description:'Verblijf in privékamer (gedeelde woning)',price:'Prijsopbouw',labelAccommodation:'Verblijf',labelCleaning:'Schoonmaakkosten',labelTaxRate:'Tarief toeristenbelasting',labelTaxIncluded:'Toeristenbelasting inbegrepen',labelTaxAdded:'Toeristenbelasting toegevoegd',labelTotal:'Totaal betaald',paymentTitle:'Betaling',note:'Dit betreft particuliere verhuur. Btw is niet van toepassing.',
     cozy:'Knusse kamer (straatzijde)',spacious:'Ruime kamer (tuinzijde)',customRoomOpt:'Aangepaste kamernaam...',booking:'Betaald via Booking.com',airbnb:'Betaald via Airbnb',customPayOpt:'Aangepaste betaalmethode...',checkEmail:'Controleer je e-mail voor de inloglink.',denied:'Toegang geweigerd. Dit e-mailadres is niet geautoriseerd.',savedInvoice:'Factuur opgeslagen.',deleted:'Factuur verwijderd.',duplicated:'Factuur gedupliceerd. Sla deze als nieuwe factuur op.',required:'Vul alle verplichte factuurvelden in.',noRegs:'Geen gastenregistraties in deze weergave.',noInvoices:'Nog geen facturen.',loading:'Laden…',backToTop:'Naar boven',attentionTitle:'Aandacht nodig',attentionSubtitle:'Snel overzicht van aankomende en openstaande gasttaken.',attentionArriving:'Binnenkort aankomst',attentionId:'ID nog controleren',attentionInvoices:'Facturen te maken',filterAll:'Alles',filterArrivingSoon:'Binnenkort',filterUpcoming:'Aankomend',filterStaying:'Nu verblijvend',filterPast:'Verleden',filterId:'ID nog controleren',filterInvoice:'Factuur te maken',invoiceCreated:'Factuur gemaakt',invoicePending:'Factuur gevraagd',openInvoice:'Gekoppelde factuur openen',unsaved:'Je hebt niet-opgeslagen wijzigingen. Doorgaan zonder op te slaan?' 
   }
 };
 
-let currentLang='en', currentRegistrationId=null, currentDraftReservationId=null, currentInvoiceId=null, registrations=[], invoices=[], reservations=[], reservationInvites=[], overnightGuests=[], overnightInvites=[], manualNights=false, registrationFilter='all', reservationFilter='upcoming', registrationDirty=false, invoiceDirty=false, suppressDirty=false;
+let currentLang='en', currentRegistrationId=null, currentDraftReservationId=null, currentInvoiceId=null, registrations=[], invoices=[], reservations=[], reservationInvites=[], manualNights=false, registrationFilter='all', reservationFilter='upcoming', registrationDirty=false, invoiceDirty=false, suppressDirty=false;
 const $=id=>document.getElementById(id);
 
 const rf={
-  id:$('registrationId'),source:$('registrationSource'),name:$('regName'),city:$('regCity'),country:$('regCountry'),checkin:$('regCheckin'),checkout:$('regCheckout'),booking:$('regBookingReference'),platform:$('regBookingPlatform'),invoiceRequested:$('regInvoiceRequested'),invoiceType:$('regInvoiceType'),email:$('regEmail'),companyName:$('regCompanyName'),companyAddress:$('regCompanyAddress'),vat:$('regVat'),idType:$('regIdType'),idOther:$('regIdOther'),idVerified:$('regIdVerified')
+  id:$('registrationId'),source:$('registrationSource'),name:$('regName'),city:$('regCity'),country:$('regCountry'),checkin:$('regCheckin'),checkout:$('regCheckout'),booking:$('regBookingReference'),platform:$('regBookingPlatform'),invoiceRequested:$('regInvoiceRequested'),invoiceType:$('regInvoiceType'),email:$('regEmail'),companyName:$('regCompanyName'),companyAddress:$('regCompanyAddress'),vat:$('regVat'),idType:$('regIdType'),idOther:$('regIdOther'),idVerified:$('regIdVerified'),guestCount:$('regGuestCount'),additionalGuestNights:$('regAdditionalGuestNights'),additionalGuestRate:$('regAdditionalGuestRate'),additionalGuestPayment:$('regAdditionalGuestPayment'),additionalGuestPaid:$('regAdditionalGuestPaid')
 };
 const f={
   registrationId:$('guestRegistrationId'),invoiceNumber:$('invoiceNumber'),invoiceDate:$('invoiceDate'),guestName:$('guestName'),guestAddress:$('guestAddress'),guestPostal:$('guestPostalCode'),guestCity:$('guestCity'),guestCountry:$('guestCountry'),companyName:$('companyName'),companyAddress:$('companyAddress'),vat:$('vatNumber'),email:$('guestEmail'),booking:$('bookingReference'),room:$('roomName'),customRoom:$('customRoomName'),checkin:$('checkinDate'),checkout:$('checkoutDate'),nights:$('nights'),guests:$('guests'),accommodation:$('accommodationAmount'),cleaning:$('cleaningFee'),additionalGuestFee:$('additionalGuestFee'),additionalGuestNights:$('additionalGuestNights'),tourist:$('touristTaxRate'),taxMode:$('taxMode'),payment:$('paymentMethod'),customPayment:$('customPaymentMethod')
@@ -156,9 +156,9 @@ function reservationMatchesFilter(r,filter){
 }
 function reservationGuestBadges(reg){
   if(!reg)return '';
-  const x=tr[currentLang], linked=linkedInvoiceForRegistration(reg.id), guestCount=overnightSummaryCount(reg.id);
+  const x=tr[currentLang], linked=linkedInvoiceForRegistration(reg.id), guestCount=registrationGuestCount(reg);
   const idText=registrationIdStatusText(reg);
-  const idClass=registrationIdsVerified(reg)?'good':'warn';
+  const idClass=reg.id_verified?'good':'warn';
   const invoiceHtml=linked
     ? `<button type="button" class="badge invoice-created reservation-invoice-badge" title="${escapeHtml(x.openInvoice)}">${escapeHtml(x.invoiceCreated)} · ${escapeHtml(linked.invoice_number)}</button>`
     : (reg.invoice_requested?`<span class="badge invoice-pending">${escapeHtml(x.invoicePending)}</span>`:'');
@@ -187,6 +187,7 @@ function beginManualRegistrationForReservation(reservation){
   rf.invoiceType.value='personal';
   rf.idType.value='';
   rf.idVerified.checked=false;
+  rf.guestCount.value='1';rf.additionalGuestNights.value=0;rf.additionalGuestRate.value='20.00';rf.additionalGuestPayment.value='';rf.additionalGuestPaid.checked=false;toggleGuestOccupancy();
   toggleRegInvoice();
   toggleIdOther();
   // This registration is reservation-linked, so platform is authoritative and hidden.
@@ -531,7 +532,7 @@ function setTexts(){
   const x=tr[currentLang]; document.documentElement.lang=currentLang;
   document.querySelectorAll('[data-reservation-filter]').forEach(b=>b.onclick=()=>setReservationFilter(b.dataset.reservationFilter));
 document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===currentLang));
-  const map={reservations:'reservationsTitle',reservationsSubtitle:'reservationsSubtitle',syncCalendars:'syncCalendarsBtn',navReservations:'navReservations',reservationFilterUpcoming:'reservationFilterUpcoming',reservationFilterArrivingSoon:'reservationFilterArrivingSoon',reservationFilterStaying:'reservationFilterStaying',reservationFilterId:'reservationFilterId',reservationFilterInvoice:'reservationFilterInvoice',reservationFilterPast:'reservationFilterPast',reservationFilterRemoved:'reservationFilterRemoved',reservationFilterAll:'reservationFilterAll',pageTitle:'pageTitle',pageSubtitle:'pageSubtitle',loginTitle:'loginTitle',loginText:'loginText',loginEmail:'labelLoginEmail',loginBtn:'loginBtn',loginCode:'labelLoginCode',loginCodeIntro:'loginCodeIntro',verifyLogin:'verifyLoginBtn',resendCode:'resendLoginCodeBtn',changeEmail:'changeLoginEmailBtn',logout:'logoutBtn',registrations:'registrationTitle',registrationArchiveSubtitle:'registrationArchiveSubtitle',paper:'newPaperBtn',manualInvite:'manualInviteToggleBtn',invite:'inviteTitle',manualInviteHint:'manualInviteHint',cancel:'closeManualInviteBtn',inviteBooking:'labelInviteBooking',invitePlatform:'labelInvitePlatform',checkin:'labelInviteCheckin',checkout:'labelInviteCheckout',createLink:'createInviteBtn',copy:'copyInviteBtn',searchReg:'labelRegistrationSearch',regEditor:'registrationEditorTitle',close:'closeRegistrationBtn',fullName:'labelRegName',city:'labelRegCity',country:'labelRegCountry',bookingRef:'labelRegBooking',bookingPlatform:'labelRegPlatform',invoiceRequested:'regInvoiceRequestedText',invoiceType:'labelRegInvoiceType',email:'labelRegEmail',companyName:'labelRegCompanyName',companyAddress:'labelRegCompanyAddress',vat:'labelRegVat',overnightGuests:'overnightGuestsTitle',addOvernightGuest:'addOvernightGuestBtn',overnightCity:'labelOvernightCity',overnightArrival:'labelOvernightCheckin',overnightDeparture:'labelOvernightCheckout',overnightRate:'labelOvernightRate',overnightPayment:'labelOvernightPayment',overnightPaid:'overnightPaidText',overnightIdType:'labelOvernightIdType',overnightIdOther:'labelOvernightIdOther',overnightIdVerified:'overnightIdVerifiedText',saveOvernight:'saveOvernightGuestBtn',createOvernightQr:'createOvernightQrBtn',copyOvernightLink:'copyOvernightLinkBtn',printOvernight:'printOvernightFormBtn',cancelOvernight:'cancelOvernightGuestBtn',deleteOvernight:'deleteOvernightGuestBtn',additionalGuestFee:'labelAdditionalGuestFee',additionalGuestNights:'labelAdditionalGuestNights',identity:'identityTitle',idShown:'labelIdType',verified:'idVerifiedText',saveRegistration:'saveRegistrationBtn',useInvoice:'useForInvoiceBtn',deleteRegistration:'deleteRegistrationBtn',formTitle:'formTitle',newInvoice:'newInvoiceBtn',duplicate:'duplicateBtn',invoiceNumber:'labelInvoiceNumber',invoiceDate:'labelInvoiceDate',guestName:'labelGuestName',guestAddress:'labelGuestAddress',guestPostal:'labelGuestPostal',guestCity:'labelGuestCity',guestCountry:'labelGuestCountry',guestEmail:'labelGuestEmail',room:'labelRoomName',customRoom:'labelCustomRoomName',nights:'labelNights',guests:'labelGuests',accommodation:'labelAccommodation',cleaning:'labelCleaning',tourist:'labelTouristTaxRate',taxMode:'labelTaxMode',payment:'labelPaymentMethod',customPayment:'labelCustomPayment',saveInvoice:'saveBtn',deleteInvoice:'deleteBtn',print:'printBtn',savedInvoices:'savedInvoicesTitle',searchInvoices:'labelSearchInvoices',navRegistrations:'navRegistrations',navGuestDetails:'navGuestDetails',navInvoiceDetails:'navInvoiceDetails',navSavedInvoices:'navSavedInvoices'};
+  const map={reservations:'reservationsTitle',reservationsSubtitle:'reservationsSubtitle',syncCalendars:'syncCalendarsBtn',navReservations:'navReservations',reservationFilterUpcoming:'reservationFilterUpcoming',reservationFilterArrivingSoon:'reservationFilterArrivingSoon',reservationFilterStaying:'reservationFilterStaying',reservationFilterId:'reservationFilterId',reservationFilterInvoice:'reservationFilterInvoice',reservationFilterPast:'reservationFilterPast',reservationFilterRemoved:'reservationFilterRemoved',reservationFilterAll:'reservationFilterAll',pageTitle:'pageTitle',pageSubtitle:'pageSubtitle',loginTitle:'loginTitle',loginText:'loginText',loginEmail:'labelLoginEmail',loginBtn:'loginBtn',loginCode:'labelLoginCode',loginCodeIntro:'loginCodeIntro',verifyLogin:'verifyLoginBtn',resendCode:'resendLoginCodeBtn',changeEmail:'changeLoginEmailBtn',logout:'logoutBtn',registrations:'registrationTitle',registrationArchiveSubtitle:'registrationArchiveSubtitle',paper:'newPaperBtn',manualInvite:'manualInviteToggleBtn',invite:'inviteTitle',manualInviteHint:'manualInviteHint',cancel:'closeManualInviteBtn',inviteBooking:'labelInviteBooking',invitePlatform:'labelInvitePlatform',checkin:'labelInviteCheckin',checkout:'labelInviteCheckout',createLink:'createInviteBtn',copy:'copyInviteBtn',searchReg:'labelRegistrationSearch',regEditor:'registrationEditorTitle',close:'closeRegistrationBtn',fullName:'labelRegName',city:'labelRegCity',country:'labelRegCountry',bookingRef:'labelRegBooking',bookingPlatform:'labelRegPlatform',invoiceRequested:'regInvoiceRequestedText',invoiceType:'labelRegInvoiceType',email:'labelRegEmail',companyName:'labelRegCompanyName',companyAddress:'labelRegCompanyAddress',vat:'labelRegVat',overnightGuests:'overnightGuestsTitle',addOvernightGuest:'addOvernightGuestBtn',overnightCity:'labelOvernightCity',overnightArrival:'labelOvernightCheckin',overnightDeparture:'labelOvernightCheckout',overnightRate:'labelOvernightRate',overnightPayment:'labelOvernightPayment',overnightPaid:'overnightPaidText',overnightIdType:'labelOvernightIdType',overnightIdOther:'labelOvernightIdOther',overnightIdVerified:'overnightIdVerifiedText',saveOvernight:'saveOvernightGuestBtn',createOvernightQr:'createOvernightQrBtn',copyOvernightLink:'copyOvernightLinkBtn',printOvernight:'printOvernightFormBtn',cancelOvernight:'cancelOvernightGuestBtn',deleteOvernight:'deleteOvernightGuestBtn',additionalGuestFee:'labelAdditionalGuestFee',additionalGuestNights:'labelAdditionalGuestNights',guestOccupancy:'guestOccupancyTitle',guestOccupancyHint:'guestOccupancyHint',guestCount:'labelGuestCount',regAdditionalGuestNights:'labelRegAdditionalGuestNights',regAdditionalGuestRate:'labelRegAdditionalGuestRate',regAdditionalGuestPayment:'labelRegAdditionalGuestPayment',regAdditionalGuestTotal:'labelRegAdditionalGuestTotal',regAdditionalGuestPaid:'regAdditionalGuestPaidText',identity:'identityTitle',idShown:'labelIdType',verified:'idVerifiedText',saveRegistration:'saveRegistrationBtn',useInvoice:'useForInvoiceBtn',deleteRegistration:'deleteRegistrationBtn',formTitle:'formTitle',newInvoice:'newInvoiceBtn',duplicate:'duplicateBtn',invoiceNumber:'labelInvoiceNumber',invoiceDate:'labelInvoiceDate',guestName:'labelGuestName',guestAddress:'labelGuestAddress',guestPostal:'labelGuestPostal',guestCity:'labelGuestCity',guestCountry:'labelGuestCountry',guestEmail:'labelGuestEmail',room:'labelRoomName',customRoom:'labelCustomRoomName',nights:'labelNights',guests:'labelGuests',accommodation:'labelAccommodation',cleaning:'labelCleaning',tourist:'labelTouristTaxRate',taxMode:'labelTaxMode',payment:'labelPaymentMethod',customPayment:'labelCustomPayment',saveInvoice:'saveBtn',deleteInvoice:'deleteBtn',print:'printBtn',savedInvoices:'savedInvoicesTitle',searchInvoices:'labelSearchInvoices',navRegistrations:'navRegistrations',navGuestDetails:'navGuestDetails',navInvoiceDetails:'navInvoiceDetails',navSavedInvoices:'navSavedInvoices'};
   for(const [k,id] of Object.entries(map)) if($(id)) $(id).textContent=x[k];
   if($('attentionTitle')) $('attentionTitle').textContent=x.attentionTitle;
   if($('attentionSubtitle')) $('attentionSubtitle').textContent=x.attentionSubtitle;
@@ -548,9 +549,12 @@ document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.
   $('labelBookingReference').textContent=x.bookingRef; $('labelCheckin').textContent=x.checkin; $('labelCheckout').textContent=x.checkout;
   $('registrationSearch').placeholder=x.searchRegPh; $('searchInvoices').placeholder=x.searchInvoicePh;
   rf.invoiceType.options[0].text=x.personal; rf.invoiceType.options[1].text=x.company;
-  rf.platform.options[0].text=x.platformNotSelected; $('overnightPayment').options[0].text=x.notSelected;$('overnightPayment').options[1].text=x.cash;$('overnightPayment').options[2].text=x.paypal;$('overnightPayment').options[3].text='Airbnb'; rf.platform.options[1].text='Airbnb'; rf.platform.options[2].text='Booking.com'; rf.platform.options[3].text=x.platformDirectOther;
+  rf.platform.options[0].text=x.platformNotSelected; rf.platform.options[1].text='Airbnb'; rf.platform.options[2].text='Booking.com'; rf.platform.options[3].text=x.platformDirectOther;
   $('inviteBookingPlatform').options[0].text=x.platformNotSelected; $('inviteBookingPlatform').options[1].text='Airbnb'; $('inviteBookingPlatform').options[2].text='Booking.com'; $('inviteBookingPlatform').options[3].text=x.platformDirectOther;
-  rf.idType.options[0].text=x.notSelected; rf.idType.options[1].text=x.passport; rf.idType.options[2].text=x.idCard; rf.idType.options[3].text=x.drivers; rf.idType.options[4].text=x.otherId; $('labelIdOther').textContent=x.otherId; $('overnightIdType').options[0].text=x.notSelected; $('overnightIdType').options[1].text=x.passport; $('overnightIdType').options[2].text=x.idCard; $('overnightIdType').options[3].text=x.drivers; $('overnightIdType').options[4].text=x.otherId;
+  rf.idType.options[0].text=x.notSelected; rf.idType.options[1].text=x.passport; rf.idType.options[2].text=x.idCard; rf.idType.options[3].text=x.drivers; rf.idType.options[4].text=x.otherId; $('labelIdOther').textContent=x.otherId;
+  $('regGuestCount').options[0].text=x.guestOne; $('regGuestCount').options[1].text=x.guestTwo;
+  $('regAdditionalGuestPayment').options[0].text=x.notSelected; $('regAdditionalGuestPayment').options[1].text=x.cash; $('regAdditionalGuestPayment').options[2].text=x.paypal; $('regAdditionalGuestPayment').options[3].text='Airbnb';
+  $('additionalGuestNightsHint').textContent=x.additionalGuestNightsHint;
   const currentRoom=f.room.value; f.room.innerHTML=`<option value="${x.cozy}">${x.cozy}</option><option value="${x.spacious}">${x.spacious}</option><option value="custom">${x.customRoomOpt}</option>`; if(currentRoom==='custom')f.room.value='custom'; else if(currentRoom.includes('Cozy')||currentRoom.includes('Knusse'))f.room.value=x.cozy; else f.room.value=x.spacious;
   const currentPay=f.payment.value; f.payment.innerHTML=`<option value="${x.booking}">${x.booking}</option><option value="${x.airbnb}">${x.airbnb}</option><option value="custom">${x.customPayOpt}</option>`; if(currentPay==='custom')f.payment.value='custom'; else if(currentPay.includes('Booking'))f.payment.value=x.booking; else if(currentPay.includes('Airbnb'))f.payment.value=x.airbnb;
   f.taxMode.innerHTML=`<option value="included">${x.taxIncluded}</option><option value="excluded">${x.taxExcluded}</option>`;
@@ -666,8 +670,8 @@ async function createInvite(){
 function blankRegistration(){
   if(!guardUnsaved('registration'))return;
   suppressDirty=true;
-  currentRegistrationId=null; currentDraftReservationId=null; rf.id.value=''; rf.source.value='paper_manual'; for(const k of ['name','city','country','checkin','checkout','booking','email','companyName','companyAddress','vat','idOther'])rf[k].value=''; populateCountries(rf.country,''); applyRegistrationPlatformField(null); rf.invoiceRequested.checked=false; rf.invoiceType.value='personal'; rf.idType.value=''; rf.idVerified.checked=false; toggleRegInvoice();toggleIdOther(); $('deleteRegistrationBtn').classList.add('hidden'); $('registrationEditor').classList.remove('hidden'); $('registrationMessage').textContent='';
-  registrationDirty=false; suppressDirty=false; renderOvernightGuests();
+  currentRegistrationId=null; currentDraftReservationId=null; rf.id.value=''; rf.source.value='paper_manual'; for(const k of ['name','city','country','checkin','checkout','booking','email','companyName','companyAddress','vat','idOther'])rf[k].value=''; populateCountries(rf.country,''); applyRegistrationPlatformField(null); rf.invoiceRequested.checked=false; rf.invoiceType.value='personal'; rf.idType.value=''; rf.idVerified.checked=false; rf.guestCount.value='1';rf.additionalGuestNights.value=0;rf.additionalGuestRate.value='20.00';rf.additionalGuestPayment.value='';rf.additionalGuestPaid.checked=false;toggleGuestOccupancy(); toggleRegInvoice();toggleIdOther(); $('deleteRegistrationBtn').classList.add('hidden'); $('registrationEditor').classList.remove('hidden'); $('registrationMessage').textContent='';
+  registrationDirty=false; suppressDirty=false;
   requestAnimationFrame(()=>{
     const heading=$('registrationEditorTitle')||$('registrationEditor');
     heading.scrollIntoView({behavior:'smooth',block:'start'});
@@ -676,8 +680,8 @@ function blankRegistration(){
 function loadReg(r,scrollMode='default'){
   if(!guardUnsaved('registration'))return;
   suppressDirty=true;
-  currentRegistrationId=r.id;currentDraftReservationId=null;rf.id.value=r.id;rf.source.value=r.source||'digital';rf.name.value=r.full_name||'';rf.city.value=r.city||'';populateCountries(rf.country,r.country||'');rf.checkin.value=r.checkin_date||'';rf.checkout.value=r.checkout_date||'';rf.booking.value=r.booking_reference||'';applyRegistrationPlatformField(r);rf.invoiceRequested.checked=!!r.invoice_requested;rf.invoiceType.value=r.invoice_type||'personal';rf.email.value=r.email||'';rf.companyName.value=r.company_name||'';rf.companyAddress.value=r.company_address||'';rf.vat.value=r.vat_number||'';rf.idType.value=r.id_type||'';rf.idOther.value=r.id_other||'';rf.idVerified.checked=!!r.id_verified;toggleRegInvoice();toggleIdOther();$('deleteRegistrationBtn').classList.remove('hidden');$('registrationEditor').classList.remove('hidden');$('registrationMessage').textContent='';
-  registrationDirty=false; suppressDirty=false; renderOvernightGuests();
+  currentRegistrationId=r.id;currentDraftReservationId=null;rf.id.value=r.id;rf.source.value=r.source||'digital';rf.name.value=r.full_name||'';rf.city.value=r.city||'';populateCountries(rf.country,r.country||'');rf.checkin.value=r.checkin_date||'';rf.checkout.value=r.checkout_date||'';rf.booking.value=r.booking_reference||'';applyRegistrationPlatformField(r);rf.invoiceRequested.checked=!!r.invoice_requested;rf.invoiceType.value=r.invoice_type||'personal';rf.email.value=r.email||'';rf.companyName.value=r.company_name||'';rf.companyAddress.value=r.company_address||'';rf.vat.value=r.vat_number||'';rf.idType.value=r.id_type||'';rf.idOther.value=r.id_other||'';rf.idVerified.checked=!!r.id_verified;rf.guestCount.value=String(registrationGuestCount(r));rf.additionalGuestNights.value=r.additional_guest_nights||0;rf.additionalGuestRate.value=Number(r.additional_guest_fee_per_night||20).toFixed(2);rf.additionalGuestPayment.value=r.additional_guest_payment_method||'';rf.additionalGuestPaid.checked=!!r.additional_guest_fee_paid;toggleGuestOccupancy();toggleRegInvoice();toggleIdOther();$('deleteRegistrationBtn').classList.remove('hidden');$('registrationEditor').classList.remove('hidden');$('registrationMessage').textContent='';
+  registrationDirty=false; suppressDirty=false;
   requestAnimationFrame(()=>{
     if(scrollMode==='heading'){
       const heading=$('registrationEditorTitle')||$('registrationEditor');
@@ -691,7 +695,9 @@ function loadReg(r,scrollMode='default'){
 }
 async function saveReg(){
   if(!rf.name.value.trim()||!rf.city.value.trim()||!rf.country.value.trim()||!rf.checkin.value||!rf.checkout.value){$('registrationMessage').textContent=currentLang==='nl'?'Vul alle gastgegevens en verblijfsdata in.':'Complete all guest information and stay dates.';return;}
-  const s=await session(); const draftReservation=currentDraftReservationId?reservations.find(r=>r.id===currentDraftReservationId):null; const payload={full_name:rf.name.value.trim(),home_address:null,postal_code:null,city:rf.city.value.trim(),country:rf.country.value.trim(),checkin_date:rf.checkin.value,checkout_date:rf.checkout.value,booking_reference:rf.booking.value.trim()||null,booking_platform:(draftReservation?.platform||rf.platform.value||null),reservation_id:(draftReservation?.id||undefined),invoice_requested:rf.invoiceRequested.checked,invoice_type:rf.invoiceRequested.checked?rf.invoiceType.value:null,email:rf.invoiceRequested.checked?rf.email.value.trim()||null:null,company_name:rf.invoiceRequested.checked&&rf.invoiceType.value==='company'?rf.companyName.value.trim()||null:null,company_address:rf.invoiceRequested.checked&&rf.invoiceType.value==='company'?rf.companyAddress.value.trim()||null:null,vat_number:rf.invoiceRequested.checked&&rf.invoiceType.value==='company'?rf.vat.value.trim()||null:null,declaration_accepted:true,source:rf.source.value||'paper_manual',id_type:rf.idType.value||null,id_other:rf.idType.value==='other'?rf.idOther.value.trim()||null:null,id_verified:rf.idVerified.checked,id_verified_at:rf.idVerified.checked?new Date().toISOString():null,id_verified_by:rf.idVerified.checked?s.user.id:null};
+  const mainNights=mainStayNights(), guestCount=Number(rf.guestCount.value||1), extraNights=guestCount>1?Number(rf.additionalGuestNights.value||0):0;
+  if(guestCount>1 && (!extraNights || extraNights<1 || extraNights>mainNights)){ $('registrationMessage').textContent=currentLang==='nl'?'Het aantal nachten van de extra gast moet tussen 1 en het aantal nachten van de hoofdgast liggen.':'Additional guest nights must be between 1 and the main guest stay length.'; return; }
+  const s=await session(); const draftReservation=currentDraftReservationId?reservations.find(r=>r.id===currentDraftReservationId):null; const payload={full_name:rf.name.value.trim(),home_address:null,postal_code:null,city:rf.city.value.trim(),country:rf.country.value.trim(),checkin_date:rf.checkin.value,checkout_date:rf.checkout.value,booking_reference:rf.booking.value.trim()||null,booking_platform:(draftReservation?.platform||rf.platform.value||null),reservation_id:(draftReservation?.id||undefined),invoice_requested:rf.invoiceRequested.checked,invoice_type:rf.invoiceRequested.checked?rf.invoiceType.value:null,email:rf.invoiceRequested.checked?rf.email.value.trim()||null:null,company_name:rf.invoiceRequested.checked&&rf.invoiceType.value==='company'?rf.companyName.value.trim()||null:null,company_address:rf.invoiceRequested.checked&&rf.invoiceType.value==='company'?rf.companyAddress.value.trim()||null:null,vat_number:rf.invoiceRequested.checked&&rf.invoiceType.value==='company'?rf.vat.value.trim()||null:null,declaration_accepted:true,source:rf.source.value||'paper_manual',id_type:rf.idType.value||null,id_other:rf.idType.value==='other'?rf.idOther.value.trim()||null:null,id_verified:rf.idVerified.checked,id_verified_at:rf.idVerified.checked?new Date().toISOString():null,id_verified_by:rf.idVerified.checked?s.user.id:null,guest_count:guestCount,additional_guest_nights:extraNights,additional_guest_fee_per_night:guestCount>1?Number(rf.additionalGuestRate.value||20):20,additional_guest_payment_method:guestCount>1?(rf.additionalGuestPayment.value||null):null,additional_guest_fee_paid:guestCount>1?rf.additionalGuestPaid.checked:false};
   let q=currentRegistrationId?supabaseClient.from('guest_registrations').update(payload).eq('id',currentRegistrationId).select().single():supabaseClient.from('guest_registrations').insert([{...payload,submitted_at:new Date().toISOString()}]).select().single();
   const {data,error}=await q;if(error){$('registrationMessage').textContent=error.message;return;}
   if(currentDraftReservationId){
@@ -700,159 +706,49 @@ async function saveReg(){
   currentRegistrationId=data.id; currentDraftReservationId=null; rf.id.value=data.id; registrationDirty=false; $('deleteRegistrationBtn').classList.remove('hidden'); $('registrationMessage').textContent=tr[currentLang].savedReg; await loadRegs();
 }
 
-const ADDITIONAL_GUEST_FORM_BASE='https://nijmegenguestrooms.com/additional-guest-registration/';
-function overnightNights(g){
-  if(!g?.checkin_date||!g?.checkout_date)return 0;
-  return reservationNightsBetween(g.checkin_date,g.checkout_date);
+function mainStayNights(){
+  if(!rf.checkin.value||!rf.checkout.value)return 0;
+  return Math.max(0,reservationNightsBetween(rf.checkin.value,rf.checkout.value));
 }
-function overnightFeeTotal(g){ return overnightNights(g)*Number(g?.fee_per_night||0); }
-function overnightForRegistration(regId){ return overnightGuests.filter(g=>g.guest_registration_id===regId).sort((a,b)=>String(a.checkin_date).localeCompare(String(b.checkin_date))); }
-function registrationIdsVerified(reg){
-  if(!reg?.id_verified)return false;
-  return overnightForRegistration(reg.id).every(g=>!!g.id_verified);
-}
-function registrationHasIdToVerify(reg){ return !!reg && !registrationIdsVerified(reg); }
+function registrationGuestCount(reg){ return Math.max(1,Number(reg?.guest_count||1)); }
+function registrationHasIdToVerify(reg){ return !!reg && !reg.id_verified; }
 function registrationIdStatusText(reg){
-  const count=overnightSummaryCount(reg.id), verified=registrationIdsVerified(reg);
-  if(currentLang==='nl') return verified?(count>1?'ID’s gecontroleerd':'ID gecontroleerd'):(count>1?'ID’s nog controleren':'ID nog controleren');
-  return verified?(count>1?'IDs verified':'ID verified'):(count>1?'IDs to verify':'ID to verify');
+  if(currentLang==='nl') return reg?.id_verified?'ID gecontroleerd':'ID nog controleren';
+  return reg?.id_verified?'ID verified':'ID to verify';
 }
-
-function paidOvernightForRegistration(regId){ return overnightForRegistration(regId).filter(g=>g.fee_paid); }
-function overnightSummaryCount(regId){ return 1 + overnightForRegistration(regId).length; }
-
-async function loadOvernightGuests(){
-  const [{data:g,error:ge},{data:i,error:ie}]=await Promise.all([
-    supabaseClient.from('additional_overnight_guests').select('*').order('checkin_date',{ascending:true}).limit(500),
-    supabaseClient.from('additional_guest_invites').select('*').is('used_at',null).order('created_at',{ascending:false}).limit(300)
-  ]);
-  overnightGuests=ge?[]:(g||[]);
-  overnightInvites=ie?[]:(i||[]);
-  renderOvernightGuests();
-  renderAttention(); renderRegs(); renderReservations();
+function additionalGuestTotalFromRegistration(reg){
+  if(!reg || registrationGuestCount(reg)<2)return 0;
+  return Number(reg.additional_guest_nights||0)*Number(reg.additional_guest_fee_per_night||20);
 }
-
-function clearOvernightEditor(){
-  $('overnightGuestId').value='';
-  for(const id of ['overnightName','overnightCity']) $(id).value='';
-  populateCountries($('overnightCountry'),'');
-  $('overnightCheckin').value=rf.checkin.value||'';
-  $('overnightCheckout').value=rf.checkout.value||'';
-  $('overnightRate').value='20.00';
-  $('overnightPayment').value='';
-  $('overnightPaid').checked=false;$('overnightIdType').value='';$('overnightIdOther').value='';$('overnightIdVerified').checked=false;toggleOvernightIdOther();
-  $('deleteOvernightGuestBtn').classList.add('hidden');
-  $('overnightGuestMessage').textContent='';
+function additionalPaymentLabel(method){
+  if(method==='cash')return currentLang==='nl'?'Contant':'Cash';
+  if(method==='paypal')return 'PayPal';
+  if(method==='airbnb')return 'Airbnb';
+  return '';
 }
-
-function openOvernightEditor(g=null){
-  if(!currentRegistrationId){ $('registrationMessage').textContent=currentLang==='nl'?'Sla eerst de hoofdgastregistratie op.':'Save the primary guest registration first.'; return; }
-  $('overnightGuestEditor').classList.remove('hidden');
-  if(!g){ clearOvernightEditor(); }
-  else{
-    $('overnightGuestId').value=g.id;
-    $('overnightName').value=g.full_name||'';
-    $('overnightCity').value=g.city||'';
-    populateCountries($('overnightCountry'),g.country||'');
-    $('overnightCheckin').value=g.checkin_date||rf.checkin.value||'';
-    $('overnightCheckout').value=g.checkout_date||rf.checkout.value||'';
-    $('overnightRate').value=Number(g.fee_per_night||20).toFixed(2);
-    $('overnightPayment').value=g.payment_method||'';
-    $('overnightPaid').checked=!!g.fee_paid;$('overnightIdType').value=g.id_type||'';$('overnightIdOther').value=g.id_other||'';$('overnightIdVerified').checked=!!g.id_verified;toggleOvernightIdOther();
-    $('deleteOvernightGuestBtn').classList.remove('hidden');
-    $('overnightGuestMessage').textContent='';
+function toggleGuestOccupancy(resetNights=false){
+  const hasExtra=Number(rf.guestCount.value||1)>1;
+  $('additionalGuestStayFields').classList.toggle('hidden',!hasExtra);
+  const maxNights=mainStayNights();
+  rf.additionalGuestNights.max=maxNights||'';
+  if(hasExtra){
+    if(resetNights || !Number(rf.additionalGuestNights.value) || Number(rf.additionalGuestNights.value)>maxNights){
+      rf.additionalGuestNights.value=maxNights||1;
+    }
+  }else{
+    rf.additionalGuestNights.value=0;
+    rf.additionalGuestPayment.value='';
+    rf.additionalGuestPaid.checked=false;
   }
-  requestAnimationFrame(()=>$('overnightGuestEditor').scrollIntoView({behavior:'smooth',block:'nearest'}));
+  updateAdditionalGuestTotal();
+}
+function updateAdditionalGuestTotal(){
+  const nights=Number(rf.additionalGuestNights.value||0);
+  const rate=Number(rf.additionalGuestRate.value||0);
+  $('regAdditionalGuestTotal').textContent=euro(nights*rate);
 }
 
-function toggleOvernightIdOther(){
-  $('overnightOtherIdField').classList.toggle('hidden',$('overnightIdType').value!=='other');
-}
-function renderOvernightGuests(){
-  const list=$('overnightGuestList'); if(!list)return;
-  list.innerHTML='';
-  if(!currentRegistrationId){ $('overnightGuestsSummary').textContent=tr[currentLang].overnightSummaryOne; return; }
-  const rows=overnightForRegistration(currentRegistrationId);
-  const total=1+rows.length;
-  $('overnightGuestsSummary').textContent=total===1?tr[currentLang].overnightSummaryOne:tr[currentLang].overnightSummaryMany.replace('{count}',total);
-  rows.forEach(g=>{
-    const d=document.createElement('button'); d.type='button'; d.className='overnight-guest-row';
-    const idBadge=g.id_verified?`<span class="badge good">${currentLang==='nl'?'ID gecontroleerd':'ID verified'}</span>`:`<span class="badge warn">${currentLang==='nl'?'ID nog controleren':'ID to verify'}</span>`; const paid=g.fee_paid?`<span class="badge good">${currentLang==='nl'?'Betaald':'Paid'}</span>`:`<span class="badge warn">${currentLang==='nl'?'Nog te betalen':'Payment due'}</span>`;
-    d.innerHTML=`<span><strong>${escapeHtml(g.full_name||((currentLang==='nl')?'Registratie nog niet ingevuld':'Registration not completed'))}</strong><small>${fmt(g.checkin_date)} → ${fmt(g.checkout_date)} · ${overnightNights(g)} ${escapeHtml(tr[currentLang].nightsWord)}${g.id_type?` · ${escapeHtml(g.id_type==='passport'?tr[currentLang].passport:g.id_type==='id_card'?tr[currentLang].idCard:g.id_type==='drivers_licence'?tr[currentLang].drivers:g.id_type==='other'?(g.id_other||tr[currentLang].otherId):g.id_type)}`:''}</small></span><span>${idBadge}${paid}</span>`;
-    d.onclick=()=>openOvernightEditor(g);
-    list.appendChild(d);
-  });
-}
-
-async function saveOvernightGuest(){
-  if(!currentRegistrationId)return;
-  const name=$('overnightName').value.trim(), city=$('overnightCity').value.trim(), country=$('overnightCountry').value.trim();
-  const ci=$('overnightCheckin').value,co=$('overnightCheckout').value;
-  if(!name||!city||!country||!ci||!co||co<=ci){$('overnightGuestMessage').textContent=currentLang==='nl'?'Vul naam, woonplaats, land en geldige verblijfsdata in.':'Enter name, city, country and valid stay dates.';return;}
-  const idType=$('overnightIdType').value,idOther=$('overnightIdOther').value.trim(),idVerified=$('overnightIdVerified').checked;
-  if(idVerified&&!idType){$('overnightGuestMessage').textContent=currentLang==='nl'?'Kies welk identiteitsbewijs is gecontroleerd.':'Select which identification document was checked.';return;}
-  if(idVerified&&idType==='other'&&!idOther){$('overnightGuestMessage').textContent=currentLang==='nl'?'Vul het andere identiteitsbewijs in.':'Enter the other identification document.';return;}
-  const payload={guest_registration_id:currentRegistrationId,full_name:name,city,country,checkin_date:ci,checkout_date:co,fee_per_night:Number($('overnightRate').value||20),fee_includes_tourist_tax:true,payment_method:['cash','paypal','airbnb'].includes($('overnightPayment').value)?$('overnightPayment').value:null,fee_paid:$('overnightPaid').checked,id_type:idType||null,id_other:idType==='other'?(idOther||null):null,id_verified:idVerified,source:'manual'};
-  const id=$('overnightGuestId').value;
-  const q=id?supabaseClient.from('additional_overnight_guests').update(payload).eq('id',id).select().single():supabaseClient.from('additional_overnight_guests').insert([payload]).select().single();
-  const {data,error}=await q;
-  if(error){$('overnightGuestMessage').textContent=error.message;return;}
-  $('overnightGuestId').value=data.id; $('deleteOvernightGuestBtn').classList.remove('hidden'); $('overnightGuestMessage').textContent=tr[currentLang].overnightSaved;
-  await loadOvernightGuests();
-}
-
-async function deleteOvernightGuest(){
-  const id=$('overnightGuestId').value;if(!id)return;
-  if(!confirm(currentLang==='nl'?'Deze overnachtende gast verwijderen?':'Delete this overnight guest?'))return;
-  const {error}=await supabaseClient.from('additional_overnight_guests').delete().eq('id',id);
-  if(error){$('overnightGuestMessage').textContent=error.message;return;}
-  $('overnightGuestEditor').classList.add('hidden'); await loadOvernightGuests();
-}
-
-async function ensureOvernightGuestInvite(){
-  if(!currentRegistrationId)return null;
-  const ci=$('overnightCheckin').value||rf.checkin.value,co=$('overnightCheckout').value||rf.checkout.value;
-  if(!ci||!co||co<=ci){$('overnightGuestMessage').textContent=currentLang==='nl'?'Vul eerst geldige verblijfsdata in.':'Enter valid stay dates first.';return null;}
-  const existing=overnightInvites.find(i=>i.guest_registration_id===currentRegistrationId && !i.used_at && new Date(i.expires_at)>new Date());
-  if(existing)return existing;
-  const {data,error}=await supabaseClient.rpc('create_additional_guest_invite',{p_guest_registration_id:currentRegistrationId,p_checkin_date:ci,p_checkout_date:co,p_fee_per_night:Number($('overnightRate').value||20),p_valid_days:30});
-  if(error){$('overnightGuestMessage').textContent=error.message;return null;}
-  const row=Array.isArray(data)?data[0]:data;overnightInvites.unshift({guest_registration_id:currentRegistrationId,...row});return row;
-}
-async function createOvernightGuestInvite(){
-  const row=await ensureOvernightGuestInvite();if(!row)return;
-  const url=`${ADDITIONAL_GUEST_FORM_BASE}?token=${encodeURIComponent(row.token)}`;
-  showGenericQr(url,currentLang==='nl'?'Scan om extra gast te registreren':'Scan to register additional guest',`${fmt($('overnightCheckin').value||rf.checkin.value)} → ${fmt($('overnightCheckout').value||rf.checkout.value)}`);
-  $('overnightGuestMessage').textContent=tr[currentLang].overnightQrCreated;
-}
-async function copyOvernightGuestLink(){
-  const row=await ensureOvernightGuestInvite();if(!row)return;
-  const url=`${ADDITIONAL_GUEST_FORM_BASE}?token=${encodeURIComponent(row.token)}`;
-  try{await navigator.clipboard.writeText(url);$('overnightGuestMessage').textContent=currentLang==='nl'?'Registratielink gekopieerd.':'Registration link copied.';}
-  catch(e){prompt(currentLang==='nl'?'Kopieer deze registratielink:':'Copy this registration link:',url);}
-}
-
-function printOvernightGuestForm(){
-  const ci=$('overnightCheckin').value||rf.checkin.value,co=$('overnightCheckout').value||rf.checkout.value;
-  const nl=currentLang==='nl',w=window.open('','_blank');if(!w)return;
-  const title=nl?'Registratie overnachtende gast':'Additional overnight guest registration';
-  const platform=platformDisplay(effectiveRegistrationPlatform(registrations.find(r=>r.id===currentRegistrationId)))||'—';
-  w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${title}</title><style>@page{size:A4;margin:18mm}body{font-family:Arial;color:#263238;font-size:11pt}h1{color:#4f3627}.meta{padding:14px;background:#f6f1eb;border-radius:10px;margin:18px 0}.line{height:30px;border-bottom:1px solid #666;margin-bottom:15px}.box{display:inline-block;width:15px;height:15px;border:1px solid #333;vertical-align:-2px;margin-right:6px}.sig{margin-top:40px;border-top:1px solid #666;padding-top:6px;width:45%}</style></head><body><h1>${title}</h1><div>Nijmegen Guest Rooms</div><div class="meta"><b>${nl?'Boekingsplatform':'Booking platform'}:</b> ${platform}<br><b>${nl?'Aankomst':'Arrival'}:</b> ${fmt(ci)}<br><b>${nl?'Vertrek':'Departure'}:</b> ${fmt(co)}<br><b>${nl?'Toeslag':'Additional guest fee'}:</b> €${Number($('overnightRate').value||20).toFixed(2)} ${nl?'per nacht, incl. toeristenbelasting':'per night, incl. tourist tax'}</div><b>${nl?'Volledige naam':'Full name'}</b><div class="line"></div><b>${nl?'Woonplaats':'City / place of residence'}</b><div class="line"></div><b>${nl?'Land':'Country'}</b><div class="line"></div><p><span class="box"></span>${nl?'Ik verklaar dat deze gegevens volledig en juist zijn.':'I confirm that this information is complete and correct.'}</p><div class="sig">${nl?'Handtekening gast':'Guest signature'}</div><script>window.onload=()=>setTimeout(()=>window.print(),250)<\/script></body></html>`);
-  w.document.close();
-}
-
-function showGenericQr(url,title,subtitle=''){
-  const container=$('qrCodeContainer');container.innerHTML='';
-  $('qrModalTitle').textContent=title;$('qrModalSubtitle').textContent=subtitle;
-  $('qrReservationInfo').textContent='';
-  $('copyQrLinkBtn').textContent=tr[currentLang].qrCopy;
-  if(typeof window.QRCode!=='function'){alert('QR library unavailable');return;}
-  new window.QRCode(container,{text:url,width:300,height:300,colorDark:'#000000',colorLight:'#ffffff',correctLevel:window.QRCode.CorrectLevel.M});
-  $('copyQrLinkBtn').onclick=async()=>{await navigator.clipboard.writeText(url);$('copyQrLinkBtn').textContent=tr[currentLang].copied;};
-  $('qrModal').classList.remove('hidden');document.documentElement.classList.add('qr-modal-open');document.body.classList.add('qr-modal-open');
-}
-
-async function loadRegs(){const {data,error}=await supabaseClient.from('guest_registrations').select('*').order('checkin_date',{ascending:false}).limit(250);if(error){$('registrationList').innerHTML=`<p class="muted">${error.message}</p>`;return;}registrations=data||[];renderAttention();renderRegs();renderReservations(); if(!overnightGuests.length) loadOvernightGuests(); else renderOvernightGuests();}
+async function loadRegs(){const {data,error}=await supabaseClient.from('guest_registrations').select('*').order('checkin_date',{ascending:false}).limit(250);if(error){$('registrationList').innerHTML=`<p class="muted">${error.message}</p>`;return;}registrations=data||[];renderAttention();renderRegs();renderReservations();}
 async function deleteRegistration(){
   if(!currentRegistrationId)return;
   if(!confirm(tr[currentLang].confirmDeleteReg))return;
@@ -882,9 +778,9 @@ function renderRegs(){
     const invoiceBadge=linked
       ? `<button type="button" class="badge invoice-created linked-invoice-badge" title="${escapeHtml(x.openInvoice)}">${escapeHtml(x.invoiceCreated)} · ${escapeHtml(linked.invoice_number)}</button>`
       : (r.invoice_requested?`<span class="badge invoice-pending">${escapeHtml(x.invoicePending)}</span>`:'');
-    const guestCount=overnightSummaryCount(r.id), guestCountBadge=guestCount>1?`<span class="badge">👤 ${guestCount} ${currentLang==='nl'?'gasten':'guests'}</span>`:''; const platform=effectiveRegistrationPlatform(r), platformBadge=platform?`<span class="badge platform-archive ${platform==='airbnb'?'airbnb':platform==='booking'?'booking':''}">${escapeHtml(platformDisplay(platform))}</span>`:'';
+    const guestCount=registrationGuestCount(r), guestCountBadge=guestCount>1?`<span class="badge">👤 ${guestCount} ${currentLang==='nl'?'gasten':'guests'}</span>`:''; const platform=effectiveRegistrationPlatform(r), platformBadge=platform?`<span class="badge platform-archive ${platform==='airbnb'?'airbnb':platform==='booking'?'booking':''}">${escapeHtml(platformDisplay(platform))}</span>`:'';
     const d=document.createElement('div'); d.className='registration-item list-item-with-action';
-    d.innerHTML=`<div class="list-item-content"><strong>${escapeHtml(r.full_name)}</strong><span class="muted">${fmt(r.checkin_date)} → ${fmt(r.checkout_date)}</span><div class="registration-badges">${platformBadge}${guestCountBadge}<span class="badge ${registrationIdsVerified(r)?'good':'warn'}">${escapeHtml(registrationIdStatusText(r))}</span>${invoiceBadge}<span class="badge">${r.source==='paper_manual'?(currentLang==='nl'?'Papier':'Paper'):(currentLang==='nl'?'Digitaal':'Digital')}</span></div></div><button type="button" class="quick-delete-btn" title="${escapeHtml(x.quickDeleteReg)}" aria-label="${escapeHtml(x.quickDeleteReg)}">🗑</button>`;
+    d.innerHTML=`<div class="list-item-content"><strong>${escapeHtml(r.full_name)}</strong><span class="muted">${fmt(r.checkin_date)} → ${fmt(r.checkout_date)}</span><div class="registration-badges">${platformBadge}${guestCountBadge}<span class="badge ${r.id_verified?'good':'warn'}">${escapeHtml(registrationIdStatusText(r))}</span>${invoiceBadge}<span class="badge">${r.source==='paper_manual'?(currentLang==='nl'?'Papier':'Paper'):(currentLang==='nl'?'Digitaal':'Digital')}</span></div></div><button type="button" class="quick-delete-btn" title="${escapeHtml(x.quickDeleteReg)}" aria-label="${escapeHtml(x.quickDeleteReg)}">🗑</button>`;
     d.querySelector('.list-item-content').onclick=(e)=>{ if(e.target.closest('.linked-invoice-badge'))return; loadReg(r,'heading'); };
     const badge=d.querySelector('.linked-invoice-badge'); if(badge) badge.onclick=e=>{e.stopPropagation();const opened=loadInvoice(linked);if(opened&&window.innerWidth>1000){requestAnimationFrame(()=>$('invoiceDetailsCard').scrollIntoView({behavior:'smooth',block:'start'}));}};
     d.querySelector('.quick-delete-btn').onclick=e=>{e.stopPropagation();quickDeleteRegistration(r);};
@@ -902,50 +798,28 @@ function mainPaymentForRegistration(registrationId){
   if(platform==='airbnb')return tr[currentLang].airbnb;
   return '';
 }
-function additionalPaymentLabel(method){
-  if(method==='cash')return currentLang==='nl'?'Contant':'Cash';
-  if(method==='paypal')return 'PayPal';
-  if(method==='airbnb')return 'Airbnb';
-  return '';
-}
-function buildInvoicePaymentText(registrationId,extras){
+function buildInvoicePaymentText(registrationId){
+  const reg=registrations.find(g=>g.id===registrationId);
+  if(!reg)return '';
   const main=mainPaymentForRegistration(registrationId);
-  const methods=[...new Set((extras||[]).map(g=>g.payment_method).filter(Boolean))];
-
-  // If every charge was paid via Airbnb, one concise line is enough.
-  if(main===tr[currentLang].airbnb && methods.length===1 && methods[0]==='airbnb'){
-    return tr[currentLang].airbnb;
-  }
-  if(!methods.length)return main;
-
-  const mainText=main
-    ? `${currentLang==='nl'?'Accommodatie':'Accommodation'}: ${main}`
-    : '';
-
-  const extraTexts=methods.map(m=>{
-    const label=additionalPaymentLabel(m);
-    if(m==='airbnb') return `${currentLang==='nl'?'Extra overnachtende gast':'Additional overnight guest'}: ${tr[currentLang].airbnb}`;
-    if(m==='paypal') return `${currentLang==='nl'?'Extra overnachtende gast':'Additional overnight guest'}: ${currentLang==='nl'?'Betaald via PayPal':'Paid via PayPal'}`;
-    if(m==='cash') return `${currentLang==='nl'?'Extra overnachtende gast':'Additional overnight guest'}: ${currentLang==='nl'?'Contant betaald':'Paid in cash'}`;
-    return `${currentLang==='nl'?'Extra overnachtende gast':'Additional overnight guest'}: ${label}`;
-  });
-
-  return [mainText,...extraTexts].filter(Boolean).join('  •  ');
+  const hasExtra=registrationGuestCount(reg)>1 && Number(reg.additional_guest_nights||0)>0;
+  const method=hasExtra?(reg.additional_guest_payment_method||''):'';
+  if(!hasExtra || !method)return main;
+  if(main===tr[currentLang].airbnb && method==='airbnb')return tr[currentLang].airbnb;
+  const mainText=main?`${currentLang==='nl'?'Accommodatie':'Accommodation'}: ${main}`:'';
+  let extraText='';
+  if(method==='airbnb') extraText=`${currentLang==='nl'?'Extra overnachtende gast':'Additional overnight guest'}: ${tr[currentLang].airbnb}`;
+  if(method==='paypal') extraText=`${currentLang==='nl'?'Extra overnachtende gast':'Additional overnight guest'}: ${currentLang==='nl'?'Betaald via PayPal':'Paid via PayPal'}`;
+  if(method==='cash') extraText=`${currentLang==='nl'?'Extra overnachtende gast':'Additional overnight guest'}: ${currentLang==='nl'?'Contant betaald':'Paid in cash'}`;
+  return [mainText,extraText].filter(Boolean).join('  •  ');
 }
-function applyCombinedPaymentToInvoice(registrationId,extras){
-  const text=buildInvoicePaymentText(registrationId,extras);
+function applyCombinedPaymentToInvoice(registrationId){
+  const text=buildInvoicePaymentText(registrationId);
   if(!text)return false;
-
-  // Keep the normal platform dropdown when there is only one platform payment.
-  if(text===tr[currentLang].booking){
-    f.payment.value=tr[currentLang].booking;f.customPayment.value='';
-  }else if(text===tr[currentLang].airbnb){
-    f.payment.value=tr[currentLang].airbnb;f.customPayment.value='';
-  }else{
-    f.payment.value='custom';f.customPayment.value=text;
-  }
-  toggleInvoiceCustom();
-  return true;
+  if(text===tr[currentLang].booking){f.payment.value=tr[currentLang].booking;f.customPayment.value='';}
+  else if(text===tr[currentLang].airbnb){f.payment.value=tr[currentLang].airbnb;f.customPayment.value='';}
+  else{f.payment.value='custom';f.customPayment.value=text;}
+  toggleInvoiceCustom(); return true;
 }
 
 function useRegistrationForInvoice(){
@@ -955,12 +829,13 @@ function useRegistrationForInvoice(){
   suppressDirty=true;
   currentInvoiceId=null;
   f.registrationId.value=currentRegistrationId||'';f.guestName.value=rf.name.value;f.guestAddress.value='';f.guestPostal.value='';f.guestCity.value=rf.city.value;f.guestCountry.value=rf.country.value;f.companyName.value=rf.invoiceType.value==='company'?rf.companyName.value:'';f.companyAddress.value=rf.invoiceType.value==='company'?rf.companyAddress.value:'';f.vat.value=rf.invoiceType.value==='company'?rf.vat.value:'';f.email.value=rf.email.value;f.booking.value=rf.booking.value;f.checkin.value=rf.checkin.value;f.checkout.value=rf.checkout.value;applyReservationRoomToInvoice(currentRegistrationId);applyReservationPaymentToInvoice(currentRegistrationId);
-  const extras=overnightForRegistration(currentRegistrationId);
-  const extraFee=extras.reduce((sum,g)=>sum+overnightFeeTotal(g),0);
-  const extraNights=extras.reduce((sum,g)=>sum+overnightNights(g),0);
-  f.additionalGuestFee.value=extraFee.toFixed(2);f.additionalGuestNights.value=extraNights;f.guests.value=extras.length?2:1;
-  $('additionalGuestInvoiceFields').classList.toggle('hidden',!extras.length);
-  applyCombinedPaymentToInvoice(currentRegistrationId,extras);
+  const reg=registrations.find(g=>g.id===currentRegistrationId);
+  const hasExtra=registrationGuestCount(reg)>1 && Number(reg?.additional_guest_nights||0)>0;
+  const extraNights=hasExtra?Number(reg.additional_guest_nights||0):0;
+  const extraFee=hasExtra?additionalGuestTotalFromRegistration(reg):0;
+  f.additionalGuestFee.value=extraFee.toFixed(2);f.additionalGuestNights.value=extraNights;f.guests.value=registrationGuestCount(reg);
+  $('additionalGuestInvoiceFields').classList.toggle('hidden',!hasExtra);
+  applyCombinedPaymentToInvoice(currentRegistrationId);
   manualNights=false;autoNights();$('deleteBtn').classList.add('hidden');$('duplicateBtn').classList.add('hidden');updatePreview();invoiceDirty=true;suppressDirty=false;document.querySelector('.form-card').scrollIntoView({behavior:'smooth'});
 }
 
@@ -1023,7 +898,13 @@ $('loginCodeForm').addEventListener('submit',e=>{
 $('resendLoginCodeBtn').onclick=()=>{if(pendingLoginEmail)login(pendingLoginEmail,true)};
 $('changeLoginEmailBtn').onclick=()=>{pendingLoginEmail='';showLoginEmailStep();};
 $('loginCode').addEventListener('input',()=>{$('loginCode').value=$('loginCode').value.replace(/\D/g,'').slice(0,8);});
-$('logoutBtn').onclick=logout;$('manualInviteToggleBtn').onclick=()=>setManualInviteOpen($('manualInvitePanel').classList.contains('hidden'));$('closeManualInviteBtn').onclick=()=>setManualInviteOpen(false);$('createInviteBtn').onclick=createInvite;$('copyInviteBtn').onclick=async()=>{await navigator.clipboard.writeText($('inviteUrl').value);$('inviteMessage').textContent=tr[currentLang].copied;};$('newPaperBtn').onclick=blankRegistration;$('closeRegistrationBtn').onclick=()=>{if(!guardUnsaved('registration'))return;registrationDirty=false;currentDraftReservationId=null;$('registrationEditor').classList.add('hidden');};$('saveRegistrationBtn').onclick=saveReg;$('addOvernightGuestBtn').onclick=()=>openOvernightEditor();$('overnightIdType').onchange=toggleOvernightIdOther;$('saveOvernightGuestBtn').onclick=saveOvernightGuest;$('createOvernightQrBtn').onclick=createOvernightGuestInvite;$('copyOvernightLinkBtn').onclick=copyOvernightGuestLink;$('printOvernightFormBtn').onclick=printOvernightGuestForm;$('cancelOvernightGuestBtn').onclick=()=>{$('overnightGuestEditor').classList.add('hidden');};$('deleteOvernightGuestBtn').onclick=deleteOvernightGuest;$('useForInvoiceBtn').onclick=useRegistrationForInvoice;$('deleteRegistrationBtn').onclick=deleteRegistration;$('registrationSearch').oninput=renderRegs;rf.invoiceRequested.onchange=toggleRegInvoice;rf.invoiceType.onchange=toggleRegInvoice;rf.idType.onchange=toggleIdOther;
+$('logoutBtn').onclick=logout;$('manualInviteToggleBtn').onclick=()=>setManualInviteOpen($('manualInvitePanel').classList.contains('hidden'));$('closeManualInviteBtn').onclick=()=>setManualInviteOpen(false);$('createInviteBtn').onclick=createInvite;$('copyInviteBtn').onclick=async()=>{await navigator.clipboard.writeText($('inviteUrl').value);$('inviteMessage').textContent=tr[currentLang].copied;};$('newPaperBtn').onclick=blankRegistration;$('closeRegistrationBtn').onclick=()=>{if(!guardUnsaved('registration'))return;registrationDirty=false;currentDraftReservationId=null;$('registrationEditor').classList.add('hidden');};$('saveRegistrationBtn').onclick=saveReg;
+$('regGuestCount').onchange=()=>{toggleGuestOccupancy(true);registrationDirty=true;};
+$('regCheckin').addEventListener('change',()=>toggleGuestOccupancy());$('regCheckout').addEventListener('change',()=>toggleGuestOccupancy());
+$('regAdditionalGuestNights').oninput=()=>{const max=mainStayNights();if(Number(rf.additionalGuestNights.value)>max)rf.additionalGuestNights.value=max;updateAdditionalGuestTotal();registrationDirty=true;};
+$('regAdditionalGuestRate').oninput=()=>{updateAdditionalGuestTotal();registrationDirty=true;};
+$('regAdditionalGuestPayment').onchange=()=>{registrationDirty=true;};
+$('regAdditionalGuestPaid').onchange=()=>{registrationDirty=true;};$('useForInvoiceBtn').onclick=useRegistrationForInvoice;$('deleteRegistrationBtn').onclick=deleteRegistration;$('registrationSearch').oninput=renderRegs;rf.invoiceRequested.onchange=toggleRegInvoice;rf.invoiceType.onchange=toggleRegInvoice;rf.idType.onchange=toggleIdOther;
 document.querySelectorAll('.filter-pill').forEach(b=>b.onclick=()=>setRegistrationFilter(b.dataset.filter));
 document.querySelectorAll('[data-reservation-attention]').forEach(b=>b.onclick=()=>{setReservationFilter(b.dataset.reservationAttention);$('reservationsOverview').scrollIntoView({behavior:'smooth',block:'start'});});
 $('saveBtn').onclick=saveInvoice;$('deleteBtn').onclick=deleteInvoice;$('duplicateBtn').onclick=duplicateInvoice;$('newInvoiceBtn').onclick=()=>newInvoice();$('printBtn').onclick=()=>{if(validateInvoice())window.print();else $('saveMessage').textContent=tr[currentLang].required;};$('searchInvoices').oninput=renderInvoices;f.room.onchange=()=>{toggleInvoiceCustom();updatePreview()};f.payment.onchange=()=>{toggleInvoiceCustom();updatePreview()};f.taxMode.onchange=()=>updatePreview();f.checkin.onchange=()=>{manualNights=false;autoNights();updatePreview()};f.checkout.onchange=()=>{manualNights=false;autoNights();updatePreview()};f.nights.oninput=()=>{manualNights=true;updatePreview()};

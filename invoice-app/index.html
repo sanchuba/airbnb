@@ -8,11 +8,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="NGR Admin" />
-  <link rel="manifest" href="./manifest.webmanifest?v=3.7.3" />
+  <link rel="manifest" href="./manifest.webmanifest?v=3.8.0" />
   <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=3.5.0" />
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=3.5.0" />
   <title>Nijmegen Guest Rooms – Admin</title>
-  <link rel="stylesheet" href="./style.css?v=3.7.3" />
+  <link rel="stylesheet" href="./style.css?v=3.8.0" />
 </head>
 <body>
   <div class="container">
@@ -208,53 +208,46 @@
               </div>
             </div>
 
-            <div id="overnightGuestsBox" class="subcard overnight-guests-box">
-              <div class="section-header compact-section-header">
-                <div>
-                  <h3 id="overnightGuestsTitle">Overnight guests</h3>
-                  <p id="overnightGuestsSummary" class="muted overnight-summary">1 registered guest</p>
-                </div>
-                <button id="addOvernightGuestBtn" type="button" class="action-btn secondary">+ Add overnight guest</button>
+            <div id="guestOccupancyBox" class="subcard guest-occupancy-box">
+              <div>
+                <h3 id="guestOccupancyTitle">Stay occupancy</h3>
+                <p id="guestOccupancyHint" class="muted occupancy-hint">Register only the number of overnight guests. No personal details are required for additional guests.</p>
               </div>
-              <div id="overnightGuestList"></div>
-              <div id="overnightGuestEditor" class="overnight-editor hidden">
-                <input id="overnightGuestId" type="hidden" />
-                <div class="field"><label id="labelOvernightName" for="overnightName">Full name</label><input id="overnightName" /></div>
+              <div class="field">
+                <label id="labelGuestCount" for="regGuestCount">Number of guests</label>
+                <select id="regGuestCount">
+                  <option value="1">1 guest</option>
+                  <option value="2">2 guests</option>
+                </select>
+              </div>
+              <div id="additionalGuestStayFields" class="conditional hidden">
                 <div class="inline-grid">
-                  <div class="field"><label id="labelOvernightCity" for="overnightCity">City / place of residence</label><input id="overnightCity" /></div>
-                  <div class="field"><label id="labelOvernightCountry" for="overnightCountry">Country</label><select id="overnightCountry"><option value="">Select a country</option></select></div>
+                  <div class="field">
+                    <label id="labelRegAdditionalGuestNights" for="regAdditionalGuestNights">Additional guest nights</label>
+                    <input id="regAdditionalGuestNights" type="number" min="1" step="1" />
+                    <p id="additionalGuestNightsHint" class="field-hint">Defaults to the main guest's full stay, but can be reduced.</p>
+                  </div>
+                  <div class="field">
+                    <label id="labelRegAdditionalGuestRate" for="regAdditionalGuestRate">Additional guest fee (€ per night, incl. tourist tax)</label>
+                    <input id="regAdditionalGuestRate" type="number" min="0" step="0.01" value="20.00" />
+                  </div>
                 </div>
                 <div class="inline-grid">
-                  <div class="field"><label id="labelOvernightCheckin" for="overnightCheckin">Arrival</label><input id="overnightCheckin" type="date" /></div>
-                  <div class="field"><label id="labelOvernightCheckout" for="overnightCheckout">Departure</label><input id="overnightCheckout" type="date" /></div>
+                  <div class="field">
+                    <label id="labelRegAdditionalGuestPayment" for="regAdditionalGuestPayment">Additional guest payment</label>
+                    <select id="regAdditionalGuestPayment">
+                      <option value="">Not selected</option>
+                      <option value="cash">Cash</option>
+                      <option value="paypal">PayPal</option>
+                      <option value="airbnb">Airbnb</option>
+                    </select>
+                  </div>
+                  <div class="field">
+                    <label id="labelRegAdditionalGuestTotal">Additional guest total</label>
+                    <div id="regAdditionalGuestTotal" class="readonly-value">€0.00</div>
+                  </div>
                 </div>
-                <div class="inline-grid">
-                  <div class="field"><label id="labelOvernightRate" for="overnightRate">Additional guest fee (€ per night, incl. tourist tax)</label><input id="overnightRate" type="number" min="0" step="0.01" value="20.00" /></div>
-                  <div class="field"><label id="labelOvernightPayment" for="overnightPayment">Payment method</label><select id="overnightPayment"><option value="">Not selected</option><option value="cash">Cash</option><option value="paypal">PayPal</option><option value="airbnb">Airbnb</option></select></div>
-                </div>
-                <div class="field">
-                  <label id="labelOvernightIdType" for="overnightIdType">Identification shown</label>
-                  <select id="overnightIdType">
-                    <option value="">Not selected</option>
-                    <option value="passport">Passport</option>
-                    <option value="id_card">ID card</option>
-                    <option value="drivers_licence">Driver's licence</option>
-                    <option value="other">Other valid ID</option>
-                  </select>
-                </div>
-                <div id="overnightOtherIdField" class="field hidden">
-                  <label id="labelOvernightIdOther" for="overnightIdOther">Other valid ID</label>
-                  <input id="overnightIdOther" />
-                </div>
-                <div class="overnight-checks"><label class="check-row"><input id="overnightPaid" type="checkbox" /><span id="overnightPaidText">Fee paid</span></label><label class="check-row"><input id="overnightIdVerified" type="checkbox" /><span id="overnightIdVerifiedText">Identity verified</span></label></div>
-                <div class="button-row overnight-actions">
-                  <button id="saveOvernightGuestBtn" type="button" class="action-btn primary">Save overnight guest</button>
-                  <button id="createOvernightQrBtn" type="button" class="action-btn secondary">Show QR code</button><button id="copyOvernightLinkBtn" type="button" class="action-btn secondary">Copy registration link</button>
-                  <button id="printOvernightFormBtn" type="button" class="action-btn secondary">Print paper form</button>
-                  <button id="cancelOvernightGuestBtn" type="button" class="action-btn secondary">Cancel</button>
-                  <button id="deleteOvernightGuestBtn" type="button" class="action-btn danger hidden">Delete</button>
-                </div>
-                <p id="overnightGuestMessage" class="muted"></p>
+                <label class="check-row"><input id="regAdditionalGuestPaid" type="checkbox" /><span id="regAdditionalGuestPaidText">Additional guest fee paid</span></label>
               </div>
             </div>
 
@@ -337,10 +330,10 @@
   </div>
   <button id="backToTopBtn" class="back-to-top-btn screen-only" type="button" aria-label="Back to top" title="Back to top">↑</button>
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-  <script type="module" src="./app.js?v=3.7.3"></script>
+  <script type="module" src="./app.js?v=3.8.0"></script>
   <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.7.3').catch(() => {}));
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.8.0').catch(() => {}));
   }
   </script>
 </body>
