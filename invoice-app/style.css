@@ -1109,3 +1109,93 @@ body.qr-modal-open{
   border:1px solid var(--border);border-radius:12px;background:var(--soft);
   font-weight:700;color:var(--heading)
 }
+
+
+/* v3.9.0 — mobile workflow polish */
+@media (min-width:701px){
+  .reservation-more-group,
+  .reservation-more-menu{
+    display:contents;
+  }
+  .reservation-more-toggle{
+    display:none !important;
+  }
+}
+
+.clickable-list-card{
+  cursor:pointer;
+  transition:background .16s ease,border-color .16s ease,box-shadow .16s ease,transform .12s ease;
+}
+.clickable-list-card:focus-visible{
+  outline:3px solid rgba(102,72,54,.20);
+  outline-offset:2px;
+}
+.clickable-list-card:active{
+  transform:scale(.997);
+}
+
+.mobile-save-bar{display:none}
+
+@media (max-width:700px){
+  .registration-list{
+    max-height:none;
+    overflow:visible;
+  }
+
+  .reservation-more-group{
+    width:100%;
+  }
+  .reservation-more-toggle{
+    width:100%;
+    display:block;
+  }
+  .reservation-more-menu{
+    display:none;
+    width:100%;
+    margin-top:8px;
+    gap:8px;
+    flex-direction:column;
+  }
+  .reservation-more-group.open .reservation-more-menu{
+    display:flex;
+  }
+  .reservation-more-menu .action-btn{
+    width:100%;
+    text-align:center;
+  }
+
+  .mobile-save-bar{
+    position:fixed;
+    z-index:9500;
+    left:max(12px,env(safe-area-inset-left));
+    right:max(12px,env(safe-area-inset-right));
+    bottom:max(12px,env(safe-area-inset-bottom));
+    min-height:58px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    padding:9px 10px 9px 16px;
+    border:1px solid rgba(92,70,56,.12);
+    border-radius:18px;
+    background:rgba(255,255,255,.97);
+    color:var(--heading);
+    box-shadow:0 10px 34px rgba(0,0,0,.18);
+    backdrop-filter:blur(14px);
+    font-weight:700;
+  }
+  .mobile-save-bar.hidden{
+    display:none !important;
+  }
+  .mobile-save-bar .action-btn{
+    min-width:104px;
+    flex:0 0 auto;
+    padding:11px 18px;
+  }
+  body.mobile-save-visible{
+    padding-bottom:calc(90px + env(safe-area-inset-bottom));
+  }
+  body.mobile-save-visible .back-to-top-btn{
+    bottom:calc(86px + env(safe-area-inset-bottom));
+  }
+}
