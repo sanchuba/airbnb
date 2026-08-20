@@ -1075,3 +1075,20 @@ body.qr-modal-open{
     max-width: 100%;
   }
 }
+
+/* v3.6.0 — additional overnight guests */
+.overnight-guests-box{margin-top:18px}
+.compact-section-header{align-items:flex-start}
+.overnight-summary{margin:3px 0 0}
+.overnight-guest-row{
+ width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;
+ border:1px solid var(--border);background:var(--soft);border-radius:12px;padding:12px 14px;
+ color:inherit;text-align:left;cursor:pointer;margin-top:9px
+}
+.overnight-guest-row strong,.overnight-guest-row small{display:block}
+.overnight-guest-row small{margin-top:4px;color:var(--muted)}
+.overnight-editor{border-top:1px solid var(--border);margin-top:14px;padding-top:14px}
+@media(max-width:700px){
+ .overnight-guest-row{align-items:flex-start;flex-direction:column}
+ .overnight-actions .action-btn{flex:1 1 100%}
+}
