@@ -399,8 +399,11 @@ async function showRegistrationQr(inv,reservation=null){
     correctLevel:window.QRCode.CorrectLevel.M
   });
   $('copyQrLinkBtn').onclick=async()=>{
+    const btn=$('copyQrLinkBtn');
     await navigator.clipboard.writeText(url);
-    $('copyQrLinkBtn').textContent=x.copied;
+    btn.textContent=x.copied;
+    window.clearTimeout(btn._copyResetTimer);
+    btn._copyResetTimer=window.setTimeout(()=>{btn.textContent=x.copy;},2500);
   };
   $('qrModal').classList.remove('hidden');
   document.documentElement.classList.add('qr-modal-open');
@@ -427,7 +430,7 @@ function addReservationLinkBox(parent,inv,reservation=null){
   const old=parent.querySelector('.reservation-link-box'); if(old)old.remove();
   const wrap=document.createElement('div'); wrap.className='reservation-link-box'; const url=reservationLink(inv);
   wrap.innerHTML=`<input readonly value="${escapeHtml(url)}"><button type="button" class="action-btn secondary copy-link-btn">${escapeHtml(tr[currentLang].copyRegistrationLink)}</button><button type="button" class="action-btn primary qr-link-btn">${escapeHtml(tr[currentLang].showQr)}</button>`;
-  wrap.querySelector('.copy-link-btn').onclick=async e=>{e.stopPropagation();await navigator.clipboard.writeText(url); wrap.querySelector('.copy-link-btn').textContent=tr[currentLang].copied;};
+  wrap.querySelector('.copy-link-btn').onclick=async e=>{e.stopPropagation();const btn=wrap.querySelector('.copy-link-btn');await navigator.clipboard.writeText(url);btn.textContent=tr[currentLang].copied;window.clearTimeout(btn._copyResetTimer);btn._copyResetTimer=window.setTimeout(()=>{btn.textContent=tr[currentLang].copy;},2500);};
   wrap.querySelector('.qr-link-btn').onclick=e=>{e.stopPropagation();showRegistrationQr(inv,reservation);};
   parent.appendChild(wrap);
 }
