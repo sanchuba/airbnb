@@ -1975,3 +1975,27 @@ body.qr-modal-open{
     letter-spacing:.01em;
   }
 }
+
+/* v3.16.2 — iOS/Safari fix for persistent mobile weekday header */
+@media(max-width:700px){
+  /* position:sticky cannot follow the document scroll when an ancestor is an
+     overflow-clipping container. Both mode still keeps its normal clipping;
+     only the vertically scrolling single-room calendar needs overflow visible. */
+  #calendarOverview:not(.calendar-both-continuous){
+    overflow:visible!important;
+  }
+
+  #calendarOverview:not(.calendar-both-continuous) .calendar-room-month.continuous-mobile{
+    overflow:visible!important;
+    contain:none!important;
+  }
+
+  #calendarOverview:not(.calendar-both-continuous) .calendar-room-month.continuous-mobile > .room-month-weekdays{
+    position:-webkit-sticky;
+    position:sticky;
+    top:0;
+    z-index:100;
+    display:grid!important;
+    visibility:visible!important;
+  }
+}
