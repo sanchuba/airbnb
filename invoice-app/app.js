@@ -1170,7 +1170,7 @@ if(backToTopBtn){
 window.addEventListener('beforeunload',e=>{if(registrationDirty||invoiceDirty){e.preventDefault();e.returnValue='';}});
 initAdminNav();
 
-async function init(){setTexts();toggleRegInvoice();toggleIdOther();toggleInvoiceCustom();const s=await session();if(!s){document.body.classList.remove('mobile-app-active');$('loginView').classList.remove('hidden');$('appView').classList.add('hidden');return;}if(!(await allowed())){await supabaseClient.auth.signOut();$('loginMessage').textContent=tr[currentLang].denied;return;}$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');$('logoutBtn').classList.remove('hidden');initMobileAppShell();await Promise.all([loadRegs(),loadInvoices(),loadReservations(),newInvoice(true)]); await autoSyncCalendars();}
+async function init(){setTexts();setReservationFilter(reservationFilter);toggleRegInvoice();toggleIdOther();toggleInvoiceCustom();const s=await session();if(!s){document.body.classList.remove('mobile-app-active');$('loginView').classList.remove('hidden');$('appView').classList.add('hidden');return;}if(!(await allowed())){await supabaseClient.auth.signOut();$('loginMessage').textContent=tr[currentLang].denied;return;}$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');$('logoutBtn').classList.remove('hidden');initMobileAppShell();await Promise.all([loadRegs(),loadInvoices(),loadReservations(),newInvoice(true)]); await autoSyncCalendars();}
 init().catch(err=>{
   console.error('Admin initialization failed:', err);
   const msg=document.getElementById('loginMessage');
