@@ -1499,3 +1499,52 @@ body.qr-modal-open{
   .calendar-room-view-summary .muted{font-size:10px}
   .calendar-room-switcher{margin-top:1px}
 }
+
+/* v3.14.3 — persistent mobile room switch + exact Both reset */
+.calendar-mobile-room-btn{display:none}
+
+@media(max-width:700px){
+  /* The floating control is now the primary, always-visible room selector:
+     Cozy | Spacious | Both. */
+  .calendar-view-switch{
+    left:14px;
+    right:14px;
+    width:auto;
+    display:grid;
+    grid-template-columns:1fr 1fr .72fr;
+    gap:3px;
+  }
+  .calendar-view-switch button{
+    min-width:0;
+    width:100%;
+    padding:10px 7px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    font-size:10.5px;
+  }
+  .calendar-mobile-room-btn{display:block}
+
+  /* Do not depend on a sticky header several screens above for room switching.
+     The room identity remains in the floating selector at all times. */
+  .calendar-room-view-head:not(.hidden){
+    position:static;
+    margin:0 0 10px;
+    padding:5px 2px 8px;
+    box-shadow:none;
+    background:transparent;
+    border-bottom:0;
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+  }
+  .calendar-room-view-head .calendar-room-switcher{display:none}
+  .calendar-room-view-summary{display:none}
+
+  /* Override the previous first-button truncation rule now that the first
+     button is an actual room name rather than "Month · Cozy". */
+  .calendar-view-switch button:first-child{max-width:none}
+}
+
+@media(min-width:701px){
+  .calendar-mobile-room-btn{display:none!important}
+}

@@ -218,13 +218,38 @@ function scrollCalendarToTodayStart(behavior='auto'){
   requestAnimationFrame(()=>scrollCalendarToDate(today,behavior));
 }
 function updateCalendarViewSwitch(){
-  const x=tr[currentLang],month=$('calendarViewMonthBtn'),both=$('calendarViewBothBtn');
+  const x=tr[currentLang],month=$('calendarViewMonthBtn'),other=$('calendarViewOtherRoomBtn'),both=$('calendarViewBothBtn');
+  const mobile=isMobileShell();
+  if(mobile){
+    if(month){
+      month.textContent=calendarRoomDisplay('cozy');
+      month.classList.toggle('active',calendarRoomView==='cozy');
+      month.setAttribute('aria-pressed',String(calendarRoomView==='cozy'));
+    }
+    if(other){
+      other.textContent=calendarRoomDisplay('spacious');
+      other.classList.toggle('active',calendarRoomView==='spacious');
+      other.setAttribute('aria-pressed',String(calendarRoomView==='spacious'));
+    }
+    if(both){
+      both.textContent=x.calendarBothView;
+      both.classList.toggle('active',!calendarRoomView);
+      both.setAttribute('aria-pressed',String(!calendarRoomView));
+    }
+    return;
+  }
   if(month){
     const roomSuffix=calendarRoomView?` · ${calendarRoomView==='cozy'?(currentLang==='nl'?'Knus':'Cozy'):(currentLang==='nl'?'Ruim':'Spacious')}`:'';
     month.textContent=x.calendarMonthView+roomSuffix;
-    month.classList.toggle('active',!!calendarRoomView);month.setAttribute('aria-pressed',String(!!calendarRoomView));
+    month.classList.toggle('active',!!calendarRoomView);
+    month.setAttribute('aria-pressed',String(!!calendarRoomView));
   }
-  if(both){both.textContent=x.calendarBothView;both.classList.toggle('active',!calendarRoomView);both.setAttribute('aria-pressed',String(!calendarRoomView));}
+  if(other){other.classList.remove('active');other.setAttribute('aria-pressed','false');}
+  if(both){
+    both.textContent=x.calendarBothView;
+    both.classList.toggle('active',!calendarRoomView);
+    both.setAttribute('aria-pressed',String(!calendarRoomView));
+  }
 }
 function updateCalendarRoomSwitcher(){
   const cozy=$('calendarRoomCozyBtn'),spacious=$('calendarRoomSpaciousBtn');
@@ -236,6 +261,19 @@ function setCalendarRoomView(roomKey,opts={}){
   calendarRoomScrollDate=opts.date||calendarRoomScrollDate||monthStartIso();
   renderCalendar();
   requestAnimationFrame(()=>scrollRoomMonthToDate(calendarRoomScrollDate,opts.behavior||'auto'));
+}
+function showBothAtInitialTodayPosition(){
+  const n=new Date();
+  calendarRoomView=null;
+  calendarCursor=new Date(n.getFullYear(),n.getMonth(),1);
+  calendarRoomScrollDate=localToday();
+  calendarTimelineScrollLeft=0;
+  calendarHasVisited=true;
+  renderCalendar();
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    scrollCalendarToTodayStart('auto');
+    if($('calendarScroller'))calendarTimelineScrollLeft=$('calendarScroller').scrollLeft;
+  }));
 }
 function exitCalendarRoomView(opts={}){
   const date=isMobileShell()?visibleRoomMonthDate():(calendarRoomScrollDate||monthStartIso());
@@ -1402,8 +1440,20 @@ document.querySelectorAll('[data-reservation-filter]').forEach(b=>b.onclick=()=>
 document.querySelectorAll('.lang-btn').forEach(b=>b.onclick=()=>{currentLang=b.dataset.lang;setTexts();toggleRegInvoice();toggleIdOther();toggleInvoiceCustom();renderReservations();updateMobileSaveBar();renderCalendarSyncAge();renderCalendar();updateMobileShellText();if(pendingLoginEmail)startOtpCooldown(pendingLoginEmail);});
 
 
-$('calendarViewMonthBtn').onclick=()=>setCalendarRoomView(calendarRoomView||'cozy',{date:calendarRoomView?visibleRoomMonthDate():visibleTimelineDate(),behavior:'smooth'});
-$('calendarViewBothBtn').onclick=()=>exitCalendarRoomView({behavior:'smooth'});
+$('calendarViewMonthBtn').onclick=()=>{
+  if(isMobileShell()){
+    setCalendarRoomView('cozy',{date:calendarRoomView?visibleRoomMonthDate():visibleTimelineDate(),behavior:'auto'});
+  }else{
+    setCalendarRoomView(calendarRoomView||'cozy',{date:calendarRoomView?visibleRoomMonthDate():visibleTimelineDate(),behavior:'smooth'});
+  }
+};
+$('calendarViewOtherRoomBtn').onclick=()=>{
+  if(isMobileShell())setCalendarRoomView('spacious',{date:calendarRoomView?visibleRoomMonthDate():visibleTimelineDate(),behavior:'auto'});
+};
+$('calendarViewBothBtn').onclick=()=>{
+  if(isMobileShell())showBothAtInitialTodayPosition();
+  else exitCalendarRoomView({behavior:'smooth'});
+};
 $('calendarRoomCozyBtn').onclick=()=>setCalendarRoomView('cozy',{date:isMobileShell()?visibleRoomMonthDate():calendarRoomScrollDate||monthStartIso(),behavior:'auto'});
 $('calendarRoomSpaciousBtn').onclick=()=>setCalendarRoomView('spacious',{date:isMobileShell()?visibleRoomMonthDate():calendarRoomScrollDate||monthStartIso(),behavior:'auto'});
 
