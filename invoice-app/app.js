@@ -238,7 +238,7 @@ function setCalendarRoomView(roomKey,opts={}){
   requestAnimationFrame(()=>scrollRoomMonthToDate(calendarRoomScrollDate,opts.behavior||'auto'));
 }
 function exitCalendarRoomView(opts={}){
-  const date=calendarRoomScrollDate||monthStartIso();
+  const date=isMobileShell()?visibleRoomMonthDate():(calendarRoomScrollDate||monthStartIso());
   const d=new Date(date+'T12:00:00');calendarCursor=new Date(d.getFullYear(),d.getMonth(),1);
   calendarRoomView=null;renderCalendar();
   requestAnimationFrame(()=>{scrollCalendarToDate(date,opts.behavior||'auto');});
@@ -248,12 +248,33 @@ function roomMonthGridStart(cursor){
 }
 function monthSectionId(cursor){return `room-month-${cursor.getFullYear()}-${String(cursor.getMonth()+1).padStart(2,'0')}`;}
 function monthDateFromElement(el){return el?.dataset?.monthStart||null;}
+function visibleTimelineDate(){
+  const scroller=$('calendarScroller'),root=$('calendarTimeline');
+  if(!scroller||!root)return monthStartIso();
+  const heads=[...root.querySelectorAll('.calendar-day-head[data-date]')];
+  if(!heads.length)return monthStartIso();
+  const sr=scroller.getBoundingClientRect();
+  const stickyWidth=isMobileShell()?112:150;
+  const targetX=sr.left+stickyWidth+14;
+  let best=heads[0],bestDist=Infinity;
+  for(const h of heads){
+    const r=h.getBoundingClientRect();
+    if(r.right<sr.left+stickyWidth||r.left>sr.right)continue;
+    const dist=Math.abs(r.left-targetX);
+    if(dist<bestDist){best=h;bestDist=dist;}
+  }
+  return best?.dataset?.date||monthStartIso();
+}
 function visibleRoomMonthDate(){
   const sections=[...document.querySelectorAll('.room-month-section')];if(!sections.length)return calendarRoomScrollDate||monthStartIso();
-  const top=Math.max(0,document.querySelector('.mobile-app-header')?.getBoundingClientRect().bottom||0)+54;
+  const top=84;
   let best=sections[0],bestDist=Infinity;
   for(const sec of sections){const r=sec.getBoundingClientRect(),dist=Math.abs(r.top-top);if(r.bottom>top&&dist<bestDist){best=sec;bestDist=dist;}}
-  return monthDateFromElement(best)||monthStartIso();
+  const monthStart=monthDateFromElement(best)||monthStartIso();
+  // Keep the exact date we entered with while that month remains visible. If the user
+  // has scrolled into another month, use the middle of that month rather than day 1.
+  if(calendarRoomScrollDate&&calendarRoomScrollDate.slice(0,7)===monthStart.slice(0,7))return calendarRoomScrollDate;
+  return monthStart.slice(0,8)+'15';
 }
 function scrollRoomMonthToDate(iso,behavior='auto'){
   const root=$('calendarRoomMonth');if(!root)return;
@@ -1381,10 +1402,10 @@ document.querySelectorAll('[data-reservation-filter]').forEach(b=>b.onclick=()=>
 document.querySelectorAll('.lang-btn').forEach(b=>b.onclick=()=>{currentLang=b.dataset.lang;setTexts();toggleRegInvoice();toggleIdOther();toggleInvoiceCustom();renderReservations();updateMobileSaveBar();renderCalendarSyncAge();renderCalendar();updateMobileShellText();if(pendingLoginEmail)startOtpCooldown(pendingLoginEmail);});
 
 
-$('calendarViewMonthBtn').onclick=()=>setCalendarRoomView(calendarRoomView||'cozy',{date:calendarRoomView?visibleRoomMonthDate():monthStartIso(),behavior:'smooth'});
+$('calendarViewMonthBtn').onclick=()=>setCalendarRoomView(calendarRoomView||'cozy',{date:calendarRoomView?visibleRoomMonthDate():visibleTimelineDate(),behavior:'smooth'});
 $('calendarViewBothBtn').onclick=()=>exitCalendarRoomView({behavior:'smooth'});
-$('calendarRoomCozyBtn').onclick=()=>setCalendarRoomView('cozy',{date:isMobileShell()?visibleRoomMonthDate():monthStartIso(),behavior:'auto'});
-$('calendarRoomSpaciousBtn').onclick=()=>setCalendarRoomView('spacious',{date:isMobileShell()?visibleRoomMonthDate():monthStartIso(),behavior:'auto'});
+$('calendarRoomCozyBtn').onclick=()=>setCalendarRoomView('cozy',{date:isMobileShell()?visibleRoomMonthDate():calendarRoomScrollDate||monthStartIso(),behavior:'auto'});
+$('calendarRoomSpaciousBtn').onclick=()=>setCalendarRoomView('spacious',{date:isMobileShell()?visibleRoomMonthDate():calendarRoomScrollDate||monthStartIso(),behavior:'auto'});
 
 // Horizontal swipe changes view without stealing vertical month scrolling.
 // In the horizontal Both view, an edge-swipe from the far-left opens Month view so normal date panning still works.

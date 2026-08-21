@@ -1478,3 +1478,24 @@ body.qr-modal-open{
   /* The floating control always says which room's month is open, even after the room header scrolls away. */
   .calendar-view-switch button:first-child{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 }
+
+/* v3.14.2 — keep room context/switcher visible while vertically browsing months */
+@media(max-width:700px){
+  .calendar-room-view-head:not(.hidden){
+    position:sticky;
+    top:0;
+    z-index:60;
+    margin:0 -2px 10px;
+    padding:8px 2px 9px;
+    background:rgba(255,255,255,.96);
+    border-bottom:1px solid rgba(92,70,56,.10);
+    box-shadow:0 5px 14px rgba(36,28,23,.06);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+  }
+  .calendar-room-view-head .calendar-room-back{display:none}
+  .calendar-room-view-summary{padding:0 3px}
+  .calendar-room-view-summary strong{font-size:14px}
+  .calendar-room-view-summary .muted{font-size:10px}
+  .calendar-room-switcher{margin-top:1px}
+}
