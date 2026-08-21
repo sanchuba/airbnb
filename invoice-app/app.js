@@ -653,18 +653,29 @@ function populateCountries(select, selected=''){
 }
 
 
+
+function applyRequiredFieldIndicators(){
+  const invoiceIds=['labelInvoiceNumber','labelInvoiceDate','labelGuestName','labelRoomName','labelCheckin','labelCheckout','labelNights','labelGuests','labelAccommodation','labelCleaning','labelTouristTaxRate','labelTaxMode','labelPaymentMethod'];
+  const registrationIds=['labelRegName','labelRegCity','labelRegCountry','labelRegCheckin','labelRegCheckout'];
+  [...invoiceIds,...registrationIds].forEach(id=>{
+    const label=$(id);if(!label)return;
+    label.querySelectorAll('.required-star').forEach(s=>s.remove());
+    const star=document.createElement('span');star.className='required-star';star.textContent=' *';star.setAttribute('aria-hidden','true');label.appendChild(star);
+  });
+}
+function focusFirstInvalid(fields){
+  const first=fields.find(Boolean);if(!first)return;
+  requestAnimationFrame(()=>{
+    first.scrollIntoView({behavior:'smooth',block:'center'});
+    setTimeout(()=>{try{first.focus({preventScroll:true});}catch(e){first.focus();}},300);
+  });
+}
 function setTexts(){
   const x=tr[currentLang]; document.documentElement.lang=currentLang;
   document.querySelectorAll('[data-reservation-filter]').forEach(b=>b.onclick=()=>setReservationFilter(b.dataset.reservationFilter));
 document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===currentLang));
   const map={reservations:'reservationsTitle',reservationsSubtitle:'reservationsSubtitle',syncCalendars:'syncCalendarsBtn',navReservations:'navReservations',reservationFilterUpcoming:'reservationFilterUpcoming',reservationFilterArrivingSoon:'reservationFilterArrivingSoon',reservationFilterStaying:'reservationFilterStaying',reservationFilterId:'reservationFilterId',reservationFilterInvoice:'reservationFilterInvoice',reservationFilterPast:'reservationFilterPast',reservationFilterRemoved:'reservationFilterRemoved',reservationFilterAll:'reservationFilterAll',pageTitle:'pageTitle',pageSubtitle:'pageSubtitle',loginTitle:'loginTitle',loginText:'loginText',loginEmail:'labelLoginEmail',loginBtn:'loginBtn',loginCode:'labelLoginCode',loginCodeIntro:'loginCodeIntro',verifyLogin:'verifyLoginBtn',resendCode:'resendLoginCodeBtn',changeEmail:'changeLoginEmailBtn',logout:'logoutBtn',registrations:'registrationTitle',registrationArchiveSubtitle:'registrationArchiveSubtitle',paper:'newPaperBtn',manualInvite:'manualInviteToggleBtn',invite:'inviteTitle',manualInviteHint:'manualInviteHint',cancel:'closeManualInviteBtn',inviteBooking:'labelInviteBooking',invitePlatform:'labelInvitePlatform',checkin:'labelInviteCheckin',checkout:'labelInviteCheckout',createLink:'createInviteBtn',copy:'copyInviteBtn',searchReg:'labelRegistrationSearch',regEditor:'registrationEditorTitle',close:'closeRegistrationBtn',fullName:'labelRegName',city:'labelRegCity',country:'labelRegCountry',bookingRef:'labelRegBooking',bookingPlatform:'labelRegPlatform',invoiceRequested:'regInvoiceRequestedText',invoiceType:'labelRegInvoiceType',email:'labelRegEmail',companyName:'labelRegCompanyName',companyAddress:'labelRegCompanyAddress',vat:'labelRegVat',additionalGuestFee:'labelAdditionalGuestFee',additionalGuestNights:'labelAdditionalGuestNights',guestOccupancy:'guestOccupancyTitle',guestOccupancyHint:'guestOccupancyHint',guestCount:'labelGuestCount',regAdditionalGuestNights:'labelRegAdditionalGuestNights',regAdditionalGuestRate:'labelRegAdditionalGuestRate',regAdditionalGuestPayment:'labelRegAdditionalGuestPayment',regAdditionalGuestTotal:'labelRegAdditionalGuestTotal',regAdditionalGuestPaid:'regAdditionalGuestPaidText',identity:'identityTitle',idShown:'labelIdType',verified:'idVerifiedText',saveRegistration:'saveRegistrationBtn',useInvoice:'useForInvoiceBtn',deleteRegistration:'deleteRegistrationBtn',formTitle:'formTitle',newInvoice:'newInvoiceBtn',duplicate:'duplicateBtn',invoiceNumber:'labelInvoiceNumber',invoiceDate:'labelInvoiceDate',guestName:'labelGuestName',guestAddress:'labelGuestAddress',guestPostal:'labelGuestPostal',guestCity:'labelGuestCity',guestCountry:'labelGuestCountry',guestEmail:'labelGuestEmail',room:'labelRoomName',customRoom:'labelCustomRoomName',nights:'labelNights',guests:'labelGuests',accommodation:'labelAccommodation',cleaning:'labelCleaning',tourist:'labelTouristTaxRate',taxMode:'labelTaxMode',payment:'labelPaymentMethod',customPayment:'labelCustomPayment',saveInvoice:'saveBtn',deleteInvoice:'deleteBtn',print:'printBtn',savedInvoices:'savedInvoicesTitle',searchInvoices:'labelSearchInvoices',navRegistrations:'navRegistrations',navGuestDetails:'navGuestDetails',navInvoiceDetails:'navInvoiceDetails',navSavedInvoices:'navSavedInvoices'};
-  for(const [k,id] of Object.entries(map)) if($(id)) $(id).textContent=x[k];
-  document.querySelectorAll('#invoiceDetailsCard .field[data-required="true"] > label').forEach(label=>{
-    if(!label.querySelector('.required-star')){
-      const star=document.createElement('span');star.className='required-star';star.setAttribute('aria-hidden','true');star.textContent=' *';label.appendChild(star);
-    }
-  });
-  if($('attentionTitle')) $('attentionTitle').textContent=x.attentionTitle;
+  for(const [k,id] of Object.entries(map)) if($(id)) $(id).textContent=x[k];if($('attentionTitle')) $('attentionTitle').textContent=x.attentionTitle;
   if($('attentionSubtitle')) $('attentionSubtitle').textContent=x.attentionSubtitle;
   if($('attentionArrivingLabel')) $('attentionArrivingLabel').textContent=x.attentionArriving;
   if($('attentionIdLabel')) $('attentionIdLabel').textContent=x.attentionId;
@@ -703,12 +714,7 @@ document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.
   if($('filterId')) $('filterId').textContent=x.filterId;
   if($('filterInvoice')) $('filterInvoice').textContent=x.filterInvoice;
   populateCountries(rf.country,rf.country.value);
-  renderAttention(); renderRegs(); renderInvoices(); updatePreview();
-  document.querySelectorAll('#invoiceDetailsCard .field[data-required="true"] > label').forEach(label=>{
-    if(!label.querySelector('.required-star')){
-      const star=document.createElement('span');star.className='required-star';star.setAttribute('aria-hidden','true');star.textContent=' *';label.appendChild(star);
-    }
-  });
+  renderAttention(); renderRegs(); renderInvoices(); updatePreview();  applyRequiredFieldIndicators();
 }
 
 function syncGuestDetailsNav(){
@@ -877,7 +883,11 @@ function loadReg(r,scrollMode='default'){
   });
 }
 async function saveReg(){
-  if(!rf.name.value.trim()||!rf.city.value.trim()||!rf.country.value.trim()||!rf.checkin.value||!rf.checkout.value){$('registrationMessage').textContent=currentLang==='nl'?'Vul alle gastgegevens en verblijfsdata in.':'Complete all guest information and stay dates.';return;}
+  const requiredReg=[rf.name,rf.city,rf.country,rf.checkin,rf.checkout];
+  requiredReg.forEach(el=>el.closest('.field')?.classList.remove('field-invalid'));
+  const invalidReg=requiredReg.filter(el=>!String(el.value||'').trim());
+  invalidReg.forEach(el=>el.closest('.field')?.classList.add('field-invalid'));
+  if(invalidReg.length){$('registrationMessage').textContent=currentLang==='nl'?'Vul alle verplichte velden in.':'Complete all required fields.';focusFirstInvalid(invalidReg);return;}
   const mainNights=mainStayNights(), guestCount=Number(rf.guestCount.value||1), extraNights=guestCount>1?Number(rf.additionalGuestNights.value||0):0;
   if(guestCount>1 && (!extraNights || extraNights<1 || extraNights>mainNights)){ $('registrationMessage').textContent=currentLang==='nl'?'Het aantal nachten van de extra gast moet tussen 1 en het aantal nachten van de hoofdgast liggen.':'Additional guest nights must be between 1 and the main guest stay length.'; return; }
   const s=await session(); const draftReservation=currentDraftReservationId?reservations.find(r=>r.id===currentDraftReservationId):null; const payload={full_name:rf.name.value.trim(),home_address:null,postal_code:null,city:rf.city.value.trim(),country:rf.country.value.trim(),checkin_date:rf.checkin.value,checkout_date:rf.checkout.value,booking_reference:rf.booking.value.trim()||null,booking_platform:(draftReservation?.platform||rf.platform.value||null),reservation_id:(draftReservation?.id||undefined),invoice_requested:rf.invoiceRequested.checked,invoice_type:rf.invoiceRequested.checked?rf.invoiceType.value:null,email:rf.invoiceRequested.checked?rf.email.value.trim()||null:null,company_name:rf.invoiceRequested.checked&&rf.invoiceType.value==='company'?rf.companyName.value.trim()||null:null,company_address:rf.invoiceRequested.checked&&rf.invoiceType.value==='company'?rf.companyAddress.value.trim()||null:null,vat_number:rf.invoiceRequested.checked&&rf.invoiceType.value==='company'?rf.vat.value.trim()||null:null,declaration_accepted:true,source:rf.source.value||'paper_manual',id_type:rf.idType.value||null,id_other:rf.idType.value==='other'?rf.idOther.value.trim()||null:null,id_verified:rf.idVerified.checked,id_verified_at:rf.idVerified.checked?new Date().toISOString():null,id_verified_by:rf.idVerified.checked?s.user.id:null,guest_count:guestCount,additional_guest_nights:extraNights,additional_guest_fee_per_night:guestCount>1?Number(rf.additionalGuestRate.value||20):20,additional_guest_payment_method:guestCount>1?(rf.additionalGuestPayment.value||null):null,additional_guest_fee_paid:guestCount>1?rf.additionalGuestPaid.checked:false};
@@ -1103,7 +1113,7 @@ document.querySelectorAll('.filter-pill').forEach(b=>b.onclick=()=>setRegistrati
 document.querySelectorAll('[data-reservation-attention]').forEach(b=>b.onclick=()=>{setReservationFilter(b.dataset.reservationAttention);$('reservationsOverview').scrollIntoView({behavior:'smooth',block:'start'});});
 $('saveBtn').onclick=async()=>{await saveInvoice();updateMobileSaveBar();};$('deleteBtn').onclick=deleteInvoice;$('duplicateBtn').onclick=duplicateInvoice;$('newInvoiceBtn').onclick=()=>newInvoice();$('printBtn').onclick=()=>{if(validateInvoice(true))window.print();else $('saveMessage').textContent=tr[currentLang].required;};$('searchInvoices').oninput=()=>{updateSearchClearButtons();renderInvoices();};$('clearInvoiceSearch').onclick=()=>{$('searchInvoices').value='';updateSearchClearButtons();renderInvoices();$('searchInvoices').focus();};f.room.onchange=()=>{toggleInvoiceCustom();updatePreview()};f.payment.onchange=()=>{toggleInvoiceCustom();updatePreview()};f.taxMode.onchange=()=>updatePreview();f.checkin.onchange=()=>{manualNights=false;autoNights();updatePreview()};f.checkout.onchange=()=>{manualNights=false;autoNights();updatePreview()};f.nights.oninput=()=>{manualNights=true;updatePreview()};
 Object.values(f).filter(v=>v&&v.tagName!=='SELECT').forEach(v=>{if(v.type!=='hidden')v.addEventListener('input',updatePreview)});
-Object.values(rf).forEach(v=>{if(!v||v.type==='hidden')return; const ev=(v.tagName==='SELECT'||v.type==='checkbox')?'change':'input'; v.addEventListener(ev,markRegistrationDirty);});
+Object.values(rf).forEach(v=>{if(!v||v.type==='hidden')return; const ev=(v.tagName==='SELECT'||v.type==='checkbox')?'change':'input'; v.addEventListener(ev,markRegistrationDirty);v.addEventListener('input',()=>{if(String(v.value||'').trim())v.closest('.field')?.classList.remove('field-invalid');});v.addEventListener('change',()=>{if(String(v.value||'').trim())v.closest('.field')?.classList.remove('field-invalid');});});
 Object.values(f).forEach(v=>{if(!v||v.type==='hidden')return; const ev=(v.tagName==='SELECT'||v.type==='checkbox')?'change':'input'; v.addEventListener(ev,markInvoiceDirty);});
 document.querySelectorAll('#invoiceDetailsCard input,#invoiceDetailsCard select,#invoiceDetailsCard textarea').forEach(el=>{el.addEventListener('input',()=>clearInvoiceFieldError(el));el.addEventListener('change',()=>clearInvoiceFieldError(el));});
 document.querySelectorAll('[data-reservation-filter]').forEach(b=>b.onclick=()=>setReservationFilter(b.dataset.reservationFilter));

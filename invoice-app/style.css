@@ -1314,3 +1314,24 @@ body.qr-modal-open{
   display:inline !important;
   visibility:visible !important;
 }
+
+/* v3.11.7 — explicit required indicators */
+.required-star{
+  display:inline!important;
+  visibility:visible!important;
+  opacity:1!important;
+  color:#a14d4d!important;
+  font-weight:900!important;
+  margin-left:2px!important;
+}
+#registrationEditor .field-invalid label,
+#invoiceDetailsCard .field-invalid label{color:#a14d4d!important}
+#registrationEditor .field-invalid input,
+#registrationEditor .field-invalid select,
+#registrationEditor .field-invalid textarea,
+#invoiceDetailsCard .field-invalid input,
+#invoiceDetailsCard .field-invalid select,
+#invoiceDetailsCard .field-invalid textarea{
+  border-color:#a14d4d!important;
+  box-shadow:0 0 0 3px rgba(161,77,77,.12)!important;
+}
