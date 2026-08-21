@@ -1859,3 +1859,28 @@ body.qr-modal-open{
     justify-content:flex-end;
   }
 }
+
+/* v3.15.5 — direct Airbnb action from Calendar reservation detail */
+.calendar-detail-actions{
+  display:flex;
+  gap:9px;
+  align-items:stretch;
+  margin-top:14px;
+}
+.calendar-detail-actions .action-btn{
+  flex:1 1 0;
+  margin:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  text-decoration:none;
+}
+.calendar-detail-actions .hidden{
+  display:none!important;
+}
+@media(max-width:700px){
+  .calendar-detail-actions{
+    flex-direction:column;
+  }
+}

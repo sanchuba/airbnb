@@ -600,8 +600,25 @@ function openCalendarDetail(r){
   $('calendarDetailPlatform').innerHTML=blocked?`<span class="calendar-platform-badge blocked">${x.calendarBlocked}</span>`:`<span class="calendar-platform-badge ${r.platform}">${r.platform==='airbnb'?'Airbnb':'Booking.com'}</span>`;
   $('calendarDetailName').textContent=calendarEventName(r);
   $('calendarDetailMeta').innerHTML=`<strong>${escapeHtml(roomLabel(r.room_key))}</strong><span>${fmt(r.checkin_date)} → ${fmt(r.checkout_date)} · ${reservationNightsBetween(r.checkin_date,r.checkout_date)} ${escapeHtml(x.nightsWord)}</span>`;
-  $('calendarDetailBadges').innerHTML=calendarEventStatusBadges(r);$('calendarDetailOpenBtn').classList.toggle('hidden',blocked);
+  $('calendarDetailBadges').innerHTML=calendarEventStatusBadges(r);
+
+  $('calendarDetailOpenBtn').classList.toggle('hidden',blocked);
   $('calendarDetailOpenBtn').onclick=()=>{closeCalendarDetail();openReservationFromCalendar(r.id);};
+
+  // Airbnb reservations already carry the direct reservation/chat URL from iCal.
+  // Surface it here too, so Calendar can be used as a fast route to guest messaging.
+  const airbnbBtn=$('calendarDetailAirbnbBtn');
+  const showAirbnb=!blocked&&r.platform==='airbnb'&&!!r.reservation_url;
+  airbnbBtn.classList.toggle('hidden',!showAirbnb);
+  if(showAirbnb){
+    airbnbBtn.href=r.reservation_url;
+    airbnbBtn.textContent=x.openAirbnb;
+    airbnbBtn.onclick=e=>e.stopPropagation();
+  }else{
+    airbnbBtn.removeAttribute('href');
+    airbnbBtn.onclick=null;
+  }
+
   $('calendarDetailBackdrop').classList.remove('hidden');$('calendarDetailSheet').classList.remove('hidden');
 }
 function closeCalendarDetail(){$('calendarDetailBackdrop')?.classList.add('hidden');$('calendarDetailSheet')?.classList.add('hidden');}
