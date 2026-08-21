@@ -1947,3 +1947,31 @@ body.qr-modal-open{
 .calendar-detail-reference + .calendar-detail-badges{
   margin-top:0;
 }
+
+/* v3.16.1 — persistent weekday row in mobile vertical Month view */
+@media(max-width:700px){
+  .calendar-room-month.continuous-mobile{
+    overflow:visible;
+  }
+
+  .calendar-room-month.continuous-mobile > .room-month-weekdays{
+    position:sticky;
+    top:0;
+    z-index:24;
+    margin-left:-1px;
+    margin-right:-1px;
+    background:rgba(255,255,255,.96);
+    border-top:1px solid rgba(92,70,56,.08);
+    border-bottom:1px solid rgba(92,70,56,.12);
+    box-shadow:0 4px 12px rgba(36,28,23,.05);
+    backdrop-filter:blur(12px);
+    -webkit-backdrop-filter:blur(12px);
+  }
+
+  .calendar-room-month.continuous-mobile > .room-month-weekdays span{
+    padding-top:11px;
+    padding-bottom:11px;
+    font-size:10.5px;
+    letter-spacing:.01em;
+  }
+}
