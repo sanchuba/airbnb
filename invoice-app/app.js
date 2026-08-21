@@ -1454,7 +1454,7 @@ function renderRegs(){
       // Registration archive sorting is deliberately filter-specific:
       //
       // All / Arriving soon / Upcoming / Staying now / ID to verify:
-      //   latest check-in date first.
+      //   earliest check-in date first.
       //
       // Past / Invoice to create:
       //   oldest check-out date first, so the longest-waiting historic item
@@ -1470,9 +1470,11 @@ function renderRegs(){
         // Stable/understandable tie-breaker when two guests checked out the same day.
         if(aIn!==bIn)return aIn-bIn;
       }else{
-        if(aIn!==bIn)return bIn-aIn;
-        // Same check-in day: later checkout first.
-        if(aOut!==bOut)return bOut-aOut;
+        // All / Arriving soon / Upcoming / Staying now / ID to verify:
+        // earliest check-in first, then progressively later check-ins.
+        if(aIn!==bIn)return aIn-bIn;
+        // Same check-in day: earlier checkout first.
+        if(aOut!==bOut)return aOut-bOut;
       }
 
       return String(a.full_name||'').localeCompare(String(b.full_name||''),undefined,{sensitivity:'base'});
