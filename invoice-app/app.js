@@ -218,6 +218,19 @@ function scrollCalendarToTodayStart(behavior='auto'){
   requestAnimationFrame(()=>scrollCalendarToDate(today,behavior));
 }
 
+
+function positionCalendarToolbarActions(){
+  const actions=$('calendarToolbarActions'),home=$('calendarToolbarActionsHome'),head=$('calendarRoomViewHead');
+  if(!actions||!home||!head)return;
+  const desktopRoomMode=!isMobileShell()&&!!calendarRoomView;
+  if(desktopRoomMode){
+    if(actions.parentElement!==head)head.appendChild(actions);
+    actions.classList.add('desktop-under-room');
+  }else{
+    if(actions.parentElement!==home.parentElement)home.insertAdjacentElement('afterend',actions);
+    actions.classList.remove('desktop-under-room');
+  }
+}
 function positionCalendarViewSwitch(){
   const viewSwitch=$('calendarViewSwitch'),home=$('calendarViewSwitchHome'),head=$('calendarRoomViewHead');
   if(!viewSwitch||!home||!head)return;
@@ -231,6 +244,7 @@ function positionCalendarViewSwitch(){
   }
 }
 function updateCalendarViewSwitch(){
+  positionCalendarToolbarActions();
   positionCalendarViewSwitch();
   const x=tr[currentLang],month=$('calendarViewMonthBtn'),other=$('calendarViewOtherRoomBtn'),both=$('calendarViewBothBtn');
   const mobile=isMobileShell();

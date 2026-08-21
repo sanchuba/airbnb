@@ -1647,3 +1647,48 @@ body.qr-modal-open{
     margin-top:0;
   }
 }
+
+/* v3.14.8 — desktop room-calendar control hierarchy */
+.calendar-toolbar-actions-home{display:none}
+
+@media(min-width:701px){
+  .calendar-room-view-head{
+    grid-template-rows:auto auto auto;
+  }
+
+  .calendar-room-view-head .calendar-room-back{
+    grid-row:1 / span 3;
+  }
+  .calendar-room-view-head .calendar-room-view-summary{
+    grid-row:1 / span 3;
+  }
+
+  .calendar-room-view-head .calendar-room-switcher{
+    grid-column:2;
+    grid-row:1;
+    justify-self:end;
+  }
+
+  /* The row the user highlighted: Today | previous | October 2026 | next */
+  .calendar-room-view-head .calendar-toolbar-actions.desktop-under-room{
+    grid-column:2;
+    grid-row:2;
+    position:static!important;
+    margin:0;
+    justify-self:end;
+    justify-content:flex-end;
+    width:auto;
+  }
+
+  .calendar-room-view-head .calendar-toolbar-actions.desktop-under-room strong{
+    min-width:130px;
+  }
+
+  /* View choice stays beneath the month navigation row. */
+  .calendar-room-view-head .calendar-view-switch.desktop-under-room{
+    grid-column:2;
+    grid-row:3;
+    justify-self:end;
+    margin-top:0;
+  }
+}

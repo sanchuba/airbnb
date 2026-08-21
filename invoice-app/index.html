@@ -8,11 +8,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="NGR Admin" />
-  <link rel="manifest" href="./manifest.webmanifest?v=3.14.7" />
+  <link rel="manifest" href="./manifest.webmanifest?v=3.14.8" />
   <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=3.5.0" />
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=3.5.0" />
   <title>Nijmegen Guest Rooms – Admin</title>
-  <link rel="stylesheet" href="./style.css?v=3.14.7" />
+  <link rel="stylesheet" href="./style.css?v=3.14.8" />
 </head>
 <body>
   <div class="container">
@@ -140,7 +140,8 @@
             <h2 id="calendarTitle">Calendar</h2>
             <p id="calendarSubtitle" class="muted">Both rooms, every reservation, one clear timeline.</p>
           </div>
-          <div class="calendar-toolbar-actions">
+          <div id="calendarToolbarActionsHome" class="calendar-toolbar-actions-home"></div>
+          <div id="calendarToolbarActions" class="calendar-toolbar-actions">
             <button id="calendarTodayBtn" class="action-btn secondary" type="button">Today</button>
             <button id="calendarPrevBtn" class="calendar-arrow-btn" type="button" aria-label="Previous month">‹</button>
             <strong id="calendarMonthLabel"></strong>
@@ -425,10 +426,10 @@
   </div>
   <button id="backToTopBtn" class="back-to-top-btn screen-only" type="button" aria-label="Back to top" title="Back to top">↑</button>
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-  <script type="module" src="./app.js?v=3.14.7"></script>
+  <script type="module" src="./app.js?v=3.14.8"></script>
   <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.14.7').catch(() => {}));
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.14.8').catch(() => {}));
   }
   </script>
 </body>
