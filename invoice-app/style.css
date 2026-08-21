@@ -1328,3 +1328,16 @@ body.qr-modal-open{
   font-weight:900!important;
   margin-left:2px!important;
 }
+
+/* v3.11.9 — guest registration validation visibility */
+#registrationEditor input.invalid-control,
+#registrationEditor select.invalid-control,
+#registrationEditor textarea.invalid-control{
+  border-color:#a14d4d!important;
+  box-shadow:0 0 0 3px rgba(161,77,77,.14)!important;
+  background:#fffafa!important;
+}
+#registrationEditor .field-invalid > label{
+  color:#a14d4d!important;
+  font-weight:700!important;
+}

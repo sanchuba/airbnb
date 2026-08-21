@@ -667,6 +667,7 @@ function clearAdminValidationState(scope){
   const root=scope==='registration'?$('registrationEditor'):scope==='invoice'?$('invoiceDetailsCard'):null;
   if(!root)return;
   root.querySelectorAll('.field-invalid').forEach(el=>el.classList.remove('field-invalid'));
+  root.querySelectorAll('.invalid-control').forEach(el=>{el.classList.remove('invalid-control');el.removeAttribute('aria-invalid');});
   if(scope==='registration'&&$('registrationMessage'))$('registrationMessage').textContent='';
   if(scope==='invoice'&&$('saveMessage'))$('saveMessage').textContent='';
 }
@@ -891,9 +892,9 @@ function loadReg(r,scrollMode='default'){clearAdminValidationState('registration
 }
 async function saveReg(){
   const requiredReg=[rf.name,rf.city,rf.country,rf.checkin,rf.checkout];
-  requiredReg.forEach(el=>el.closest('.field')?.classList.remove('field-invalid'));
+  requiredReg.forEach(el=>{el.closest('.field')?.classList.remove('field-invalid');el.classList.remove('invalid-control');el.removeAttribute('aria-invalid');});
   const invalidReg=requiredReg.filter(el=>!String(el.value||'').trim());
-  invalidReg.forEach(el=>el.closest('.field')?.classList.add('field-invalid'));
+  invalidReg.forEach(el=>{el.closest('.field')?.classList.add('field-invalid');el.classList.add('invalid-control');el.setAttribute('aria-invalid','true');});
   if(invalidReg.length){$('registrationMessage').textContent=currentLang==='nl'?'Vul alle verplichte velden in.':'Complete all required fields.';focusFirstInvalid(invalidReg);return;}
   const mainNights=mainStayNights(), guestCount=Number(rf.guestCount.value||1), extraNights=guestCount>1?Number(rf.additionalGuestNights.value||0):0;
   if(guestCount>1 && (!extraNights || extraNights<1 || extraNights>mainNights)){ $('registrationMessage').textContent=currentLang==='nl'?'Het aantal nachten van de extra gast moet tussen 1 en het aantal nachten van de hoofdgast liggen.':'Additional guest nights must be between 1 and the main guest stay length.'; return; }
@@ -1120,7 +1121,7 @@ document.querySelectorAll('.filter-pill').forEach(b=>b.onclick=()=>setRegistrati
 document.querySelectorAll('[data-reservation-attention]').forEach(b=>b.onclick=()=>{setReservationFilter(b.dataset.reservationAttention);$('reservationsOverview').scrollIntoView({behavior:'smooth',block:'start'});});
 $('saveBtn').onclick=async()=>{await saveInvoice();updateMobileSaveBar();};$('deleteBtn').onclick=deleteInvoice;$('duplicateBtn').onclick=duplicateInvoice;$('newInvoiceBtn').onclick=()=>newInvoice();$('printBtn').onclick=()=>{if(validateInvoice(true))window.print();else $('saveMessage').textContent=tr[currentLang].required;};$('searchInvoices').oninput=()=>{updateSearchClearButtons();renderInvoices();};$('clearInvoiceSearch').onclick=()=>{$('searchInvoices').value='';updateSearchClearButtons();renderInvoices();$('searchInvoices').focus();};f.room.onchange=()=>{toggleInvoiceCustom();updatePreview()};f.payment.onchange=()=>{toggleInvoiceCustom();updatePreview()};f.taxMode.onchange=()=>updatePreview();f.checkin.onchange=()=>{manualNights=false;autoNights();updatePreview()};f.checkout.onchange=()=>{manualNights=false;autoNights();updatePreview()};f.nights.oninput=()=>{manualNights=true;updatePreview()};
 Object.values(f).filter(v=>v&&v.tagName!=='SELECT').forEach(v=>{if(v.type!=='hidden')v.addEventListener('input',updatePreview)});
-Object.values(rf).forEach(v=>{if(!v||v.type==='hidden')return; const ev=(v.tagName==='SELECT'||v.type==='checkbox')?'change':'input'; v.addEventListener(ev,markRegistrationDirty);v.addEventListener('input',()=>{if(String(v.value||'').trim())v.closest('.field')?.classList.remove('field-invalid');});v.addEventListener('change',()=>{if(String(v.value||'').trim())v.closest('.field')?.classList.remove('field-invalid');});});
+Object.values(rf).forEach(v=>{if(!v||v.type==='hidden')return; const ev=(v.tagName==='SELECT'||v.type==='checkbox')?'change':'input'; v.addEventListener(ev,markRegistrationDirty);v.addEventListener('input',()=>{if(String(v.value||'').trim()){v.closest('.field')?.classList.remove('field-invalid');v.classList.remove('invalid-control');v.removeAttribute('aria-invalid');}});v.addEventListener('change',()=>{if(String(v.value||'').trim()){v.closest('.field')?.classList.remove('field-invalid');v.classList.remove('invalid-control');v.removeAttribute('aria-invalid');}});});
 Object.values(f).forEach(v=>{if(!v||v.type==='hidden')return; const ev=(v.tagName==='SELECT'||v.type==='checkbox')?'change':'input'; v.addEventListener(ev,markInvoiceDirty);});
 document.querySelectorAll('#invoiceDetailsCard input,#invoiceDetailsCard select,#invoiceDetailsCard textarea').forEach(el=>{el.addEventListener('input',()=>clearInvoiceFieldError(el));el.addEventListener('change',()=>clearInvoiceFieldError(el));});
 document.querySelectorAll('[data-reservation-filter]').forEach(b=>b.onclick=()=>setReservationFilter(b.dataset.reservationFilter));
