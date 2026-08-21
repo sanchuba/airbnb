@@ -633,7 +633,7 @@ function openCalendarDetail(r){
   const airbnbId=r.platform==='airbnb'&&!blocked?String(r.reservation_code||'').trim():'';
   const platformRef=bookingId?`Booking.com #${bookingId}`:(airbnbId?`Airbnb #${airbnbId}`:'');
   ref.textContent=platformRef;
-  ref.classList.toggle('hidden',!platformRef);
+  ref.className=`calendar-detail-reference${platformRef?'':' hidden'}${bookingId?' booking':(airbnbId?' airbnb':'')}`;
 
   $('calendarDetailBadges').innerHTML=calendarEventStatusBadges(r);
 

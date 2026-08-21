@@ -1919,3 +1919,22 @@ body.qr-modal-open{
 .calendar-detail-clickable .calendar-detail-close{
   cursor:default;
 }
+
+/* v3.15.9 — restore subtle Calendar platform-reference typography */
+.calendar-detail-reference{
+  margin-top:6px;
+  width:auto;
+  max-width:100%;
+  padding:0;
+  border-radius:0;
+  background:transparent;
+  font-size:11px;
+  line-height:1.25;
+  font-weight:700;
+}
+.calendar-detail-reference.booking{
+  color:#4c6f96;
+}
+.calendar-detail-reference.airbnb{
+  color:#b43b55;
+}
