@@ -257,9 +257,19 @@ function updateCalendarRoomSwitcher(){
   if(spacious){spacious.textContent=calendarRoomDisplay('spacious');spacious.classList.toggle('active',calendarRoomView==='spacious');spacious.setAttribute('aria-pressed',String(calendarRoomView==='spacious'));}
 }
 function setCalendarRoomView(roomKey,opts={}){
+  const switchingRoom=isMobileShell()&&!!calendarRoomView&&calendarRoomView!==roomKey;
+  const viewportY=switchingRoom?window.scrollY:null;
   calendarRoomView=roomKey||calendarRoomView||'cozy';
   calendarRoomScrollDate=opts.date||calendarRoomScrollDate||monthStartIso();
   renderCalendar();
+  if(switchingRoom){
+    // Cozy and Spacious use the same continuous month geometry. Keep the exact
+    // page position so changing rooms feels like changing a layer, not navigating.
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      window.scrollTo({top:viewportY,left:0,behavior:'auto'});
+    }));
+    return;
+  }
   requestAnimationFrame(()=>scrollRoomMonthToDate(calendarRoomScrollDate,opts.behavior||'auto'));
 }
 function showBothAtInitialTodayPosition(){
@@ -1442,13 +1452,17 @@ document.querySelectorAll('.lang-btn').forEach(b=>b.onclick=()=>{currentLang=b.d
 
 $('calendarViewMonthBtn').onclick=()=>{
   if(isMobileShell()){
-    setCalendarRoomView('cozy',{date:calendarRoomView?visibleRoomMonthDate():visibleTimelineDate(),behavior:'auto'});
+    if(calendarRoomView==='spacious')setCalendarRoomView('cozy');
+    else if(!calendarRoomView)setCalendarRoomView('cozy',{date:visibleTimelineDate(),behavior:'auto'});
   }else{
     setCalendarRoomView(calendarRoomView||'cozy',{date:calendarRoomView?visibleRoomMonthDate():visibleTimelineDate(),behavior:'smooth'});
   }
 };
 $('calendarViewOtherRoomBtn').onclick=()=>{
-  if(isMobileShell())setCalendarRoomView('spacious',{date:calendarRoomView?visibleRoomMonthDate():visibleTimelineDate(),behavior:'auto'});
+  if(isMobileShell()){
+    if(calendarRoomView==='cozy')setCalendarRoomView('spacious');
+    else if(!calendarRoomView)setCalendarRoomView('spacious',{date:visibleTimelineDate(),behavior:'auto'});
+  }
 };
 $('calendarViewBothBtn').onclick=()=>{
   if(isMobileShell())showBothAtInitialTodayPosition();

@@ -1548,3 +1548,13 @@ body.qr-modal-open{
 @media(min-width:701px){
   .calendar-mobile-room-btn{display:none!important}
 }
+
+/* v3.14.4 — Both | Cozy | Spacious + no-jump room switching */
+@media(max-width:700px){
+  .calendar-view-switch{
+    grid-template-columns:.72fr 1fr 1fr;
+  }
+  .calendar-view-switch #calendarViewBothBtn{grid-column:1}
+  .calendar-view-switch #calendarViewMonthBtn{grid-column:2}
+  .calendar-view-switch #calendarViewOtherRoomBtn{grid-column:3}
+}
