@@ -1341,3 +1341,16 @@ body.qr-modal-open{
   color:#a14d4d!important;
   font-weight:700!important;
 }
+
+/* v3.12.0 — Guest Registration validation, using original field.invalid state */
+#registrationEditor .field.invalid > label{
+  color:#a14d4d!important;
+  font-weight:700!important;
+}
+#registrationEditor .field.invalid > input,
+#registrationEditor .field.invalid > select,
+#registrationEditor .field.invalid > textarea{
+  border-color:#a14d4d!important;
+  background:#fff4f4!important;
+  box-shadow:0 0 0 3px rgba(161,77,77,.16)!important;
+}
