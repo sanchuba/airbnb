@@ -1817,3 +1817,45 @@ body.qr-modal-open{
     gap:4px;
   }
 }
+
+/* v3.15.4 — always-visible desktop entry to room Month view */
+.calendar-desktop-room-shortcuts{
+  display:none;
+}
+
+@media(min-width:701px){
+  .calendar-both-continuous .calendar-desktop-room-shortcuts{
+    display:flex;
+    align-items:center;
+    gap:3px;
+    padding:3px;
+    border:1px solid var(--border);
+    border-radius:999px;
+    background:#f7f4f2;
+  }
+  .calendar-both-continuous .calendar-desktop-room-shortcuts button{
+    border:0;
+    background:transparent;
+    border-radius:999px;
+    padding:8px 12px;
+    color:#746b64;
+    font:750 11px/1 inherit;
+    cursor:pointer;
+    white-space:nowrap;
+  }
+  .calendar-both-continuous .calendar-desktop-room-shortcuts button:hover{
+    background:#fff;
+    color:var(--heading);
+    box-shadow:0 2px 8px rgba(36,28,23,.10);
+  }
+
+  /* In room Month view, the existing Cozy/Spacious selector is used instead. */
+  #calendarOverview:not(.calendar-both-continuous) .calendar-desktop-room-shortcuts{
+    display:none!important;
+  }
+
+  .calendar-both-continuous .calendar-toolbar-actions{
+    flex-wrap:wrap;
+    justify-content:flex-end;
+  }
+}

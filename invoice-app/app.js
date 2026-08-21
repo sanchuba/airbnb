@@ -344,6 +344,14 @@ function restoreViewportY(y){
   });
   setTimeout(restore,40);
 }
+
+function openDesktopRoomMonth(roomKey){
+  const date=visibleTimelineDate();
+  const d=new Date(date+'T12:00:00');
+  if($('calendarScroller'))calendarTimelineScrollLeft=$('calendarScroller').scrollLeft;
+  calendarCursor=new Date(d.getFullYear(),d.getMonth(),1);
+  setCalendarRoomView(roomKey,{date,preserveViewport:true});
+}
 function setCalendarRoomView(roomKey,opts={}){
   const switchingRoom=isMobileShell()&&!!calendarRoomView&&calendarRoomView!==roomKey;
   const preserveViewport=!!opts.preserveViewport||switchingRoom;
@@ -1183,6 +1191,8 @@ document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.
   if($('calendarTitle'))$('calendarTitle').textContent=x.calendarTitle;
   if($('calendarSubtitle'))$('calendarSubtitle').textContent=x.calendarSubtitle;
   if($('calendarTodayBtn'))$('calendarTodayBtn').textContent=x.calendarToday;
+  if($('calendarOpenCozyMonthBtn'))$('calendarOpenCozyMonthBtn').textContent=calendarRoomDisplay('cozy');
+  if($('calendarOpenSpaciousMonthBtn'))$('calendarOpenSpaciousMonthBtn').textContent=calendarRoomDisplay('spacious');
   if($('calendarBlockedLegend'))$('calendarBlockedLegend').textContent=x.calendarBlocked;
   if($('calendarHint'))$('calendarHint').textContent=x.calendarHint;
   if($('calendarDetailOpenBtn'))$('calendarDetailOpenBtn').textContent=x.calendarOpenReservation;
@@ -1667,6 +1677,9 @@ $('calendarScroller').addEventListener('touchstart',e=>{const t=e.touches[0];cal
 $('calendarScroller').addEventListener('touchend',e=>{if(!calendarSwipeStart||calendarSwipeStart.mode!=='both')return;const t=e.changedTouches[0],dx=t.clientX-calendarSwipeStart.x,dy=t.clientY-calendarSwipeStart.y,atLeft=calendarSwipeStart.atLeft;calendarSwipeStart=null;if(atLeft&&dx>85&&Math.abs(dx)>Math.abs(dy)*1.4)setCalendarRoomView('cozy',{date:monthStartIso(),behavior:'auto'});},{passive:true});
 
 window.addEventListener('scroll',()=>{if(calendarRoomView&&mobileShellState.tab==='calendar')calendarRoomScrollDate=visibleRoomMonthDate();},{passive:true});
+
+$('calendarOpenCozyMonthBtn').onclick=()=>{if(!isMobileShell()&&!calendarRoomView)openDesktopRoomMonth('cozy');};
+$('calendarOpenSpaciousMonthBtn').onclick=()=>{if(!isMobileShell()&&!calendarRoomView)openDesktopRoomMonth('spacious');};
 
 $('calendarRoomBackBtn').onclick=()=>{
   if(!isMobileShell()){
