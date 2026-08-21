@@ -1938,3 +1938,12 @@ body.qr-modal-open{
 .calendar-detail-reference.airbnb{
   color:#b43b55;
 }
+
+/* v3.16.0 — restore original Calendar reference vertical rhythm */
+.calendar-detail-reference{
+  margin-top:4px;
+  margin-bottom:10px;
+}
+.calendar-detail-reference + .calendar-detail-badges{
+  margin-top:0;
+}
