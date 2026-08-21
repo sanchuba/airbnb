@@ -1446,3 +1446,35 @@ body.qr-modal-open{
   .room-month-event{top:48px;height:30px;padding:0 7px;font-size:9px}
   .calendar-event{top:24px;height:34px}
 }
+
+/* v3.14.1 — clearer room selection + classic desktop month view */
+.calendar-room-view-summary{display:flex;flex-direction:column;gap:2px;min-width:0}
+.calendar-room-view-summary strong{font-size:15px;color:var(--heading)}
+.calendar-room-view-summary .muted{font-size:11px}
+.calendar-room-switcher{display:flex;align-items:center;gap:3px;margin-left:auto;padding:3px;border:1px solid var(--border);border-radius:999px;background:#f7f4f2}
+.calendar-room-switcher button{border:0;background:transparent;border-radius:999px;padding:8px 12px;color:#746b64;font:750 11px/1 inherit;cursor:pointer;white-space:nowrap}
+.calendar-room-switcher button.active{background:#fff;color:var(--heading);box-shadow:0 2px 8px rgba(36,28,23,.12)}
+.calendar-room-switcher button:hover{color:var(--heading)}
+
+@media(min-width:701px){
+  /* Desktop returns to the compact, classic one-month grid. */
+  .calendar-room-month.single-month-desktop{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:#fff}
+  .calendar-room-month.single-month-desktop .room-month-weekdays{position:static;border:0;border-bottom:1px solid var(--border);border-radius:0;background:#faf8f6;backdrop-filter:none;-webkit-backdrop-filter:none}
+  .calendar-room-month.single-month-desktop .room-month-section{margin:0;scroll-margin-top:0}
+  .calendar-room-month.single-month-desktop .room-month-title{display:none}
+  .calendar-room-month.single-month-desktop .room-month-week{min-height:92px;border:0;border-bottom:1px solid var(--border);border-radius:0!important;overflow:hidden}
+  .calendar-room-month.single-month-desktop .room-month-week:last-child{border-bottom:0}
+  .calendar-room-month.single-month-desktop .room-month-day{padding:8px;border-right:1px solid #eee9e5}
+  .calendar-room-month.single-month-desktop .room-month-event{top:44px;height:31px}
+  .calendar-room-view-head{padding:4px 0 2px}
+}
+
+@media(max-width:700px){
+  .calendar-room-view-head{gap:10px}
+  .calendar-room-view-summary{width:100%}
+  .calendar-room-switcher{width:100%;margin-left:0;display:grid;grid-template-columns:1fr 1fr;border-radius:14px;padding:4px}
+  .calendar-room-switcher button{padding:10px 8px;border-radius:10px;font-size:11px}
+  .calendar-room-switcher button.active{background:var(--heading);color:#fff}
+  /* The floating control always says which room's month is open, even after the room header scrolls away. */
+  .calendar-view-switch button:first-child{max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+}

@@ -219,8 +219,17 @@ function scrollCalendarToTodayStart(behavior='auto'){
 }
 function updateCalendarViewSwitch(){
   const x=tr[currentLang],month=$('calendarViewMonthBtn'),both=$('calendarViewBothBtn');
-  if(month){month.textContent=x.calendarMonthView;month.classList.toggle('active',!!calendarRoomView);month.setAttribute('aria-pressed',String(!!calendarRoomView));}
+  if(month){
+    const roomSuffix=calendarRoomView?` · ${calendarRoomView==='cozy'?(currentLang==='nl'?'Knus':'Cozy'):(currentLang==='nl'?'Ruim':'Spacious')}`:'';
+    month.textContent=x.calendarMonthView+roomSuffix;
+    month.classList.toggle('active',!!calendarRoomView);month.setAttribute('aria-pressed',String(!!calendarRoomView));
+  }
   if(both){both.textContent=x.calendarBothView;both.classList.toggle('active',!calendarRoomView);both.setAttribute('aria-pressed',String(!calendarRoomView));}
+}
+function updateCalendarRoomSwitcher(){
+  const cozy=$('calendarRoomCozyBtn'),spacious=$('calendarRoomSpaciousBtn');
+  if(cozy){cozy.textContent=calendarRoomDisplay('cozy');cozy.classList.toggle('active',calendarRoomView==='cozy');cozy.setAttribute('aria-pressed',String(calendarRoomView==='cozy'));}
+  if(spacious){spacious.textContent=calendarRoomDisplay('spacious');spacious.classList.toggle('active',calendarRoomView==='spacious');spacious.setAttribute('aria-pressed',String(calendarRoomView==='spacious'));}
 }
 function setCalendarRoomView(roomKey,opts={}){
   calendarRoomView=roomKey||calendarRoomView||'cozy';
@@ -293,17 +302,24 @@ function renderRoomMonthSection(roomKey,cursor,events,today){
 }
 function renderRoomMonthCalendar(roomKey){
   const root=$('calendarRoomMonth');if(!root)return;root.innerHTML='';
-  const locale=currentLang==='nl'?'nl-NL':'en-GB',today=localToday();
+  const locale=currentLang==='nl'?'nl-NL':'en-GB',today=localToday(),mobile=isMobileShell();
+  root.classList.toggle('continuous-mobile',mobile);
+  root.classList.toggle('single-month-desktop',!mobile);
   const sticky=document.createElement('div');sticky.className='room-month-weekdays';
   const weekdays=[],monday=new Date(2026,0,5);for(let i=0;i<7;i++){const d=new Date(monday);d.setDate(d.getDate()+i);weekdays.push(new Intl.DateTimeFormat(locale,{weekday:'short'}).format(d).replace('.',''));}
   sticky.innerHTML=weekdays.map(w=>`<span>${escapeHtml(w)}</span>`).join('');root.appendChild(sticky);
   const events=[...reservations.filter(isRealReservation),...calendarVisibleBlocks()].filter(r=>r.room_key===roomKey);
-  // A continuous Airbnb-style vertical calendar: two months back for context, twenty-one ahead for planning.
-  for(let delta=-2;delta<=21;delta++){
-    const cursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+delta,1);
-    root.appendChild(renderRoomMonthSection(roomKey,cursor,events,today));
+  if(mobile){
+    // Mobile keeps the Airbnb-style continuous vertical calendar.
+    for(let delta=-2;delta<=21;delta++){
+      const cursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+delta,1);
+      root.appendChild(renderRoomMonthSection(roomKey,cursor,events,today));
+    }
+  }else{
+    // Desktop intentionally uses the classic single-month calendar. Month navigation stays in the toolbar.
+    root.appendChild(renderRoomMonthSection(roomKey,new Date(calendarCursor),events,today));
   }
-  updateCalendarViewSwitch();
+  updateCalendarViewSwitch();updateCalendarRoomSwitcher();
 }
 function renderCalendar(){
   const root=$('calendarTimeline');if(!root)return;
@@ -314,7 +330,9 @@ function renderCalendar(){
   const roomMode=!!calendarRoomView;
   $('calendarScroller').classList.toggle('hidden',roomMode);$('calendarRoomMonth').classList.toggle('hidden',!roomMode);$('calendarRoomViewHead').classList.toggle('hidden',!roomMode);
   if(roomMode){
-    $('calendarRoomViewTitle').textContent=`${calendarRoomDisplay(calendarRoomView)} · ${calendarRoomSide(calendarRoomView)}`;
+    $('calendarRoomViewTitle').textContent=calendarRoomDisplay(calendarRoomView);
+    if($('calendarRoomViewSubtitle'))$('calendarRoomViewSubtitle').textContent=calendarRoomSide(calendarRoomView);
+    updateCalendarRoomSwitcher();
     $('calendarHint').textContent=tr[currentLang].calendarRoomHint;renderRoomMonthCalendar(calendarRoomView);return;
   }
   $('calendarHint').textContent=tr[currentLang].calendarHint;
@@ -362,7 +380,7 @@ function openReservationFromCalendar(id){
   setReservationFilter('all');
   requestAnimationFrame(()=>{const card=document.querySelector(`[data-reservation-id="${CSS.escape(id)}"]`);card?.scrollIntoView({behavior:'smooth',block:'center'});card?.classList.add('calendar-target-flash');setTimeout(()=>card?.classList.remove('calendar-target-flash'),1800);});
 }
-function changeCalendarMonth(delta){calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+delta,1);calendarTimelineScrollLeft=0;renderCalendar();if(!calendarRoomView&&$('calendarScroller'))$('calendarScroller').scrollLeft=0;}
+function changeCalendarMonth(delta){calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+delta,1);calendarRoomScrollDate=monthStartIso();calendarTimelineScrollLeft=0;renderCalendar();if(!calendarRoomView&&$('calendarScroller'))$('calendarScroller').scrollLeft=0;}
 function calendarToday(){const n=new Date();calendarCursor=new Date(n.getFullYear(),n.getMonth(),1);calendarRoomScrollDate=localToday();renderCalendar();if(calendarRoomView)requestAnimationFrame(()=>scrollRoomMonthToDate(localToday(),'smooth'));else scrollCalendarToTodayStart('smooth');}
 function reservationNightsBetween(a,b){ const A=new Date(`${a}T12:00:00`),B=new Date(`${b}T12:00:00`); return Math.max(0,Math.round((B-A)/86400000)); }
 
@@ -1363,8 +1381,10 @@ document.querySelectorAll('[data-reservation-filter]').forEach(b=>b.onclick=()=>
 document.querySelectorAll('.lang-btn').forEach(b=>b.onclick=()=>{currentLang=b.dataset.lang;setTexts();toggleRegInvoice();toggleIdOther();toggleInvoiceCustom();renderReservations();updateMobileSaveBar();renderCalendarSyncAge();renderCalendar();updateMobileShellText();if(pendingLoginEmail)startOtpCooldown(pendingLoginEmail);});
 
 
-$('calendarViewMonthBtn').onclick=()=>setCalendarRoomView(calendarRoomView||'cozy',{date:visibleRoomMonthDate(),behavior:'smooth'});
+$('calendarViewMonthBtn').onclick=()=>setCalendarRoomView(calendarRoomView||'cozy',{date:calendarRoomView?visibleRoomMonthDate():monthStartIso(),behavior:'smooth'});
 $('calendarViewBothBtn').onclick=()=>exitCalendarRoomView({behavior:'smooth'});
+$('calendarRoomCozyBtn').onclick=()=>setCalendarRoomView('cozy',{date:isMobileShell()?visibleRoomMonthDate():monthStartIso(),behavior:'auto'});
+$('calendarRoomSpaciousBtn').onclick=()=>setCalendarRoomView('spacious',{date:isMobileShell()?visibleRoomMonthDate():monthStartIso(),behavior:'auto'});
 
 // Horizontal swipe changes view without stealing vertical month scrolling.
 // In the horizontal Both view, an edge-swipe from the far-left opens Month view so normal date panning still works.
