@@ -1558,3 +1558,57 @@ body.qr-modal-open{
   .calendar-view-switch #calendarViewMonthBtn{grid-column:2}
   .calendar-view-switch #calendarViewOtherRoomBtn{grid-column:3}
 }
+
+/* v3.14.6 — desktop Calendar control stack + stronger no-jump behavior */
+.calendar-card{
+  overflow-anchor:none;
+}
+.calendar-view-switch-home{
+  display:none;
+}
+
+@media(min-width:701px){
+  /* In a room-specific Month view, place Month/Both directly below
+     the Cozy/Spacious room selector instead of at the bottom of the card. */
+  .calendar-room-view-head{
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    grid-template-rows:auto auto;
+    align-items:center;
+    column-gap:14px;
+    row-gap:7px;
+  }
+  .calendar-room-view-head .calendar-room-back{
+    grid-column:1;
+    grid-row:1 / span 2;
+    justify-self:start;
+  }
+  .calendar-room-view-head .calendar-room-view-summary{
+    grid-column:1;
+    grid-row:1 / span 2;
+    margin-left:112px;
+  }
+  .calendar-room-view-head .calendar-room-switcher{
+    grid-column:2;
+    grid-row:1;
+    margin-left:0;
+    justify-self:end;
+  }
+  .calendar-room-view-head .calendar-view-switch.desktop-under-room{
+    position:static!important;
+    right:auto!important;
+    bottom:auto!important;
+    grid-column:2;
+    grid-row:2;
+    justify-self:end;
+    box-shadow:none;
+    background:#f7f4f2;
+  }
+
+  /* The original absolute placement still applies in Both view. */
+  #calendarViewSwitch:not(.desktop-under-room){
+    position:absolute;
+    right:24px;
+    bottom:18px;
+  }
+}

@@ -217,7 +217,21 @@ function scrollCalendarToTodayStart(behavior='auto'){
   const today=localToday();if(today.slice(0,7)!==monthStartIso().slice(0,7))return;
   requestAnimationFrame(()=>scrollCalendarToDate(today,behavior));
 }
+
+function positionCalendarViewSwitch(){
+  const viewSwitch=$('calendarViewSwitch'),home=$('calendarViewSwitchHome'),head=$('calendarRoomViewHead');
+  if(!viewSwitch||!home||!head)return;
+  const desktopRoomMode=!isMobileShell()&&!!calendarRoomView;
+  if(desktopRoomMode){
+    if(viewSwitch.parentElement!==head)head.appendChild(viewSwitch);
+    viewSwitch.classList.add('desktop-under-room');
+  }else{
+    if(viewSwitch.parentElement!==home.parentElement)home.insertAdjacentElement('afterend',viewSwitch);
+    viewSwitch.classList.remove('desktop-under-room');
+  }
+}
 function updateCalendarViewSwitch(){
+  positionCalendarViewSwitch();
   const x=tr[currentLang],month=$('calendarViewMonthBtn'),other=$('calendarViewOtherRoomBtn'),both=$('calendarViewBothBtn');
   const mobile=isMobileShell();
   if(mobile){
@@ -256,6 +270,17 @@ function updateCalendarRoomSwitcher(){
   if(cozy){cozy.textContent=calendarRoomDisplay('cozy');cozy.classList.toggle('active',calendarRoomView==='cozy');cozy.setAttribute('aria-pressed',String(calendarRoomView==='cozy'));}
   if(spacious){spacious.textContent=calendarRoomDisplay('spacious');spacious.classList.toggle('active',calendarRoomView==='spacious');spacious.setAttribute('aria-pressed',String(calendarRoomView==='spacious'));}
 }
+
+function restoreViewportY(y){
+  const target=Math.max(0,Number(y)||0);
+  const restore=()=>window.scrollTo({top:target,left:window.scrollX,behavior:'auto'});
+  restore();
+  requestAnimationFrame(()=>{
+    restore();
+    requestAnimationFrame(restore);
+  });
+  setTimeout(restore,40);
+}
 function setCalendarRoomView(roomKey,opts={}){
   const switchingRoom=isMobileShell()&&!!calendarRoomView&&calendarRoomView!==roomKey;
   const preserveViewport=!!opts.preserveViewport||switchingRoom;
@@ -266,9 +291,7 @@ function setCalendarRoomView(roomKey,opts={}){
   if(preserveViewport){
     // Changing Calendar view/room should feel like swapping the content in place,
     // not navigating to a different part of the page.
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      window.scrollTo({top:viewportY,left:0,behavior:'auto'});
-    }));
+    restoreViewportY(viewportY);
     return;
   }
   requestAnimationFrame(()=>scrollRoomMonthToDate(calendarRoomScrollDate,opts.behavior||'auto'));
@@ -293,9 +316,7 @@ function exitCalendarRoomView(opts={}){
   const d=new Date(date+'T12:00:00');calendarCursor=new Date(d.getFullYear(),d.getMonth(),1);
   calendarRoomView=null;renderCalendar();
   if(preserveViewport){
-    requestAnimationFrame(()=>requestAnimationFrame(()=>{
-      window.scrollTo({top:viewportY,left:0,behavior:'auto'});
-    }));
+    restoreViewportY(viewportY);
     return;
   }
   requestAnimationFrame(()=>{scrollCalendarToDate(date,opts.behavior||'auto');});
