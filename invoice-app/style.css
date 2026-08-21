@@ -1692,3 +1692,10 @@ body.qr-modal-open{
     margin-top:0;
   }
 }
+
+/* v3.14.9 — remove redundant desktop Month/Both toggle */
+@media(min-width:701px){
+  #calendarViewSwitch{
+    display:none!important;
+  }
+}
