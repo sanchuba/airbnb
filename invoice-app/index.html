@@ -8,11 +8,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="NGR Admin" />
-  <link rel="manifest" href="./manifest.webmanifest?v=3.10.0" />
+  <link rel="manifest" href="./manifest.webmanifest?v=3.11.0" />
   <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=3.5.0" />
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=3.5.0" />
   <title>Nijmegen Guest Rooms – Admin</title>
-  <link rel="stylesheet" href="./style.css?v=3.10.0" />
+  <link rel="stylesheet" href="./style.css?v=3.11.0" />
 </head>
 <body>
   <div class="container">
@@ -297,7 +297,7 @@
           </div>
 
           <div class="card saved-card screen-only" id="savedInvoicesCard">
-            <div class="section-header"><h2 id="savedInvoicesTitle">Saved Invoices</h2></div>
+            <div class="section-header"><h2 id="savedInvoicesTitle">Saved Invoices</h2><button id="mobileNewInvoiceBtn" class="action-btn primary mobile-shell-only" type="button">New invoice</button></div>
             <div class="field"><label id="labelSearchInvoices" for="searchInvoices">Search / filter invoices</label><input id="searchInvoices" placeholder="Search by invoice number, guest name, company, email or booking reference" /></div>
             <div id="invoiceList" class="invoice-list"></div>
           </div>
@@ -332,16 +332,36 @@
       <button id="copyQrLinkBtn" class="action-btn secondary qr-copy-btn" type="button">Copy registration link</button>
     </div>
   </div>
+  <div id="mobileDetailBar" class="mobile-detail-bar mobile-shell-only hidden screen-only">
+    <button id="mobileDetailBackBtn" class="mobile-detail-back" type="button" aria-label="Back">‹</button>
+    <strong id="mobileDetailTitle">Details</strong>
+  </div>
+  <nav id="mobileBottomNav" class="mobile-bottom-nav mobile-shell-only screen-only" aria-label="Main navigation">
+    <button type="button" class="mobile-bottom-tab active" data-mobile-tab="reservations"><span class="mobile-tab-icon">▣</span><span id="mobileTabReservationsLabel">Reservations</span></button>
+    <button type="button" class="mobile-bottom-tab" data-mobile-tab="guests"><span class="mobile-tab-icon">♙</span><span id="mobileTabGuestsLabel">Guests</span></button>
+    <button type="button" class="mobile-bottom-tab" data-mobile-tab="invoices"><span class="mobile-tab-icon">▤</span><span id="mobileTabInvoicesLabel">Invoices</span></button>
+    <button type="button" class="mobile-bottom-tab" data-mobile-tab="more" id="mobileTabMore"><span class="mobile-tab-icon">•••</span><span id="mobileTabMoreLabel">More</span></button>
+  </nav>
+  <div id="mobileMoreBackdrop" class="mobile-more-backdrop mobile-shell-only hidden screen-only"></div>
+  <section id="mobileMoreSheet" class="mobile-more-sheet mobile-shell-only hidden screen-only">
+    <div class="mobile-more-handle"></div>
+    <div class="mobile-more-heading"><strong id="mobileMoreTitle">More</strong><button id="mobileMoreCloseBtn" type="button">×</button></div>
+    <button id="mobileMoreSyncBtn" class="mobile-more-action" type="button">Sync calendars</button>
+    <button id="mobileMorePaperBtn" class="mobile-more-action" type="button">Add paper registration</button>
+    <button id="mobileMoreLinkBtn" class="mobile-more-action" type="button">Create manual guest link</button>
+    <div class="mobile-more-language"><span id="mobileMoreLanguageLabel">Language</span><div><button id="mobileMoreEnglishBtn" type="button">English</button><button id="mobileMoreDutchBtn" type="button">Nederlands</button></div></div>
+    <button id="mobileMoreLogoutBtn" class="mobile-more-action mobile-more-danger" type="button">Log out</button>
+  </section>
   <div id="mobileSaveBar" class="mobile-save-bar hidden screen-only" role="status" aria-live="polite">
     <span id="mobileSaveStatus">Unsaved changes</span>
     <button id="mobileSaveBtn" type="button" class="action-btn primary">Save</button>
   </div>
   <button id="backToTopBtn" class="back-to-top-btn screen-only" type="button" aria-label="Back to top" title="Back to top">↑</button>
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-  <script type="module" src="./app.js?v=3.10.0"></script>
+  <script type="module" src="./app.js?v=3.11.0"></script>
   <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.10.0').catch(() => {}));
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.11.0').catch(() => {}));
   }
   </script>
 </body>
