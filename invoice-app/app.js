@@ -625,12 +625,25 @@ function openCalendarDetail(r){
   const x=tr[currentLang],blocked=isAirbnbBlock(r);
   $('calendarDetailPlatform').innerHTML=blocked?`<span class="calendar-platform-badge blocked">${x.calendarBlocked}</span>`:`<span class="calendar-platform-badge ${r.platform}">${r.platform==='airbnb'?'Airbnb':'Booking.com'}</span>`;
   $('calendarDetailName').textContent=calendarEventName(r);
-  const bookingIdForMeta=bookingReferenceForReservation(r);
-  $('calendarDetailMeta').innerHTML=`<strong>${escapeHtml(roomLabel(r.room_key))}</strong><span>${fmt(r.checkin_date)} → ${fmt(r.checkout_date)} · ${reservationNightsBetween(r.checkin_date,r.checkout_date)} ${escapeHtml(x.nightsWord)}</span>${bookingIdForMeta?`<span class="calendar-booking-reference">Booking.com #${escapeHtml(bookingIdForMeta)}</span>`:''}`;
+
+  $('calendarDetailMeta').innerHTML=`<strong>${escapeHtml(roomLabel(r.room_key))}</strong><span>${fmt(r.checkin_date)} → ${fmt(r.checkout_date)} · ${reservationNightsBetween(r.checkin_date,r.checkout_date)} ${escapeHtml(x.nightsWord)}</span>`;
+
+  const ref=$('calendarDetailReference');
+  const bookingId=bookingReferenceForReservation(r);
+  const airbnbId=r.platform==='airbnb'&&!blocked?String(r.reservation_code||'').trim():'';
+  const platformRef=bookingId?`Booking.com #${bookingId}`:(airbnbId?`Airbnb #${airbnbId}`:'');
+  ref.textContent=platformRef;
+  ref.classList.toggle('hidden',!platformRef);
+
   $('calendarDetailBadges').innerHTML=calendarEventStatusBadges(r);
 
+  const openInternal=()=>{
+    if(blocked)return;
+    closeCalendarDetail();
+    openReservationFromCalendar(r.id);
+  };
   $('calendarDetailOpenBtn').classList.toggle('hidden',blocked);
-  $('calendarDetailOpenBtn').onclick=()=>{closeCalendarDetail();openReservationFromCalendar(r.id);};
+  $('calendarDetailOpenBtn').onclick=e=>{e.stopPropagation();openInternal();};
 
   const airbnbBtn=$('calendarDetailAirbnbBtn');
   const showAirbnb=!blocked&&r.platform==='airbnb'&&!!r.reservation_url;
@@ -644,7 +657,6 @@ function openCalendarDetail(r){
   }
 
   const bookingBtn=$('calendarDetailBookingBtn');
-  const bookingId=bookingReferenceForReservation(r);
   const bookingUrl=bookingAdminReservationUrl(bookingId);
   const showBooking=!blocked&&r.platform==='booking'&&!!bookingUrl;
   bookingBtn.classList.toggle('hidden',!showBooking);
@@ -656,7 +668,19 @@ function openCalendarDetail(r){
     bookingBtn.removeAttribute('href');bookingBtn.onclick=null;
   }
 
-  $('calendarDetailBackdrop').classList.remove('hidden');$('calendarDetailSheet').classList.remove('hidden');
+  const sheet=$('calendarDetailSheet');
+  sheet.classList.toggle('calendar-detail-clickable',!blocked);
+  sheet.tabIndex=blocked?-1:0;
+  sheet.onclick=e=>{
+    if(blocked||e.target.closest('button,a'))return;
+    openInternal();
+  };
+  sheet.onkeydown=e=>{
+    if(blocked||e.target.closest('button,a'))return;
+    if(e.key==='Enter'||e.key===' '){e.preventDefault();openInternal();}
+  };
+
+  $('calendarDetailBackdrop').classList.remove('hidden');sheet.classList.remove('hidden');
 }
 function closeCalendarDetail(){$('calendarDetailBackdrop')?.classList.add('hidden');$('calendarDetailSheet')?.classList.add('hidden');}
 function openReservationFromCalendar(id){

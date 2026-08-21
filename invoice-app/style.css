@@ -1891,3 +1891,31 @@ body.qr-modal-open{
   font-weight:700;
   color:#4c6f96;
 }
+
+/* v3.15.8 — consistent platform reference + tappable Calendar detail card */
+.calendar-detail-reference{
+  margin-top:8px;
+  width:max-content;
+  max-width:100%;
+  padding:6px 9px;
+  border-radius:8px;
+  background:#f3f6f9;
+  font-size:11px;
+  line-height:1.2;
+  font-weight:750;
+  color:#4c6f96;
+}
+.calendar-detail-clickable{
+  cursor:pointer;
+}
+.calendar-detail-clickable:hover{
+  box-shadow:0 -8px 28px rgba(36,28,23,.13);
+}
+.calendar-detail-clickable:focus-visible{
+  outline:2px solid currentColor;
+  outline-offset:-3px;
+}
+.calendar-detail-clickable .calendar-detail-actions,
+.calendar-detail-clickable .calendar-detail-close{
+  cursor:default;
+}
