@@ -1257,3 +1257,30 @@ body.qr-modal-open{
 
   body.mobile-detail-open #newInvoiceBtn{display:none!important}
 }
+
+/* v3.11.2 — clearer active bottom navigation */
+@media(max-width:700px){
+  .mobile-bottom-tab{
+    position:relative;
+    transition:color .18s ease, background .18s ease, transform .18s ease;
+  }
+  .mobile-bottom-tab.active{
+    color:var(--heading);
+    background:var(--highlight);
+    font-weight:750;
+  }
+  .mobile-bottom-tab.active .mobile-tab-icon{
+    transform:translateY(-1px) scale(1.08);
+  }
+  .mobile-bottom-tab.active::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    bottom:2px;
+    width:24px;
+    height:3px;
+    border-radius:999px;
+    background:var(--heading);
+    transform:translateX(-50%);
+  }
+}
