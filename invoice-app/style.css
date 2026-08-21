@@ -1296,7 +1296,11 @@ body.qr-modal-open{
 
 
 .reservation-filters [data-reservation-filter].active{
-  background:
+  background:#5b4231!important;
+  color:#fff!important;
+  border-color:#5b4231!important;
+  font-weight:700;
+}
 
 /* v3.11.7 — explicit required indicators */
 .required-star{
@@ -1370,3 +1374,30 @@ body.qr-modal-open{
 .calendar-event{position:absolute;top:22px;height:42px;border:0;border-radius:10px;padding:0 8px;display:flex;align-items:center;gap:6px;overflow:hidden;white-space:nowrap;cursor:pointer;pointer-events:auto;box-shadow:0 2px 8px rgba(0,0,0,.10);font:650 11px/1 inherit;text-align:left}.calendar-event.airbnb{background:#fff0f3;color:#7e1730;border:1px solid #ffc4cf}.calendar-event.booking{background:#eef5ff;color:#174b82;border:1px solid #c7dcf5}.calendar-event.blocked{background:repeating-linear-gradient(135deg,#f2f2f2 0 7px,#e4e4e4 7px 14px);color:#5f5f5f;border:1px dashed #aaa}.calendar-platform-badge{display:inline-flex;align-items:center;border-radius:999px;padding:4px 7px;font-size:10px;font-weight:800;line-height:1;white-space:nowrap}.calendar-platform-badge.airbnb{background:#ff385c;color:#fff}.calendar-platform-badge.booking{background:#3478c5;color:#fff}.calendar-platform-badge.blocked{background:#777;color:#fff}.calendar-event .calendar-platform-badge{padding:3px 5px;font-size:9px}.calendar-event-name{overflow:hidden;text-overflow:ellipsis}.calendar-hint{margin:8px 2px 0;font-size:12px}
 .calendar-detail-backdrop{position:fixed;inset:0;z-index:9390;background:rgba(29,23,19,.30)}.calendar-detail-sheet{position:fixed;z-index:9400;left:50%;top:50%;transform:translate(-50%,-50%);width:min(440px,calc(100vw - 30px));padding:18px;background:#fff;border:1px solid var(--border);border-radius:20px;box-shadow:0 20px 60px rgba(0,0,0,.22)}.calendar-detail-backdrop.hidden,.calendar-detail-sheet.hidden{display:none!important}.calendar-detail-handle{display:none}.calendar-detail-header{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.calendar-detail-header h2{margin:7px 0 0;font-size:24px}.calendar-detail-close{width:38px;height:38px;border:0;border-radius:50%;background:var(--highlight);color:var(--heading);font-size:24px}.calendar-detail-meta{display:flex;flex-direction:column;gap:4px;margin:16px 0;color:#6e665f}.calendar-detail-meta strong{color:var(--heading)}.calendar-detail-badges{display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px}.calendar-mini-status{padding:6px 9px;border-radius:999px;font-size:11px;font-weight:700;background:#eee8e2;color:#655c55}.calendar-mini-status.good{background:#e8f5ec;color:#347146}.calendar-mini-status.warn{background:#fbf0df;color:#8a5b18}.calendar-detail-open{width:100%}.calendar-target-flash{animation:calendarFlash 1.7s ease}@keyframes calendarFlash{25%,70%{box-shadow:0 0 0 4px rgba(99,70,51,.25),0 10px 24px rgba(0,0,0,.12)}}
 @media(max-width:700px){#calendarOverview{min-height:calc(100dvh - 110px)}.calendar-toolbar{display:block}.calendar-toolbar-actions{margin-top:12px;justify-content:space-between}.calendar-toolbar-actions strong{flex:1;min-width:0}.calendar-timeline{min-width:1040px}.calendar-grid{grid-template-columns:112px repeat(var(--calendar-days),30px)}.calendar-room-label{padding:12px 8px;position:sticky;left:0;z-index:5}.calendar-event-lane{left:112px}.calendar-day-head{height:50px}.calendar-room-row,.calendar-day-cell{min-height:82px}.calendar-event{top:20px;height:40px}.calendar-detail-sheet{left:8px;right:8px;bottom:calc(78px + env(safe-area-inset-bottom));top:auto;transform:none;width:auto;border-radius:22px;padding:8px 16px 18px}.calendar-detail-handle{display:block;width:42px;height:4px;border-radius:999px;background:#d5cec7;margin:2px auto 11px}.mobile-bottom-nav{gap:1px;padding-left:4px;padding-right:4px}.mobile-bottom-tab{font-size:10px}}
+
+/* v3.13.1 — calendar mobile polish */
+@media(max-width:700px){
+  .calendar-card{
+    padding-left:14px;
+    padding-right:14px;
+  }
+  .calendar-toolbar h2{
+    font-size:2rem;
+  }
+  .calendar-legend{
+    gap:10px 14px;
+  }
+  .calendar-scroller{
+    margin-left:-14px;
+    margin-right:-14px;
+    padding-left:14px;
+    padding-right:14px;
+    -webkit-overflow-scrolling:touch;
+  }
+  .calendar-timeline{
+    border-radius:12px;
+  }
+  .calendar-room-label{
+    box-shadow:4px 0 8px rgba(255,255,255,.88);
+  }
+}
