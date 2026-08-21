@@ -384,15 +384,25 @@ function renderRoomMonthSection(roomKey,cursor,events,today){
     monthEvents.filter(r=>r.checkin_date<we&&r.checkout_date>=ws).forEach(r=>{
       // Airbnb-style turnover geometry: a stay starts 25% into check-in day and ends 25% into checkout day.
       // This lets an outgoing and incoming guest share one date cleanly with no overlap.
-      let startPos=r.checkin_date<=monthStart?offset:diff(r.checkin_date)+0.25;
-      let endPos=r.checkout_date>=monthEnd?offset+daysInMonth:diff(r.checkout_date)+0.25;
+      // Clip each reservation segment to THIS WEEK, not merely to the month.
+      // Without this, a multi-week stay repeats its original check-in weekday
+      // on every row (for example Thu-Sun every week), creating false gaps.
+      let startPos=r.checkin_date<=ws?0:diff(r.checkin_date)+0.25;
+      let endPos=r.checkout_date>=we?7:diff(r.checkout_date)+0.25;
       startPos=Math.max(0,Math.min(7,startPos));endPos=Math.max(0,Math.min(7,endPos));
       if(endPos<=startPos)return;
       const bar=document.createElement('button');bar.type='button';bar.className=`room-month-event ${isAirbnbBlock(r)?'blocked':r.platform}`;
       bar.style.left=`calc(${startPos} * (100% / 7))`;bar.style.width=`calc(${endPos-startPos} * (100% / 7))`;
-      bar.classList.toggle('continues-before',r.checkin_date<ws||r.checkin_date<monthStart);
-      bar.classList.toggle('continues-after',r.checkout_date>=we||r.checkout_date>=monthEnd);
-      bar.innerHTML=isAirbnbBlock(r)?`<span>${escapeHtml(tr[currentLang].calendarBlocked)}</span>`:`<span class="room-month-platform-dot ${r.platform}" aria-hidden="true"></span><span>${escapeHtml(calendarEventName(r))}</span>`;
+      const continuesBefore=r.checkin_date<ws||r.checkin_date<monthStart;
+      const continuesAfter=r.checkout_date>=we||r.checkout_date>=monthEnd;
+      bar.classList.toggle('continues-before',continuesBefore);
+      bar.classList.toggle('continues-after',continuesAfter);
+      const showLabel=!continuesBefore || ws<=monthStart;
+      if(isAirbnbBlock(r)){
+        bar.innerHTML=showLabel?`<span>${escapeHtml(tr[currentLang].calendarBlocked)}</span>`:`<span class="room-month-continuation" aria-hidden="true">↔</span>`;
+      }else{
+        bar.innerHTML=showLabel?`<span class="room-month-platform-dot ${r.platform}" aria-hidden="true"></span><span>${escapeHtml(calendarEventName(r))}</span>`:`<span class="room-month-continuation" aria-hidden="true">↔</span>`;
+      }
       bar.onclick=e=>{e.stopPropagation();openCalendarDetail(r);};layer.appendChild(bar);
     });
     week.appendChild(layer);section.appendChild(week);
