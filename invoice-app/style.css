@@ -1779,3 +1779,41 @@ body.qr-modal-open{
     text-align:center;
   }
 }
+
+/* v3.15.3 — restore clear desktop Both -> Month navigation */
+.calendar-room-open-hint{
+  display:none;
+  margin-top:5px;
+  font-style:normal;
+  font-size:9px;
+  font-weight:700;
+  color:#8b6c59;
+}
+
+@media(min-width:701px){
+  .calendar-both-continuous .calendar-room-label{
+    position:sticky;
+    left:0;
+    z-index:12;
+    box-shadow:5px 0 10px rgba(255,255,255,.92);
+  }
+
+  .calendar-both-continuous .calendar-room-open{
+    cursor:pointer;
+    transition:background .15s ease, box-shadow .15s ease;
+  }
+  .calendar-both-continuous .calendar-room-open:hover{
+    background:#f1ebe6;
+    box-shadow:5px 0 10px rgba(255,255,255,.92), inset 0 0 0 1px rgba(92,70,56,.08);
+  }
+  .calendar-both-continuous .calendar-room-open-hint{
+    display:block;
+  }
+
+  /* Month view has one clear exit instead of the removed Month/Both toggle. */
+  .calendar-room-view-head .calendar-room-back{
+    display:inline-flex!important;
+    align-items:center;
+    gap:4px;
+  }
+}
