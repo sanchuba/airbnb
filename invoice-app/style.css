@@ -1236,3 +1236,24 @@ body.qr-modal-open{
   .back-to-top-btn{display:none!important}
 }
 @media(min-width:701px){.mobile-bottom-nav,.mobile-detail-bar,.mobile-more-sheet,.mobile-more-backdrop,.mobile-shell-only{display:none!important}}
+
+/* v3.11.1 — mobile navigation refinements */
+@media(max-width:700px){
+  body.mobile-app-active .topbar{display:none!important}
+  body.mobile-app-active .container{padding-top:10px}
+
+  .mobile-more-language button{display:flex;align-items:center;justify-content:space-between;gap:8px;border:1px solid transparent}
+  .mobile-more-language button.selected{background:var(--heading);color:#fff;border-color:var(--heading)}
+  .mobile-language-check{visibility:hidden;font-weight:900}
+  .mobile-more-language button.selected .mobile-language-check{visibility:visible}
+
+  .mobile-more-account{border-top:1px solid #eee7e1;margin-top:2px;padding:14px 4px 0}
+  .mobile-more-account>span{display:block;margin-bottom:9px;color:#766f67;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em}
+  .mobile-signout-btn{width:100%;border:1px solid rgba(161,77,77,.22);border-radius:12px;padding:12px 14px;background:#fff8f8;color:var(--danger);text-align:center;font:700 14px inherit;cursor:pointer}
+
+  .mobile-save-actions{display:flex;align-items:center;gap:7px;flex:0 0 auto}
+  .mobile-save-bar .mobile-save-actions .action-btn{min-width:0;padding:11px 15px}
+  .mobile-save-bar #mobileCancelBtn{background:transparent;border:1px solid var(--border)}
+
+  body.mobile-detail-open #newInvoiceBtn{display:none!important}
+}
