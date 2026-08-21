@@ -1699,3 +1699,83 @@ body.qr-modal-open{
     display:none!important;
   }
 }
+
+/* v3.15.0 — continuous horizontally-scrolling Both calendar */
+.calendar-both-continuous .calendar-toolbar-actions #calendarPrevBtn,
+.calendar-both-continuous .calendar-toolbar-actions #calendarNextBtn{
+  display:none!important;
+}
+.calendar-both-continuous .calendar-toolbar-actions{
+  gap:12px;
+}
+.calendar-both-continuous .calendar-toolbar-actions #calendarMonthLabel{
+  min-width:185px;
+  text-align:left;
+}
+
+.calendar-month-band{
+  height:34px;
+  position:sticky;
+  top:0;
+  z-index:7;
+  background:#faf8f6;
+  border-bottom:1px solid var(--border);
+}
+.calendar-month-band .calendar-corner{
+  position:sticky;
+  left:0;
+  z-index:9;
+}
+.calendar-month-span{
+  min-width:0;
+  display:flex;
+  align-items:center;
+  padding:0 8px;
+  border-left:2px solid #d7c9be;
+  color:var(--heading);
+  background:#faf8f6;
+  font-size:11px;
+  font-weight:800;
+  white-space:nowrap;
+  text-transform:capitalize;
+}
+.calendar-both-continuous .calendar-days-header{
+  top:34px;
+}
+.calendar-both-continuous .calendar-day-head.month-start,
+.calendar-both-continuous .calendar-day-cell.month-start{
+  border-left:2px solid #d7c9be!important;
+}
+.calendar-both-continuous .calendar-timeline{
+  /* A fixed daily rhythm makes continuous cross-month scrolling predictable. */
+  width:max-content;
+  min-width:100%;
+}
+.calendar-both-continuous .calendar-grid{
+  grid-template-columns:150px repeat(var(--calendar-days),32px);
+  width:max-content;
+  min-width:100%;
+}
+.calendar-both-continuous .calendar-event-lane{
+  left:150px;
+  width:calc(var(--calendar-days) * 32px);
+  right:auto;
+}
+
+@media(max-width:700px){
+  .calendar-both-continuous .calendar-grid{
+    grid-template-columns:112px repeat(var(--calendar-days),30px);
+  }
+  .calendar-both-continuous .calendar-event-lane{
+    left:112px;
+    width:calc(var(--calendar-days) * 30px);
+  }
+  .calendar-both-continuous .calendar-toolbar-actions{
+    justify-content:flex-start;
+  }
+  .calendar-both-continuous .calendar-toolbar-actions #calendarMonthLabel{
+    min-width:0;
+    flex:1;
+    text-align:center;
+  }
+}

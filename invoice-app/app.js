@@ -180,6 +180,56 @@ let calendarHasVisited=false;
 let calendarTimelineScrollLeft=0;
 let calendarRoomScrollDate=null;
 function isoLocalDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+
+function continuousBothStartDate(){
+  const n=new Date();
+  return new Date(n.getFullYear(),n.getMonth()-6,1);
+}
+function continuousBothEndDate(){
+  const n=new Date();
+  return new Date(n.getFullYear(),n.getMonth()+13,1);
+}
+function continuousBothStartIso(){return isoLocalDate(continuousBothStartDate());}
+function continuousBothEndIso(){return isoLocalDate(continuousBothEndDate());}
+function daysBetweenIso(a,b){
+  return Math.max(0,Math.round((new Date(b+'T12:00:00')-new Date(a+'T12:00:00'))/86400000));
+}
+function continuousBothDayCount(){return daysBetweenIso(continuousBothStartIso(),continuousBothEndIso());}
+function continuousBothMonths(){
+  const out=[],start=continuousBothStartDate(),end=continuousBothEndDate();
+  for(let d=new Date(start);d<end;d=new Date(d.getFullYear(),d.getMonth()+1,1)){
+    const s=isoLocalDate(d),next=isoLocalDate(new Date(d.getFullYear(),d.getMonth()+1,1));
+    out.push({date:new Date(d),start:s,days:daysBetweenIso(s,next)});
+  }
+  return out;
+}
+function updateContinuousCalendarMonthLabel(){
+  if(calendarRoomView)return;
+  const scroller=$('calendarScroller'),root=$('calendarTimeline'),label=$('calendarMonthLabel');
+  if(!scroller||!root||!label)return;
+  const heads=[...root.querySelectorAll('.calendar-day-head[data-date]')];
+  if(!heads.length)return;
+  const sr=scroller.getBoundingClientRect(),stickyWidth=isMobileShell()?112:150;
+  const leftX=sr.left+stickyWidth+8,rightX=sr.right-8;
+  let first=null,last=null;
+  for(const h of heads){
+    const r=h.getBoundingClientRect();
+    if(r.right>=leftX&&r.left<=rightX){if(!first)first=h;last=h;}
+  }
+  first=first||heads[0];last=last||first;
+  const fd=new Date(first.dataset.date+'T12:00:00'),ld=new Date(last.dataset.date+'T12:00:00');
+  const locale=currentLang==='nl'?'nl-NL':'en-GB';
+  if(fd.getFullYear()===ld.getFullYear()&&fd.getMonth()===ld.getMonth()){
+    label.textContent=new Intl.DateTimeFormat(locale,{month:'long',year:'numeric'}).format(fd);
+  }else if(fd.getFullYear()===ld.getFullYear()){
+    const a=new Intl.DateTimeFormat(locale,{month:'short'}).format(fd);
+    const b=new Intl.DateTimeFormat(locale,{month:'short',year:'numeric'}).format(ld);
+    label.textContent=`${a} – ${b}`;
+  }else{
+    const fmt=new Intl.DateTimeFormat(locale,{month:'short',year:'numeric'});
+    label.textContent=`${fmt.format(fd)} – ${fmt.format(ld)}`;
+  }
+}
 function monthStartIso(){return isoLocalDate(new Date(calendarCursor.getFullYear(),calendarCursor.getMonth(),1));}
 function nextMonthStartIso(){return isoLocalDate(new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,1));}
 function calendarDaysInMonth(){return new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,0).getDate();}
@@ -214,8 +264,7 @@ function scrollCalendarToDate(iso,behavior='auto'){
   scroller.scrollTo({left:target,behavior});calendarTimelineScrollLeft=target;
 }
 function scrollCalendarToTodayStart(behavior='auto'){
-  const today=localToday();if(today.slice(0,7)!==monthStartIso().slice(0,7))return;
-  requestAnimationFrame(()=>scrollCalendarToDate(today,behavior));
+  requestAnimationFrame(()=>scrollCalendarToDate(localToday(),behavior));
 }
 
 
@@ -311,9 +360,7 @@ function setCalendarRoomView(roomKey,opts={}){
   requestAnimationFrame(()=>scrollRoomMonthToDate(calendarRoomScrollDate,opts.behavior||'auto'));
 }
 function showBothAtInitialTodayPosition(){
-  const n=new Date();
   calendarRoomView=null;
-  calendarCursor=new Date(n.getFullYear(),n.getMonth(),1);
   calendarRoomScrollDate=localToday();
   calendarTimelineScrollLeft=0;
   calendarHasVisited=true;
@@ -446,46 +493,98 @@ function renderRoomMonthCalendar(roomKey){
 }
 function renderCalendar(){
   const root=$('calendarTimeline');if(!root)return;
-  const start=monthStartIso(),end=nextMonthStartIso(),days=calendarDaysInMonth(),today=localToday();
-  $('calendarMonthLabel').textContent=calendarMonthText();
+  const today=localToday();
   updateCalendarViewSwitch();
 
   const roomMode=!!calendarRoomView;
-  $('calendarScroller').classList.toggle('hidden',roomMode);$('calendarRoomMonth').classList.toggle('hidden',!roomMode);$('calendarRoomViewHead').classList.toggle('hidden',!roomMode);
+  $('calendarScroller').classList.toggle('hidden',roomMode);
+  $('calendarRoomMonth').classList.toggle('hidden',!roomMode);
+  $('calendarRoomViewHead').classList.toggle('hidden',!roomMode);
+  $('calendarOverview').classList.toggle('calendar-both-continuous',!roomMode);
+
   if(roomMode){
+    $('calendarMonthLabel').textContent=calendarMonthText();
     $('calendarRoomViewTitle').textContent=calendarRoomDisplay(calendarRoomView);
     if($('calendarRoomViewSubtitle'))$('calendarRoomViewSubtitle').textContent=calendarRoomSide(calendarRoomView);
     updateCalendarRoomSwitcher();
-    $('calendarHint').textContent=tr[currentLang].calendarRoomHint;renderRoomMonthCalendar(calendarRoomView);return;
+    $('calendarHint').textContent=tr[currentLang].calendarRoomHint;
+    renderRoomMonthCalendar(calendarRoomView);
+    return;
   }
-  $('calendarHint').textContent=tr[currentLang].calendarHint;
 
+  $('calendarHint').textContent=tr[currentLang].calendarHint;
+  const start=continuousBothStartIso(),end=continuousBothEndIso(),days=continuousBothDayCount();
   const weekdayFmt=new Intl.DateTimeFormat(currentLang==='nl'?'nl-NL':'en-GB',{weekday:'short'});
+  const monthFmt=new Intl.DateTimeFormat(currentLang==='nl'?'nl-NL':'en-GB',{month:'long',year:'numeric'});
   const rooms=[['cozy',calendarRoomDisplay('cozy')],['spacious',calendarRoomDisplay('spacious')]];
-  root.style.setProperty('--calendar-days',days);root.innerHTML='';
-  const header=document.createElement('div');header.className='calendar-grid calendar-days-header';header.innerHTML='<div class="calendar-room-label calendar-corner"></div>';
-  for(let day=1;day<=days;day++){const d=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth(),day),iso=isoLocalDate(d),past=iso<today;header.innerHTML+=`<div class="calendar-day-head ${iso===today?'today':''} ${past?'past':''}" data-date="${iso}"><span>${weekdayFmt.format(d).replace('.','')}</span><strong>${day}</strong></div>`;}
+  root.style.setProperty('--calendar-days',days);
+  root.innerHTML='';
+
+  // Month band: subtle separators make one continuous timeline easy to scan.
+  const monthBand=document.createElement('div');
+  monthBand.className='calendar-grid calendar-month-band';
+  monthBand.innerHTML='<div class="calendar-room-label calendar-corner"></div>';
+  let monthOffset=0;
+  continuousBothMonths().forEach(month=>{
+    const block=document.createElement('div');
+    block.className='calendar-month-span';
+    block.style.gridColumn=`${monthOffset+2} / span ${month.days}`;
+    block.textContent=monthFmt.format(month.date);
+    monthBand.appendChild(block);
+    monthOffset+=month.days;
+  });
+  root.appendChild(monthBand);
+
+  const header=document.createElement('div');
+  header.className='calendar-grid calendar-days-header';
+  header.innerHTML='<div class="calendar-room-label calendar-corner"></div>';
+  const startDate=continuousBothStartDate();
+  for(let i=0;i<days;i++){
+    const d=new Date(startDate);d.setDate(startDate.getDate()+i);
+    const iso=isoLocalDate(d),past=iso<today,monthStart=d.getDate()===1;
+    const cell=document.createElement('div');
+    cell.className=`calendar-day-head ${iso===today?'today':''} ${past?'past':''} ${monthStart?'month-start':''}`;
+    cell.dataset.date=iso;
+    cell.innerHTML=`<span>${weekdayFmt.format(d).replace('.','')}</span><strong>${d.getDate()}</strong>`;
+    header.appendChild(cell);
+  }
   root.appendChild(header);
 
   const events=[...reservations.filter(isRealReservation),...calendarVisibleBlocks()];
   rooms.forEach(([roomKey,label])=>{
-    const row=document.createElement('div');row.className='calendar-grid calendar-room-row';
+    const row=document.createElement('div');
+    row.className='calendar-grid calendar-room-row';
     row.innerHTML=`<button type="button" class="calendar-room-label calendar-room-open" title="${escapeHtml(tr[currentLang].calendarOpenRoom)}"><span><strong>${escapeHtml(label)}</strong><small>${escapeHtml(calendarRoomSide(roomKey))}</small></span><b aria-hidden="true">›</b></button>`;
-    for(let day=1;day<=days;day++){const iso=`${start.slice(0,8)}${String(day).padStart(2,'0')}`;row.innerHTML+=`<div class="calendar-day-cell ${iso===today?'today':''} ${iso<today?'past':''}"></div>`;}
-    root.appendChild(row);row.querySelector('.calendar-room-open').onclick=()=>setCalendarRoomView(roomKey);
+    for(let i=0;i<days;i++){
+      const d=new Date(startDate);d.setDate(startDate.getDate()+i);
+      const iso=isoLocalDate(d),monthStart=d.getDate()===1;
+      row.innerHTML+=`<div class="calendar-day-cell ${iso===today?'today':''} ${iso<today?'past':''} ${monthStart?'month-start':''}"></div>`;
+    }
+    root.appendChild(row);
+    row.querySelector('.calendar-room-open').onclick=()=>{
+      const date=visibleTimelineDate(),d=new Date(date+'T12:00:00');
+      calendarCursor=new Date(d.getFullYear(),d.getMonth(),1);
+      setCalendarRoomView(roomKey,{date,behavior:'auto'});
+    };
     const lane=document.createElement('div');lane.className='calendar-event-lane';row.appendChild(lane);
     events.filter(r=>r.room_key===roomKey&&r.checkin_date<end&&r.checkout_date>start).sort((a,b)=>a.checkin_date.localeCompare(b.checkin_date)).forEach(r=>{
       const visibleStart=r.checkin_date<start?start:r.checkin_date,visibleEnd=r.checkout_date>end?end:r.checkout_date;
-      const diff=x=>Math.round((new Date(x+'T00:00:00')-new Date(start+'T00:00:00'))/86400000);
-      const startDay=Math.max(0,diff(visibleStart)),endDay=Math.max(startDay+1,diff(visibleEnd));
+      const startDay=daysBetweenIso(start,visibleStart),endDay=Math.max(startDay+1,daysBetweenIso(start,visibleEnd));
       const bar=document.createElement('button');bar.type='button';bar.className=`calendar-event ${isAirbnbBlock(r)?'blocked':r.platform}`;
       const startPos=r.checkin_date<start?0:startDay+0.25,endPos=r.checkout_date>=end?days:endDay+0.25;
-      bar.style.left=`calc(${startPos} * (100% / ${days}))`;bar.style.width=`calc(${Math.max(.05,endPos-startPos)} * (100% / ${days}))`;
-      bar.classList.toggle('continues-before',r.checkin_date<start);bar.classList.toggle('continues-after',r.checkout_date>=end);
-      bar.innerHTML=isAirbnbBlock(r)?`<span class="calendar-event-name">${escapeHtml(tr[currentLang].calendarBlocked)}</span>`:`<span class="calendar-platform-badge ${r.platform}">${r.platform==='airbnb'?'Airbnb':'Booking'}</span><span class="calendar-event-name">${escapeHtml(calendarEventName(r))}</span>`;
-      bar.onclick=e=>{e.stopPropagation();openCalendarDetail(r);};lane.appendChild(bar);
+      bar.style.left=`calc(${startPos} * (100% / ${days}))`;
+      bar.style.width=`calc(${Math.max(.05,endPos-startPos)} * (100% / ${days}))`;
+      bar.classList.toggle('continues-before',r.checkin_date<start);
+      bar.classList.toggle('continues-after',r.checkout_date>=end);
+      bar.innerHTML=isAirbnbBlock(r)
+        ? `<span class="calendar-event-name">${escapeHtml(tr[currentLang].calendarBlocked)}</span>`
+        : `<span class="calendar-platform-badge ${r.platform}">${r.platform==='airbnb'?'Airbnb':'Booking'}</span><span class="calendar-event-name">${escapeHtml(calendarEventName(r))}</span>`;
+      bar.onclick=e=>{e.stopPropagation();openCalendarDetail(r);};
+      lane.appendChild(bar);
     });
   });
+
+  requestAnimationFrame(updateContinuousCalendarMonthLabel);
 }
 function openCalendarDetail(r){
   const x=tr[currentLang],blocked=isAirbnbBlock(r);
@@ -503,8 +602,19 @@ function openReservationFromCalendar(id){
   setReservationFilter('all');
   requestAnimationFrame(()=>{const card=document.querySelector(`[data-reservation-id="${CSS.escape(id)}"]`);card?.scrollIntoView({behavior:'smooth',block:'center'});card?.classList.add('calendar-target-flash');setTimeout(()=>card?.classList.remove('calendar-target-flash'),1800);});
 }
-function changeCalendarMonth(delta){calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+delta,1);calendarRoomScrollDate=monthStartIso();calendarTimelineScrollLeft=0;renderCalendar();if(!calendarRoomView&&$('calendarScroller'))$('calendarScroller').scrollLeft=0;}
-function calendarToday(){const n=new Date();calendarCursor=new Date(n.getFullYear(),n.getMonth(),1);calendarRoomScrollDate=localToday();renderCalendar();if(calendarRoomView)requestAnimationFrame(()=>scrollRoomMonthToDate(localToday(),'smooth'));else scrollCalendarToTodayStart('smooth');}
+function changeCalendarMonth(delta){
+  if(!calendarRoomView)return;
+  calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+delta,1);
+  calendarRoomScrollDate=monthStartIso();renderCalendar();
+}
+function calendarToday(){
+  const n=new Date();calendarCursor=new Date(n.getFullYear(),n.getMonth(),1);calendarRoomScrollDate=localToday();
+  if(calendarRoomView){
+    renderCalendar();requestAnimationFrame(()=>scrollRoomMonthToDate(localToday(),'smooth'));
+  }else{
+    scrollCalendarToTodayStart('smooth');
+  }
+}
 function reservationNightsBetween(a,b){ const A=new Date(`${a}T12:00:00`),B=new Date(`${b}T12:00:00`); return Math.max(0,Math.round((B-A)/86400000)); }
 
 async function loadReservations(){
@@ -1536,7 +1646,18 @@ $('calendarScroller').addEventListener('touchend',e=>{if(!calendarSwipeStart||ca
 window.addEventListener('scroll',()=>{if(calendarRoomView&&mobileShellState.tab==='calendar')calendarRoomScrollDate=visibleRoomMonthDate();},{passive:true});
 
 $('calendarRoomBackBtn').onclick=exitCalendarRoomView;
-$('calendarScroller').addEventListener('scroll',()=>{if(mobileShellState.tab==='calendar'&&!calendarRoomView)calendarTimelineScrollLeft=$('calendarScroller').scrollLeft;},{passive:true});
+$('calendarScroller').addEventListener('scroll',()=>{
+  if(!calendarRoomView){
+    calendarTimelineScrollLeft=$('calendarScroller').scrollLeft;
+    updateContinuousCalendarMonthLabel();
+  }
+},{passive:true});
+$('navCalendar')?.addEventListener('click',()=>{
+  if(!calendarRoomView&&!calendarHasVisited){
+    calendarHasVisited=true;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>scrollCalendarToTodayStart('auto')));
+  }
+});
 $('calendarPrevBtn').onclick=()=>changeCalendarMonth(-1);
 $('calendarNextBtn').onclick=()=>changeCalendarMonth(1);
 $('calendarTodayBtn').onclick=calendarToday;
