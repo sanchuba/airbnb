@@ -8,11 +8,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="NGR Admin" />
-  <link rel="manifest" href="./manifest.webmanifest?v=3.11.2" />
+  <link rel="manifest" href="./manifest.webmanifest?v=3.11.4" />
   <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=3.5.0" />
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=3.5.0" />
   <title>Nijmegen Guest Rooms – Admin</title>
-  <link rel="stylesheet" href="./style.css?v=3.11.2" />
+  <link rel="stylesheet" href="./style.css?v=3.11.4" />
 </head>
 <body>
   <div class="container">
@@ -174,7 +174,7 @@
               <p id="inviteMessage" class="muted"></p>
             </div>
 
-            <div class="field"><label id="labelRegistrationSearch" for="registrationSearch">Search registrations</label><input id="registrationSearch" placeholder="Search by name, email or booking reference" /></div>
+            <div class="field"><label id="labelRegistrationSearch" for="registrationSearch">Search registrations</label><div class="search-input-wrap"><input id="registrationSearch" type="search" placeholder="Search by name, email or booking reference" /><button id="clearRegistrationSearch" class="search-clear-btn hidden" type="button" aria-label="Clear search">×</button></div></div>
             <div class="registration-filters" id="registrationFilters" aria-label="Registration filters">
               <button type="button" class="filter-pill active" data-filter="all" id="filterAll">All</button>
               <button type="button" class="filter-pill" data-filter="arrivingSoon" id="filterArrivingSoon">Arriving soon</button>
@@ -273,8 +273,8 @@
           <div class="card form-card screen-only" id="invoiceDetailsCard">
             <div class="section-header"><h2 id="formTitle">Invoice Details</h2><button id="newInvoiceBtn" class="action-btn secondary">New invoice</button></div>
             <input id="guestRegistrationId" type="hidden" />
-            <div class="inline-grid"><div class="field" data-required="true"><label id="labelInvoiceNumber" for="invoiceNumber">Invoice number</label><input id="invoiceNumber" /></div><div class="field" data-required="true"><label id="labelInvoiceDate" for="invoiceDate">Invoice date</label><input id="invoiceDate" type="date" /></div></div>
-            <div class="field" data-required="true"><label id="labelGuestName" for="guestName">Guest name</label><input id="guestName" /></div>
+            <div class="inline-grid"><div class="field" data-required="true"><label id="labelInvoiceNumber" for="invoiceNumber">Invoice number <span class="required-star" aria-hidden="true">*</span></label><input id="invoiceNumber" /></div><div class="field" data-required="true"><label id="labelInvoiceDate" for="invoiceDate">Invoice date <span class="required-star" aria-hidden="true">*</span></label><input id="invoiceDate" type="date" /></div></div>
+            <div class="field" data-required="true"><label id="labelGuestName" for="guestName">Guest name <span class="required-star" aria-hidden="true">*</span></label><input id="guestName" /></div>
             <div class="field"><label id="labelGuestAddress" for="guestAddress">Guest address</label><input id="guestAddress" /></div>
             <div class="inline-grid"><div class="field"><label id="labelGuestPostal" for="guestPostalCode">Postal code</label><input id="guestPostalCode" /></div><div class="field"><label id="labelGuestCity" for="guestCity">City</label><input id="guestCity" /></div></div>
             <div class="field"><label id="labelGuestCountry" for="guestCountry">Country</label><input id="guestCountry" /></div>
@@ -283,18 +283,18 @@
             <div class="field"><label id="labelVatNumber" for="vatNumber">VAT number (optional)</label><input id="vatNumber" /></div>
             <div class="field"><label id="labelGuestEmail" for="guestEmail">Guest email (optional)</label><input id="guestEmail" type="email" /></div>
             <div class="field"><label id="labelBookingReference" for="bookingReference">Booking reference (optional)</label><input id="bookingReference" /></div>
-            <div class="field" data-required="true"><label id="labelRoomName" for="roomName">Room name</label><select id="roomName"><option value="Cozy Room (Street Side)">Cozy Room (Street Side)</option><option value="Spacious Room (Garden View)">Spacious Room (Garden View)</option><option value="custom">Custom room name...</option></select></div>
+            <div class="field" data-required="true"><label id="labelRoomName" for="roomName">Room name <span class="required-star" aria-hidden="true">*</span></label><select id="roomName"><option value="Cozy Room (Street Side)">Cozy Room (Street Side)</option><option value="Spacious Room (Garden View)">Spacious Room (Garden View)</option><option value="custom">Custom room name...</option></select></div>
             <div class="field hidden" id="customRoomField"><label id="labelCustomRoomName" for="customRoomName">Custom room name</label><input id="customRoomName" /></div>
-            <div class="inline-grid"><div class="field" data-required="true"><label id="labelCheckin" for="checkinDate">Check-in</label><input id="checkinDate" type="date" /></div><div class="field" data-required="true"><label id="labelCheckout" for="checkoutDate">Check-out</label><input id="checkoutDate" type="date" /></div></div>
-            <div class="inline-grid"><div class="field" data-required="true"><label id="labelNights" for="nights">Nights</label><input id="nights" type="number" min="1" /></div><div class="field" data-required="true"><label id="labelGuests" for="guests">Guests</label><input id="guests" type="number" min="1" value="1" /></div></div>
-            <div class="field" data-required="true"><label id="labelAccommodation" for="accommodationAmount">Accommodation (€)</label><input id="accommodationAmount" type="number" step="0.01" /></div>
+            <div class="inline-grid"><div class="field" data-required="true"><label id="labelCheckin" for="checkinDate">Check-in <span class="required-star" aria-hidden="true">*</span></label><input id="checkinDate" type="date" /></div><div class="field" data-required="true"><label id="labelCheckout" for="checkoutDate">Check-out <span class="required-star" aria-hidden="true">*</span></label><input id="checkoutDate" type="date" /></div></div>
+            <div class="inline-grid"><div class="field" data-required="true"><label id="labelNights" for="nights">Nights <span class="required-star" aria-hidden="true">*</span></label><input id="nights" type="number" min="1" /></div><div class="field" data-required="true"><label id="labelGuests" for="guests">Guests <span class="required-star" aria-hidden="true">*</span></label><input id="guests" type="number" min="1" value="1" /></div></div>
+            <div class="field" data-required="true"><label id="labelAccommodation" for="accommodationAmount">Accommodation (€) <span class="required-star" aria-hidden="true">*</span></label><input id="accommodationAmount" type="number" step="0.01" /></div>
             <div id="additionalGuestInvoiceFields" class="inline-grid hidden">
               <div class="field"><label id="labelAdditionalGuestFee" for="additionalGuestFee">Additional overnight guest fee (€)</label><input id="additionalGuestFee" type="number" min="0" step="0.01" value="0.00" /></div>
               <div class="field"><label id="labelAdditionalGuestNights" for="additionalGuestNights">Additional guest nights</label><input id="additionalGuestNights" type="number" min="0" step="1" value="0" /></div>
             </div>
-            <div class="field" data-required="true"><label id="labelCleaning" for="cleaningFee">Cleaning fee (€)</label><input id="cleaningFee" type="number" step="0.01" value="5.00" /></div>
-            <div class="inline-grid"><div class="field" data-required="true"><label id="labelTouristTaxRate" for="touristTaxRate">Tourist tax rate (€ per guest per night)</label><input id="touristTaxRate" type="number" step="0.01" value="3.71" /></div><div class="field" data-required="true"><label id="labelTaxMode" for="taxMode">Tourist tax handling</label><select id="taxMode"><option value="included">Accommodation amount already includes tourist tax</option><option value="excluded">Tourist tax should be added on top of accommodation</option></select></div></div>
-            <div class="field" data-required="true"><label id="labelPaymentMethod" for="paymentMethod">Payment</label><select id="paymentMethod"><option value="Paid via Booking.com">Paid via Booking.com</option><option value="Paid via Airbnb">Paid via Airbnb</option><option value="custom">Custom payment method...</option></select></div>
+            <div class="field" data-required="true"><label id="labelCleaning" for="cleaningFee">Cleaning fee (€) <span class="required-star" aria-hidden="true">*</span></label><input id="cleaningFee" type="number" step="0.01" value="5.00" /></div>
+            <div class="inline-grid"><div class="field" data-required="true"><label id="labelTouristTaxRate" for="touristTaxRate">Tourist tax rate (€ per guest per night) <span class="required-star" aria-hidden="true">*</span></label><input id="touristTaxRate" type="number" step="0.01" value="3.71" /></div><div class="field" data-required="true"><label id="labelTaxMode" for="taxMode">Tourist tax handling <span class="required-star" aria-hidden="true">*</span></label><select id="taxMode"><option value="included">Accommodation amount already includes tourist tax</option><option value="excluded">Tourist tax should be added on top of accommodation</option></select></div></div>
+            <div class="field" data-required="true"><label id="labelPaymentMethod" for="paymentMethod">Payment <span class="required-star" aria-hidden="true">*</span></label><select id="paymentMethod"><option value="Paid via Booking.com">Paid via Booking.com</option><option value="Paid via Airbnb">Paid via Airbnb</option><option value="custom">Custom payment method...</option></select></div>
             <div class="field hidden" id="customPaymentField"><label id="labelCustomPayment" for="customPaymentMethod">Custom payment method</label><input id="customPaymentMethod" /></div>
             <div class="button-row"><button id="saveBtn" class="action-btn primary">Save invoice</button><button id="duplicateBtn" class="action-btn secondary hidden">Duplicate invoice</button><button id="deleteBtn" class="action-btn danger hidden">Delete invoice</button><button id="printBtn" class="action-btn secondary">Print / Save as PDF</button></div>
             <p id="saveMessage" class="muted"></p>
@@ -302,7 +302,7 @@
 
           <div class="card saved-card screen-only" id="savedInvoicesCard">
             <div class="section-header"><h2 id="savedInvoicesTitle">Saved Invoices</h2><button id="mobileNewInvoiceBtn" class="action-btn primary mobile-shell-only" type="button">New invoice</button></div>
-            <div class="field"><label id="labelSearchInvoices" for="searchInvoices">Search / filter invoices</label><input id="searchInvoices" placeholder="Search by invoice number, guest name, company, email or booking reference" /></div>
+            <div class="field"><label id="labelSearchInvoices" for="searchInvoices">Search / filter invoices</label><div class="search-input-wrap"><input id="searchInvoices" type="search" placeholder="Search by invoice number, guest name, company, email or booking reference" /><button id="clearInvoiceSearch" class="search-clear-btn hidden" type="button" aria-label="Clear search">×</button></div></div>
             <div id="invoiceList" class="invoice-list"></div>
           </div>
         </div>
@@ -371,10 +371,10 @@
   </div>
   <button id="backToTopBtn" class="back-to-top-btn screen-only" type="button" aria-label="Back to top" title="Back to top">↑</button>
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-  <script type="module" src="./app.js?v=3.11.2"></script>
+  <script type="module" src="./app.js?v=3.11.4"></script>
   <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.11.2').catch(() => {}));
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.11.4').catch(() => {}));
   }
   </script>
 </body>
