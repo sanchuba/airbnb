@@ -8,7 +8,7 @@ const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const tr = {
   en: {
     pageTitle:'Guest & Invoice Admin',pageSubtitle:'Nijmegen Guest Rooms – Private administration',loginTitle:'Sign in',loginText:'Only authorized users can access the administration.',loginEmail:'Email',loginBtn:'Send verification code',loginCode:'Verification code',loginCodeIntro:'Enter the verification code sent to your email.',verifyLogin:'Verify & sign in',resendCode:'Resend code',changeEmail:'Use another email',codeSent:'Verification code sent. Check your email.',codeResent:'A new verification code has been sent.',invalidCode:'The verification code is invalid or has expired.',authRateTitle:'Too many codes requested',authRateText:'Please wait a little before requesting another verification code.',resendIn:'Resend code in {seconds}s',logout:'Log out',
-    reservations:'Reservations',reservationsSubtitle:'Read-only overview from Airbnb and Booking.com calendars.',syncCalendars:'Sync calendars',syncingCalendars:'Syncing calendars…',syncedCalendars:'Calendars synced.',syncFailed:'Calendar sync failed',registrationNotCreated:'Registration not created',registrationLinkReady:'Registration link ready',registrationSubmitted:'Registration submitted',createRegistrationLink:'Create registration link',copyRegistrationLink:'Copy link',showQr:'Show QR code',qrTitle:'Scan to complete your guest registration',qrSubtitle:'Open your camera and scan the QR code.',qrCopy:'Copy registration link',completeManually:'Complete registration manually',printPaperForm:'Print prefilled paper form',manualFromReservation:'Manual registration linked to this reservation.',openGuest:'Open guest',openAirbnb:'Open in Airbnb ↗',moreActions:'More',lessActions:'Hide options',mobileGuests:'Guests',mobileInvoices:'Invoices',mobileMore:'More',mobileBack:'Back',mobileMoreSync:'Sync calendars',mobileMorePaper:'Add paper registration',mobileMoreLink:'Create manual guest link',mobileLanguage:'Language',mobileAccount:'Account',mobileSignOut:'Sign out',cancelShort:'Cancel',clearSearch:'Clear search',unsavedShort:'Unsaved changes',saveShort:'Save',savingShort:'Saving…',roomCozyShort:'Cozy room',roomSpaciousShort:'Spacious room',nightsWord:'nights',navReservations:'Reservations',noReservations:'No reservations match this view.',reservationFilterUpcoming:'Upcoming',reservationFilterArrivingSoon:'Arriving soon',reservationFilterStaying:'Staying now',reservationFilterId:'ID to verify',reservationFilterInvoice:'Invoice to create',reservationFilterPast:'Past',reservationFilterRemoved:'Removed / cancelled',reservationFilterAll:'All',reservationRemoved:'Removed / cancelled',possibleExistingRegistration:'Possible existing registration',linkExistingGuest:'Link existing guest',linkSuggestedGuest:'Link {name}',selectExistingGuest:'Select an existing guest registration',confirmLinkGuest:'Link {name} to this reservation?',linkedExistingGuest:'Existing guest registration linked.',noUnlinkedGuests:'No unlinked guest registrations are available.',exactMatch:'Exact dates',registrations:'Guest registrations',registrationArchiveSubtitle:'Detailed guest administration and archive.',paper:'Add paper registration',manualInvite:'＋ Create manual guest link',invite:'Create manual guest link',manualInviteHint:'Use this only for a guest without an Airbnb or Booking.com reservation.',cancel:'Cancel',inviteBooking:'Booking reference (optional)',invitePlatform:'Booking platform',checkin:'Check-in',checkout:'Check-out',createLink:'Create secure link',copy:'Copy link',searchReg:'Search registrations',searchRegPh:'Search by name, email or booking reference',
+    reservations:'Reservations',reservationsSubtitle:'Read-only overview from Airbnb and Booking.com calendars.',syncCalendars:'Sync calendars',syncingCalendars:'Syncing calendars…',syncedCalendars:'Calendars synced.',syncFailed:'Calendar sync failed',registrationNotCreated:'Registration not created',registrationLinkReady:'Registration link ready',registrationSubmitted:'Registration submitted',createRegistrationLink:'Create registration link',copyRegistrationLink:'Copy link',showQr:'Show QR code',qrTitle:'Scan to complete your guest registration',qrSubtitle:'Open your camera and scan the QR code.',qrCopy:'Copy registration link',completeManually:'Complete registration manually',printPaperForm:'Print prefilled paper form',manualFromReservation:'Manual registration linked to this reservation.',openGuest:'Open guest',openAirbnb:'Open in Airbnb ↗',moreActions:'More',lessActions:'Hide options',mobileGuests:'Guests',mobileInvoices:'Invoices',mobileMore:'More',mobileBack:'Back',mobileMoreSync:'Sync calendars',mobileMorePaper:'Add paper registration',mobileMoreLink:'Create manual guest link',mobileLanguage:'Language',mobileAccount:'Account',mobileSignOut:'Sign out',cancelShort:'Cancel',clearSearch:'Clear search',unsavedShort:'Unsaved changes',saveShort:'Save',savingShort:'Saving…',roomCozyShort:'Cozy room',roomSpaciousShort:'Spacious room',nightsWord:'nights',navReservations:'Reservations',navCalendar:'Calendar',calendarTitle:'Calendar',calendarSubtitle:'Both rooms, every reservation, one clear timeline.',calendarToday:'Today',calendarBlocked:'Blocked',calendarHint:'Tap a reservation for details.',calendarOpenReservation:'Open reservation',calendarClose:'Close',calendarRegistration:'Registration',calendarInvoice:'Invoice',calendarId:'ID',calendarSubmitted:'Submitted',calendarNotSubmitted:'Not submitted',calendarVerified:'Verified',calendarNotVerified:'Not verified',calendarNone:'None',noReservations:'No reservations match this view.',reservationFilterUpcoming:'Upcoming',reservationFilterArrivingSoon:'Arriving soon',reservationFilterStaying:'Staying now',reservationFilterId:'ID to verify',reservationFilterInvoice:'Invoice to create',reservationFilterPast:'Past',reservationFilterRemoved:'Removed / cancelled',reservationFilterAll:'All',reservationRemoved:'Removed / cancelled',possibleExistingRegistration:'Possible existing registration',linkExistingGuest:'Link existing guest',linkSuggestedGuest:'Link {name}',selectExistingGuest:'Select an existing guest registration',confirmLinkGuest:'Link {name} to this reservation?',linkedExistingGuest:'Existing guest registration linked.',noUnlinkedGuests:'No unlinked guest registrations are available.',exactMatch:'Exact dates',registrations:'Guest registrations',registrationArchiveSubtitle:'Detailed guest administration and archive.',paper:'Add paper registration',manualInvite:'＋ Create manual guest link',invite:'Create manual guest link',manualInviteHint:'Use this only for a guest without an Airbnb or Booking.com reservation.',cancel:'Cancel',inviteBooking:'Booking reference (optional)',invitePlatform:'Booking platform',checkin:'Check-in',checkout:'Check-out',createLink:'Create secure link',copy:'Copy link',searchReg:'Search registrations',searchRegPh:'Search by name, email or booking reference',
     regEditor:'Guest registration',close:'Close',fullName:'Full name',city:'City',country:'Country',bookingRef:'Booking reference (optional)',bookingPlatform:'Booking platform',platformNotSelected:'Not selected',platformDirectOther:'Direct / Other',platformLinkedHint:'Automatically linked from the reservation.',invoiceRequested:'Invoice requested',invoiceType:'Invoice type',personal:'Personal',company:'Company',email:'Email',companyName:'Company name',companyAddress:'Company address',vat:'VAT number (optional)',guestOccupancy:'Stay occupancy',guestOccupancyHint:'Register only the number of overnight guests. No personal details are required for additional guests.',guestCount:'Number of guests',guestOne:'1 guest',guestTwo:'2 guests',regAdditionalGuestNights:'Additional guest nights',additionalGuestNightsHint:'Defaults to the main guest\'s full stay, but can be reduced.',regAdditionalGuestRate:'Additional guest fee (€ per night, incl. tourist tax)',regAdditionalGuestPayment:'Additional guest payment',regAdditionalGuestTotal:'Additional guest total',regAdditionalGuestPaid:'Additional guest fee paid',cash:'Cash',paypal:'PayPal',additionalGuestFee:'Additional overnight guest fee (€)',additionalGuestNights:'Additional guest nights',additionalGuestLine:'Additional overnight guest',additionalGuestPaidPayPal:'Paid via PayPal',additionalGuestPaidCash:'Paid in cash',identity:'Identification check – host only',idShown:'Identification shown',notSelected:'Not selected',passport:'Passport',idCard:'ID card',drivers:'Driver\'s licence',otherId:'Other valid ID',verified:'Identity verified',saveRegistration:'Save registration',useInvoice:'Use for invoice',deleteRegistration:'Delete registration',savedReg:'Registration saved.',deletedReg:'Registration deleted.',confirmDeleteReg:'Delete this guest registration? This cannot be undone.',quickDeleteReg:'Delete registration',quickDeleteInvoice:'Delete invoice',linkCreated:'Secure registration link created.',copied:'Link copied.',navRegistrations:'Guest registrations',navGuestDetails:'Guest details',navInvoiceDetails:'Invoice details',navSavedInvoices:'Saved invoices',
     formTitle:'Invoice Details',newInvoice:'New invoice',duplicate:'Duplicate invoice',invoiceNumber:'Invoice number',invoiceDate:'Invoice date',guestName:'Guest name',guestAddress:'Guest address',guestPostal:'Postal code',guestCity:'City',guestCountry:'Country',guestEmail:'Guest email (optional)',room:'Room name',customRoom:'Custom room name',nights:'Nights',guests:'Guests',accommodation:'Accommodation (€)',cleaning:'Cleaning fee (€)',tourist:'Tourist tax rate (€ per guest per night)',taxMode:'Tourist tax handling',taxIncluded:'Accommodation amount already includes tourist tax',taxExcluded:'Tourist tax should be added on top of accommodation',payment:'Payment',customPayment:'Custom payment method',saveInvoice:'Save invoice',deleteInvoice:'Delete invoice',print:'Print / Save as PDF',savedInvoices:'Saved Invoices',searchInvoices:'Search / filter invoices',searchInvoicePh:'Search by invoice number, guest name, company, email or booking reference',
     invoiceTitle:'INVOICE',labelInvoiceNumber:'Invoice number:',labelDate:'Date:',billed:'Billed to',labelVat:'VAT number:',labelBooking:'Booking reference:',stay:'Stay Details',labelRoom:'Room:',labelCheckin:'Check-in:',labelCheckout:'Check-out:',labelNights:'Nights:',labelGuests:'Guests:',descriptionTitle:'Description',description:'Accommodation in private room (shared home)',price:'Price Breakdown',labelAccommodation:'Accommodation',labelCleaning:'Cleaning fee',labelTaxRate:'Tourist tax rate',labelTaxIncluded:'Tourist tax included',labelTaxAdded:'Tourist tax added',labelTotal:'Total amount paid',paymentTitle:'Payment',note:'This is a private rental. VAT is not applicable.',
@@ -16,7 +16,7 @@ const tr = {
   },
   nl: {
     pageTitle:'Gasten- & factuurbeheer',pageSubtitle:'Nijmegen Guest Rooms – Privé administratie',loginTitle:'Inloggen',loginText:'Alleen geautoriseerde gebruikers hebben toegang tot de administratie.',loginEmail:'E-mailadres',loginBtn:'Stuur verificatiecode',loginCode:'Verificatiecode',loginCodeIntro:'Vul de verificatiecode in die naar je e-mailadres is gestuurd.',verifyLogin:'Verifiëren & inloggen',resendCode:'Code opnieuw sturen',changeEmail:'Ander e-mailadres gebruiken',codeSent:'Verificatiecode verzonden. Controleer je e-mail.',codeResent:'Er is een nieuwe verificatiecode verzonden.',invalidCode:'De verificatiecode is ongeldig of verlopen.',authRateTitle:'Te veel codes aangevraagd',authRateText:'Wacht even voordat je opnieuw een verificatiecode aanvraagt.',resendIn:'Code opnieuw sturen over {seconds}s',logout:'Uitloggen',
-    reservations:'Reserveringen',reservationsSubtitle:'Alleen-lezen overzicht uit de kalenders van Airbnb en Booking.com.',syncCalendars:'Kalenders synchroniseren',syncingCalendars:'Kalenders synchroniseren…',syncedCalendars:'Kalenders gesynchroniseerd.',syncFailed:'Kalendersynchronisatie mislukt',registrationNotCreated:'Registratie nog niet aangemaakt',registrationLinkReady:'Registratielink gereed',registrationSubmitted:'Registratie ingediend',createRegistrationLink:'Registratielink maken',copyRegistrationLink:'Link kopiëren',showQr:'Toon QR-code',qrTitle:'Scan om je gastenregistratie in te vullen',qrSubtitle:'Open de camera en scan de QR-code.',qrCopy:'Kopieer registratielink',completeManually:'Registratie handmatig voltooien',printPaperForm:'Vooringevuld papieren formulier printen',manualFromReservation:'Handmatige registratie gekoppeld aan deze reservering.',openGuest:'Gast openen',openAirbnb:'Openen in Airbnb ↗',moreActions:'Meer',lessActions:'Opties verbergen',mobileGuests:'Gasten',mobileInvoices:'Facturen',mobileMore:'Meer',mobileBack:'Terug',mobileMoreSync:'Kalenders synchroniseren',mobileMorePaper:'Papieren registratie toevoegen',mobileMoreLink:'Handmatige gastenlink maken',mobileLanguage:'Taal',mobileAccount:'Account',mobileSignOut:'Uitloggen',cancelShort:'Annuleren',clearSearch:'Zoekopdracht wissen',unsavedShort:'Niet-opgeslagen wijzigingen',saveShort:'Opslaan',savingShort:'Opslaan…',roomCozyShort:'Knusse kamer',roomSpaciousShort:'Ruime kamer',nightsWord:'nachten',navReservations:'Reserveringen',noReservations:'Geen reserveringen in deze weergave.',reservationFilterUpcoming:'Aankomend',reservationFilterArrivingSoon:'Binnenkort',reservationFilterStaying:'Nu verblijvend',reservationFilterId:'ID nog controleren',reservationFilterInvoice:'Factuur te maken',reservationFilterPast:'Verleden',reservationFilterRemoved:'Verwijderd / geannuleerd',reservationFilterAll:'Alles',reservationRemoved:'Verwijderd / geannuleerd',possibleExistingRegistration:'Mogelijk bestaande registratie',linkExistingGuest:'Bestaande gast koppelen',linkSuggestedGuest:'Koppel {name}',selectExistingGuest:'Selecteer een bestaande gastenregistratie',confirmLinkGuest:'{name} aan deze reservering koppelen?',linkedExistingGuest:'Bestaande gastenregistratie gekoppeld.',noUnlinkedGuests:'Er zijn geen ongekoppelde gastenregistraties beschikbaar.',exactMatch:'Exacte data',registrations:'Gastenregistraties',registrationArchiveSubtitle:'Gedetailleerde gastenadministratie en archief.',paper:'Papieren registratie toevoegen',manualInvite:'＋ Handmatige gastenlink maken',invite:'Handmatige gastenlink maken',manualInviteHint:'Gebruik dit alleen voor een gast zonder Airbnb- of Booking.com-reservering.',cancel:'Annuleren',inviteBooking:'Boekingsreferentie (optioneel)',invitePlatform:'Boekingsplatform',checkin:'Inchecken',checkout:'Uitchecken',createLink:'Veilige link maken',copy:'Link kopiëren',searchReg:'Registraties zoeken',searchRegPh:'Zoek op naam, e-mail of boekingsreferentie',
+    reservations:'Reserveringen',reservationsSubtitle:'Alleen-lezen overzicht uit de kalenders van Airbnb en Booking.com.',syncCalendars:'Kalenders synchroniseren',syncingCalendars:'Kalenders synchroniseren…',syncedCalendars:'Kalenders gesynchroniseerd.',syncFailed:'Kalendersynchronisatie mislukt',registrationNotCreated:'Registratie nog niet aangemaakt',registrationLinkReady:'Registratielink gereed',registrationSubmitted:'Registratie ingediend',createRegistrationLink:'Registratielink maken',copyRegistrationLink:'Link kopiëren',showQr:'Toon QR-code',qrTitle:'Scan om je gastenregistratie in te vullen',qrSubtitle:'Open de camera en scan de QR-code.',qrCopy:'Kopieer registratielink',completeManually:'Registratie handmatig voltooien',printPaperForm:'Vooringevuld papieren formulier printen',manualFromReservation:'Handmatige registratie gekoppeld aan deze reservering.',openGuest:'Gast openen',openAirbnb:'Openen in Airbnb ↗',moreActions:'Meer',lessActions:'Opties verbergen',mobileGuests:'Gasten',mobileInvoices:'Facturen',mobileMore:'Meer',mobileBack:'Terug',mobileMoreSync:'Kalenders synchroniseren',mobileMorePaper:'Papieren registratie toevoegen',mobileMoreLink:'Handmatige gastenlink maken',mobileLanguage:'Taal',mobileAccount:'Account',mobileSignOut:'Uitloggen',cancelShort:'Annuleren',clearSearch:'Zoekopdracht wissen',unsavedShort:'Niet-opgeslagen wijzigingen',saveShort:'Opslaan',savingShort:'Opslaan…',roomCozyShort:'Knusse kamer',roomSpaciousShort:'Ruime kamer',nightsWord:'nachten',navReservations:'Reserveringen',navCalendar:'Kalender',calendarTitle:'Kalender',calendarSubtitle:'Beide kamers, alle reserveringen, één duidelijk overzicht.',calendarToday:'Vandaag',calendarBlocked:'Geblokkeerd',calendarHint:'Tik op een reservering voor details.',calendarOpenReservation:'Reservering openen',calendarClose:'Sluiten',calendarRegistration:'Registratie',calendarInvoice:'Factuur',calendarId:'ID',calendarSubmitted:'Ingediend',calendarNotSubmitted:'Niet ingediend',calendarVerified:'Geverifieerd',calendarNotVerified:'Niet geverifieerd',calendarNone:'Geen',noReservations:'Geen reserveringen in deze weergave.',reservationFilterUpcoming:'Aankomend',reservationFilterArrivingSoon:'Binnenkort',reservationFilterStaying:'Nu verblijvend',reservationFilterId:'ID nog controleren',reservationFilterInvoice:'Factuur te maken',reservationFilterPast:'Verleden',reservationFilterRemoved:'Verwijderd / geannuleerd',reservationFilterAll:'Alles',reservationRemoved:'Verwijderd / geannuleerd',possibleExistingRegistration:'Mogelijk bestaande registratie',linkExistingGuest:'Bestaande gast koppelen',linkSuggestedGuest:'Koppel {name}',selectExistingGuest:'Selecteer een bestaande gastenregistratie',confirmLinkGuest:'{name} aan deze reservering koppelen?',linkedExistingGuest:'Bestaande gastenregistratie gekoppeld.',noUnlinkedGuests:'Er zijn geen ongekoppelde gastenregistraties beschikbaar.',exactMatch:'Exacte data',registrations:'Gastenregistraties',registrationArchiveSubtitle:'Gedetailleerde gastenadministratie en archief.',paper:'Papieren registratie toevoegen',manualInvite:'＋ Handmatige gastenlink maken',invite:'Handmatige gastenlink maken',manualInviteHint:'Gebruik dit alleen voor een gast zonder Airbnb- of Booking.com-reservering.',cancel:'Annuleren',inviteBooking:'Boekingsreferentie (optioneel)',invitePlatform:'Boekingsplatform',checkin:'Inchecken',checkout:'Uitchecken',createLink:'Veilige link maken',copy:'Link kopiëren',searchReg:'Registraties zoeken',searchRegPh:'Zoek op naam, e-mail of boekingsreferentie',
     regEditor:'Gastenregistratie',close:'Sluiten',fullName:'Volledige naam',city:'Woonplaats',country:'Land',bookingRef:'Boekingsreferentie (optioneel)',bookingPlatform:'Boekingsplatform',platformNotSelected:'Niet geselecteerd',platformDirectOther:'Direct / Anders',platformLinkedHint:'Automatisch gekoppeld vanuit de reservering.',invoiceRequested:'Factuur aangevraagd',invoiceType:'Type factuur',personal:'Particulier',company:'Zakelijk',email:'E-mailadres',companyName:'Bedrijfsnaam',companyAddress:'Bedrijfsadres',vat:'Btw-identificatienummer (optioneel)',guestOccupancy:'Bezetting verblijf',guestOccupancyHint:'Registreer alleen het aantal overnachtende gasten. Van extra gasten zijn geen persoonsgegevens nodig.',guestCount:'Aantal gasten',guestOne:'1 gast',guestTwo:'2 gasten',regAdditionalGuestNights:'Nachten extra gast',additionalGuestNightsHint:'Standaard gelijk aan het volledige verblijf van de hoofdgast, maar kan worden verlaagd.',regAdditionalGuestRate:'Toeslag extra gast (€ per nacht, incl. toeristenbelasting)',regAdditionalGuestPayment:'Betaling extra gast',regAdditionalGuestTotal:'Totaal extra gast',regAdditionalGuestPaid:'Toeslag extra gast betaald',cash:'Contant',paypal:'PayPal',additionalGuestFee:'Toeslag extra overnachtende gast (€)',additionalGuestNights:'Extra gastnachten',additionalGuestLine:'Extra overnachtende gast',additionalGuestPaidPayPal:'Betaald via PayPal',additionalGuestPaidCash:'Contant betaald',identity:'Identiteitscontrole – alleen host',idShown:'Getoond identiteitsbewijs',notSelected:'Niet geselecteerd',passport:'Paspoort',idCard:'ID-kaart',drivers:'Rijbewijs',otherId:'Ander geldig ID',verified:'Identiteit gecontroleerd',saveRegistration:'Registratie opslaan',useInvoice:'Gebruiken voor factuur',deleteRegistration:'Registratie verwijderen',savedReg:'Registratie opgeslagen.',deletedReg:'Registratie verwijderd.',confirmDeleteReg:'Deze gastenregistratie verwijderen? Dit kan niet ongedaan worden gemaakt.',quickDeleteReg:'Registratie verwijderen',quickDeleteInvoice:'Factuur verwijderen',linkCreated:'Veilige registratielink aangemaakt.',copied:'Link gekopieerd.',navRegistrations:'Gastenregistraties',navGuestDetails:'Gastgegevens',navInvoiceDetails:'Factuurgegevens',navSavedInvoices:'Opgeslagen facturen',
     formTitle:'Factuurgegevens',newInvoice:'Nieuwe factuur',duplicate:'Factuur dupliceren',invoiceNumber:'Factuurnummer',invoiceDate:'Factuurdatum',guestName:'Naam gast',guestAddress:'Adres gast',guestPostal:'Postcode',guestCity:'Woonplaats',guestCountry:'Land',guestEmail:'E-mailadres gast (optioneel)',room:'Kamernaam',customRoom:'Aangepaste kamernaam',nights:'Aantal nachten',guests:'Aantal gasten',accommodation:'Verblijf (€)',cleaning:'Schoonmaakkosten (€)',tourist:'Toeristenbelasting (€ per gast per nacht)',taxMode:'Verwerking toeristenbelasting',taxIncluded:'Verblijfsbedrag is al inclusief toeristenbelasting',taxExcluded:'Toeristenbelasting moet bovenop het verblijfsbedrag komen',payment:'Betaling',customPayment:'Aangepaste betaalmethode',saveInvoice:'Factuur opslaan',deleteInvoice:'Factuur verwijderen',print:'Printen / Opslaan als PDF',savedInvoices:'Opgeslagen facturen',searchInvoices:'Facturen zoeken / filteren',searchInvoicePh:'Zoek op factuurnummer, gastnaam, bedrijf, e-mail of boekingsreferentie',
     invoiceTitle:'FACTUUR',labelInvoiceNumber:'Factuurnummer:',labelDate:'Datum:',billed:'Factureren aan',labelVat:'Btw-nummer:',labelBooking:'Boekingsreferentie:',stay:'Verblijfsgegevens',labelRoom:'Kamer:',labelCheckin:'Inchecken:',labelCheckout:'Uitchecken:',labelNights:'Aantal nachten:',labelGuests:'Aantal gasten:',descriptionTitle:'Omschrijving',description:'Verblijf in privékamer (gedeelde woning)',price:'Prijsopbouw',labelAccommodation:'Verblijf',labelCleaning:'Schoonmaakkosten',labelTaxRate:'Tarief toeristenbelasting',labelTaxIncluded:'Toeristenbelasting inbegrepen',labelTaxAdded:'Toeristenbelasting toegevoegd',labelTotal:'Totaal betaald',paymentTitle:'Betaling',note:'Dit betreft particuliere verhuur. Btw is niet van toepassing.',
@@ -162,6 +162,88 @@ function candidateSortForReservation(reservation,a,b){
   const db=Math.abs(new Date(b.checkin_date+'T12:00:00').getTime()-target);
   return da-db || String(a.full_name||'').localeCompare(String(b.full_name||''));
 }
+
+function isRealReservation(r){
+  if(!r||r.status!=='active')return false;
+  if(r.platform==='booking')return true;
+  return String(r.summary||'').trim().toLowerCase()==='reserved';
+}
+function isAirbnbBlock(r){return !!r&&r.status==='active'&&r.platform==='airbnb'&&!isRealReservation(r);}
+function datesOverlap(a,b){return String(a.checkin_date||'')<String(b.checkout_date||'')&&String(b.checkin_date||'')<String(a.checkout_date||'');}
+function calendarVisibleBlocks(){
+  const booking=reservations.filter(r=>isRealReservation(r)&&r.platform==='booking');
+  return reservations.filter(isAirbnbBlock).filter(block=>!booking.some(b=>b.room_key===block.room_key&&datesOverlap(block,b)));
+}
+let calendarCursor=new Date();calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth(),1);
+function isoLocalDate(d){return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;}
+function monthStartIso(){return isoLocalDate(new Date(calendarCursor.getFullYear(),calendarCursor.getMonth(),1));}
+function nextMonthStartIso(){return isoLocalDate(new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,1));}
+function calendarDaysInMonth(){return new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+1,0).getDate();}
+function calendarEventName(r){
+  if(isAirbnbBlock(r))return tr[currentLang].calendarBlocked;
+  const reg=reservationRegistration(r.id);
+  if(reg?.full_name)return reg.full_name;
+  if(r.platform==='booking'&&r.summary&&String(r.summary).toLowerCase()!=='reserved')return r.summary;
+  return r.reservation_code||(r.platform==='airbnb'?'Airbnb':'Booking.com');
+}
+function calendarMonthText(){return new Intl.DateTimeFormat(currentLang==='nl'?'nl-NL':'en-GB',{month:'long',year:'numeric'}).format(calendarCursor);}
+function calendarEventStatusBadges(r){
+  if(isAirbnbBlock(r))return '';
+  const reg=reservationRegistration(r.id),invoice=reg?linkedInvoiceForRegistration(reg.id):null,x=tr[currentLang];
+  let out=`<span class="calendar-mini-status ${reg?'good':'warn'}">${x.calendarRegistration}: ${reg?x.calendarSubmitted:x.calendarNotSubmitted}</span>`;
+  if(reg)out+=`<span class="calendar-mini-status ${reg.id_verified?'good':'warn'}">${x.calendarId}: ${reg.id_verified?x.calendarVerified:x.calendarNotVerified}</span>`;
+  if(reg?.invoice_requested)out+=`<span class="calendar-mini-status ${invoice?'good':'warn'}">${x.calendarInvoice}: ${invoice?escapeHtml(invoice.invoice_number):x.calendarNone}</span>`;
+  return out;
+}
+function renderCalendar(){
+  const root=$('calendarTimeline');if(!root)return;
+  const start=monthStartIso(),end=nextMonthStartIso(),days=calendarDaysInMonth(),today=localToday();
+  $('calendarMonthLabel').textContent=calendarMonthText();
+  const weekdayFmt=new Intl.DateTimeFormat(currentLang==='nl'?'nl-NL':'en-GB',{weekday:'short'});
+  const rooms=[['cozy',currentLang==='nl'?'Knusse kamer':'Cozy room'],['spacious',currentLang==='nl'?'Ruime kamer':'Spacious room']];
+  root.style.setProperty('--calendar-days',days);root.innerHTML='';
+  const header=document.createElement('div');header.className='calendar-grid calendar-days-header';header.innerHTML='<div class="calendar-room-label calendar-corner"></div>';
+  for(let day=1;day<=days;day++){const d=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth(),day),iso=isoLocalDate(d);header.innerHTML+=`<div class="calendar-day-head ${iso===today?'today':''}"><span>${weekdayFmt.format(d).replace('.','')}</span><strong>${day}</strong></div>`;}
+  root.appendChild(header);
+  const events=[...reservations.filter(isRealReservation),...calendarVisibleBlocks()];
+  rooms.forEach(([roomKey,label])=>{
+    const row=document.createElement('div');row.className='calendar-grid calendar-room-row';
+    row.innerHTML=`<div class="calendar-room-label"><strong>${escapeHtml(label)}</strong><small>${roomKey==='cozy'?(currentLang==='nl'?'Straatzijde':'Street side'):(currentLang==='nl'?'Tuinzijde':'Garden side')}</small></div>`;
+    for(let day=1;day<=days;day++){const iso=`${start.slice(0,8)}${String(day).padStart(2,'0')}`;row.innerHTML+=`<div class="calendar-day-cell ${iso===today?'today':''}"></div>`;}
+    root.appendChild(row);
+    const lane=document.createElement('div');lane.className='calendar-event-lane';row.appendChild(lane);
+    const roomEvents=events.filter(r=>r.room_key===roomKey&&r.checkin_date<end&&r.checkout_date>start).sort((a,b)=>a.checkin_date.localeCompare(b.checkin_date));
+    roomEvents.forEach(r=>{
+      const visibleStart=r.checkin_date<start?start:r.checkin_date,visibleEnd=r.checkout_date>end?end:r.checkout_date;
+      const diff=x=>Math.round((new Date(x+'T00:00:00')-new Date(start+'T00:00:00'))/86400000);
+      const startDay=Math.max(0,diff(visibleStart)),endDay=Math.max(startDay+1,diff(visibleEnd));
+      const bar=document.createElement('button');bar.type='button';bar.className=`calendar-event ${isAirbnbBlock(r)?'blocked':r.platform}`;
+      bar.style.left=`calc(${startDay} * (100% / ${days}) + ${r.checkin_date>=start?'4px':'0px'})`;
+      bar.style.width=`calc(${endDay-startDay} * (100% / ${days}) - ${r.checkout_date<=end?'8px':'0px'})`;
+      bar.innerHTML=isAirbnbBlock(r)?`<span class="calendar-event-name">${escapeHtml(tr[currentLang].calendarBlocked)}</span>`:`<span class="calendar-platform-badge ${r.platform}">${r.platform==='airbnb'?'Airbnb':'Booking'}</span><span class="calendar-event-name">${escapeHtml(calendarEventName(r))}</span>`;
+      bar.onclick=e=>{e.stopPropagation();openCalendarDetail(r);};lane.appendChild(bar);
+    });
+  });
+  if(isMobileShell()&&calendarCursor.getFullYear()===new Date().getFullYear()&&calendarCursor.getMonth()===new Date().getMonth()){requestAnimationFrame(()=>root.querySelector('.calendar-day-head.today')?.scrollIntoView({block:'nearest',inline:'center'}));}
+}
+function openCalendarDetail(r){
+  const x=tr[currentLang],blocked=isAirbnbBlock(r);
+  $('calendarDetailPlatform').innerHTML=blocked?`<span class="calendar-platform-badge blocked">${x.calendarBlocked}</span>`:`<span class="calendar-platform-badge ${r.platform}">${r.platform==='airbnb'?'Airbnb':'Booking.com'}</span>`;
+  $('calendarDetailName').textContent=calendarEventName(r);
+  $('calendarDetailMeta').innerHTML=`<strong>${escapeHtml(roomLabel(r.room_key))}</strong><span>${fmt(r.checkin_date)} → ${fmt(r.checkout_date)} · ${reservationNightsBetween(r.checkin_date,r.checkout_date)} ${escapeHtml(x.nightsWord)}</span>`;
+  $('calendarDetailBadges').innerHTML=calendarEventStatusBadges(r);$('calendarDetailOpenBtn').classList.toggle('hidden',blocked);
+  $('calendarDetailOpenBtn').onclick=()=>{closeCalendarDetail();openReservationFromCalendar(r.id);};
+  $('calendarDetailBackdrop').classList.remove('hidden');$('calendarDetailSheet').classList.remove('hidden');
+}
+function closeCalendarDetail(){$('calendarDetailBackdrop')?.classList.add('hidden');$('calendarDetailSheet')?.classList.add('hidden');}
+function openReservationFromCalendar(id){
+  if(isMobileShell()){setMobileTab('reservations',{restore:false});}
+  else document.querySelector('#navReservations')?.click();
+  setReservationFilter('all');
+  requestAnimationFrame(()=>{const card=document.querySelector(`[data-reservation-id="${CSS.escape(id)}"]`);card?.scrollIntoView({behavior:'smooth',block:'center'});card?.classList.add('calendar-target-flash');setTimeout(()=>card?.classList.remove('calendar-target-flash'),1800);});
+}
+function changeCalendarMonth(delta){calendarCursor=new Date(calendarCursor.getFullYear(),calendarCursor.getMonth()+delta,1);renderCalendar();$('calendarScroller').scrollLeft=0;}
+function calendarToday(){const n=new Date();calendarCursor=new Date(n.getFullYear(),n.getMonth(),1);renderCalendar();}
 function reservationNightsBetween(a,b){ const A=new Date(`${a}T12:00:00`),B=new Date(`${b}T12:00:00`); return Math.max(0,Math.round((B-A)/86400000)); }
 
 async function loadReservations(){
@@ -170,7 +252,7 @@ async function loadReservations(){
     supabaseClient.from('guest_registration_invites').select('id,token,reservation_id,used_at,expires_at').not('reservation_id','is',null).order('created_at',{ascending:false}).limit(300)
   ]);
   if(re){ $('reservationList').innerHTML=`<p class="muted">${escapeHtml(re.message)}</p>`; return; }
-  reservations=r||[]; reservationInvites=ie?[]:(iv||[]); renderReservations(); renderAttention();
+  reservations=r||[]; reservationInvites=ie?[]:(iv||[]); renderReservations(); renderAttention(); renderCalendar();
 }
 
 function setReservationFilter(filter){
@@ -341,7 +423,7 @@ function appendReservationMoreMenu(actions,controls){
 
 function renderReservations(){
   const x=tr[currentLang];
-  const rows=reservations.filter(r=>reservationMatchesFilter(r,reservationFilter)).sort((a,b)=>{
+  const rows=reservations.filter(isRealReservation).filter(r=>reservationMatchesFilter(r,reservationFilter)).sort((a,b)=>{
     const aIn=String(a.checkin_date||''),bIn=String(b.checkin_date||''),aOut=String(a.checkout_date||''),bOut=String(b.checkout_date||'');
     if(reservationFilter==='past') return bOut.localeCompare(aOut);               // most recent checkout first
     if(reservationFilter==='invoiceToCreate') return aOut.localeCompare(bOut);    // furthest-past/oldest checkout first
@@ -353,7 +435,7 @@ function renderReservations(){
   rows.forEach(r=>{
     const reg=reservationRegistration(r.id), inv=reservationInvite(r.id), n=reservationNightsBetween(r.checkin_date,r.checkout_date);
     const exactCandidates=!reg && r.status==='active' ? exactReservationCandidates(r) : [];
-    const d=document.createElement('div'); d.className='reservation-item'+(r.status!=='active'?' removed':'');
+    const d=document.createElement('div'); d.className='reservation-item'+(r.status!=='active'?' removed':''); d.dataset.reservationId=r.id;
     const platformClass=r.platform==='airbnb'?'airbnb':'booking';
     const platformLabel=r.platform==='airbnb'?'Airbnb':'Booking.com';
     const status=r.status!=='active'
@@ -534,7 +616,7 @@ setInterval(renderCalendarSyncAge,30000);
 
 function renderAttention(){
   const t=localToday();
-  const active=reservations.filter(r=>r.status==='active');
+  const active=reservations.filter(isRealReservation);
   const arriving=active.filter(r=>r.checkin_date>=t&&r.checkin_date<=addDaysIso(t,3)).length;
   const ids=active.filter(r=>{ const reg=reservationRegistration(r.id); return !!reg && registrationHasIdToVerify(reg) && r.checkin_date<=t && r.checkout_date>t; }).length;
   const inv=active.filter(r=>{ const reg=reservationRegistration(r.id); return !!reg && !!reg.invoice_requested && !linkedInvoiceForRegistration(reg.id) && r.checkout_date<=t; }).length;
@@ -725,7 +807,15 @@ document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.
   if($('filterId')) $('filterId').textContent=x.filterId;
   if($('filterInvoice')) $('filterInvoice').textContent=x.filterInvoice;
   populateCountries(rf.country,rf.country.value);
-  renderAttention(); renderRegs(); renderInvoices(); updatePreview();  applyRequiredFieldIndicators();
+  renderAttention(); renderRegs(); renderInvoices(); updatePreview();  if($('navCalendar'))$('navCalendar').textContent=x.navCalendar;
+  if($('calendarTitle'))$('calendarTitle').textContent=x.calendarTitle;
+  if($('calendarSubtitle'))$('calendarSubtitle').textContent=x.calendarSubtitle;
+  if($('calendarTodayBtn'))$('calendarTodayBtn').textContent=x.calendarToday;
+  if($('calendarBlockedLegend'))$('calendarBlockedLegend').textContent=x.calendarBlocked;
+  if($('calendarHint'))$('calendarHint').textContent=x.calendarHint;
+  if($('calendarDetailOpenBtn'))$('calendarDetailOpenBtn').textContent=x.calendarOpenReservation;
+  if($('calendarDetailCloseBtn'))$('calendarDetailCloseBtn').setAttribute('aria-label',x.calendarClose);
+  applyRequiredFieldIndicators();
 }
 
 function syncGuestDetailsNav(){
@@ -745,13 +835,13 @@ function scrollToAdminSection(targetId){
 }
 
 
-const mobileShellState={tab:'reservations',detail:null,detailSource:'reservations',scroll:{reservations:0,guests:0,invoices:0},initialized:false};
+const mobileShellState={tab:'reservations',detail:null,detailSource:'reservations',scroll:{reservations:0,calendar:0,guests:0,invoices:0},initialized:false};
 function isMobileShell(){return window.matchMedia('(max-width:700px)').matches;}
-function mobileTabElement(tab){return tab==='reservations'?$('reservationsOverview'):tab==='guests'?$('registrationOverview'):tab==='invoices'?$('savedInvoicesCard'):null;}
-function mobileMainElements(){return [$('reservationsOverview'),$('registrationOverview'),$('registrationEditor'),$('invoiceDetailsCard'),$('savedInvoicesCard'),$('previewWrapper')].filter(Boolean);}
+function mobileTabElement(tab){return tab==='reservations'?$('reservationsOverview'):tab==='calendar'?$('calendarOverview'):tab==='guests'?$('registrationOverview'):tab==='invoices'?$('savedInvoicesCard'):null;}
+function mobileMainElements(){return [$('reservationsOverview'),$('calendarOverview'),$('registrationOverview'),$('registrationEditor'),$('invoiceDetailsCard'),$('savedInvoicesCard'),$('previewWrapper')].filter(Boolean);}
 function updateMobileShellText(){
   const x=tr[currentLang];
-  $('mobileTabReservationsLabel').textContent=x.navReservations;$('mobileTabGuestsLabel').textContent=x.mobileGuests;$('mobileTabInvoicesLabel').textContent=x.mobileInvoices;$('mobileTabMoreLabel').textContent=x.mobileMore;
+  $('mobileTabReservationsLabel').textContent=x.navReservations;$('mobileTabCalendarLabel').textContent=x.navCalendar;$('mobileTabGuestsLabel').textContent=x.mobileGuests;$('mobileTabInvoicesLabel').textContent=x.mobileInvoices;$('mobileTabMoreLabel').textContent=x.mobileMore;
   $('mobileMoreTitle').textContent=x.mobileMore;$('mobileMoreSyncBtn').textContent=x.mobileMoreSync;$('mobileMorePaperBtn').textContent=x.mobileMorePaper;$('mobileMoreLinkBtn').textContent=x.mobileMoreLink;$('mobileMoreLanguageLabel').textContent=x.mobileLanguage;$('mobileMoreAccountLabel').textContent=x.mobileAccount;$('mobileMoreLogoutBtn').textContent=x.mobileSignOut;$('mobileNewInvoiceBtn').textContent=x.newInvoice;$('mobileDetailBackBtn').setAttribute('aria-label',x.mobileBack);
   const en=$('mobileMoreEnglishBtn'),nl=$('mobileMoreDutchBtn');en.classList.toggle('selected',currentLang==='en');nl.classList.toggle('selected',currentLang==='nl');en.setAttribute('aria-pressed',String(currentLang==='en'));nl.setAttribute('aria-pressed',String(currentLang==='nl'));if($('mobileCancelBtn'))$('mobileCancelBtn').textContent=x.cancelShort;
 }
@@ -1137,8 +1227,14 @@ Object.values(rf).forEach(v=>{if(!v||v.type==='hidden')return; const ev=(v.tagNa
 Object.values(f).forEach(v=>{if(!v||v.type==='hidden')return; const ev=(v.tagName==='SELECT'||v.type==='checkbox')?'change':'input'; v.addEventListener(ev,markInvoiceDirty);});
 document.querySelectorAll('#invoiceDetailsCard input,#invoiceDetailsCard select,#invoiceDetailsCard textarea').forEach(el=>{el.addEventListener('input',()=>clearInvoiceFieldError(el));el.addEventListener('change',()=>clearInvoiceFieldError(el));});
 document.querySelectorAll('[data-reservation-filter]').forEach(b=>b.onclick=()=>setReservationFilter(b.dataset.reservationFilter));
-document.querySelectorAll('.lang-btn').forEach(b=>b.onclick=()=>{currentLang=b.dataset.lang;setTexts();toggleRegInvoice();toggleIdOther();toggleInvoiceCustom();renderReservations();updateMobileSaveBar();renderCalendarSyncAge();updateMobileShellText();if(pendingLoginEmail)startOtpCooldown(pendingLoginEmail);});
+document.querySelectorAll('.lang-btn').forEach(b=>b.onclick=()=>{currentLang=b.dataset.lang;setTexts();toggleRegInvoice();toggleIdOther();toggleInvoiceCustom();renderReservations();updateMobileSaveBar();renderCalendarSyncAge();renderCalendar();updateMobileShellText();if(pendingLoginEmail)startOtpCooldown(pendingLoginEmail);});
 
+
+$('calendarPrevBtn').onclick=()=>changeCalendarMonth(-1);
+$('calendarNextBtn').onclick=()=>changeCalendarMonth(1);
+$('calendarTodayBtn').onclick=calendarToday;
+$('calendarDetailCloseBtn').onclick=closeCalendarDetail;
+$('calendarDetailBackdrop').onclick=closeCalendarDetail;
 
 document.addEventListener('click',e=>{
   document.querySelectorAll('.item-menu.open').forEach(menu=>{
