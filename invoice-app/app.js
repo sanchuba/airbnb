@@ -659,6 +659,11 @@ function setTexts(){
 document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.dataset.lang===currentLang));
   const map={reservations:'reservationsTitle',reservationsSubtitle:'reservationsSubtitle',syncCalendars:'syncCalendarsBtn',navReservations:'navReservations',reservationFilterUpcoming:'reservationFilterUpcoming',reservationFilterArrivingSoon:'reservationFilterArrivingSoon',reservationFilterStaying:'reservationFilterStaying',reservationFilterId:'reservationFilterId',reservationFilterInvoice:'reservationFilterInvoice',reservationFilterPast:'reservationFilterPast',reservationFilterRemoved:'reservationFilterRemoved',reservationFilterAll:'reservationFilterAll',pageTitle:'pageTitle',pageSubtitle:'pageSubtitle',loginTitle:'loginTitle',loginText:'loginText',loginEmail:'labelLoginEmail',loginBtn:'loginBtn',loginCode:'labelLoginCode',loginCodeIntro:'loginCodeIntro',verifyLogin:'verifyLoginBtn',resendCode:'resendLoginCodeBtn',changeEmail:'changeLoginEmailBtn',logout:'logoutBtn',registrations:'registrationTitle',registrationArchiveSubtitle:'registrationArchiveSubtitle',paper:'newPaperBtn',manualInvite:'manualInviteToggleBtn',invite:'inviteTitle',manualInviteHint:'manualInviteHint',cancel:'closeManualInviteBtn',inviteBooking:'labelInviteBooking',invitePlatform:'labelInvitePlatform',checkin:'labelInviteCheckin',checkout:'labelInviteCheckout',createLink:'createInviteBtn',copy:'copyInviteBtn',searchReg:'labelRegistrationSearch',regEditor:'registrationEditorTitle',close:'closeRegistrationBtn',fullName:'labelRegName',city:'labelRegCity',country:'labelRegCountry',bookingRef:'labelRegBooking',bookingPlatform:'labelRegPlatform',invoiceRequested:'regInvoiceRequestedText',invoiceType:'labelRegInvoiceType',email:'labelRegEmail',companyName:'labelRegCompanyName',companyAddress:'labelRegCompanyAddress',vat:'labelRegVat',additionalGuestFee:'labelAdditionalGuestFee',additionalGuestNights:'labelAdditionalGuestNights',guestOccupancy:'guestOccupancyTitle',guestOccupancyHint:'guestOccupancyHint',guestCount:'labelGuestCount',regAdditionalGuestNights:'labelRegAdditionalGuestNights',regAdditionalGuestRate:'labelRegAdditionalGuestRate',regAdditionalGuestPayment:'labelRegAdditionalGuestPayment',regAdditionalGuestTotal:'labelRegAdditionalGuestTotal',regAdditionalGuestPaid:'regAdditionalGuestPaidText',identity:'identityTitle',idShown:'labelIdType',verified:'idVerifiedText',saveRegistration:'saveRegistrationBtn',useInvoice:'useForInvoiceBtn',deleteRegistration:'deleteRegistrationBtn',formTitle:'formTitle',newInvoice:'newInvoiceBtn',duplicate:'duplicateBtn',invoiceNumber:'labelInvoiceNumber',invoiceDate:'labelInvoiceDate',guestName:'labelGuestName',guestAddress:'labelGuestAddress',guestPostal:'labelGuestPostal',guestCity:'labelGuestCity',guestCountry:'labelGuestCountry',guestEmail:'labelGuestEmail',room:'labelRoomName',customRoom:'labelCustomRoomName',nights:'labelNights',guests:'labelGuests',accommodation:'labelAccommodation',cleaning:'labelCleaning',tourist:'labelTouristTaxRate',taxMode:'labelTaxMode',payment:'labelPaymentMethod',customPayment:'labelCustomPayment',saveInvoice:'saveBtn',deleteInvoice:'deleteBtn',print:'printBtn',savedInvoices:'savedInvoicesTitle',searchInvoices:'labelSearchInvoices',navRegistrations:'navRegistrations',navGuestDetails:'navGuestDetails',navInvoiceDetails:'navInvoiceDetails',navSavedInvoices:'navSavedInvoices'};
   for(const [k,id] of Object.entries(map)) if($(id)) $(id).textContent=x[k];
+  document.querySelectorAll('#invoiceDetailsCard .field[data-required="true"] > label').forEach(label=>{
+    if(!label.querySelector('.required-star')){
+      const star=document.createElement('span');star.className='required-star';star.setAttribute('aria-hidden','true');star.textContent=' *';label.appendChild(star);
+    }
+  });
   if($('attentionTitle')) $('attentionTitle').textContent=x.attentionTitle;
   if($('attentionSubtitle')) $('attentionSubtitle').textContent=x.attentionSubtitle;
   if($('attentionArrivingLabel')) $('attentionArrivingLabel').textContent=x.attentionArriving;
@@ -699,6 +704,11 @@ document.querySelectorAll('.lang-btn').forEach(b=>b.classList.toggle('active',b.
   if($('filterInvoice')) $('filterInvoice').textContent=x.filterInvoice;
   populateCountries(rf.country,rf.country.value);
   renderAttention(); renderRegs(); renderInvoices(); updatePreview();
+  document.querySelectorAll('#invoiceDetailsCard .field[data-required="true"] > label').forEach(label=>{
+    if(!label.querySelector('.required-star')){
+      const star=document.createElement('span');star.className='required-star';star.setAttribute('aria-hidden','true');star.textContent=' *';label.appendChild(star);
+    }
+  });
 }
 
 function syncGuestDetailsNav(){

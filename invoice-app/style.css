@@ -1293,7 +1293,7 @@ body.qr-modal-open{
 .search-clear-btn{position:absolute;right:7px;top:50%;transform:translateY(-50%);width:30px;height:30px;border:0;border-radius:50%;background:var(--highlight);color:var(--heading);font:600 20px/1 Arial,sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center}.search-clear-btn.hidden{display:none!important}
 
 /* v3.11.5 — robust required markers and initial reservation filter */
-#invoiceDetailsCard .field[data-required="true"] > label::after{
+#invoiceDetailsCard.field[data-required="true"] > label::after, #invoiceDetailsCard .field[data-required="true"] > label::after{
   content:" *";
   color:var(--danger);
   font-weight:800;
@@ -1304,4 +1304,13 @@ body.qr-modal-open{
   color:#fff!important;
   border-color:#5b4231!important;
   font-weight:700;
+}
+
+/* v3.11.6 — guaranteed required-field indicators */
+.form-card .field[data-required="true"] > label::after{
+  content:"  *" !important;
+  color:#a44848 !important;
+  font-weight:900 !important;
+  display:inline !important;
+  visibility:visible !important;
 }
