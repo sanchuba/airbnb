@@ -258,13 +258,14 @@ function updateCalendarRoomSwitcher(){
 }
 function setCalendarRoomView(roomKey,opts={}){
   const switchingRoom=isMobileShell()&&!!calendarRoomView&&calendarRoomView!==roomKey;
-  const viewportY=switchingRoom?window.scrollY:null;
+  const preserveViewport=!!opts.preserveViewport||switchingRoom;
+  const viewportY=preserveViewport?window.scrollY:null;
   calendarRoomView=roomKey||calendarRoomView||'cozy';
   calendarRoomScrollDate=opts.date||calendarRoomScrollDate||monthStartIso();
   renderCalendar();
-  if(switchingRoom){
-    // Cozy and Spacious use the same continuous month geometry. Keep the exact
-    // page position so changing rooms feels like changing a layer, not navigating.
+  if(preserveViewport){
+    // Changing Calendar view/room should feel like swapping the content in place,
+    // not navigating to a different part of the page.
     requestAnimationFrame(()=>requestAnimationFrame(()=>{
       window.scrollTo({top:viewportY,left:0,behavior:'auto'});
     }));
@@ -286,9 +287,17 @@ function showBothAtInitialTodayPosition(){
   }));
 }
 function exitCalendarRoomView(opts={}){
+  const preserveViewport=!!opts.preserveViewport;
+  const viewportY=preserveViewport?window.scrollY:null;
   const date=isMobileShell()?visibleRoomMonthDate():(calendarRoomScrollDate||monthStartIso());
   const d=new Date(date+'T12:00:00');calendarCursor=new Date(d.getFullYear(),d.getMonth(),1);
   calendarRoomView=null;renderCalendar();
+  if(preserveViewport){
+    requestAnimationFrame(()=>requestAnimationFrame(()=>{
+      window.scrollTo({top:viewportY,left:0,behavior:'auto'});
+    }));
+    return;
+  }
   requestAnimationFrame(()=>{scrollCalendarToDate(date,opts.behavior||'auto');});
 }
 function roomMonthGridStart(cursor){
@@ -1455,7 +1464,7 @@ $('calendarViewMonthBtn').onclick=()=>{
     if(calendarRoomView==='spacious')setCalendarRoomView('cozy');
     else if(!calendarRoomView)setCalendarRoomView('cozy',{date:visibleTimelineDate(),behavior:'auto'});
   }else{
-    setCalendarRoomView(calendarRoomView||'cozy',{date:calendarRoomView?visibleRoomMonthDate():visibleTimelineDate(),behavior:'smooth'});
+    setCalendarRoomView(calendarRoomView||'cozy',{date:calendarRoomView?visibleRoomMonthDate():visibleTimelineDate(),preserveViewport:true});
   }
 };
 $('calendarViewOtherRoomBtn').onclick=()=>{
@@ -1466,10 +1475,10 @@ $('calendarViewOtherRoomBtn').onclick=()=>{
 };
 $('calendarViewBothBtn').onclick=()=>{
   if(isMobileShell())showBothAtInitialTodayPosition();
-  else exitCalendarRoomView({behavior:'smooth'});
+  else exitCalendarRoomView({preserveViewport:true});
 };
-$('calendarRoomCozyBtn').onclick=()=>setCalendarRoomView('cozy',{date:isMobileShell()?visibleRoomMonthDate():calendarRoomScrollDate||monthStartIso(),behavior:'auto'});
-$('calendarRoomSpaciousBtn').onclick=()=>setCalendarRoomView('spacious',{date:isMobileShell()?visibleRoomMonthDate():calendarRoomScrollDate||monthStartIso(),behavior:'auto'});
+$('calendarRoomCozyBtn').onclick=()=>setCalendarRoomView('cozy',{date:isMobileShell()?visibleRoomMonthDate():calendarRoomScrollDate||monthStartIso(),preserveViewport:!isMobileShell(),behavior:'auto'});
+$('calendarRoomSpaciousBtn').onclick=()=>setCalendarRoomView('spacious',{date:isMobileShell()?visibleRoomMonthDate():calendarRoomScrollDate||monthStartIso(),preserveViewport:!isMobileShell(),behavior:'auto'});
 
 // Horizontal swipe changes view without stealing vertical month scrolling.
 // In the horizontal Both view, an edge-swipe from the far-left opens Month view so normal date panning still works.
