@@ -916,7 +916,29 @@ function renderReservations(){
       }
       if(inv) addReservationLinkBox(actions,inv,r);
     }
-    if(r.platform==='airbnb'&&r.reservation_url){ const a=document.createElement('a'); a.className='action-btn secondary'; a.href=r.reservation_url; a.target='_blank'; a.rel='noopener'; a.textContent=x.openAirbnb; a.onclick=e=>e.stopPropagation(); secondaryControls.push(a); }
+    if(r.platform==='airbnb'&&r.reservation_url){
+      const a=document.createElement('a');
+      a.className='action-btn secondary';
+      a.href=r.reservation_url;
+      a.target='_blank';
+      a.rel='noopener';
+      a.textContent=x.openAirbnb;
+      a.onclick=e=>e.stopPropagation();
+      secondaryControls.push(a);
+    }
+    if(r.platform==='booking'){
+      const bookingUrl=bookingAdminReservationUrl(bookingReferenceForReservation(r));
+      if(bookingUrl){
+        const a=document.createElement('a');
+        a.className='action-btn secondary';
+        a.href=bookingUrl;
+        a.target='_blank';
+        a.rel='noopener';
+        a.textContent=x.openBooking;
+        a.onclick=e=>e.stopPropagation();
+        secondaryControls.push(a);
+      }
+    }
     appendReservationMoreMenu(actions,secondaryControls);
     box.appendChild(d);
   });
