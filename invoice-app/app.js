@@ -1451,11 +1451,31 @@ function renderRegs(){
     .filter(r=>registrationMatchesFilter(r,registrationFilter))
     .filter(r=>[r.full_name,r.email,r.booking_reference,r.company_name,r.city,platformDisplay(effectiveRegistrationPlatform(r))].filter(Boolean).some(v=>String(v).toLowerCase().includes(q)))
     .sort((a,b)=>{
-      const aIn=Date.parse(a.checkin_date||'1970-01-01'),bIn=Date.parse(b.checkin_date||'1970-01-01');
-      const aOut=Date.parse(a.checkout_date||'1970-01-01'),bOut=Date.parse(b.checkout_date||'1970-01-01');
-      if(registrationFilter==='past') return bOut-aOut;               // most recent checkout first
-      if(registrationFilter==='invoiceToCreate') return aOut-bOut;    // furthest-past/oldest checkout first
-      return bIn-aIn;                                                  // most recent/latest check-in first
+      // Registration archive sorting is deliberately filter-specific:
+      //
+      // All / Arriving soon / Upcoming / Staying now / ID to verify:
+      //   latest check-in date first.
+      //
+      // Past / Invoice to create:
+      //   oldest check-out date first, so the longest-waiting historic item
+      //   is at the top and the most recently checked-out item is at the bottom.
+      const aIn=Date.parse(`${a.checkin_date||'1970-01-01'}T12:00:00`);
+      const bIn=Date.parse(`${b.checkin_date||'1970-01-01'}T12:00:00`);
+      const aOut=Date.parse(`${a.checkout_date||'1970-01-01'}T12:00:00`);
+      const bOut=Date.parse(`${b.checkout_date||'1970-01-01'}T12:00:00`);
+      const checkoutOldestFirst=registrationFilter==='past'||registrationFilter==='invoiceToCreate';
+
+      if(checkoutOldestFirst){
+        if(aOut!==bOut)return aOut-bOut;
+        // Stable/understandable tie-breaker when two guests checked out the same day.
+        if(aIn!==bIn)return aIn-bIn;
+      }else{
+        if(aIn!==bIn)return bIn-aIn;
+        // Same check-in day: later checkout first.
+        if(aOut!==bOut)return bOut-aOut;
+      }
+
+      return String(a.full_name||'').localeCompare(String(b.full_name||''),undefined,{sensitivity:'base'});
     });
   $('registrationList').innerHTML='';
   document.querySelectorAll('.filter-pill').forEach(b=>b.classList.toggle('active',b.dataset.filter===registrationFilter));
