@@ -1402,123 +1402,13 @@ body.qr-modal-open{
   }
 }
 
-/* v3.13.2 — calendar position memory + room month view */
-.calendar-room-open{
-  width:100%;
-  border:0;
-  margin:0;
-  text-align:left;
-  cursor:pointer;
-  font:inherit;
-  color:inherit;
-  flex-direction:row;
-  align-items:center;
-  justify-content:space-between;
-  gap:8px;
-}
-.calendar-room-open>span{display:flex;flex-direction:column}
-.calendar-room-open>b{font:400 24px/1 Georgia,serif;color:#8b8178}
-.calendar-room-open:hover{background:#f4efeb}
-
-.calendar-room-view-head{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  margin:10px 0 12px;
-}
-.calendar-room-view-head.hidden{display:none!important}
-.calendar-room-back{
-  border:0;
-  border-radius:999px;
-  padding:9px 13px;
-  background:var(--highlight);
-  color:var(--heading);
-  font:700 12px inherit;
-  cursor:pointer;
-}
-.calendar-room-view-head strong{color:var(--heading);font-size:14px}
-.calendar-room-month{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:#fff}
-.calendar-room-month.hidden{display:none!important}
-.room-month-weekdays{
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  background:#faf8f6;
-  border-bottom:1px solid var(--border);
-}
-.room-month-weekdays span{
-  padding:10px 2px;
-  text-align:center;
-  color:#766e67;
-  font-size:10px;
-  font-weight:700;
-  text-transform:uppercase;
-}
-.room-month-week{
-  position:relative;
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  min-height:92px;
-  border-bottom:1px solid var(--border);
-}
-.room-month-week:last-child{border-bottom:0}
-.room-month-day{
-  min-width:0;
-  padding:8px;
-  border-right:1px solid #eee9e5;
-  background:#fff;
-}
-.room-month-day:last-of-type{border-right:0}
-.room-month-day.outside{background:#faf9f8;color:#bbb}
-.room-month-day.today{background:#fbf3ef}
-.room-month-day-number{
-  display:inline-flex;
-  width:26px;height:26px;
-  align-items:center;justify-content:center;
-  border-radius:50%;
-  color:var(--heading);
-  font-size:12px;font-weight:700;
-}
-.room-month-day.outside .room-month-day-number{color:#aaa}
-.room-month-day.today .room-month-day-number{background:var(--heading);color:#fff}
-.room-month-event-layer{
-  position:absolute;
-  left:0;right:0;bottom:10px;
-  display:grid;
-  grid-template-columns:repeat(7,1fr);
-  pointer-events:none;
-}
-.room-month-event{
-  min-width:0;
-  height:30px;
-  margin:0 2px;
-  border:0;
-  border-radius:8px;
-  padding:0 7px;
-  display:flex;
-  align-items:center;
-  gap:5px;
-  overflow:hidden;
-  pointer-events:auto;
-  cursor:pointer;
-  font:700 10px/1 inherit;
-  white-space:nowrap;
-  box-shadow:0 2px 7px rgba(0,0,0,.08);
-}
-.room-month-event>span:last-child{overflow:hidden;text-overflow:ellipsis}
-.room-month-event.airbnb{background:#fff0f3;color:#8a1732;border:1px solid #ffc4cf}
-.room-month-event.booking{background:#eef5ff;color:#174b82;border:1px solid #c7dcf5}
-.room-month-event.blocked{background:repeating-linear-gradient(135deg,#f2f2f2 0 7px,#e4e4e4 7px 14px);color:#5f5f5f;border:1px dashed #aaa}
-.room-month-platform-dot{width:7px;height:7px;border-radius:50%;flex:0 0 auto}
-.room-month-platform-dot.airbnb{background:#ff385c}
-.room-month-platform-dot.booking{background:#3478c5}
-
-@media(max-width:700px){
-  .calendar-room-open{position:sticky;left:0;z-index:6}
-  .calendar-room-view-head{align-items:flex-start;flex-direction:column;gap:8px}
-  .calendar-room-month{margin-left:-2px;margin-right:-2px}
-  .room-month-week{min-height:78px}
-  .room-month-day{padding:5px 3px}
-  .room-month-day-number{width:24px;height:24px;font-size:11px}
-  .room-month-event-layer{bottom:7px}
-  .room-month-event{height:25px;padding:0 5px;font-size:8.5px;border-radius:7px}
-}
+/* v3.13.3 — calendar refinement */
+.calendar-day-head.past{background:#f3f2f1;color:#aaa39d}.calendar-day-head.past strong{color:#9a938d}.calendar-day-cell.past{background:#f5f4f3}
+.calendar-room-open{width:100%;border:0;margin:0;text-align:left;cursor:pointer;font:inherit;color:inherit;flex-direction:row;align-items:center;justify-content:space-between;gap:8px}
+.calendar-room-open>span{display:flex;flex-direction:column}.calendar-room-open>b{font:400 24px/1 Georgia,serif;color:#8b8178}.calendar-room-open:hover{background:#f4efeb}
+.calendar-room-view-head{display:flex;align-items:center;gap:12px;margin:10px 0 12px}.calendar-room-view-head.hidden{display:none!important}.calendar-room-back{border:0;border-radius:999px;padding:9px 13px;background:var(--highlight);color:var(--heading);font:700 12px inherit;cursor:pointer}.calendar-room-view-head strong{color:var(--heading);font-size:14px}
+.calendar-room-month{border:1px solid var(--border);border-radius:14px;overflow:hidden;background:#fff}.calendar-room-month.hidden{display:none!important}
+.room-month-weekdays{display:grid;grid-template-columns:repeat(7,1fr);background:#faf8f6;border-bottom:1px solid var(--border)}.room-month-weekdays span{padding:10px 2px;text-align:center;color:#766e67;font-size:10px;font-weight:700;text-transform:uppercase}
+.room-month-week{position:relative;display:grid;grid-template-columns:repeat(7,1fr);min-height:92px;border-bottom:1px solid var(--border)}.room-month-week:last-child{border-bottom:0}.room-month-day{min-width:0;padding:8px;border-right:1px solid #eee9e5;background:#fff}.room-month-day.outside{background:#faf9f8}.room-month-day.today{background:#fbf3ef}.room-month-day.past{background:#f4f3f2}.room-month-day-number{display:inline-flex;width:26px;height:26px;align-items:center;justify-content:center;border-radius:50%;color:var(--heading);font-size:12px;font-weight:700}.room-month-day.outside .room-month-day-number,.room-month-day.past .room-month-day-number{color:#9e9791}.room-month-day.today .room-month-day-number{background:var(--heading);color:#fff}
+.room-month-event-layer{position:absolute;left:0;right:0;bottom:10px;display:grid;grid-template-columns:repeat(7,1fr);pointer-events:none}.room-month-event{min-width:0;height:30px;margin:0 2px;border:0;border-radius:8px;padding:0 7px;display:flex;align-items:center;gap:5px;overflow:hidden;pointer-events:auto;cursor:pointer;font:700 10px/1 inherit;white-space:nowrap;box-shadow:0 2px 7px rgba(0,0,0,.08);z-index:2}.room-month-event>span:last-child{overflow:hidden;text-overflow:ellipsis}.room-month-event.airbnb{background:#fff0f3;color:#8a1732;border:1px solid #ffc4cf}.room-month-event.booking{background:#eef5ff;color:#174b82;border:1px solid #c7dcf5}.room-month-event.blocked{background:repeating-linear-gradient(135deg,#f2f2f2 0 7px,#e4e4e4 7px 14px);color:#5f5f5f;border:1px dashed #aaa}.room-month-platform-dot{width:7px;height:7px;border-radius:50%;flex:0 0 auto}.room-month-platform-dot.airbnb{background:#ff385c}.room-month-platform-dot.booking{background:#3478c5}
+@media(max-width:700px){.calendar-room-open{position:sticky;left:0;z-index:6}.calendar-room-view-head{align-items:flex-start;flex-direction:column;gap:8px}.room-month-week{min-height:78px}.room-month-day{padding:5px 3px}.room-month-day-number{width:24px;height:24px;font-size:11px}.room-month-event-layer{bottom:7px}.room-month-event{height:25px;padding:0 5px;font-size:8.5px;border-radius:7px}}
