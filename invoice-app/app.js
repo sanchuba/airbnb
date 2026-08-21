@@ -342,8 +342,11 @@ function appendReservationMoreMenu(actions,controls){
 function renderReservations(){
   const x=tr[currentLang];
   const rows=reservations.filter(r=>reservationMatchesFilter(r,reservationFilter)).sort((a,b)=>{
-    if(reservationFilter==='past') return b.checkout_date.localeCompare(a.checkout_date);
-    return a.checkin_date.localeCompare(b.checkin_date);
+    const aIn=String(a.checkin_date||''),bIn=String(b.checkin_date||''),aOut=String(a.checkout_date||''),bOut=String(b.checkout_date||'');
+    if(reservationFilter==='past') return bOut.localeCompare(aOut);               // most recent checkout first
+    if(reservationFilter==='invoiceToCreate') return aOut.localeCompare(bOut);    // furthest-past/oldest checkout first
+    if(reservationFilter==='all') return bIn.localeCompare(aIn);                 // most recent/latest check-in first
+    return aIn.localeCompare(bIn);                                                // operational filters: nearest upcoming/current first
   });
   const box=$('reservationList'); if(!box)return; box.innerHTML='';
   if(!rows.length){ box.innerHTML=`<p class="muted">${x.noReservations}</p>`; return; }
@@ -974,9 +977,11 @@ function renderRegs(){
     .filter(r=>registrationMatchesFilter(r,registrationFilter))
     .filter(r=>[r.full_name,r.email,r.booking_reference,r.company_name,r.city,platformDisplay(effectiveRegistrationPlatform(r))].filter(Boolean).some(v=>String(v).toLowerCase().includes(q)))
     .sort((a,b)=>{
-      if(registrationFilter==='past') return String(b.checkout_date||'').localeCompare(String(a.checkout_date||''));
-      if(registrationFilter==='invoiceToCreate') return String(a.checkout_date||'').localeCompare(String(b.checkout_date||''));
-      return String(b.checkin_date||'').localeCompare(String(a.checkin_date||''));
+      const aIn=Date.parse(a.checkin_date||'1970-01-01'),bIn=Date.parse(b.checkin_date||'1970-01-01');
+      const aOut=Date.parse(a.checkout_date||'1970-01-01'),bOut=Date.parse(b.checkout_date||'1970-01-01');
+      if(registrationFilter==='past') return bOut-aOut;               // most recent checkout first
+      if(registrationFilter==='invoiceToCreate') return aOut-bOut;    // furthest-past/oldest checkout first
+      return bIn-aIn;                                                  // most recent/latest check-in first
     });
   $('registrationList').innerHTML='';
   document.querySelectorAll('.filter-pill').forEach(b=>b.classList.toggle('active',b.dataset.filter===registrationFilter));

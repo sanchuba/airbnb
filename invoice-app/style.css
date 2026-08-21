@@ -1354,3 +1354,10 @@ body.qr-modal-open{
   background:#fff4f4!important;
   box-shadow:0 0 0 3px rgba(161,77,77,.16)!important;
 }
+
+/* v3.12.1 — consistent invalid-field styling */
+#invoiceDetailsCard .field-invalid input,
+#invoiceDetailsCard .field-invalid select,
+#invoiceDetailsCard .field-invalid textarea{
+  background:#fff4f4!important;
+}
