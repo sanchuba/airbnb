@@ -8,11 +8,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="NGR Admin" />
-  <link rel="manifest" href="./manifest.webmanifest?v=3.16.6" />
+  <link rel="manifest" href="./manifest.webmanifest?v=3.16.7" />
   <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=3.5.0" />
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=3.5.0" />
   <title>Nijmegen Guest Rooms – Admin</title>
-  <link rel="stylesheet" href="./style.css?v=3.16.6" />
+  <link rel="stylesheet" href="./style.css?v=3.16.7" />
 </head>
 <body>
   <div class="container">
@@ -115,6 +115,10 @@
               <span class="attention-number" id="attentionExpiredLinkCount">0</span>
               <span class="attention-label" id="attentionExpiredLinkLabel">Registration links expired</span>
             </button>
+            <button type="button" class="attention-card" data-reservation-attention="needsAttention">
+              <span class="attention-number" id="attentionFlaggedCount">0</span>
+              <span class="attention-label" id="attentionFlaggedLabel">Flagged reservations</span>
+            </button>
           </div>
           <div id="attentionClearState" class="attention-clear-state hidden">
             <span class="attention-clear-icon" aria-hidden="true">✓</span>
@@ -137,6 +141,8 @@
           <button type="button" class="filter-pill" data-reservation-filter="invoiceToCreate" id="reservationFilterInvoice">Invoice to create</button>
           <button type="button" class="filter-pill" data-reservation-filter="missingBookingReference" id="reservationFilterBookingRef">Booking ref missing</button>
           <button type="button" class="filter-pill" data-reservation-filter="expiredRegistrationLink" id="reservationFilterExpiredLink">Link expired</button>
+          <button type="button" class="filter-pill" data-reservation-filter="needsAttention" id="reservationFilterAttention">Needs attention</button>
+          <button type="button" class="filter-pill" data-reservation-filter="noShow" id="reservationFilterNoShow">No-show</button>
           <button type="button" class="filter-pill" data-reservation-filter="past" id="reservationFilterPast">Past</button>
           <button type="button" class="filter-pill" data-reservation-filter="all" id="reservationFilterAll">All</button>
           <button type="button" class="filter-pill" data-reservation-filter="removed" id="reservationFilterRemoved">Removed / cancelled</button>
@@ -388,6 +394,7 @@
     </div>
     <div id="calendarDetailMeta" class="calendar-detail-meta"></div>
     <div id="calendarDetailReference" class="calendar-detail-reference hidden"></div>
+    <div id="calendarDetailAlert" class="calendar-detail-alert hidden"></div>
     <div id="calendarDetailBadges" class="calendar-detail-badges"></div>
     <div class="calendar-detail-actions">
       <button id="calendarDetailOpenBtn" class="action-btn primary calendar-detail-open" type="button">Open reservation</button>
@@ -445,10 +452,10 @@
   </div>
   <button id="backToTopBtn" class="back-to-top-btn screen-only" type="button" aria-label="Back to top" title="Back to top">↑</button>
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-  <script type="module" src="./app.js?v=3.16.6"></script>
+  <script type="module" src="./app.js?v=3.16.7"></script>
   <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.16.6').catch(() => {}));
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.16.7').catch(() => {}));
   }
   </script>
 </body>

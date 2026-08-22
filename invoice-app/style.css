@@ -2066,3 +2066,25 @@ body.qr-modal-open{
 [data-reservation-attention="expiredRegistrationLink"] .attention-number{
   color:#9a3f18;
 }
+
+/* v3.16.7 — reservation attention flags + no-show */
+.reservation-item.reservation-flagged{box-shadow:inset 3px 0 0 #d99a2b}
+.reservation-item.reservation-no-show{opacity:.82}
+.reservation-host-state-badges{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.reservation-attention-badge{background:#fff5dd!important;border-color:#efd08b!important;color:#8a5a00!important}
+.reservation-no-show-badge{background:#f1f0ef!important;border-color:#d5d1cd!important;color:#5f5954!important}
+.reservation-attention-note{margin-top:8px;padding:9px 10px;border-radius:10px;background:#fff8e8;border:1px solid #f0d79e;color:#725115;font-size:10.5px;line-height:1.4}
+.reservation-attention-editor{width:100%;box-sizing:border-box;padding:12px;border:1px solid #efd08b;border-radius:14px;background:#fff9ec;display:flex;flex-direction:column;gap:8px}
+.reservation-attention-editor>strong{font-size:11px;color:#805910}
+.reservation-attention-editor textarea{width:100%;box-sizing:border-box;resize:vertical;min-height:74px;border:1px solid var(--border);border-radius:10px;padding:10px;background:#fff;color:var(--text);font:inherit;font-size:11px}
+.reservation-attention-editor-actions{display:flex;justify-content:flex-end;gap:7px}
+.reservation-no-show-action{color:#6b625c}
+
+.calendar-event.needs-attention,.room-month-event.needs-attention{box-shadow:0 0 0 2px #e6aa37,0 3px 8px rgba(0,0,0,.12)}
+.calendar-event.no-show,.room-month-event.no-show{filter:grayscale(.75);opacity:.68;border-style:dashed}
+.calendar-mini-status.attention{background:#fff2cf;border-color:#efce7c;color:#7a5200}
+.calendar-mini-status.no-show{background:#efeeed;border-color:#d5d1cd;color:#5d5752}
+.calendar-detail-alert{display:flex;flex-direction:column;gap:3px;margin-top:10px;padding:10px 11px;border-radius:11px;font-size:11px;line-height:1.4}
+.calendar-detail-alert.attention{background:#fff7e4;border:1px solid #efd18f;color:#725015}
+.calendar-detail-alert.no-show{background:#f2f1f0;border:1px solid #d8d4d0;color:#5e5853}
+.calendar-detail-alert.hidden{display:none!important}
