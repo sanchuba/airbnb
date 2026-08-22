@@ -2056,3 +2056,13 @@ body.qr-modal-open{
   .reservation-booking-ref-editor-controls{flex:0 0 auto;width:100%}
   .reservation-booking-ref-editor-controls .action-btn{min-width:105px}
 }
+
+/* v3.16.6 — reservation-aware registration-link expiry */
+.reservation-status.expired-link-status{
+  background:#fff0e8;
+  border-color:#efc2aa;
+  color:#9a3f18;
+}
+[data-reservation-attention="expiredRegistrationLink"] .attention-number{
+  color:#9a3f18;
+}
