@@ -2044,7 +2044,6 @@ body.qr-modal-open{
 }
 
 /* v3.16.4 — Booking.com reference task workflow */
-.reservation-booking-ref{color:#4c6f96;font-size:10.5px;font-weight:750}
 .reservation-booking-ref-editor{width:100%;box-sizing:border-box;padding:12px;border:1px solid #f0cf95;border-radius:14px;background:#fff9ee;display:flex;align-items:flex-end;gap:12px}
 .reservation-booking-ref-editor-copy{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;gap:3px}
 .reservation-booking-ref-editor-copy strong{color:#855713;font-size:11px}

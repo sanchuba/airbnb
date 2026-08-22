@@ -952,7 +952,7 @@ function renderReservations(){
             : `<span class="reservation-status">${escapeHtml(x.registrationNotCreated)}</span>`;
     const bookingRef=bookingReferenceForReservation(r);
     const displayName=reg?.full_name||(r.platform==='booking'?(bookingRef||platformLabel):(r.reservation_code||platformLabel));
-    d.innerHTML=`<div class="reservation-top"><div><div class="reservation-title"><span class="platform-pill ${platformClass}">${platformLabel}</span><strong>${escapeHtml(displayName)}</strong></div><div class="reservation-meta">${escapeHtml(roomLabel(r.room_key))}<br>${fmt(r.checkin_date)} → ${fmt(r.checkout_date)} · ${n} ${escapeHtml(x.nightsWord)}${r.platform==='booking'&&bookingRef?`<br><span class="reservation-booking-ref">Booking.com #${escapeHtml(bookingRef)}</span>`:''}</div></div>${status}</div>${reservationGuestBadges(reg)}<div class="reservation-actions"></div>`;
+    d.innerHTML=`<div class="reservation-top"><div><div class="reservation-title"><span class="platform-pill ${platformClass}">${platformLabel}</span><strong>${escapeHtml(displayName)}</strong></div><div class="reservation-meta">${escapeHtml(roomLabel(r.room_key))}<br>${fmt(r.checkin_date)} → ${fmt(r.checkout_date)} · ${n} ${escapeHtml(x.nightsWord)}</div></div>${status}</div>${reservationGuestBadges(reg)}<div class="reservation-actions"></div>`;
     const actions=d.querySelector('.reservation-actions');
     const secondaryControls=[];
     actions.addEventListener('click',e=>e.stopPropagation());
