@@ -433,3 +433,155 @@ window.addEventListener('hashchange', openFaqIfHash);
 window.addEventListener('load', openFaqIfHash);
 
 setLanguage(currentLang);
+
+// vNext — Booking.com-first availability powered by anonymous iCal ranges.
+const AVAILABILITY_ENDPOINT = 'https://rmvfrgpampxduldzfwxi.supabase.co/functions/v1/public-availability';
+const BOOKING_PROPERTY_URL = 'https://www.booking.com/hotel/nl/nijmegen-knusse-kamers.html';
+let publicAvailability = null;
+let publicAvailabilityFailed = false;
+
+function isoTodayLocal() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function parseIsoDate(value) {
+  if (!value) return null;
+  const [y, m, d] = value.split('-').map(Number);
+  if (!y || !m || !d) return null;
+  return new Date(y, m - 1, d);
+}
+
+function nightsBetween(checkin, checkout) {
+  const start = parseIsoDate(checkin);
+  const end = parseIsoDate(checkout);
+  if (!start || !end) return 0;
+  return Math.round((end - start) / 86400000);
+}
+
+function rangesOverlap(stayStart, stayEnd, blockStart, blockEnd) {
+  // iCal DTEND and guest checkout are both exclusive: back-to-back stays remain possible.
+  return stayStart < blockEnd && stayEnd > blockStart;
+}
+
+function roomLooksAvailable(roomKey, checkin, checkout) {
+  const blocks = publicAvailability?.rooms?.[roomKey] || [];
+  return !blocks.some(block => rangesOverlap(checkin, checkout, block.start, block.end));
+}
+
+function setPill(row, state, lang) {
+  const pill = row?.querySelector('.availability-pill');
+  if (!pill) return;
+  const labels = {
+    en: { neutral: 'Select dates', available: 'Looks available', unavailable: 'Unavailable', unknown: 'Check on Booking.com' },
+    nl: { neutral: 'Kies data', available: 'Lijkt beschikbaar', unavailable: 'Niet beschikbaar', unknown: 'Controleer op Booking.com' }
+  };
+  pill.className = `availability-pill ${state}`;
+  pill.textContent = labels[lang][state];
+}
+
+function updateAvailabilityUi(lang) {
+  const cap = lang === 'en' ? 'En' : 'Nl';
+  const checkin = document.getElementById(`checkin${cap}`)?.value;
+  const checkout = document.getElementById(`checkout${cap}`)?.value;
+  const rows = document.querySelectorAll(`[data-room-status][data-lang="${lang}"]`);
+  const valid = checkin && checkout && nightsBetween(checkin, checkout) > 0;
+
+  rows.forEach(row => {
+    if (!valid) return setPill(row, 'neutral', lang);
+    if (!publicAvailability || publicAvailabilityFailed) return setPill(row, 'unknown', lang);
+    const key = row.dataset.roomStatus;
+    setPill(row, roomLooksAvailable(key, checkin, checkout) ? 'available' : 'unavailable', lang);
+  });
+}
+
+function formatFeedTime(iso, lang) {
+  if (!iso) return lang === 'en' ? 'Calendars loaded' : 'Kalenders geladen';
+  const dt = new Date(iso);
+  if (Number.isNaN(dt.getTime())) return lang === 'en' ? 'Calendars loaded' : 'Kalenders geladen';
+  return (lang === 'en' ? 'Checked ' : 'Gecontroleerd ') + dt.toLocaleTimeString(lang === 'en' ? 'en-GB' : 'nl-NL', { hour: '2-digit', minute: '2-digit' });
+}
+
+function renderAvailabilitySyncState() {
+  ['en', 'nl'].forEach(lang => {
+    const el = document.getElementById(`availabilitySync${lang === 'en' ? 'En' : 'Nl'}`);
+    if (!el) return;
+    if (publicAvailabilityFailed) {
+      el.textContent = lang === 'en' ? 'Estimate temporarily unavailable' : 'Schatting tijdelijk niet beschikbaar';
+    } else if (publicAvailability) {
+      el.textContent = formatFeedTime(publicAvailability.generatedAt, lang);
+    }
+    updateAvailabilityUi(lang);
+  });
+}
+
+async function loadPublicAvailability() {
+  try {
+    const response = await fetch(AVAILABILITY_ENDPOINT, { headers: { Accept: 'application/json' } });
+    if (!response.ok) throw new Error(`Availability HTTP ${response.status}`);
+    const data = await response.json();
+    if (!data?.rooms?.cozy || !data?.rooms?.spacious) throw new Error('Invalid availability response');
+    publicAvailability = data;
+    publicAvailabilityFailed = false;
+  } catch (error) {
+    console.warn('Estimated availability could not be loaded:', error);
+    publicAvailabilityFailed = true;
+  }
+  renderAvailabilitySyncState();
+}
+
+function buildBookingUrl(checkin, checkout) {
+  const url = new URL(BOOKING_PROPERTY_URL);
+  url.searchParams.set('checkin', checkin);
+  url.searchParams.set('checkout', checkout);
+  url.searchParams.set('group_adults', '1');
+  url.searchParams.set('no_rooms', '1');
+  url.searchParams.set('group_children', '0');
+  return url.toString();
+}
+
+function setupAvailabilityForm(lang) {
+  const cap = lang === 'en' ? 'En' : 'Nl';
+  const form = document.getElementById(`availabilityForm${cap}`);
+  const checkin = document.getElementById(`checkin${cap}`);
+  const checkout = document.getElementById(`checkout${cap}`);
+  if (!form || !checkin || !checkout) return;
+
+  const today = isoTodayLocal();
+  checkin.min = today;
+  checkout.min = today;
+
+  function syncDates(source) {
+    if (source === checkin && checkin.value) {
+      checkout.min = checkin.value;
+      if (checkout.value && checkout.value <= checkin.value) checkout.value = '';
+    }
+    updateAvailabilityUi(lang);
+  }
+
+  checkin.addEventListener('change', () => syncDates(checkin));
+  checkout.addEventListener('change', () => syncDates(checkout));
+
+  form.addEventListener('submit', event => {
+    event.preventDefault();
+    form.querySelector('.availability-error')?.remove();
+    const inDate = checkin.value;
+    const outDate = checkout.value;
+    const nights = nightsBetween(inDate, outDate);
+    if (!inDate || !outDate || nights < 1) {
+      const p = document.createElement('p');
+      p.className = 'availability-error';
+      p.textContent = lang === 'en' ? 'Please choose a valid check-in and check-out date.' : 'Kies een geldige incheck- en uitcheckdatum.';
+      form.appendChild(p);
+      return;
+    }
+    window.open(buildBookingUrl(inDate, outDate), '_blank', 'noopener,noreferrer');
+  });
+}
+
+setupAvailabilityForm('en');
+setupAvailabilityForm('nl');
+loadPublicAvailability();

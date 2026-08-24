@@ -528,30 +528,53 @@
       </section>
 
       <section class="section" id="book-en">
-        <div class="cta-section booking-section">
-          <h2>Book your stay</h2>
-          <p>
-            Nijmegen Guest Rooms is available on Airbnb and Booking.com. Choose your room and the booking platform you prefer to view current availability, prices and booking conditions.
-          </p>
-          <div class="booking-room-grid">
-            <div class="booking-room-card">
-              <h3>Cozy Room</h3>
-              <p>Our cozy street-side room, with a free bicycle during your stay.</p>
-              <div class="booking-actions">
-                <a class="btn btn-platform-airbnb" href="https://airbnb.nl/h/knussekamermetfietsjoa" target="_blank" rel="noopener noreferrer">View on Airbnb</a>
-                <a class="btn btn-platform-booking" href="https://www.booking.com/hotel/nl/nijmegen-knusse-kamers.html" target="_blank" rel="noopener noreferrer">View on Booking.com</a>
-              </div>
+        <div class="cta-section booking-section availability-booking">
+          <div class="booking-eyebrow">Book your stay</div>
+          <h2>Check availability</h2>
+          <p class="booking-lead">Choose your check-in and check-out dates. We’ll show an estimated availability check for both rooms, then Booking.com confirms the final live availability and price.</p>
+
+          <form class="availability-form" id="availabilityFormEn" data-lang="en" novalidate>
+            <div class="availability-fields">
+              <label class="availability-field">
+                <span>Check-in</span>
+                <input type="date" id="checkinEn" name="checkin" required>
+              </label>
+              <label class="availability-field">
+                <span>Check-out</span>
+                <input type="date" id="checkoutEn" name="checkout" required>
+              </label>
             </div>
-            <div class="booking-room-card">
-              <h3>Spacious Room</h3>
-              <p>Our larger, quieter garden-side room, with a free bicycle during your stay.</p>
-              <div class="booking-actions">
-                <a class="btn btn-platform-airbnb" href="https://airbnb.nl/h/ruimekamermetfietsjoa" target="_blank" rel="noopener noreferrer">View on Airbnb</a>
-                <a class="btn btn-platform-booking" href="https://www.booking.com/hotel/nl/nijmegen-knusse-kamers.html" target="_blank" rel="noopener noreferrer">View on Booking.com</a>
+
+            <div class="availability-status" id="availabilityStatusEn" aria-live="polite">
+              <div class="availability-status-head">
+                <strong>Estimated availability</strong>
+                <span class="availability-sync" id="availabilitySyncEn">Loading calendars…</span>
               </div>
+              <div class="room-availability-grid">
+                <div class="room-availability-row" data-room-status="cozy" data-lang="en">
+                  <span><strong>Cozy Room</strong><small>Street side</small></span>
+                  <span class="availability-pill neutral">Select dates</span>
+                </div>
+                <div class="room-availability-row" data-room-status="spacious" data-lang="en">
+                  <span><strong>Spacious Room</strong><small>Garden side</small></span>
+                  <span class="availability-pill neutral">Select dates</span>
+                </div>
+              </div>
+              <p class="availability-disclaimer">Calendar feeds can update with a delay. Booking.com always provides the final availability before you book.</p>
+            </div>
+
+            <button class="btn btn-primary availability-submit" type="submit">Check availability on Booking.com ↗</button>
+          </form>
+
+          <div class="airbnb-fallback">
+            <span>Prefer Airbnb? Our rooms are also available there.</span>
+            <div class="airbnb-text-links">
+              <a href="https://airbnb.nl/h/knussekamermetfietsjoa" target="_blank" rel="noopener noreferrer">Cozy Room on Airbnb ↗</a>
+              <a href="https://airbnb.nl/h/ruimekamermetfietsjoa" target="_blank" rel="noopener noreferrer">Spacious Room on Airbnb ↗</a>
             </div>
           </div>
-          <p class="booking-note">Already booked? Your reservation, payment and cancellation conditions remain with the platform you used to book.</p>
+
+          <p class="booking-note">Already booked? Please contact us through the platform where you booked, or via WhatsApp. Your payment and cancellation conditions remain with that platform.</p>
         </div>
       </section>
 
@@ -1039,30 +1062,53 @@
       </section>
 
       <section class="section" id="book-nl">
-        <div class="cta-section booking-section">
-          <h2>Boek je verblijf</h2>
-          <p>
-            Nijmegen Guest Rooms is te boeken via Airbnb en Booking.com. Kies je kamer en het boekingsplatform van je voorkeur om de actuele beschikbaarheid, prijzen en boekingsvoorwaarden te bekijken.
-          </p>
-          <div class="booking-room-grid">
-            <div class="booking-room-card">
-              <h3>Knusse kamer</h3>
-              <p>Onze knusse kamer aan de straatzijde, inclusief gratis fiets tijdens je verblijf.</p>
-              <div class="booking-actions">
-                <a class="btn btn-platform-airbnb" href="https://airbnb.nl/h/knussekamermetfietsjoa" target="_blank" rel="noopener noreferrer">Bekijk op Airbnb</a>
-                <a class="btn btn-platform-booking" href="https://www.booking.com/hotel/nl/nijmegen-knusse-kamers.html" target="_blank" rel="noopener noreferrer">Bekijk op Booking.com</a>
-              </div>
+        <div class="cta-section booking-section availability-booking">
+          <div class="booking-eyebrow">Boek je verblijf</div>
+          <h2>Controleer beschikbaarheid</h2>
+          <p class="booking-lead">Kies je aankomst- en vertrekdatum. We tonen een geschatte beschikbaarheidscheck voor beide kamers; Booking.com bevestigt daarna de definitieve live beschikbaarheid en prijs.</p>
+
+          <form class="availability-form" id="availabilityFormNl" data-lang="nl" novalidate>
+            <div class="availability-fields">
+              <label class="availability-field">
+                <span>Inchecken</span>
+                <input type="date" id="checkinNl" name="checkin" required>
+              </label>
+              <label class="availability-field">
+                <span>Uitchecken</span>
+                <input type="date" id="checkoutNl" name="checkout" required>
+              </label>
             </div>
-            <div class="booking-room-card">
-              <h3>Ruime kamer</h3>
-              <p>Onze ruimere en rustigere kamer aan de tuinzijde, inclusief gratis fiets tijdens je verblijf.</p>
-              <div class="booking-actions">
-                <a class="btn btn-platform-airbnb" href="https://airbnb.nl/h/ruimekamermetfietsjoa" target="_blank" rel="noopener noreferrer">Bekijk op Airbnb</a>
-                <a class="btn btn-platform-booking" href="https://www.booking.com/hotel/nl/nijmegen-knusse-kamers.html" target="_blank" rel="noopener noreferrer">Bekijk op Booking.com</a>
+
+            <div class="availability-status" id="availabilityStatusNl" aria-live="polite">
+              <div class="availability-status-head">
+                <strong>Geschatte beschikbaarheid</strong>
+                <span class="availability-sync" id="availabilitySyncNl">Kalenders laden…</span>
               </div>
+              <div class="room-availability-grid">
+                <div class="room-availability-row" data-room-status="cozy" data-lang="nl">
+                  <span><strong>Knusse kamer</strong><small>Straatzijde</small></span>
+                  <span class="availability-pill neutral">Kies data</span>
+                </div>
+                <div class="room-availability-row" data-room-status="spacious" data-lang="nl">
+                  <span><strong>Ruime kamer</strong><small>Tuinzijde</small></span>
+                  <span class="availability-pill neutral">Kies data</span>
+                </div>
+              </div>
+              <p class="availability-disclaimer">Kalenderfeeds kunnen met vertraging bijwerken. Booking.com toont altijd de definitieve beschikbaarheid voordat je boekt.</p>
+            </div>
+
+            <button class="btn btn-primary availability-submit" type="submit">Controleer op Booking.com ↗</button>
+          </form>
+
+          <div class="airbnb-fallback">
+            <span>Liever Airbnb? Onze kamers zijn daar ook beschikbaar.</span>
+            <div class="airbnb-text-links">
+              <a href="https://airbnb.nl/h/knussekamermetfietsjoa" target="_blank" rel="noopener noreferrer">Knusse kamer op Airbnb ↗</a>
+              <a href="https://airbnb.nl/h/ruimekamermetfietsjoa" target="_blank" rel="noopener noreferrer">Ruime kamer op Airbnb ↗</a>
             </div>
           </div>
-          <p class="booking-note">Al geboekt? Je reservering, betaling en annuleringsvoorwaarden blijven gekoppeld aan het platform waarop je hebt geboekt.</p>
+
+          <p class="booking-note">Al geboekt? Neem contact met ons op via het platform waarop je hebt geboekt, of via WhatsApp. Je betaal- en annuleringsvoorwaarden blijven gekoppeld aan dat platform.</p>
         </div>
       </section>
 
