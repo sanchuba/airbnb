@@ -1,11 +1,19 @@
 :root {
-  --bg: #f4efe7;
+  --brand-green: #304d40;
+  --brand-green-deep: #243d33;
+  --brand-green-soft: #e8f0ea;
+  --brand-cream: #f4efe7;
+  --brand-cream-soft: #faf8f4;
+  --brand-gold: #b79b68;
+  --brand-brown: #5c4638;
+
+  --bg: var(--brand-cream);
   --card: #ffffff;
   --text: #3f3f3f;
-  --heading: #5c4638;
-  --accent: #c7b8a3;
-  --highlight: #ece6dc;
-  --border: #ddd3c7;
+  --heading: var(--brand-green);
+  --accent: var(--brand-gold);
+  --highlight: var(--brand-green-soft);
+  --border: #dcd5ca;
   --error: #a94444;
   --error-bg: #fff2f2;
   --success: #356a46;
@@ -181,3 +189,50 @@ select { min-height: 46px; cursor: pointer; }
   outline-offset:6px;
   border-radius:8px;
 }
+
+
+/* v3.18.0 – unified Nijmegen Guest Rooms brand */
+body {
+  background:
+    radial-gradient(circle at 50% -10%, rgba(183,155,104,.09), transparent 28rem),
+    var(--bg);
+}
+.card {
+  border: 1px solid rgba(48,77,64,.08);
+  box-shadow: 0 16px 38px rgba(36,61,51,.075);
+}
+.brand { color: var(--brand-gold); letter-spacing: .10em; }
+h1, h2 {
+  color: var(--brand-green-deep);
+  font-family: 'Playfair Display', Georgia, serif;
+}
+.lang-btn.active,
+.primary-btn,
+.home-btn {
+  background: var(--brand-green);
+  border-color: var(--brand-green);
+}
+.lang-btn.active:hover,
+.primary-btn:hover,
+.home-btn:hover { background: var(--brand-green-deep); }
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--brand-green);
+  box-shadow: 0 0 0 3px rgba(48,77,64,.12);
+}
+.check-row input,
+.choice-card input { accent-color: var(--brand-green); }
+
+.conditional { background: var(--brand-cream-soft); }
+.choice-card:hover {
+  border-color: rgba(48,77,64,.32);
+  background: #fcfbf8;
+}
+.declaration-section {
+  background: linear-gradient(135deg, var(--brand-green-soft), #f5f3eb);
+}
+.notice:not(.error):not(.success) {
+  background: var(--brand-green-soft);
+  color: var(--brand-green-deep);
+}
+.home-btn:focus-visible { outline-color: rgba(48,77,64,.24); }
