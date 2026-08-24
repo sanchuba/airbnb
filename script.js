@@ -12,16 +12,14 @@ let currentLang = localStorage.getItem('preferredLanguage') || 'en';
 
 const navConfig = {
   en: {
-    labels: ["Rooms", "Your Stay", "Before Arrival", "Guest Guide", "FAQ", "Book"],
-    hrefs: ["#rooms-en", "#stay-en", "#arrival-en", "#guide-en", "#faq-en", "#book-en"],
-    brandHref: "#top-en",
-    guideHref: "#guide-en"
+    labels: ["Rooms", "Availability", "The stay", "Location", "FAQ", "Check availability"],
+    hrefs: ["#rooms-en", "#book-en", "#stay-en", "#arrival-en", "#faq-en", "#book-en"],
+    brandHref: "#top-en"
   },
   nl: {
-    labels: ["Kamers", "Je Verblijf", "Voor Aankomst", "Gastinformatie", "FAQ", "Boeken"],
-    hrefs: ["#rooms-nl", "#stay-nl", "#arrival-nl", "#guide-nl", "#faq-nl", "#book-nl"],
-    brandHref: "#top-nl",
-    guideHref: "#guide-nl"
+    labels: ["Kamers", "Beschikbaarheid", "Verblijf", "Locatie", "FAQ", "Controleer"],
+    hrefs: ["#rooms-nl", "#book-nl", "#stay-nl", "#arrival-nl", "#faq-nl", "#book-nl"],
+    brandHref: "#top-nl"
   }
 };
 
@@ -230,8 +228,11 @@ function setLanguage(lang) {
   });
 
   brandLink.href = navConfig[lang].brandHref;
-  heroGuideBtnEn.href = navConfig[lang].guideHref;
-  heroGuideBtnNl.href = navConfig[lang].guideHref;
+
+  const stickyAvailability = document.getElementById('stickyAvailability');
+  const stickyAvailabilityText = document.getElementById('stickyAvailabilityText');
+  if (stickyAvailability) stickyAvailability.href = lang === 'en' ? '#book-en' : '#book-nl';
+  if (stickyAvailabilityText) stickyAvailabilityText.textContent = lang === 'en' ? 'Check availability' : 'Controleer beschikbaarheid';
 
   if (lightbox.classList.contains('open')) {
     renderLightbox();
@@ -488,16 +489,74 @@ function updateAvailabilityUi(lang) {
   const checkin = document.getElementById(`checkin${cap}`)?.value;
   const checkout = document.getElementById(`checkout${cap}`)?.value;
   const rows = document.querySelectorAll(`[data-room-status][data-lang="${lang}"]`);
+  const summary = document.getElementById(`availabilitySummary${cap}`);
+  const submit = document.getElementById(`availabilitySubmit${cap}`);
   const valid = checkin && checkout && nightsBetween(checkin, checkout) > 0;
 
+  const roomStates = {};
   rows.forEach(row => {
-    if (!valid) return setPill(row, 'neutral', lang);
-    if (!publicAvailability || publicAvailabilityFailed) return setPill(row, 'unknown', lang);
     const key = row.dataset.roomStatus;
-    setPill(row, roomLooksAvailable(key, checkin, checkout) ? 'available' : 'unavailable', lang);
+    if (!valid) {
+      roomStates[key] = 'neutral';
+      return setPill(row, 'neutral', lang);
+    }
+    if (!publicAvailability || publicAvailabilityFailed) {
+      roomStates[key] = 'unknown';
+      return setPill(row, 'unknown', lang);
+    }
+    roomStates[key] = roomLooksAvailable(key, checkin, checkout) ? 'available' : 'unavailable';
+    setPill(row, roomStates[key], lang);
   });
-}
 
+  if (!summary || !submit) return;
+  summary.className = 'availability-summary';
+
+  if (!valid) {
+    summary.classList.add('neutral');
+    summary.textContent = lang === 'en'
+      ? 'Choose dates to see which room may be available.'
+      : 'Kies data om te zien welke kamer mogelijk beschikbaar is.';
+    submit.textContent = lang === 'en'
+      ? 'Check availability on Booking.com ↗'
+      : 'Controleer op Booking.com ↗';
+    return;
+  }
+
+  if (!publicAvailability || publicAvailabilityFailed) {
+    summary.classList.add('unknown');
+    summary.textContent = lang === 'en'
+      ? 'Our live estimate is temporarily unavailable. Booking.com can still check your dates.'
+      : 'Onze live schatting is tijdelijk niet beschikbaar. Booking.com kan je data nog steeds controleren.';
+    submit.textContent = lang === 'en' ? 'Check on Booking.com ↗' : 'Controleer op Booking.com ↗';
+    return;
+  }
+
+  const cozy = roomStates.cozy === 'available';
+  const spacious = roomStates.spacious === 'available';
+
+  if (cozy && spacious) {
+    summary.classList.add('available');
+    summary.textContent = lang === 'en'
+      ? 'Good news — both rooms appear available for these dates.'
+      : 'Goed nieuws — beide kamers lijken beschikbaar voor deze data.';
+    submit.textContent = lang === 'en' ? 'View rooms & prices on Booking.com ↗' : 'Bekijk kamers & prijzen op Booking.com ↗';
+  } else if (cozy || spacious) {
+    const roomName = lang === 'en'
+      ? (cozy ? 'Cozy Room' : 'Spacious Room')
+      : (cozy ? 'Knusse Kamer' : 'Ruime Kamer');
+    summary.classList.add('available');
+    summary.textContent = lang === 'en'
+      ? `Good news — the ${roomName} appears available for your dates.`
+      : `Goed nieuws — de ${roomName} lijkt beschikbaar voor je data.`;
+    submit.textContent = lang === 'en' ? 'View available room on Booking.com ↗' : 'Bekijk beschikbare kamer op Booking.com ↗';
+  } else {
+    summary.classList.add('unavailable');
+    summary.textContent = lang === 'en'
+      ? 'Both rooms appear unavailable for these dates. Booking.com has the final live availability.'
+      : 'Beide kamers lijken niet beschikbaar voor deze data. Booking.com toont de definitieve live beschikbaarheid.';
+    submit.textContent = lang === 'en' ? 'Check latest availability on Booking.com ↗' : 'Controleer laatste beschikbaarheid ↗';
+  }
+}
 function formatFeedTime(iso, lang) {
   if (!iso) return lang === 'en' ? 'Calendars loaded' : 'Kalenders geladen';
   const dt = new Date(iso);
@@ -585,3 +644,21 @@ function setupAvailabilityForm(lang) {
 setupAvailabilityForm('en');
 setupAvailabilityForm('nl');
 loadPublicAvailability();
+
+
+// Homepage conversion helpers.
+document.querySelectorAll('.room-check-link').forEach(link => {
+  link.addEventListener('click', () => {
+    const room = link.dataset.roomFocus;
+    sessionStorage.setItem('preferredRoomFocus', room || '');
+  });
+});
+
+const stickyAvailability = document.getElementById('stickyAvailability');
+if (stickyAvailability && 'IntersectionObserver' in window) {
+  const observer = new IntersectionObserver(entries => {
+    const activeBook = entries.some(entry => entry.isIntersecting && entry.target.closest('.lang-content.active'));
+    stickyAvailability.classList.toggle('hidden-by-section', activeBook);
+  }, { threshold: 0.15 });
+  document.querySelectorAll('[id^="book-"]').forEach(section => observer.observe(section));
+}
