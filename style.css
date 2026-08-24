@@ -785,3 +785,77 @@ details[open].guide-block summary::after {
     font-size: 13px;
   }
 }
+/* Platform-neutral booking section */
+.booking-room-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  max-width: 820px;
+  margin: 26px auto 0;
+  text-align: left;
+}
+
+.booking-room-card {
+  padding: 22px;
+  border: 1px solid rgba(92, 70, 56, 0.12);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.45);
+}
+
+.booking-room-card h3 {
+  margin: 0 0 8px;
+  color: var(--heading);
+  font-family: 'Playfair Display', serif;
+  font-size: 23px;
+}
+
+.booking-room-card p {
+  margin: 0 0 18px;
+  font-size: 14px;
+  opacity: 0.82;
+}
+
+.booking-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.booking-actions .btn {
+  flex: 1 1 150px;
+  padding: 12px 16px;
+  font-size: 13px;
+}
+
+.btn-platform-airbnb,
+.btn-platform-booking {
+  background: var(--heading);
+  color: #fff;
+}
+
+.booking-note {
+  margin-top: 22px !important;
+  margin-bottom: 0 !important;
+  font-size: 13px;
+  opacity: 0.68;
+}
+
+@media (max-width: 700px) {
+  .booking-room-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .booking-room-card {
+    padding: 18px;
+  }
+
+  .booking-actions {
+    flex-direction: column;
+  }
+
+  .booking-actions .btn {
+    flex: none;
+    width: 100%;
+    box-sizing: border-box;
+  }
+}
