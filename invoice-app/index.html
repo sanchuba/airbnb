@@ -8,11 +8,11 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="NGR Admin" />
-  <link rel="manifest" href="./manifest.webmanifest?v=3.16.8" />
+  <link rel="manifest" href="./manifest.webmanifest?v=3.16.9" />
   <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=3.5.0" />
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=3.5.0" />
   <title>Nijmegen Guest Rooms – Admin</title>
-  <link rel="stylesheet" href="./style.css?v=3.16.8" />
+  <link rel="stylesheet" href="./style.css?v=3.16.9" />
 </head>
 <body>
   <div class="container">
@@ -142,15 +142,15 @@
           <button type="button" class="filter-pill" data-reservation-filter="arrivingSoon" id="reservationFilterArrivingSoon">Arriving soon</button>
           <button type="button" class="filter-pill" data-reservation-filter="staying" id="reservationFilterStaying">Staying now</button>
           <button type="button" class="filter-pill" data-reservation-filter="registrationLinkNotCreated" id="reservationFilterLinkNotCreated">Link not created</button>
+          <button type="button" class="filter-pill" data-reservation-filter="needsAttention" id="reservationFilterAttention">Needs attention</button>
           <button type="button" class="filter-pill" data-reservation-filter="idToVerify" id="reservationFilterId">ID to verify</button>
-          <button type="button" class="filter-pill" data-reservation-filter="invoiceToCreate" id="reservationFilterInvoice">Invoice to create</button>
           <button type="button" class="filter-pill" data-reservation-filter="missingBookingReference" id="reservationFilterBookingRef">Booking ref missing</button>
           <button type="button" class="filter-pill" data-reservation-filter="expiredRegistrationLink" id="reservationFilterExpiredLink">Link expired</button>
-          <button type="button" class="filter-pill" data-reservation-filter="needsAttention" id="reservationFilterAttention">Needs attention</button>
+          <button type="button" class="filter-pill" data-reservation-filter="invoiceToCreate" id="reservationFilterInvoice">Invoice to create</button>
+          <button type="button" class="filter-pill archive-filter-start" data-reservation-filter="past" id="reservationFilterPast">Past</button>
           <button type="button" class="filter-pill" data-reservation-filter="noShow" id="reservationFilterNoShow">No-show</button>
-          <button type="button" class="filter-pill" data-reservation-filter="past" id="reservationFilterPast">Past</button>
-          <button type="button" class="filter-pill" data-reservation-filter="all" id="reservationFilterAll">All</button>
           <button type="button" class="filter-pill" data-reservation-filter="removed" id="reservationFilterRemoved">Removed / cancelled</button>
+          <button type="button" class="filter-pill" data-reservation-filter="all" id="reservationFilterAll">All</button>
         </div>
         <div id="reservationList" class="reservation-list"></div>
       </div>
@@ -457,10 +457,10 @@
   </div>
   <button id="backToTopBtn" class="back-to-top-btn screen-only" type="button" aria-label="Back to top" title="Back to top">↑</button>
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-  <script type="module" src="./app.js?v=3.16.8"></script>
+  <script type="module" src="./app.js?v=3.16.9"></script>
   <script>
   if ('serviceWorker' in navigator) {
-    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.16.8').catch(() => {}));
+    window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.16.9').catch(() => {}));
   }
   </script>
 </body>

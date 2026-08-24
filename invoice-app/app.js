@@ -725,27 +725,100 @@ async function loadReservations(){
 }
 
 function setReservationFilter(filter){
-  reservationFilter=filter;
+  const requested=reservationFilterPredicates[filter]?filter:'upcoming';
+  reservationFilter=requested;
   let active=null;
-  document.querySelectorAll('[data-reservation-filter]').forEach(b=>{const on=b.dataset.reservationFilter===filter;b.classList.toggle('active',on);if(on)active=b;});
+  document.querySelectorAll('[data-reservation-filter]').forEach(b=>{
+    const on=b.dataset.reservationFilter===requested;
+    b.classList.toggle('active',on);
+    b.setAttribute('aria-pressed',String(on));
+    if(on)active=b;
+  });
   renderReservations();
   scrollActiveFilterIntoView('reservationFilters',active);
 }
+function reservationFilterContext(r){
+  const t=localToday();
+  const reg=reservationRegistration(r.id);
+  const invoice=reg?linkedInvoiceForRegistration(reg.id):null;
+  const latestInvite=latestReservationInvite(r.id);
+  const validInvite=reservationInvite(r.id);
+  const expiredInvite=expiredReservationInvite(r.id);
+  return {
+    today:t,
+    reg,
+    invoice,
+    latestInvite,
+    validInvite,
+    expiredInvite,
+    active:r.status==='active',
+    live:!r.no_show,
+    stayOpen:r.checkout_date>t
+  };
+}
+const reservationFilterPredicates={
+  upcoming:(r,c)=>c.active&&c.live&&r.checkin_date>c.today,
+  arrivingSoon:(r,c)=>c.active&&c.live&&r.checkin_date>=c.today&&r.checkin_date<=addDaysIso(c.today,3),
+  staying:(r,c)=>c.active&&c.live&&r.checkin_date<=c.today&&r.checkout_date>c.today,
+
+  // Host action queues.
+  registrationLinkNotCreated:(r,c)=>c.active&&c.live&&c.stayOpen&&!c.reg&&!c.latestInvite,
+  needsAttention:(r,c)=>c.active&&c.live&&!!r.needs_attention,
+  idToVerify:(r,c)=>c.active&&c.live&&!!c.reg&&!c.reg.id_verified&&r.checkin_date<=c.today&&r.checkout_date>c.today,
+  missingBookingReference:(r,c)=>c.active&&c.live&&c.stayOpen&&r.platform==='booking'&&!bookingReferenceForReservation(r),
+  expiredRegistrationLink:(r,c)=>c.active&&c.live&&c.stayOpen&&!c.reg&&!c.validInvite&&!!c.expiredInvite,
+  invoiceToCreate:(r,c)=>c.active&&!!c.reg&&!!c.reg.invoice_requested&&!c.invoice&&r.checkout_date<=c.today,
+
+  // History / archive views.
+  past:(r,c)=>c.active&&r.checkout_date<=c.today,
+  noShow:(r,c)=>c.active&&!!r.no_show,
+  removed:(r,c)=>!c.active,
+  all:()=>true
+};
+const reservationFilterSortModes={
+  upcoming:'checkinAsc',
+  arrivingSoon:'checkinAsc',
+  staying:'checkinAsc',
+  registrationLinkNotCreated:'checkinAsc',
+  needsAttention:'checkinAsc',
+  idToVerify:'checkinAsc',
+  missingBookingReference:'checkinAsc',
+  expiredRegistrationLink:'checkinAsc',
+  invoiceToCreate:'checkoutAsc',
+  past:'checkoutDesc',
+  noShow:'checkoutDesc',
+  removed:'checkoutDesc',
+  all:'checkinDesc'
+};
 function reservationMatchesFilter(r,filter){
-  const t=localToday(), reg=reservationRegistration(r.id), invoice=reg?linkedInvoiceForRegistration(reg.id):null;
-  if(filter==='upcoming') return r.status==='active' && r.checkin_date>t;
-  if(filter==='arrivingSoon') return r.status==='active' && r.checkin_date>=t && r.checkin_date<=addDaysIso(t,3);
-  if(filter==='staying') return r.status==='active' && r.checkin_date<=t && r.checkout_date>t;
-  if(filter==='registrationLinkNotCreated') return r.status==='active' && !r.no_show && r.checkout_date>t && !reg && !latestReservationInvite(r.id);
-  if(filter==='idToVerify') return r.status==='active' && !r.no_show && !!reg && !reg.id_verified && r.checkin_date<=t && r.checkout_date>t;
-  if(filter==='invoiceToCreate') return r.status==='active' && !!reg && !!reg.invoice_requested && !invoice && r.checkout_date<=t;
-  if(filter==='missingBookingReference') return r.status==='active' && !r.no_show && r.platform==='booking' && r.checkout_date>t && !bookingReferenceForReservation(r);
-  if(filter==='expiredRegistrationLink') return r.status==='active' && !r.no_show && r.checkout_date>t && !reg && !reservationInvite(r.id) && !!expiredReservationInvite(r.id);
-  if(filter==='needsAttention') return r.status==='active' && !!r.needs_attention;
-  if(filter==='noShow') return r.status==='active' && !!r.no_show;
-  if(filter==='past') return r.status==='active' && r.checkout_date<=t;
-  if(filter==='removed') return r.status!=='active';
-  return true;
+  const predicate=reservationFilterPredicates[filter]||reservationFilterPredicates.all;
+  return predicate(r,reservationFilterContext(r));
+}
+function compareReservationsForFilter(a,b,filter){
+  const mode=reservationFilterSortModes[filter]||'checkinAsc';
+  const aIn=String(a.checkin_date||''),bIn=String(b.checkin_date||'');
+  const aOut=String(a.checkout_date||''),bOut=String(b.checkout_date||'');
+  let result=0;
+  if(mode==='checkoutAsc')result=aOut.localeCompare(bOut);
+  else if(mode==='checkoutDesc')result=bOut.localeCompare(aOut);
+  else if(mode==='checkinDesc')result=bIn.localeCompare(aIn);
+  else result=aIn.localeCompare(bIn);
+
+  // Deterministic tie-breakers keep cards from jumping between renders.
+  if(result)return result;
+  result=aOut.localeCompare(bOut);
+  if(result)return result;
+  const aName=String(reservationRegistration(a.id)?.full_name||a.reservation_code||'');
+  const bName=String(reservationRegistration(b.id)?.full_name||b.reservation_code||'');
+  return aName.localeCompare(bName,undefined,{sensitivity:'base'});
+}
+function reservationFilterCount(filter){
+  return reservations.filter(isRealReservation).filter(r=>reservationMatchesFilter(r,filter)).length;
+}
+function updateReservationFilterCounts(){
+  document.querySelectorAll('[data-reservation-filter]').forEach(btn=>{
+    btn.dataset.count=String(reservationFilterCount(btn.dataset.reservationFilter));
+  });
 }
 function reservationGuestBadges(reg){
   if(!reg)return '';
@@ -990,13 +1063,11 @@ function appendReservationMoreMenu(actions,controls){
 
 function renderReservations(){
   const x=tr[currentLang];
-  const rows=reservations.filter(isRealReservation).filter(r=>reservationMatchesFilter(r,reservationFilter)).sort((a,b)=>{
-    const aIn=String(a.checkin_date||''),bIn=String(b.checkin_date||''),aOut=String(a.checkout_date||''),bOut=String(b.checkout_date||'');
-    if(reservationFilter==='past') return bOut.localeCompare(aOut);               // most recent checkout first
-    if(reservationFilter==='invoiceToCreate') return aOut.localeCompare(bOut);    // furthest-past/oldest checkout first
-    if(reservationFilter==='all') return bIn.localeCompare(aIn);                 // most recent/latest check-in first
-    return aIn.localeCompare(bIn);                                                // operational filters: nearest upcoming/current first
-  });
+  updateReservationFilterCounts();
+  const rows=reservations
+    .filter(isRealReservation)
+    .filter(r=>reservationMatchesFilter(r,reservationFilter))
+    .sort((a,b)=>compareReservationsForFilter(a,b,reservationFilter));
   const box=$('reservationList'); if(!box)return; box.innerHTML='';
   if(!rows.length){ box.innerHTML=`<p class="muted">${x.noReservations}</p>`; return; }
   rows.forEach(r=>{
@@ -1247,14 +1318,24 @@ setInterval(renderCalendarSyncAge,30000);
 function renderAttention(){
   const t=localToday();
   const active=reservations.filter(isRealReservation);
-  const arriving=active.filter(r=>!r.no_show&&r.checkin_date>=t&&r.checkin_date<=addDaysIso(t,3)).length;
-  const ids=active.filter(r=>{ const reg=reservationRegistration(r.id); return !r.no_show && !!reg && registrationHasIdToVerify(reg) && r.checkin_date<=t && r.checkout_date>t; }).length;
-  const inv=active.filter(r=>{ const reg=reservationRegistration(r.id); return !!reg && !!reg.invoice_requested && !linkedInvoiceForRegistration(reg.id) && r.checkout_date<=t; }).length;
-  const missingBookingRef=active.filter(r=>!r.no_show && r.platform==='booking' && r.checkout_date>t && !bookingReferenceForReservation(r)).length;
-  const expiredLinks=active.filter(r=>!r.no_show && r.checkout_date>t && !reservationRegistration(r.id) && !reservationInvite(r.id) && !!expiredReservationInvite(r.id)).length;
-  const flagged=active.filter(r=>!!r.needs_attention && !r.no_show).length;
-  const linksToCreate=active.filter(r=>!r.no_show && r.status==='active' && r.checkout_date>t && !reservationRegistration(r.id) && !latestReservationInvite(r.id)).length;
-  const values={arrivingSoon:arriving,idToVerify:ids,invoiceToCreate:inv,missingBookingReference:missingBookingRef,expiredRegistrationLink:expiredLinks,needsAttention:flagged,registrationLinkNotCreated:linksToCreate};
+  const arriving=reservationFilterCount('arrivingSoon');
+  const ids=reservationFilterCount('idToVerify');
+  const inv=reservationFilterCount('invoiceToCreate');
+  const missingBookingRef=reservationFilterCount('missingBookingReference');
+  const expiredLinks=reservationFilterCount('expiredRegistrationLink');
+  const flagged=reservationFilterCount('needsAttention');
+  const linksToCreate=reservationFilterCount('registrationLinkNotCreated');
+
+  const values={
+    arrivingSoon:arriving,
+    idToVerify:ids,
+    invoiceToCreate:inv,
+    missingBookingReference:missingBookingRef,
+    expiredRegistrationLink:expiredLinks,
+    needsAttention:flagged,
+    registrationLinkNotCreated:linksToCreate
+  };
+
   if($('attentionArrivingCount'))$('attentionArrivingCount').textContent=arriving;
   if($('attentionIdCount'))$('attentionIdCount').textContent=ids;
   if($('attentionInvoiceCount'))$('attentionInvoiceCount').textContent=inv;
@@ -1262,8 +1343,11 @@ function renderAttention(){
   if($('attentionExpiredLinkCount'))$('attentionExpiredLinkCount').textContent=expiredLinks;
   if($('attentionFlaggedCount'))$('attentionFlaggedCount').textContent=flagged;
   if($('attentionLinkNotCreatedCount'))$('attentionLinkNotCreatedCount').textContent=linksToCreate;
-  const any=arriving+ids+inv+missingBookingRef+expiredLinks+flagged+linksToCreate>0;
-  document.querySelectorAll('[data-reservation-attention]').forEach(card=>card.classList.toggle('hidden',!values[card.dataset.reservationAttention]));
+
+  const any=Object.values(values).some(Boolean);
+  document.querySelectorAll('[data-reservation-attention]').forEach(card=>{
+    card.classList.toggle('hidden',!values[card.dataset.reservationAttention]);
+  });
   $('attentionClearState')?.classList.toggle('hidden',any);
   $('attentionSubtitle')?.classList.toggle('hidden',!any);
 }

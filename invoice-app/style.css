@@ -2088,3 +2088,51 @@ body.qr-modal-open{
 .calendar-detail-alert.attention{background:#fff7e4;border:1px solid #efd18f;color:#725015}
 .calendar-detail-alert.no-show{background:#f2f1f0;border:1px solid #d8d4d0;color:#5e5853}
 .calendar-detail-alert.hidden{display:none!important}
+
+/* v3.16.9 — reservation filter refactor */
+.reservation-filters .filter-pill{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.reservation-filters .filter-pill::after{
+  content:attr(data-count);
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-width:17px;
+  height:17px;
+  box-sizing:border-box;
+  padding:0 5px;
+  border-radius:999px;
+  background:rgba(92,70,56,.08);
+  color:#766d67;
+  font-size:9px;
+  font-weight:800;
+  line-height:1;
+}
+.reservation-filters .filter-pill[data-count="0"]::after{
+  display:none;
+}
+.reservation-filters .filter-pill.active::after{
+  background:rgba(255,255,255,.24);
+  color:inherit;
+}
+.reservation-filters .archive-filter-start{
+  margin-left:10px;
+  position:relative;
+}
+.reservation-filters .archive-filter-start::before{
+  content:"";
+  position:absolute;
+  left:-7px;
+  top:20%;
+  width:1px;
+  height:60%;
+  background:rgba(92,70,56,.16);
+}
+@media(max-width:700px){
+  .reservation-filters .archive-filter-start{
+    margin-left:12px;
+  }
+}
