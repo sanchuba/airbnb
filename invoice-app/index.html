@@ -377,13 +377,83 @@
         <div class="right-column">
           <div class="card preview-card" id="previewWrapper">
             <div class="invoice-preview" id="invoicePreview">
-              <div class="invoice-header"><div class="brand"><h3><span translate="no">Nijmegen Guest Rooms</span></h3><p>Landbouwstraat 15</p><p>Nijmegen, The Netherlands</p></div><div class="invoice-meta"><p class="invoice-title" id="previewInvoiceTitle">INVOICE</p><p><strong id="previewLabelInvoiceNumber">Invoice number:</strong> <span id="previewInvoiceNumber">—</span></p><p><strong id="previewLabelInvoiceDate">Date:</strong> <span id="previewInvoiceDate">—</span></p></div></div>
-              <div class="invoice-section invoice-block"><h4 id="previewSectionGuest">Billed to</h4><p id="previewCompanyName" class="hidden"></p><p id="previewGuestName">—</p><p id="previewAddress" class="subtle hidden"></p><p id="previewCityCountry" class="subtle hidden"></p><p id="previewCompanyAddress" class="subtle hidden"></p><p id="previewVatNumberWrap" class="subtle hidden"><strong id="previewLabelVatNumber">VAT number:</strong> <span id="previewVatNumber">—</span></p><p id="previewGuestEmail" class="subtle"></p><p id="previewBookingReferenceWrap" class="subtle hidden"><strong id="previewLabelBookingReference">Booking reference:</strong> <span id="previewBookingReference">—</span></p></div>
-              <div class="invoice-section invoice-block"><h4 id="previewSectionStay">Stay Details</h4><p><strong id="previewLabelRoom">Room:</strong> <span id="previewRoomName">—</span></p><p><strong id="previewLabelCheckin2">Check-in:</strong> <span id="previewCheckin">—</span></p><p><strong id="previewLabelCheckout2">Check-out:</strong> <span id="previewCheckout">—</span></p><p><strong id="previewLabelNights2">Nights:</strong> <span id="previewNights">—</span></p><p><strong id="previewLabelGuests2">Guests:</strong> <span id="previewGuests">1</span></p></div>
-              <div class="invoice-section invoice-block"><h4 id="previewSectionDescription">Description</h4><p id="previewDescription">Accommodation in private room (shared home)</p></div>
-              <div class="invoice-section"><h4 id="previewSectionPrice">Price Breakdown</h4><table class="summary-table"><tr><td id="previewLabelAccommodation">Accommodation</td><td id="previewAccommodation">€0.00</td></tr><tr id="previewAdditionalGuestRow" class="hidden"><td id="previewLabelAdditionalGuest">Additional overnight guest</td><td id="previewAdditionalGuest">€0.00</td></tr><tr><td id="previewLabelCleaning">Cleaning fee</td><td id="previewCleaning">€0.00</td></tr><tr><td id="previewLabelTaxRate">Tourist tax rate</td><td id="previewTouristTaxRate">€3.71 × 1 × 0</td></tr><tr><td id="previewLabelTaxTotal">Tourist tax included</td><td id="previewTouristTax">€0.00</td></tr><tr class="total-row"><td id="previewLabelTotal">Total amount paid</td><td id="previewTotal">€0.00</td></tr></table></div>
-              <div class="invoice-section invoice-block"><h4 id="previewSectionPayment">Payment</h4><p id="previewPaymentMethod">Paid via Booking.com</p></div>
-              <div class="invoice-section invoice-block"><p class="subtle"><em id="previewNote">This is a private rental. VAT is not applicable.</em></p></div>
+              <div class="invoice-header">
+                <div class="invoice-brand">
+                  <div class="invoice-brand-mark" aria-hidden="true">N</div>
+                  <div class="brand">
+                    <h3><span translate="no">Nijmegen Guest Rooms</span></h3>
+                    <p>Landbouwstraat 15 · Nijmegen · The Netherlands</p>
+                    <p class="invoice-contact-line"><span>nijmegenguestrooms@gmail.com</span><span class="contact-separator">·</span><span>nijmegenguestrooms.com</span></p>
+                  </div>
+                </div>
+                <div class="invoice-meta">
+                  <div class="invoice-title-row">
+                    <p class="invoice-title" id="previewInvoiceTitle">INVOICE</p>
+                    <span class="paid-badge" id="previewPaidBadge">PAID</span>
+                  </div>
+                  <dl class="invoice-meta-list">
+                    <div><dt id="previewLabelInvoiceNumber">Invoice number</dt><dd id="previewInvoiceNumber">—</dd></div>
+                    <div><dt id="previewLabelInvoiceDate">Date</dt><dd id="previewInvoiceDate">—</dd></div>
+                    <div id="previewBookingReferenceWrap" class="hidden"><dt id="previewLabelBookingReference">Booking reference</dt><dd id="previewBookingReference">—</dd></div>
+                  </dl>
+                </div>
+              </div>
+
+              <div class="invoice-summary-grid">
+                <section class="invoice-section invoice-block invoice-summary-card">
+                  <h4 id="previewSectionGuest">Billed to</h4>
+                  <p id="previewCompanyName" class="hidden"></p>
+                  <p id="previewGuestName" class="invoice-primary-value">—</p>
+                  <p id="previewAddress" class="subtle hidden"></p>
+                  <p id="previewCityCountry" class="subtle hidden"></p>
+                  <p id="previewCompanyAddress" class="subtle hidden"></p>
+                  <p id="previewVatNumberWrap" class="subtle hidden"><strong id="previewLabelVatNumber">VAT number:</strong> <span id="previewVatNumber">—</span></p>
+                  <p id="previewGuestEmail" class="subtle"></p>
+                </section>
+
+                <section class="invoice-section invoice-block invoice-summary-card">
+                  <h4 id="previewSectionStay">Stay details</h4>
+                  <dl class="stay-detail-list">
+                    <div><dt id="previewLabelRoom">Room</dt><dd id="previewRoomName">—</dd></div>
+                    <div><dt id="previewLabelCheckin2">Check-in</dt><dd id="previewCheckin">—</dd></div>
+                    <div><dt id="previewLabelCheckout2">Check-out</dt><dd id="previewCheckout">—</dd></div>
+                    <div><dt id="previewLabelNights2">Nights</dt><dd id="previewNights">—</dd></div>
+                    <div><dt id="previewLabelGuests2">Guests</dt><dd id="previewGuests">1</dd></div>
+                  </dl>
+                </section>
+              </div>
+
+              <div class="invoice-description-line">
+                <span id="previewSectionDescription">Description</span>
+                <strong id="previewDescription">Accommodation in private room (shared home)</strong>
+              </div>
+
+              <section class="invoice-section invoice-price-section">
+                <h4 id="previewSectionPrice">Price breakdown</h4>
+                <table class="summary-table">
+                  <tbody>
+                    <tr><td id="previewLabelAccommodation">Accommodation</td><td id="previewAccommodation">€0.00</td></tr>
+                    <tr id="previewAdditionalGuestRow" class="hidden"><td id="previewLabelAdditionalGuest">Additional overnight guest</td><td id="previewAdditionalGuest">€0.00</td></tr>
+                    <tr><td id="previewLabelCleaning">Cleaning fee</td><td id="previewCleaning">€0.00</td></tr>
+                    <tr class="tax-rate-row"><td id="previewLabelTaxRate">Tourist tax rate</td><td id="previewTouristTaxRate">€3.71 × 1 × 0</td></tr>
+                    <tr><td id="previewLabelTaxTotal">Tourist tax included</td><td id="previewTouristTax">€0.00</td></tr>
+                  </tbody>
+                  <tfoot><tr class="total-row"><td id="previewLabelTotal">Total amount paid</td><td id="previewTotal">€0.00</td></tr></tfoot>
+                </table>
+              </section>
+
+              <div class="invoice-payment-strip">
+                <div>
+                  <span class="invoice-payment-label" id="previewSectionPayment">Payment</span>
+                  <strong id="previewPaymentMethod">Paid via Booking.com</strong>
+                </div>
+                <span class="invoice-payment-status" id="previewPaymentStatus">Payment received</span>
+              </div>
+
+              <footer class="invoice-footer">
+                <p id="previewNote">This is a private rental. VAT is not applicable.</p>
+                <p class="invoice-footer-contact">nijmegenguestrooms.com · nijmegenguestrooms@gmail.com</p>
+              </footer>
             </div>
           </div>
         </div>
