@@ -2675,3 +2675,30 @@ button.badge.invoice-created:focus-visible,
   outline: 2px solid rgba(92,70,56,.28);
   outline-offset: 2px;
 }
+
+
+/* =========================================================
+   v3.17.3 – Reservation status badges: identical geometry
+   ========================================================= */
+.reservation-card .badge {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 26px;
+  min-height: 26px;
+  max-height: 26px;
+  padding: 0 8px;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.reservation-card button.badge,
+.reservation-card .reservation-invoice-badge,
+.reservation-card .linked-invoice-badge {
+  height: 26px;
+  min-height: 26px;
+  max-height: 26px;
+  padding: 0 8px;
+  line-height: 1;
+}
