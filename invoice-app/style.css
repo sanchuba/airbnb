@@ -2506,3 +2506,122 @@ body.qr-modal-open{
     margin-top: 15px !important;
   }
 }
+
+
+/* =========================================================
+   v3.17.1 – Invoice aligned to the public website brand
+   Website source palette:
+   --bg:        #f4efe7
+   --card:      #ffffff
+   --text:      #3f3f3f
+   --heading:   #5c4638
+   --accent:    #c7b8a3
+   --highlight: #ece6dc
+   --line:      #ddd3c7
+   ========================================================= */
+
+.invoice-preview {
+  --invoice-ink: #5c4638;
+  --invoice-green: #5c4638;
+  --invoice-green-soft: #ece6dc;
+  --invoice-gold: #c7b8a3;
+  --invoice-rule: #ddd3c7;
+  --invoice-muted: #6f655e;
+  background: #ffffff;
+  color: #3f3f3f;
+  font-family: 'Inter', sans-serif;
+}
+
+.invoice-preview .invoice-brand-mark {
+  background: #ece6dc;
+  border: 1px solid #ddd3c7;
+  color: #5c4638;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-weight: 600;
+}
+
+.invoice-preview .brand h3,
+.invoice-preview .invoice-title {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: #5c4638;
+}
+
+.invoice-preview .brand h3 {
+  font-weight: 600;
+}
+
+.invoice-preview .invoice-title {
+  font-weight: 600;
+  letter-spacing: .015em;
+}
+
+.invoice-preview .invoice-header {
+  border-bottom-color: #5c4638;
+}
+
+.invoice-preview .paid-badge {
+  background: #ece6dc;
+  border-color: #c7b8a3;
+  color: #5c4638;
+}
+
+.invoice-preview .invoice-summary-card,
+.invoice-preview .invoice-payment-strip {
+  background: #f8f5f0;
+  border-color: #ddd3c7;
+}
+
+.invoice-preview .invoice-section h4,
+.invoice-preview .invoice-payment-label,
+.invoice-preview .invoice-footer-contact {
+  color: #5c4638;
+}
+
+.invoice-preview .invoice-primary-value,
+.invoice-preview .invoice-payment-strip strong,
+.invoice-preview .invoice-meta-list dd,
+.invoice-preview .stay-detail-list dd {
+  color: #3f3f3f;
+}
+
+.invoice-preview .invoice-description-line {
+  border-color: #ddd3c7;
+}
+
+.invoice-preview .invoice-description-line span {
+  color: #6f655e;
+}
+
+.invoice-preview .summary-table tbody tr td {
+  border-bottom-color: #ece6dc;
+}
+
+.invoice-preview .summary-table tfoot .total-row td {
+  background: #5c4638;
+  color: #ffffff;
+}
+
+.invoice-preview .invoice-payment-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: #ece6dc;
+  color: #5c4638;
+  font-weight: 700;
+}
+
+.invoice-preview .invoice-footer {
+  border-top-color: #ddd3c7;
+}
+
+@media print {
+  .invoice-preview {
+    font-family: 'Inter', Arial, sans-serif !important;
+  }
+
+  .invoice-preview .brand h3,
+  .invoice-preview .invoice-title {
+    font-family: 'Playfair Display', Georgia, serif !important;
+  }
+}
