@@ -1609,7 +1609,21 @@ function closeMobileDetail({fromPop=false}={}){
 function initMobileAppShell(){
   document.body.classList.toggle('mobile-app-active',isMobileShell());
   if(mobileShellState.initialized){updateMobileShellText();return;}mobileShellState.initialized=true;updateMobileShellText();
-  document.querySelectorAll('.mobile-bottom-tab').forEach(btn=>btn.addEventListener('click',()=>{const tab=btn.dataset.mobileTab;if(tab==='more'){openMobileMore();return;}if(mobileShellState.detail)mobileShellState.detail=null;setMobileTab(tab);}));
+  document.querySelectorAll('.mobile-bottom-tab').forEach(btn=>btn.addEventListener('click',()=>{
+    const tab=btn.dataset.mobileTab;
+    if(tab==='more'){openMobileMore();return;}
+
+    // Native-app style behavior: tapping the already-active primary tab again
+    // returns that list to the top instead of appearing to do nothing.
+    if(!mobileShellState.detail && mobileShellState.tab===tab && ['reservations','guests','invoices'].includes(tab)){
+      mobileShellState.scroll[tab]=0;
+      window.scrollTo({top:0,behavior:'smooth'});
+      return;
+    }
+
+    if(mobileShellState.detail)mobileShellState.detail=null;
+    setMobileTab(tab);
+  }));
   $('mobileMoreCloseBtn').onclick=closeMobileMore;$('mobileMoreBackdrop').onclick=closeMobileMore;$('mobileDetailBackBtn').onclick=()=>closeMobileDetail();
   $('mobileNewInvoiceBtn').onclick=async()=>{await newInvoice();openMobileDetail('invoice','invoices');};$('mobileMoreSyncBtn').onclick=async()=>{closeMobileMore();setMobileTab('reservations');await syncCalendars(true);};
   $('mobileMorePaperBtn').onclick=()=>{closeMobileMore();setMobileTab('guests',{restore:false});blankRegistration();};
