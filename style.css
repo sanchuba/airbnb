@@ -1407,3 +1407,121 @@ body {
     box-shadow: 0 8px 20px rgba(36,61,51,.18);
   }
 }
+
+
+/* =========================================================
+   v3.18.2 – TRUE mobile action bar
+   Both actions now live in one fixed container. This override
+   intentionally neutralizes all earlier independent fixed-button
+   positioning on mobile.
+   ========================================================= */
+.mobile-action-bar { display: contents; }
+
+@media (max-width: 700px) {
+  body {
+    padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .mobile-action-bar {
+    display: flex;
+    position: fixed;
+    left: 14px;
+    right: 14px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    z-index: 1100;
+    width: auto;
+    height: 54px;
+    padding: 0;
+    margin: 0;
+    border-radius: 27px;
+    overflow: hidden;
+    background: var(--brand-green);
+    box-shadow: 0 12px 30px rgba(36,61,51,.27);
+  }
+
+  .mobile-action-bar .sticky-availability,
+  .mobile-action-bar .floating-btn {
+    position: static !important;
+    inset: auto !important;
+    transform: none !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    min-width: 0 !important;
+    max-width: none !important;
+    width: auto !important;
+    height: 54px !important;
+    margin: 0 !important;
+    padding: 0 12px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    text-decoration: none;
+    white-space: nowrap;
+    line-height: 1;
+  }
+
+  .mobile-action-bar .sticky-availability {
+    flex: 1.35 1 0;
+    gap: 7px;
+    background: var(--brand-green) !important;
+    color: #fff !important;
+    font-size: 13.5px;
+    font-weight: 700;
+  }
+
+  .mobile-action-bar .floating-btn {
+    flex: 1 1 0;
+    gap: 6px;
+    background: var(--brand-green-deep) !important;
+    color: #fff !important;
+    border-left: 1px solid rgba(255,255,255,.16) !important;
+    font-size: 13.5px;
+    font-weight: 600;
+  }
+
+  .mobile-action-bar .sticky-dot {
+    flex: 0 0 6px;
+    width: 6px;
+    height: 6px;
+  }
+
+  /* Do not translate the left half when the availability section is visible. */
+  .mobile-action-bar .sticky-availability.hidden-by-section {
+    opacity: .42;
+    pointer-events: none;
+    transform: none !important;
+  }
+
+  /* Actual selector used by the page. */
+  #topBtn {
+    right: 16px !important;
+    bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important;
+    width: 44px !important;
+    height: 44px !important;
+    padding: 0 !important;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50% !important;
+    font-size: 16px;
+    line-height: 1;
+    box-shadow: 0 8px 20px rgba(36,61,51,.18);
+    z-index: 1101;
+  }
+
+  #topBtn[style*="display: block"],
+  #topBtn[style*="display:block"] {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 370px) {
+  .mobile-action-bar .sticky-availability,
+  .mobile-action-bar .floating-btn {
+    padding-left: 9px !important;
+    padding-right: 9px !important;
+    font-size: 12.5px;
+  }
+}
