@@ -723,42 +723,52 @@ if (stickyAvailability && 'IntersectionObserver' in window) {
 }
 
 
-/* v3.18.4 – context-aware mobile availability CTA */
-(function setupContextAwareMobileAvailability() {
-  const wrap = document.querySelector('.mobile-availability-wrap');
-  if (!wrap) return;
 
-  const sections = [
-    document.getElementById('availability-en'),
-    document.getElementById('availability-nl'),
+
+/* v3.18.5 – clean context-aware mobile booking CTA */
+(function () {
+  const cta = document.getElementById('mobileBookingCta');
+  const text = document.getElementById('mobileBookingCtaText');
+  if (!cta || !text) return;
+
+  function currentLang() {
+    const nl = document.getElementById('nl');
+    return nl && nl.classList.contains('active') ? 'nl' : 'en';
+  }
+
+  function syncLanguage() {
+    const lang = currentLang();
+    cta.href = lang === 'nl' ? '#book-nl' : '#book-en';
+    text.textContent = lang === 'nl' ? 'Controleer beschikbaarheid' : 'Check availability';
+    cta.setAttribute('aria-label', text.textContent);
+  }
+
+  const targets = [
     document.getElementById('book-en'),
     document.getElementById('book-nl'),
+    document.getElementById('availability-en'),
+    document.getElementById('availability-nl'),
     document.querySelector('.availability-section')
   ].filter(Boolean);
 
-  const visibleSections = new Set();
-
-  function syncVisibility() {
-    const mobile = window.matchMedia('(max-width: 700px)').matches;
-    wrap.classList.toggle('is-hidden', !mobile || visibleSections.size > 0);
-  }
-
-  if ('IntersectionObserver' in window && sections.length) {
+  const visible = new Set();
+  if ('IntersectionObserver' in window && targets.length) {
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) visibleSections.add(entry.target);
-        else visibleSections.delete(entry.target);
+        if (entry.isIntersecting) visible.add(entry.target);
+        else visible.delete(entry.target);
       });
-      syncVisibility();
-    }, {
-      threshold: 0.15,
-      rootMargin: '-8% 0px -8% 0px'
-    });
-
-    sections.forEach(section => observer.observe(section));
+      cta.classList.toggle('is-hidden', visible.size > 0);
+    }, { threshold: 0.12 });
+    targets.forEach(target => observer.observe(target));
   }
 
-  window.addEventListener('resize', syncVisibility);
-  window.addEventListener('pageshow', syncVisibility);
-  syncVisibility();
+  document.addEventListener('click', event => {
+    if (event.target.closest('.lang-btn')) {
+      setTimeout(syncLanguage, 0);
+    }
+  });
+
+  window.addEventListener('pageshow', syncLanguage);
+  syncLanguage();
 })();

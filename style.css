@@ -1619,3 +1619,81 @@ body {
     display: none !important;
   }
 }
+
+
+/* =========================================================
+   v3.18.5 – clean mobile CTA
+   Fresh component; intentionally does NOT reuse legacy sticky classes.
+   ========================================================= */
+.mobile-booking-cta { display: none; }
+
+@media (max-width: 700px) {
+  body {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Kill every legacy floating booking/message control on mobile. */
+  .sticky-availability,
+  .mobile-availability-wrap,
+  .mobile-action-bar,
+  .mobile-actions,
+  .sticky-actions,
+  .floating-actions,
+  .floating-btn,
+  .message-host,
+  .message-us,
+  .whatsapp-float,
+  #topBtn,
+  #backToTop,
+  .back-to-top,
+  .scroll-top {
+    display: none !important;
+  }
+
+  .mobile-booking-cta {
+    position: fixed;
+    left: 50%;
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    z-index: 2000;
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: max-content;
+    max-width: calc(100vw - 40px);
+    min-height: 46px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 999px;
+    background: var(--brand-green);
+    color: #fff;
+    box-shadow: 0 8px 22px rgba(36,61,51,.20);
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    opacity: 1;
+    transition: opacity .18s ease, transform .18s ease;
+  }
+
+  .mobile-booking-cta.is-hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translate(-50%, 8px);
+  }
+
+  .mobile-booking-dot {
+    width: 6px;
+    height: 6px;
+    flex: 0 0 6px;
+    border-radius: 50%;
+    background: rgba(255,255,255,.85);
+  }
+}
+
+@media (min-width: 701px) {
+  .mobile-booking-cta { display: none !important; }
+}
