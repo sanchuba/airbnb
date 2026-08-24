@@ -1268,3 +1268,142 @@ body {
   border-radius: 999px;
   background: var(--brand-gold);
 }
+
+
+/* =========================================================
+   Mobile action bar refinement
+   Fixes overlap between availability, WhatsApp and back-to-top
+   ========================================================= */
+@media (max-width: 700px) {
+  body {
+    padding-bottom: calc(92px + env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Turn the two floating actions into one centered mobile bar */
+  .mobile-actions,
+  .sticky-actions,
+  .floating-actions {
+    position: fixed;
+    left: 14px;
+    right: 14px;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    z-index: 1000;
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    width: auto;
+    max-width: none;
+    padding: 0;
+    border-radius: 24px;
+    overflow: hidden;
+    background: var(--brand-green);
+    box-shadow: 0 12px 30px rgba(36,61,51,.26);
+  }
+
+  .mobile-actions .sticky-availability,
+  .mobile-actions .message-host,
+  .sticky-actions .sticky-availability,
+  .sticky-actions .message-host,
+  .floating-actions .sticky-availability,
+  .floating-actions .message-host {
+    position: static !important;
+    flex: 1 1 50%;
+    width: auto !important;
+    min-width: 0;
+    height: 52px;
+    margin: 0 !important;
+    padding: 0 14px;
+    border: 0;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    white-space: nowrap;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1;
+  }
+
+  .mobile-actions .sticky-availability,
+  .sticky-actions .sticky-availability,
+  .floating-actions .sticky-availability {
+    background: var(--brand-green);
+    color: #fff;
+  }
+
+  .mobile-actions .message-host,
+  .sticky-actions .message-host,
+  .floating-actions .message-host {
+    background: var(--brand-green-deep);
+    color: #fff;
+    border-left: 1px solid rgba(255,255,255,.15);
+  }
+
+  .mobile-actions .sticky-availability:hover,
+  .sticky-actions .sticky-availability:hover,
+  .floating-actions .sticky-availability:hover,
+  .mobile-actions .message-host:hover,
+  .sticky-actions .message-host:hover,
+  .floating-actions .message-host:hover {
+    filter: brightness(.98);
+  }
+
+  /* If actions are still separate in markup, force them into a visual joined bar */
+  .sticky-availability {
+    left: 14px !important;
+    right: 50% !important;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    height: 52px;
+    border-radius: 24px 0 0 24px !important;
+    box-shadow: 0 12px 30px rgba(36,61,51,.26) !important;
+    padding: 0 12px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    white-space: nowrap;
+  }
+
+  .message-host,
+  .whatsapp-float,
+  .message-us {
+    position: fixed !important;
+    left: 50% !important;
+    right: 14px !important;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px)) !important;
+    width: auto !important;
+    height: 52px;
+    border-radius: 0 24px 24px 0 !important;
+    box-shadow: 0 12px 30px rgba(36,61,51,.26) !important;
+    margin: 0 !important;
+    padding: 0 12px !important;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    background: var(--brand-green-deep) !important;
+    color: #fff !important;
+    font-size: 15px;
+    font-weight: 500;
+    white-space: nowrap;
+    z-index: 1001;
+  }
+
+  /* Back-to-top button sits clearly above the action bar */
+  .back-to-top,
+  .scroll-top,
+  #backToTop {
+    right: 18px !important;
+    bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important;
+    width: 44px !important;
+    height: 44px !important;
+    min-width: 44px;
+    min-height: 44px;
+    border-radius: 50% !important;
+    z-index: 1002;
+    box-shadow: 0 8px 20px rgba(36,61,51,.18);
+  }
+}
