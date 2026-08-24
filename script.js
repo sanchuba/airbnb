@@ -219,8 +219,10 @@ function setLanguage(lang) {
     content.classList.toggle('active', content.id === `content-${lang}`);
   });
 
-  whatsappBtn.textContent = whatsappConfig[lang].text;
-  whatsappBtn.href = whatsappConfig[lang].href;
+  if (whatsappBtn) {
+    whatsappBtn.textContent = whatsappConfig[lang].text;
+    whatsappBtn.href = whatsappConfig[lang].href;
+  }
 
   navLinks.forEach((link, index) => {
     link.textContent = navConfig[lang].labels[index];
@@ -427,6 +429,7 @@ lightboxInner.addEventListener('touchend', (event) => {
 
 window.addEventListener('scroll', () => {
   const btn = document.getElementById('topBtn');
+  if (!btn) return;
   btn.style.display = window.scrollY > 400 ? 'block' : 'none';
 });
 
@@ -725,19 +728,14 @@ if (stickyAvailability && 'IntersectionObserver' in window) {
 
 
 
-/* v3.18.5 – clean context-aware mobile booking CTA */
+/* v3.18.6 – recovered context-aware mobile booking CTA */
 (function () {
   const cta = document.getElementById('mobileBookingCta');
   const text = document.getElementById('mobileBookingCtaText');
   if (!cta || !text) return;
 
-  function currentLang() {
-    const nl = document.getElementById('nl');
-    return nl && nl.classList.contains('active') ? 'nl' : 'en';
-  }
-
   function syncLanguage() {
-    const lang = currentLang();
+    const lang = currentLang === 'nl' ? 'nl' : 'en';
     cta.href = lang === 'nl' ? '#book-nl' : '#book-en';
     text.textContent = lang === 'nl' ? 'Controleer beschikbaarheid' : 'Check availability';
     cta.setAttribute('aria-label', text.textContent);
@@ -745,30 +743,45 @@ if (stickyAvailability && 'IntersectionObserver' in window) {
 
   const targets = [
     document.getElementById('book-en'),
-    document.getElementById('book-nl'),
-    document.getElementById('availability-en'),
-    document.getElementById('availability-nl'),
-    document.querySelector('.availability-section')
+    document.getElementById('book-nl')
   ].filter(Boolean);
 
-  const visible = new Set();
+  const visibleTargets = new Set();
+
+  function syncVisibility() {
+    const isMobile = window.matchMedia('(max-width: 700px)').matches;
+    cta.classList.toggle('is-hidden', !isMobile || visibleTargets.size > 0);
+  }
+
   if ('IntersectionObserver' in window && targets.length) {
     const observer = new IntersectionObserver(entries => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) visible.add(entry.target);
-        else visible.delete(entry.target);
+        if (entry.isIntersecting) visibleTargets.add(entry.target);
+        else visibleTargets.delete(entry.target);
       });
-      cta.classList.toggle('is-hidden', visible.size > 0);
-    }, { threshold: 0.12 });
+      syncVisibility();
+    }, {
+      threshold: 0.08,
+      rootMargin: '-5% 0px -5% 0px'
+    });
     targets.forEach(target => observer.observe(target));
   }
 
-  document.addEventListener('click', event => {
-    if (event.target.closest('.lang-btn')) {
-      setTimeout(syncLanguage, 0);
-    }
+  langButtons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      setTimeout(() => {
+        syncLanguage();
+        syncVisibility();
+      }, 0);
+    });
   });
 
-  window.addEventListener('pageshow', syncLanguage);
+  window.addEventListener('resize', syncVisibility);
+  window.addEventListener('pageshow', () => {
+    syncLanguage();
+    syncVisibility();
+  });
+
   syncLanguage();
+  syncVisibility();
 })();
