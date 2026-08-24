@@ -721,3 +721,44 @@ if (stickyAvailability && 'IntersectionObserver' in window) {
   }, { threshold: 0.15 });
   document.querySelectorAll('[id^="book-"]').forEach(section => observer.observe(section));
 }
+
+
+/* v3.18.4 – context-aware mobile availability CTA */
+(function setupContextAwareMobileAvailability() {
+  const wrap = document.querySelector('.mobile-availability-wrap');
+  if (!wrap) return;
+
+  const sections = [
+    document.getElementById('availability-en'),
+    document.getElementById('availability-nl'),
+    document.getElementById('book-en'),
+    document.getElementById('book-nl'),
+    document.querySelector('.availability-section')
+  ].filter(Boolean);
+
+  const visibleSections = new Set();
+
+  function syncVisibility() {
+    const mobile = window.matchMedia('(max-width: 700px)').matches;
+    wrap.classList.toggle('is-hidden', !mobile || visibleSections.size > 0);
+  }
+
+  if ('IntersectionObserver' in window && sections.length) {
+    const observer = new IntersectionObserver(entries => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) visibleSections.add(entry.target);
+        else visibleSections.delete(entry.target);
+      });
+      syncVisibility();
+    }, {
+      threshold: 0.15,
+      rootMargin: '-8% 0px -8% 0px'
+    });
+
+    sections.forEach(section => observer.observe(section));
+  }
+
+  window.addEventListener('resize', syncVisibility);
+  window.addEventListener('pageshow', syncVisibility);
+  syncVisibility();
+})();

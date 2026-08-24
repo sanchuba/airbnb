@@ -1525,3 +1525,97 @@ body {
     font-size: 12.5px;
   }
 }
+
+
+/* =========================================================
+   v3.18.4 – calmer mobile CTA
+   One compact availability pill only.
+   ========================================================= */
+@media (max-width: 700px) {
+  body {
+    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+
+  .mobile-action-bar,
+  .mobile-actions,
+  .sticky-actions,
+  .floating-actions {
+    all: unset;
+  }
+
+  .mobile-availability-wrap {
+    position: fixed;
+    left: 50%;
+    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: auto;
+    max-width: calc(100vw - 32px);
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity .18s ease, transform .18s ease;
+  }
+
+  .mobile-availability-wrap.is-hidden {
+    opacity: 0;
+    transform: translate(-50%, 10px);
+    pointer-events: none;
+  }
+
+  .mobile-availability-wrap .sticky-availability,
+  .sticky-availability {
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: calc(100vw - 32px);
+    height: 48px !important;
+    min-height: 48px !important;
+    margin: 0 !important;
+    padding: 0 20px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--brand-green) !important;
+    color: #fff !important;
+    box-shadow: 0 10px 24px rgba(36,61,51,.22) !important;
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    white-space: nowrap;
+    pointer-events: auto;
+  }
+
+  .mobile-availability-wrap .sticky-availability:hover,
+  .sticky-availability:hover {
+    background: var(--brand-green-deep) !important;
+  }
+
+  /* WhatsApp remains available in the site, but not as a floating mobile CTA. */
+  .floating-btn,
+  .message-host,
+  .message-us,
+  .whatsapp-float {
+    display: none !important;
+  }
+
+  /* Mobile scrolling is easy enough; remove the competing floating up button. */
+  .back-to-top,
+  .scroll-top,
+  #backToTop,
+  #topBtn {
+    display: none !important;
+  }
+}
+
+@media (min-width: 701px) {
+  .mobile-availability-wrap {
+    display: none !important;
+  }
+}
