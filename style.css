@@ -1617,3 +1617,17 @@ body {
 }
 
 /* Desktop remains as it was in v3.18.3. */
+
+
+/* v3.18.8 – mobile scroll-to-top cleanup */
+@media (max-width: 700px) {
+  #topBtn,
+  #backToTop,
+  .back-to-top,
+  .scroll-top,
+  .top-btn {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+  }
+}
