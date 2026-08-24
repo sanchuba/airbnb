@@ -449,6 +449,17 @@ function isoTodayLocal() {
   return `${y}-${m}-${d}`;
 }
 
+function isPastIsoDate(value) {
+  if (!value) return false;
+  return value < isoTodayLocal();
+}
+
+function hasValidFutureStay(checkin, checkout) {
+  if (!checkin || !checkout) return false;
+  if (isPastIsoDate(checkin)) return false;
+  return nightsBetween(checkin, checkout) > 0;
+}
+
 function parseIsoDate(value) {
   if (!value) return null;
   const [y, m, d] = value.split('-').map(Number);
@@ -491,7 +502,8 @@ function updateAvailabilityUi(lang) {
   const rows = document.querySelectorAll(`[data-room-status][data-lang="${lang}"]`);
   const summary = document.getElementById(`availabilitySummary${cap}`);
   const submit = document.getElementById(`availabilitySubmit${cap}`);
-  const valid = checkin && checkout && nightsBetween(checkin, checkout) > 0;
+  const valid = hasValidFutureStay(checkin, checkout);
+  const hasPastCheckin = Boolean(checkin && isPastIsoDate(checkin));
 
   const roomStates = {};
   rows.forEach(row => {
@@ -513,9 +525,15 @@ function updateAvailabilityUi(lang) {
 
   if (!valid) {
     summary.classList.add('neutral');
-    summary.textContent = lang === 'en'
-      ? 'Choose dates to see which room may be available.'
-      : 'Kies data om te zien welke kamer mogelijk beschikbaar is.';
+    if (hasPastCheckin) {
+      summary.textContent = lang === 'en'
+        ? 'Past dates cannot be checked. Please choose today or a future date.'
+        : 'Datums in het verleden kunnen niet worden gecontroleerd. Kies vandaag of een toekomstige datum.';
+    } else {
+      summary.textContent = lang === 'en'
+        ? 'Choose dates to see which room may be available.'
+        : 'Kies data om te zien welke kamer mogelijk beschikbaar is.';
+    }
     submit.textContent = lang === 'en'
       ? 'Check availability on Booking.com ↗'
       : 'Controleer op Booking.com ↗';
@@ -609,15 +627,44 @@ function setupAvailabilityForm(lang) {
   const checkout = document.getElementById(`checkout${cap}`);
   if (!form || !checkin || !checkout) return;
 
-  const today = isoTodayLocal();
-  checkin.min = today;
-  checkout.min = today;
+  function sanitizeDates() {
+    const today = isoTodayLocal();
+    checkin.min = today;
+
+    if (checkin.value && checkin.value < today) {
+      checkin.value = '';
+    }
+
+    checkout.min = checkin.value || today;
+
+    if (
+      checkout.value &&
+      (checkout.value <= today || (checkin.value && checkout.value <= checkin.value))
+    ) {
+      checkout.value = '';
+    }
+
+    updateAvailabilityUi(lang);
+  }
 
   function syncDates(source) {
-    if (source === checkin && checkin.value) {
-      checkout.min = checkin.value;
-      if (checkout.value && checkout.value <= checkin.value) checkout.value = '';
+    const today = isoTodayLocal();
+    checkin.min = today;
+
+    if (source === checkin) {
+      if (checkin.value && checkin.value < today) {
+        checkin.value = '';
+      }
+      checkout.min = checkin.value || today;
+      if (checkout.value && (!checkin.value || checkout.value <= checkin.value)) {
+        checkout.value = '';
+      }
     }
+
+    if (source === checkout && checkout.value && checkout.value <= today) {
+      checkout.value = '';
+    }
+
     updateAvailabilityUi(lang);
   }
 
@@ -627,18 +674,30 @@ function setupAvailabilityForm(lang) {
   form.addEventListener('submit', event => {
     event.preventDefault();
     form.querySelector('.availability-error')?.remove();
+
     const inDate = checkin.value;
     const outDate = checkout.value;
-    const nights = nightsBetween(inDate, outDate);
-    if (!inDate || !outDate || nights < 1) {
+
+    if (!hasValidFutureStay(inDate, outDate)) {
       const p = document.createElement('p');
       p.className = 'availability-error';
-      p.textContent = lang === 'en' ? 'Please choose a valid check-in and check-out date.' : 'Kies een geldige incheck- en uitcheckdatum.';
+      p.textContent = isPastIsoDate(inDate)
+        ? (lang === 'en'
+            ? 'Check-in cannot be in the past. Please choose today or a future date.'
+            : 'De incheckdatum kan niet in het verleden liggen. Kies vandaag of een toekomstige datum.')
+        : (lang === 'en'
+            ? 'Please choose a valid check-in and check-out date.'
+            : 'Kies een geldige incheck- en uitcheckdatum.');
       form.appendChild(p);
+      updateAvailabilityUi(lang);
       return;
     }
+
     window.open(buildBookingUrl(inDate, outDate), '_blank', 'noopener,noreferrer');
   });
+
+  sanitizeDates();
+  window.addEventListener('pageshow', sanitizeDates);
 }
 
 setupAvailabilityForm('en');
