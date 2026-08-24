@@ -774,7 +774,14 @@ textarea:focus { outline:none; border-color:var(--accent); }
 .reservations-attention { margin-top: 16px; margin-bottom: 16px; }
 .reservation-guest-badges { display:flex; gap:7px; flex-wrap:wrap; align-items:center; }
 .reservation-guest-badges .badge { margin:0; }
-.reservation-invoice-badge { border:1px solid #bddcc7; font:inherit; }
+.reservation-invoice-badge {
+  border: 0;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: normal;
+  padding: 3px 8px;
+}
 .section-subtitle { margin:-8px 0 0; }
 #registrationOverview > .section-header > div:first-child { min-width:0; }
 @media (max-width:700px){ .reservation-filters{flex-wrap:nowrap;overflow-x:auto;padding-bottom:3px;scrollbar-width:thin}.reservation-filters .filter-pill{flex:0 0 auto} }
@@ -2624,4 +2631,47 @@ body.qr-modal-open{
   .invoice-preview .invoice-title {
     font-family: 'Playfair Display', Georgia, serif !important;
   }
+}
+
+
+/* =========================================================
+   v3.17.2 – Linked invoice status badge normalization
+   Click behavior is unchanged; this only normalizes button
+   rendering to the same geometry as the other .badge chips.
+   ========================================================= */
+button.badge.invoice-created,
+.reservation-invoice-badge,
+.linked-invoice-badge {
+  appearance: none;
+  -webkit-appearance: none;
+  box-sizing: border-box;
+  margin: 0;
+  border: 0;
+  border-radius: 999px;
+  padding: 3px 8px;
+  min-height: 0;
+  width: auto;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: normal;
+  letter-spacing: normal;
+  vertical-align: middle;
+  background: #e8f4ea;
+  color: #356a46;
+  cursor: pointer;
+}
+
+button.badge.invoice-created:hover,
+.reservation-invoice-badge:hover,
+.linked-invoice-badge:hover {
+  background: #dfeee2;
+  filter: none;
+}
+
+button.badge.invoice-created:focus-visible,
+.reservation-invoice-badge:focus-visible,
+.linked-invoice-badge:focus-visible {
+  outline: 2px solid rgba(92,70,56,.28);
+  outline-offset: 2px;
 }
