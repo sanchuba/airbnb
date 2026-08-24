@@ -9,7 +9,7 @@
 <meta content="Cozy private guest rooms in Nijmegen, in a shared home with warm hospitality, practical comfort, and easy access to the city." name="description"/>
 <link href="./assets/favicon.png" rel="icon" type="image/png"/>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&amp;family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
-<link href="./style.css" rel="stylesheet"/>
+<link href="./style.css?v=3.18.7-clean" rel="stylesheet"/>
 </head>
 <body>
 <div class="topbar">
@@ -135,7 +135,7 @@
 <div class="cta-section booking-section availability-booking">
 <div class="booking-eyebrow">Book your stay</div>
 <h2>Check availability</h2>
-<p class="booking-lead">Choose your check-in and check-out dates. We’ll show an estimated availability check for both rooms, then Booking.com confirms the final live availability and price.</p>
+<p class="booking-lead">Choose your check-in and check-out dates.</p>
 <form class="availability-form" data-lang="en" id="availabilityFormEn" novalidate="">
 <div class="availability-fields">
 <label class="availability-field">
@@ -162,7 +162,7 @@
 <span class="availability-pill neutral">Select dates</span>
 </div>
 </div>
-<p class="availability-disclaimer">Calendar feeds can update with a delay. Booking.com always provides the final availability before you book.</p>
+
 <div class="availability-summary neutral" id="availabilitySummaryEn">Choose dates to see which room may be available.</div></div>
 <button class="btn btn-primary availability-submit" id="availabilitySubmitEn" type="submit">Check availability on Booking.com ↗</button>
 </form>
@@ -423,7 +423,7 @@
 <div class="cta-section booking-section availability-booking">
 <div class="booking-eyebrow">Boek je verblijf</div>
 <h2>Controleer beschikbaarheid</h2>
-<p class="booking-lead">Kies je aankomst- en vertrekdatum. </p>
+<p class="booking-lead">Kies je aankomst- en vertrekdatum.</p>
 <form class="availability-form" data-lang="nl" id="availabilityFormNl" novalidate="">
 <div class="availability-fields">
 <label class="availability-field">
@@ -614,14 +614,20 @@
 </div>
 </div>
 </div>
-
+<div class="mobile-action-bar" id="mobileActionBar">
+  <a class="sticky-availability" href="#book-en" id="stickyAvailability"><span class="sticky-dot"></span><span id="stickyAvailabilityText">Check availability</span></a>
+  <a class="floating-btn" href="https://wa.me/31640565656?text=Hi,%20I%20have%20a%20question%20about%20Nijmegen%20Guest%20Rooms." id="whatsappBtn" rel="noopener noreferrer" target="_blank"><span aria-hidden="true">💬</span><span>Message us</span></a>
 </div>
-<script src="./script.js?v=3.18.6-recovery"></script>
-
-<a class="mobile-booking-cta" id="mobileBookingCta" href="#book-en" aria-label="Check availability">
-  <span class="mobile-booking-dot" aria-hidden="true"></span>
-  <span id="mobileBookingCtaText">Check availability</span>
-</a>
-
+<div id="topBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">↑</div>
+<div aria-hidden="true" class="lightbox" id="lightbox">
+<div class="lightbox-inner">
+<button aria-label="Close gallery" class="lightbox-close" id="lightboxClose" type="button">×</button>
+<button aria-label="Previous image" class="lightbox-prev" id="lightboxPrev" type="button">‹</button>
+<img alt="" class="lightbox-image" id="lightboxImage" src=""/>
+<button aria-label="Next image" class="lightbox-next" id="lightboxNext" type="button">›</button>
+<div class="lightbox-caption" id="lightboxCaption"></div>
+</div>
+</div>
+<script src="./script.js?v=3.18.7-clean"></script>
 </body>
 </html>

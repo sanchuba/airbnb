@@ -219,10 +219,8 @@ function setLanguage(lang) {
     content.classList.toggle('active', content.id === `content-${lang}`);
   });
 
-  if (whatsappBtn) {
-    whatsappBtn.textContent = whatsappConfig[lang].text;
-    whatsappBtn.href = whatsappConfig[lang].href;
-  }
+  whatsappBtn.textContent = whatsappConfig[lang].text;
+  whatsappBtn.href = whatsappConfig[lang].href;
 
   navLinks.forEach((link, index) => {
     link.textContent = navConfig[lang].labels[index];
@@ -429,7 +427,6 @@ lightboxInner.addEventListener('touchend', (event) => {
 
 window.addEventListener('scroll', () => {
   const btn = document.getElementById('topBtn');
-  if (!btn) return;
   btn.style.display = window.scrollY > 400 ? 'block' : 'none';
 });
 
@@ -724,64 +721,3 @@ if (stickyAvailability && 'IntersectionObserver' in window) {
   }, { threshold: 0.15 });
   document.querySelectorAll('[id^="book-"]').forEach(section => observer.observe(section));
 }
-
-
-
-
-/* v3.18.6 – recovered context-aware mobile booking CTA */
-(function () {
-  const cta = document.getElementById('mobileBookingCta');
-  const text = document.getElementById('mobileBookingCtaText');
-  if (!cta || !text) return;
-
-  function syncLanguage() {
-    const lang = currentLang === 'nl' ? 'nl' : 'en';
-    cta.href = lang === 'nl' ? '#book-nl' : '#book-en';
-    text.textContent = lang === 'nl' ? 'Controleer beschikbaarheid' : 'Check availability';
-    cta.setAttribute('aria-label', text.textContent);
-  }
-
-  const targets = [
-    document.getElementById('book-en'),
-    document.getElementById('book-nl')
-  ].filter(Boolean);
-
-  const visibleTargets = new Set();
-
-  function syncVisibility() {
-    const isMobile = window.matchMedia('(max-width: 700px)').matches;
-    cta.classList.toggle('is-hidden', !isMobile || visibleTargets.size > 0);
-  }
-
-  if ('IntersectionObserver' in window && targets.length) {
-    const observer = new IntersectionObserver(entries => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) visibleTargets.add(entry.target);
-        else visibleTargets.delete(entry.target);
-      });
-      syncVisibility();
-    }, {
-      threshold: 0.08,
-      rootMargin: '-5% 0px -5% 0px'
-    });
-    targets.forEach(target => observer.observe(target));
-  }
-
-  langButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-      setTimeout(() => {
-        syncLanguage();
-        syncVisibility();
-      }, 0);
-    });
-  });
-
-  window.addEventListener('resize', syncVisibility);
-  window.addEventListener('pageshow', () => {
-    syncLanguage();
-    syncVisibility();
-  });
-
-  syncLanguage();
-  syncVisibility();
-})();

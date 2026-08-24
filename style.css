@@ -1528,172 +1528,92 @@ body {
 
 
 /* =========================================================
-   v3.18.4 – calmer mobile CTA
-   One compact availability pill only.
+   v3.18.7 – calm mobile CTA, built on working v3.18.3 markup
+   No DOM elements are removed. Existing JS remains intact.
    ========================================================= */
-@media (max-width: 700px) {
-  body {
-    padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px));
-  }
-
-  .mobile-action-bar,
-  .mobile-actions,
-  .sticky-actions,
-  .floating-actions {
-    all: unset;
-  }
-
-  .mobile-availability-wrap {
-    position: fixed;
-    left: 50%;
-    bottom: calc(12px + env(safe-area-inset-bottom, 0px));
-    transform: translateX(-50%);
-    z-index: 1000;
-    width: auto;
-    max-width: calc(100vw - 32px);
-    pointer-events: none;
-    opacity: 1;
-    transition: opacity .18s ease, transform .18s ease;
-  }
-
-  .mobile-availability-wrap.is-hidden {
-    opacity: 0;
-    transform: translate(-50%, 10px);
-    pointer-events: none;
-  }
-
-  .mobile-availability-wrap .sticky-availability,
-  .sticky-availability {
-    position: static !important;
-    left: auto !important;
-    right: auto !important;
-    bottom: auto !important;
-    transform: none !important;
-    width: auto !important;
-    min-width: 0 !important;
-    max-width: calc(100vw - 32px);
-    height: 48px !important;
-    min-height: 48px !important;
-    margin: 0 !important;
-    padding: 0 20px !important;
-    border: 0 !important;
-    border-radius: 999px !important;
-    display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    background: var(--brand-green) !important;
-    color: #fff !important;
-    box-shadow: 0 10px 24px rgba(36,61,51,.22) !important;
-    font-size: 15px !important;
-    font-weight: 700 !important;
-    line-height: 1 !important;
-    white-space: nowrap;
-    pointer-events: auto;
-  }
-
-  .mobile-availability-wrap .sticky-availability:hover,
-  .sticky-availability:hover {
-    background: var(--brand-green-deep) !important;
-  }
-
-  /* WhatsApp remains available in the site, but not as a floating mobile CTA. */
-  .floating-btn,
-  .message-host,
-  .message-us,
-  .whatsapp-float {
-    display: none !important;
-  }
-
-  /* Mobile scrolling is easy enough; remove the competing floating up button. */
-  .back-to-top,
-  .scroll-top,
-  #backToTop,
-  #topBtn {
-    display: none !important;
-  }
-}
-
-@media (min-width: 701px) {
-  .mobile-availability-wrap {
-    display: none !important;
-  }
-}
-
-
-/* =========================================================
-   v3.18.5 – clean mobile CTA
-   Fresh component; intentionally does NOT reuse legacy sticky classes.
-   ========================================================= */
-.mobile-booking-cta { display: none; }
-
 @media (max-width: 700px) {
   body {
     padding-bottom: calc(72px + env(safe-area-inset-bottom, 0px));
   }
 
-  /* Kill every legacy floating booking/message control on mobile. */
-  .sticky-availability,
-  .mobile-availability-wrap,
-  .mobile-action-bar,
-  .mobile-actions,
-  .sticky-actions,
-  .floating-actions,
-  .floating-btn,
-  .message-host,
-  .message-us,
-  .whatsapp-float,
-  #topBtn,
-  #backToTop,
-  .back-to-top,
-  .scroll-top {
-    display: none !important;
+  /* Keep the existing wrapper so JS references remain valid,
+     but make it a transparent centered holder for one CTA. */
+  .mobile-action-bar {
+    position: fixed !important;
+    left: 50% !important;
+    right: auto !important;
+    bottom: calc(14px + env(safe-area-inset-bottom, 0px)) !important;
+    transform: translateX(-50%) !important;
+    z-index: 2000 !important;
+    display: block !important;
+    width: max-content !important;
+    max-width: calc(100vw - 32px) !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    pointer-events: none;
   }
 
-  .mobile-booking-cta {
-    position: fixed;
-    left: 50%;
-    bottom: calc(14px + env(safe-area-inset-bottom, 0px));
-    transform: translateX(-50%);
-    z-index: 2000;
-    box-sizing: border-box;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 8px;
-    width: max-content;
-    max-width: calc(100vw - 40px);
-    min-height: 46px;
-    padding: 0 20px;
-    border: 0;
-    border-radius: 999px;
-    background: var(--brand-green);
-    color: #fff;
-    box-shadow: 0 8px 22px rgba(36,61,51,.20);
-    text-decoration: none;
-    font-size: 14px;
-    font-weight: 700;
-    line-height: 1;
-    white-space: nowrap;
+  /* Availability is the only floating mobile action. */
+  .mobile-action-bar .sticky-availability {
+    position: static !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: none !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    max-width: calc(100vw - 32px) !important;
+    min-width: 0 !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    margin: 0 !important;
+    padding: 0 19px !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: var(--brand-green) !important;
+    color: #fff !important;
+    box-shadow: 0 8px 22px rgba(36,61,51,.20) !important;
+    font-size: 14px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    text-decoration: none !important;
+    pointer-events: auto;
     opacity: 1;
     transition: opacity .18s ease, transform .18s ease;
   }
 
-  .mobile-booking-cta.is-hidden {
-    opacity: 0;
-    pointer-events: none;
-    transform: translate(-50%, 8px);
+  .mobile-action-bar .sticky-availability.hidden-by-section {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateY(8px) !important;
   }
 
-  .mobile-booking-dot {
-    width: 6px;
-    height: 6px;
-    flex: 0 0 6px;
-    border-radius: 50%;
-    background: rgba(255,255,255,.85);
+  .mobile-action-bar .sticky-dot {
+    width: 6px !important;
+    height: 6px !important;
+    flex: 0 0 6px !important;
+    background: rgba(255,255,255,.85) !important;
+  }
+
+  /* Keep element in DOM for existing language JS, but not floating on mobile. */
+  .mobile-action-bar .floating-btn {
+    display: none !important;
+  }
+
+  /* Remove competing mobile scroll-to-top action. */
+  #topBtn {
+    display: none !important;
   }
 }
 
-@media (min-width: 701px) {
-  .mobile-booking-cta { display: none !important; }
-}
+/* Desktop remains as it was in v3.18.3. */
