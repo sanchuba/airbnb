@@ -1,11 +1,19 @@
 :root {
-  --bg: #f4efe7;
+  --brand-green: #304d40;
+  --brand-green-deep: #243d33;
+  --brand-green-soft: #e8f0ea;
+  --brand-cream: #f4efe7;
+  --brand-cream-soft: #faf8f4;
+  --brand-gold: #b79b68;
+  --brand-brown: #5c4638;
+
+  --bg: var(--brand-cream);
   --card: #ffffff;
   --text: #3f3f3f;
-  --heading: #5c4638;
-  --accent: #c7b8a3;
-  --highlight: #ece6dc;
-  --border: #ddd3c7;
+  --heading: var(--brand-green);
+  --accent: var(--brand-gold);
+  --highlight: var(--brand-green-soft);
+  --border: #dcd5ca;
   --danger: #a14d4d;
   --danger-bg: #f6e7e7;
   --error: #b84c4c;
@@ -2701,4 +2709,123 @@ button.badge.invoice-created:focus-visible,
   max-height: 26px;
   padding: 0 8px;
   line-height: 1;
+}
+
+
+/* =========================================================
+   v3.18.0 – Unified Nijmegen Guest Rooms visual system
+   ========================================================= */
+body {
+  background:
+    radial-gradient(circle at 8% 0%, rgba(183,155,104,.08), transparent 30rem),
+    var(--bg);
+}
+.page-title h1,
+.card h2,
+.section-header h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  color: var(--brand-green-deep);
+}
+.page-title p { color: #726b64; }
+
+.card {
+  border: 1px solid rgba(48,77,64,.075);
+  box-shadow: 0 12px 32px rgba(36,61,51,.06);
+}
+
+.lang-btn { border: 1px solid rgba(48,77,64,.08); }
+.lang-btn.active,
+.action-btn.primary,
+.primary {
+  background: var(--brand-green);
+  color: #fff;
+}
+.lang-btn.active:hover,
+.action-btn.primary:hover { background: var(--brand-green-deep); }
+
+.secondary,
+.action-btn.secondary {
+  background: #eee9df;
+  color: var(--brand-brown);
+}
+.secondary:hover,
+.action-btn.secondary:hover { background: #e6dfd3; }
+
+.field label { color: var(--brand-green-deep); }
+.field input:focus,
+.field select:focus,
+textarea:focus {
+  border-color: var(--brand-green);
+  box-shadow: 0 0 0 3px rgba(48,77,64,.10);
+}
+
+.badge.good,
+.registration-submitted-badge,
+.id-verified-badge,
+button.badge.invoice-created,
+.reservation-invoice-badge,
+.linked-invoice-badge {
+  background: var(--brand-green-soft);
+  color: #2f6847;
+}
+
+.reservation-card { border-color: #ddd5c9; }
+.reservation-card:hover {
+  border-color: rgba(48,77,64,.25);
+  box-shadow: 0 9px 24px rgba(36,61,51,.07);
+}
+.reservation-card .guest-name,
+.reservation-card strong { color: var(--brand-brown); }
+
+.refresh-title:focus-visible { outline-color: var(--brand-gold); }
+
+/* Invoice: green-led identity, with cream/gold supporting tones. */
+.invoice-preview {
+  --invoice-ink: var(--brand-green-deep);
+  --invoice-green: var(--brand-green);
+  --invoice-green-soft: var(--brand-green-soft);
+  --invoice-gold: var(--brand-gold);
+  --invoice-rule: #ded6cb;
+  --invoice-muted: #716a63;
+  color: #343934;
+}
+.invoice-preview .invoice-brand-mark {
+  background: var(--brand-green);
+  border-color: var(--brand-green);
+  color: #fff;
+}
+.invoice-preview .brand h3,
+.invoice-preview .invoice-title { color: var(--brand-green-deep); }
+.invoice-preview .invoice-header { border-bottom-color: var(--brand-green); }
+.invoice-preview .paid-badge {
+  background: var(--brand-green-soft);
+  border-color: rgba(48,77,64,.22);
+  color: var(--brand-green);
+}
+.invoice-preview .invoice-summary-card,
+.invoice-preview .invoice-payment-strip {
+  background: #fbfaf7;
+  border-color: #ded6cb;
+}
+.invoice-preview .invoice-section h4,
+.invoice-preview .invoice-payment-label,
+.invoice-preview .invoice-footer-contact { color: var(--brand-green); }
+.invoice-preview .invoice-description-line,
+.invoice-preview .invoice-footer { border-color: #ded6cb; }
+.invoice-preview .summary-table tbody tr td { border-bottom-color: #ece6dc; }
+.invoice-preview .summary-table tfoot .total-row td {
+  background: var(--brand-green);
+  color: #fff;
+}
+.invoice-preview .invoice-payment-status {
+  background: var(--brand-green-soft);
+  color: var(--brand-green);
+}
+.invoice-preview .invoice-title-row::after {
+  content: "";
+  width: 22px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--brand-gold);
+  margin-left: 2px;
 }
