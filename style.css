@@ -1,11 +1,19 @@
 :root {
-  --bg: #f4efe7;
+  --brand-green: #304d40;
+  --brand-green-deep: #243d33;
+  --brand-green-soft: #e8f0ea;
+  --brand-cream: #f4efe7;
+  --brand-cream-soft: #faf8f4;
+  --brand-gold: #b79b68;
+  --brand-brown: #5c4638;
+
+  --bg: var(--brand-cream);
   --card: #ffffff;
   --text: #3f3f3f;
-  --heading: #5c4638;
-  --accent: #c7b8a3;
-  --highlight: #ece6dc;
-  --line: #ddd3c7;
+  --heading: var(--brand-green);
+  --accent: var(--brand-gold);
+  --highlight: var(--brand-green-soft);
+  --line: #dcd5ca;
 }
 
 * { box-sizing: border-box; }
@@ -1128,4 +1136,135 @@ details[open].guide-block summary::after {
 @media (max-width: 760px) {
   .location-grid { grid-template-columns: 1fr; }
   .location-main { grid-row: auto; }
+}
+
+
+/* =========================================================
+   Unified brand refresh – forest green / cream / muted gold
+   ========================================================= */
+body {
+  background:
+    radial-gradient(circle at 15% 0%, rgba(183,155,104,.08), transparent 30rem),
+    var(--bg);
+}
+
+.topbar {
+  background: rgba(244,239,231,.94);
+  border-bottom-color: rgba(48,77,64,.12);
+}
+
+.brand { color: var(--brand-green-deep); font-weight: 600; }
+.nav a { color: var(--brand-green-deep); }
+.nav a:hover { color: var(--brand-green); }
+
+.lang-btn { border: 1px solid rgba(48,77,64,.10); }
+.lang-btn.active { background: var(--brand-green); color: #fff; }
+
+.hero-copy,
+.section-card,
+.cta-section,
+.guide-hero {
+  border: 1px solid rgba(48,77,64,.08);
+  box-shadow: 0 14px 34px rgba(36,61,51,.07);
+}
+
+.eyebrow { color: var(--brand-gold); opacity: 1; }
+
+.hero h1,
+.section-title,
+.guide-hero h1,
+.room-card h3,
+.feature-item h3,
+.mini-card h3,
+.guide-box h3 {
+  color: var(--brand-green-deep);
+}
+
+.btn-primary {
+  background: var(--brand-green);
+  color: #fff;
+  box-shadow: 0 8px 20px rgba(48,77,64,.16);
+}
+.btn-primary:hover { background: var(--brand-green-deep); }
+
+.btn-secondary {
+  background: var(--brand-green-soft);
+  color: var(--brand-green-deep);
+  border-color: rgba(48,77,64,.12);
+}
+
+.feature-item,
+.mini-card,
+.guide-box,
+.room-card,
+.review-card {
+  border-color: rgba(48,77,64,.10);
+}
+
+.feature-item { background: linear-gradient(145deg, #fff, var(--brand-cream-soft)); }
+
+.room-card { box-shadow: 0 8px 24px rgba(36,61,51,.055); }
+.room-card:hover { box-shadow: 0 14px 30px rgba(36,61,51,.09); }
+
+.room-tag,
+.room-choice-tag,
+.at-a-glance-item strong { color: var(--brand-green); }
+
+.availability-field { color: var(--brand-green-deep); }
+.availability-field input { border-color: rgba(48,77,64,.18); }
+.availability-field input:focus {
+  outline-color: rgba(48,77,64,.14);
+  border-color: rgba(48,77,64,.48);
+}
+.availability-status {
+  border-color: rgba(48,77,64,.12);
+  background: rgba(232,240,234,.44);
+}
+.availability-status-head,
+.room-availability-row strong { color: var(--brand-green-deep); }
+.availability-pill.neutral {
+  background: rgba(48,77,64,.08);
+  color: var(--brand-green);
+}
+.availability-pill.available,
+.availability-summary.available {
+  background: var(--brand-green-soft);
+  color: #2f6847;
+}
+
+.reviews-card {
+  background:
+    linear-gradient(135deg, rgba(232,240,234,.55), rgba(255,255,255,.92) 52%),
+    #fff;
+}
+.review-score {
+  background: var(--brand-green);
+  color: #fff;
+  box-shadow: 0 7px 18px rgba(48,77,64,.15);
+}
+.review-card { background: rgba(255,255,255,.88); }
+.review-card p { color: var(--brand-green-deep); }
+
+.sticky-availability {
+  background: var(--brand-green);
+  box-shadow: 0 10px 28px rgba(36,61,51,.26);
+}
+.sticky-availability:hover { background: var(--brand-green-deep); }
+
+.guide-block { border-color: rgba(48,77,64,.12); }
+.guide-block summary { color: var(--brand-green-deep); }
+.guide-home-link,
+.subtle-link { color: var(--brand-green); }
+.guide-box { background: linear-gradient(145deg, #fff, #fbfaf7); }
+
+.footer strong { color: var(--brand-green-deep); }
+
+.section-title::after {
+  content: "";
+  display: block;
+  width: 34px;
+  height: 2px;
+  margin-top: 10px;
+  border-radius: 999px;
+  background: var(--brand-gold);
 }
