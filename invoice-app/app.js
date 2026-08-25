@@ -2410,6 +2410,8 @@ function renderReservationsV4(){
     const actions=card.querySelector('.v4-card-actions');actions.appendChild(v4PrimaryAction(r,card));
     const menu=[];
     menu.push(v4MenuButton(v4Text('Open reservation','Open reservering'),()=>openV4Reservation(r)));
+    const qrInvite=reservationInvite(r.id);
+    if(qrInvite && inviteIsValid(qrInvite))menu.push(v4MenuButton(v4Text('Show QR code','Toon QR-code'),()=>showRegistrationQr(qrInvite,r)));
     if(reg)menu.push(v4MenuButton(v4Text('Open guest profile','Open gastprofiel'),()=>openV4GuestProfile(reg)));
     if(linked)menu.push(v4MenuButton(`${v4Text('Open invoice','Open factuur')} ${linked.invoice_number}`,()=>openV4Invoice(linked)));
     if(r.status==='active'){
@@ -2478,6 +2480,9 @@ function openV4Reservation(r){
   if(!reg){
     const b=document.createElement('button');b.className='action-btn primary';b.textContent=inv?v4Text('Copy registration link','Kopieer registratielink'):v4Text('Create registration link','Maak registratielink');
     b.onclick=async()=>{if(inv)await v4CopyRegistrationLink(r,b);else{await createReservationInvite(r,b,body);await v4LogActivity(r.id,'registration_link_generated',v4Text('Registration link generated','Registratielink gemaakt'));}};actions.appendChild(b);
+    if(inv && inviteIsValid(inv)){
+      const qr=document.createElement('button');qr.className='action-btn secondary v4-qr-workspace-btn';qr.textContent=v4Text('Show QR code','Toon QR-code');qr.onclick=()=>showRegistrationQr(inv,r);actions.appendChild(qr);
+    }
   }else{
     const b=document.createElement('button');b.className='action-btn primary';b.textContent=v4Text('Open guest profile','Open gastprofiel');b.onclick=()=>openV4GuestProfile(reg);actions.appendChild(b);
     if(linked){const i=document.createElement('button');i.className='action-btn secondary';i.textContent=v4Text('Open invoice','Open factuur');i.onclick=()=>openV4Invoice(linked);actions.appendChild(i);}
@@ -2564,6 +2569,51 @@ function useRegistrationForInvoiceFromV4(reg){
   useRegistrationForInvoice();
   $('invoiceDetailsCard').classList.add('v4-invoice-open');$('previewWrapper').classList.add('v4-invoice-open');
   if(!isMobileShell())setV4Module('invoices');
+}
+
+
+function v4QrEligibleReservations(){
+  const today=localToday();
+  return reservations
+    .filter(isRealReservation)
+    .filter(r=>r.status==='active'&&!r.no_show&&r.checkout_date>=today)
+    .map(r=>({r,inv:reservationInvite(r.id)}))
+    .filter(x=>x.inv && inviteIsValid(x.inv))
+    .sort((a,b)=>String(a.r.checkin_date).localeCompare(String(b.r.checkin_date)));
+}
+function closeV4QrPicker(){
+  $('v4QrPicker').classList.add('hidden');
+  $('v4QrPickerBackdrop').classList.add('hidden');
+}
+function openV4QrPicker(){
+  const x=tr[currentLang],list=$('v4QrPickerList');
+  $('v4QrPickerTitle').textContent=v4Text('Registration QR codes','Registratie QR-codes');
+  $('v4QrPickerSubtitle').textContent=v4Text('Choose a reservation with an active registration link.','Kies een reservering met een actieve registratielink.');
+  $('v4QrPickerHint').textContent=v4Text(
+    'QR codes open the same secure guest-registration link you can send to the guest.',
+    'QR-codes openen dezelfde beveiligde gastenregistratielink die je naar de gast kunt sturen.'
+  );
+  list.innerHTML='';
+  const rows=v4QrEligibleReservations();
+  if(!rows.length){
+    list.innerHTML=`<div class="v4-empty-state">${escapeHtml(v4Text(
+      'No active registration QR codes yet. Create a registration link from a reservation first.',
+      'Er zijn nog geen actieve registratie QR-codes. Maak eerst een registratielink vanuit een reservering.'
+    ))}</div>`;
+  }else{
+    rows.forEach(({r,inv})=>{
+      const b=document.createElement('button');b.type='button';b.className='v4-qr-choice';
+      b.innerHTML=`<div><strong>${escapeHtml(v4ReservationDisplayName(r))}</strong><small>${escapeHtml(v4PlatformLabel(r))} · ${escapeHtml(roomLabel(r.room_key))} · ${fmt(r.checkin_date)} → ${fmt(r.checkout_date)}</small></div><span class="v4-qr-open">${escapeHtml(v4Text('Show QR','Toon QR'))}</span>`;
+      b.onclick=()=>{closeV4QrPicker();showRegistrationQr(inv,r);};
+      list.appendChild(b);
+    });
+  }
+  $('v4QrPicker').classList.remove('hidden');
+  $('v4QrPickerBackdrop').classList.remove('hidden');
+}
+function closeV4Tools(){
+  $('v4ToolsMenu')?.classList.add('hidden');
+  $('v4ToolsBtn')?.setAttribute('aria-expanded','false');
 }
 
 function setV4Module(module){
@@ -2658,6 +2708,20 @@ function initV4(){
   document.querySelectorAll('[data-v4-home-filter]').forEach(b=>b.onclick=()=>{setV4Module('reservations');setReservationFilter(b.dataset.v4HomeFilter);});
   $('v4HomeSyncBtn').onclick=()=>syncCalendars(true);
 
+  $('v4ToolsBtn').onclick=e=>{
+    e.stopPropagation();
+    const menu=$('v4ToolsMenu'),opening=menu.classList.contains('hidden');
+    closeV4Tools();
+    if(opening){menu.classList.remove('hidden');$('v4ToolsBtn').setAttribute('aria-expanded','true');}
+  };
+  $('v4ToolsQrBtn').onclick=()=>{closeV4Tools();openV4QrPicker();};
+  $('v4ToolsSyncBtn').onclick=()=>{closeV4Tools();syncCalendars(true);};
+  $('v4ToolsSettingsBtn').onclick=()=>{closeV4Tools();openV4Settings();};
+  $('v4QrPickerClose').onclick=closeV4QrPicker;
+  $('v4QrPickerBackdrop').onclick=closeV4QrPicker;
+  $('v4MobileMoreQrBtn').onclick=()=>{closeMobileMore();openV4QrPicker();};
+  document.addEventListener('click',e=>{if(!e.target.closest('.v4-tools-wrap'))closeV4Tools();});
+
   $('v4ReservationWorkspaceClose').onclick=closeV4Reservation;
   $('v4ReservationBackdrop').onclick=closeV4Reservation;
   $('v4SettingsClose').onclick=closeV4Settings;$('v4SettingsBackdrop').onclick=closeV4Settings;$('v4SaveSettings').onclick=v4SaveSettings;
@@ -2685,7 +2749,12 @@ updateMobileShellText=function(){
   _v4UpdateMobileShellText();
   if($('mobileTabHomeLabel'))$('mobileTabHomeLabel').textContent=v4Text('Home','Home');
   if($('v4MobileMoreInvoicesBtn'))$('v4MobileMoreInvoicesBtn').textContent=v4Text('Invoices','Facturen');
+  if($('v4MobileMoreQrBtn'))$('v4MobileMoreQrBtn').textContent=v4Text('Registration QR codes','Registratie QR-codes');
   if($('v4MobileMoreSettingsBtn'))$('v4MobileMoreSettingsBtn').textContent=v4Text('Settings','Instellingen');
+  if($('v4ToolsBtn'))$('v4ToolsBtn').textContent=v4Text('Tools','Tools');
+  if($('v4ToolsQrBtn')){$('v4ToolsQrBtn').querySelector('strong').textContent=v4Text('Registration QR codes','Registratie QR-codes');$('v4ToolsQrBtn').querySelector('small').textContent=v4Text('Show a guest registration QR','Toon QR voor gastenregistratie');}
+  if($('v4ToolsSyncBtn')){$('v4ToolsSyncBtn').querySelector('strong').textContent=v4Text('Sync calendars','Kalenders synchroniseren');}
+  if($('v4ToolsSettingsBtn')){$('v4ToolsSettingsBtn').querySelector('strong').textContent=v4Text('Settings','Instellingen');}
 };
 const _v4InitMobileShell=initMobileAppShell;
 initMobileAppShell=function(){
@@ -2704,7 +2773,12 @@ setTexts=function(){
   renderV4All();
 };
 
-document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('v4ReservationWorkspace').classList.contains('hidden'))closeV4Reservation();if(!$('v4SettingsSheet').classList.contains('hidden'))closeV4Settings();}});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){
+  closeV4Tools();
+  if(!$('v4QrPicker').classList.contains('hidden'))closeV4QrPicker();
+  if(!$('v4ReservationWorkspace').classList.contains('hidden'))closeV4Reservation();
+  if(!$('v4SettingsSheet').classList.contains('hidden'))closeV4Settings();
+}});
 initV4();
 
 initAdminNav();

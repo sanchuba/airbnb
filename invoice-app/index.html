@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css?v=4.0.2" />
+  <link rel="stylesheet" href="./style.css?v=4.0.3" />
 </head>
 <body>
   <div class="container">
@@ -81,10 +81,20 @@
           <button class="v4-nav-btn" type="button" data-v4-module="guests" id="v4NavGuests">Guests</button>
           <button class="v4-nav-btn" type="button" data-v4-module="invoices" id="v4NavInvoices">Invoices</button>
         </nav>
-        <div class="v4-global-search-wrap">
-          <input id="v4GlobalSearch" type="search" autocomplete="off" placeholder="Search guests, reservations, invoices or booking references" aria-label="Global search">
-          <button id="v4GlobalSearchClear" type="button" class="v4-search-clear hidden" aria-label="Clear search">×</button>
-          <div id="v4GlobalSearchResults" class="v4-global-search-results hidden"></div>
+        <div class="v4-command-actions">
+          <div class="v4-global-search-wrap">
+            <input id="v4GlobalSearch" type="search" autocomplete="off" placeholder="Search guests, reservations, invoices or booking references" aria-label="Global search">
+            <button id="v4GlobalSearchClear" type="button" class="v4-search-clear hidden" aria-label="Clear search">×</button>
+            <div id="v4GlobalSearchResults" class="v4-global-search-results hidden"></div>
+          </div>
+          <div class="v4-tools-wrap">
+            <button id="v4ToolsBtn" class="v4-tools-btn" type="button" aria-expanded="false">Tools</button>
+            <div id="v4ToolsMenu" class="v4-tools-menu hidden">
+              <button id="v4ToolsQrBtn" type="button"><span>▦</span><div><strong>Registration QR codes</strong><small>Show a guest registration QR</small></div></button>
+              <button id="v4ToolsSyncBtn" type="button"><span>↻</span><div><strong>Sync calendars</strong><small>Refresh Airbnb & Booking.com</small></div></button>
+              <button id="v4ToolsSettingsBtn" type="button"><span>⚙</span><div><strong>Settings</strong><small>Pricing and invoice defaults</small></div></button>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -561,6 +571,22 @@
     <button id="v4SaveSettings" class="action-btn primary" type="button">Save settings</button>
   </section>
 
+  <div id="v4QrPickerBackdrop" class="v4-workspace-backdrop hidden screen-only"></div>
+  <section id="v4QrPicker" class="v4-qr-picker hidden screen-only" role="dialog" aria-modal="true" aria-labelledby="v4QrPickerTitle">
+    <div class="v4-workspace-head">
+      <div>
+        <span class="v4-eyebrow">Guest registration</span>
+        <h2 id="v4QrPickerTitle">Registration QR codes</h2>
+        <p id="v4QrPickerSubtitle" class="muted">Choose a reservation with an active registration link.</p>
+      </div>
+      <button id="v4QrPickerClose" type="button" class="v4-icon-btn" aria-label="Close">×</button>
+    </div>
+    <div id="v4QrPickerList" class="v4-qr-picker-list"></div>
+    <div class="v4-qr-picker-footer">
+      <p id="v4QrPickerHint" class="muted">QR codes open the same secure guest-registration link you can send to the guest.</p>
+    </div>
+  </section>
+
   <div id="qrModal" class="qr-modal hidden screen-only" role="dialog" aria-modal="true" aria-labelledby="qrModalTitle">
     <div class="qr-modal-toolbar">
       <button id="closeQrModalBtn" class="qr-close-btn" type="button" aria-label="Close">×</button>
@@ -590,6 +616,7 @@
     <button id="mobileMoreSyncBtn" class="mobile-more-action" type="button">Sync calendars</button>
     <button id="mobileMorePaperBtn" class="mobile-more-action" type="button">Add paper registration</button>
     <button id="mobileMoreLinkBtn" class="mobile-more-action" type="button">Create manual guest link</button>
+    <button id="v4MobileMoreQrBtn" class="mobile-more-action" type="button">Registration QR codes</button>
     <button id="v4MobileMoreInvoicesBtn" class="mobile-more-action" type="button">Invoices</button>
     <button id="v4MobileMoreSettingsBtn" class="mobile-more-action" type="button">Settings</button>
     <div class="mobile-more-language">
@@ -613,7 +640,7 @@
   </div>
   <button id="backToTopBtn" class="back-to-top-btn screen-only" type="button" aria-label="Back to top" title="Back to top">↑</button>
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-  <script type="module" src="./app.js?v=4.0.2"></script>
+  <script type="module" src="./app.js?v=4.0.3"></script>
   <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.16.10').catch(() => {}));
