@@ -2255,14 +2255,10 @@ function v4WorkflowHtml(r){
   let invoice='';
   if(inv){
     invoice=`<span class="v4-workflow-chip good">✓ ${escapeHtml(v4Text('Invoice created','Factuur gemaakt'))} · ${escapeHtml(inv.invoice_number)}</span>`;
-  }else if(!reg){
-    invoice=`<span class="v4-workflow-chip muted">${escapeHtml(v4Text('Invoice unknown','Factuur onbekend'))}</span>`;
-  }else if(reg.invoice_requested && r.checkout_date<=localToday()){
-    invoice=`<span class="v4-workflow-chip warn">${escapeHtml(v4Text('Invoice requested · create now','Factuur aangevraagd · nu maken'))}</span>`;
-  }else if(reg.invoice_requested){
-    invoice=`<span class="v4-workflow-chip warn">${escapeHtml(v4Text('Invoice requested','Factuur aangevraagd'))}</span>`;
-  }else{
-    invoice=`<span class="v4-workflow-chip muted">${escapeHtml(v4Text('No invoice requested','Geen factuur aangevraagd'))}</span>`;
+  }else if(reg?.invoice_requested && r.checkout_date<=localToday()){
+    invoice=`<span class="v4-workflow-chip warn">${escapeHtml(v4Text('Invoice to create','Factuur maken'))}</span>`;
+  }else if(reg?.invoice_requested){
+    invoice=`<span class="v4-workflow-chip muted">${escapeHtml(v4Text('Invoice later','Factuur later'))}</span>`;
   }
   return registration+id+invoice;
 }
