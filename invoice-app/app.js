@@ -816,9 +816,27 @@ function reservationMatchesFilter(r,filter){
   return predicate(r,reservationFilterContext(r));
 }
 function compareReservationsForFilter(a,b,filter){
-  const mode=reservationFilterSortModes[filter]||'checkinAsc';
   const aIn=String(a.checkin_date||''),bIn=String(b.checkin_date||'');
   const aOut=String(a.checkout_date||''),bOut=String(b.checkout_date||'');
+  if(filter==='all'){
+    const t=localToday();
+    const bucket=r=>{
+      if(r.status==='active'&&!r.no_show&&r.checkin_date<=t&&r.checkout_date>t)return 0; // staying now
+      if(r.status==='active'&&!r.no_show&&r.checkin_date>t)return 1;                    // upcoming
+      if(r.status==='active'&&!r.no_show&&r.checkout_date<=t)return 2;                 // past
+      return 3;                                                                        // no-show / removed
+    };
+    const bucketResult=bucket(a)-bucket(b);
+    if(bucketResult)return bucketResult;
+    const dateResult=aIn.localeCompare(bIn);
+    if(dateResult)return dateResult;
+    const checkoutResult=aOut.localeCompare(bOut);
+    if(checkoutResult)return checkoutResult;
+    const aName=String(reservationRegistration(a.id)?.full_name||a.reservation_code||'');
+    const bName=String(reservationRegistration(b.id)?.full_name||b.reservation_code||'');
+    return aName.localeCompare(bName,undefined,{sensitivity:'base'});
+  }
+  const mode=reservationFilterSortModes[filter]||'checkinAsc';
   let result=0;
   if(mode==='checkoutAsc')result=aOut.localeCompare(bOut);
   else if(mode==='checkoutDesc')result=bOut.localeCompare(aOut);
@@ -2601,6 +2619,37 @@ function v4GuestGroups(){
   registrations.forEach(r=>{const k=v4GuestIdentityKey(r);if(!m.has(k))m.set(k,[]);m.get(k).push(r);});
   return [...m.values()].map(stays=>stays.sort((a,b)=>String(b.checkin_date||'').localeCompare(String(a.checkin_date||''))));
 }
+function v4GuestRelevantStay(stays,filter,t){
+  const byInAsc=(a,b)=>String(a.checkin_date||'').localeCompare(String(b.checkin_date||''));
+  const byOutAsc=(a,b)=>String(a.checkout_date||'').localeCompare(String(b.checkout_date||''));
+  if(filter==='staying')return stays.filter(r=>r.checkin_date<=t&&r.checkout_date>t).sort(byOutAsc)[0]||stays[0];
+  if(filter==='upcoming'||filter==='arrivingSoon'||filter==='idToVerify'||filter==='invoiceToCreate')
+    return stays.filter(r=>r.checkin_date>=t).sort(byInAsc)[0]||stays.slice().sort(byInAsc)[0];
+  if(filter==='past')return stays.filter(r=>r.checkout_date<=t).sort(byInAsc)[0]||stays.slice().sort(byInAsc)[0];
+  return stays[0];
+}
+function v4GuestAllBucket(stays,t){
+  if(stays.some(r=>r.checkin_date<=t&&r.checkout_date>t))return 0;
+  if(stays.some(r=>r.checkin_date>t))return 1;
+  return 2;
+}
+function compareV4GuestGroups(a,b,filter,t){
+  if(filter==='all'){
+    const bucketResult=v4GuestAllBucket(a,t)-v4GuestAllBucket(b,t);
+    if(bucketResult)return bucketResult;
+    const dateFor=stays=>{
+      const bucket=v4GuestAllBucket(stays,t);
+      if(bucket===0)return stays.filter(r=>r.checkin_date<=t&&r.checkout_date>t).map(r=>r.checkin_date).sort()[0]||'';
+      if(bucket===1)return stays.filter(r=>r.checkin_date>t).map(r=>r.checkin_date).sort()[0]||'';
+      return stays.map(r=>r.checkin_date).filter(Boolean).sort()[0]||'';
+    };
+    return dateFor(a).localeCompare(dateFor(b));
+  }
+  const ar=v4GuestRelevantStay(a,filter,t),br=v4GuestRelevantStay(b,filter,t);
+  if(filter==='staying')return String(ar.checkout_date||'').localeCompare(String(br.checkout_date||''));
+  return String(ar.checkin_date||'').localeCompare(String(br.checkin_date||''));
+}
+
 function renderRegsV4(){
   const x=tr[currentLang],q=($('registrationSearch').value||'').trim().toLowerCase(),t=localToday();
   const groups=v4GuestGroups().filter(stays=>{
@@ -2615,7 +2664,7 @@ function renderRegsV4(){
       if(registrationFilter==='invoiceToCreate')return r.invoice_requested&&!linkedInvoiceForRegistration(r.id)&&r.checkout_date<=t;
       return true;
     });
-  }).sort((a,b)=>String(b[0].checkin_date||'').localeCompare(String(a[0].checkin_date||'')));
+  }).sort((a,b)=>compareV4GuestGroups(a,b,registrationFilter,t));
   const box=$('registrationList');box.innerHTML='';
   document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===registrationFilter));
   if(!groups.length){box.innerHTML=`<div class="v4-empty-state">${escapeHtml(x.noRegs)}</div>`;return;}
