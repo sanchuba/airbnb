@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css?v=4.0.4" />
+  <link rel="stylesheet" href="./style.css?v=4.0.5" />
 </head>
 <body>
   <div class="container">
@@ -192,7 +192,7 @@
             <button type="button" class="filter-pill" data-reservation-filter="staying" id="reservationFilterStaying">Staying now</button>
             <button type="button" class="filter-pill" data-reservation-filter="past" id="reservationFilterPast">Past</button>
             <button type="button" class="filter-pill" data-reservation-filter="noShow" id="reservationFilterNoShow">No-show</button>
-            <button type="button" class="filter-pill" data-reservation-filter="removed" id="reservationFilterRemoved">Cancelled</button>
+            <button type="button" class="filter-pill" data-reservation-filter="removed" id="reservationFilterRemoved">Removed / cancelled</button>
             <button type="button" class="filter-pill" data-reservation-filter="all" id="reservationFilterAll">All</button>
           </div>
           <button id="v4MoreReservationFiltersBtn" type="button" class="v4-filter-toggle" aria-expanded="false">Filters</button>
@@ -640,7 +640,7 @@
   </div>
   <button id="backToTopBtn" class="back-to-top-btn screen-only" type="button" aria-label="Back to top" title="Back to top">↑</button>
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-  <script type="module" src="./app.js?v=4.0.4"></script>
+  <script type="module" src="./app.js?v=4.0.5"></script>
   <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.16.10').catch(() => {}));

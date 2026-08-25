@@ -3119,3 +3119,13 @@ body.v4-invoices-module #savedInvoicesCard { display:block; }
   }
   .v4-qr-choice { grid-template-columns:1fr auto; }
 }
+
+
+/* v4.0.5 – distinguish confirmed cancellation from automatic feed removal */
+.v4-reservation-card[data-removal-kind="cancelled"] .v4-res-relative {
+  color:#96453f;
+  font-weight:800;
+}
+.v4-reservation-card[data-removal-kind="feed"] .v4-res-relative {
+  color:#7c746e;
+}

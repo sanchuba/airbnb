@@ -2189,6 +2189,7 @@ window.addEventListener('beforeunload',e=>{if(registrationDirty||invoiceDirty){e
 // v4.0.0 – Product architecture layer
 // ================================================================
 let v4DesktopModule='home';
+let v4DesktopCalendarHasOpened=false;
 let v4ReservationPlatform='';
 let v4ReservationRoom='';
 let v4CurrentReservation=null;
@@ -2227,7 +2228,9 @@ function closeV4Settings(){
 
 function v4LifecycleLabel(r){
   const t=localToday();
-  if(r.status!=='active') return v4Text('Cancelled','Geannuleerd');
+  if(r.status!=='active') return r.cancellation_confirmed_at
+    ? v4Text('Cancelled','Geannuleerd')
+    : v4Text('Removed from feed','Uit kalenderfeed verwijderd');
   if(r.no_show) return v4Text('No-show','No-show');
   if(r.checkin_date===t) return v4Text('Arrives today','Komt vandaag');
   if(r.checkout_date===t) return v4Text('Departs today','Vertrekt vandaag');
@@ -2369,6 +2372,33 @@ function v4MakeOverflow(actions){
   toggle.onclick=e=>{e.stopPropagation();wrap.classList.toggle('open');};
   wrap.append(toggle,menu);return wrap;
 }
+async function setV4CancellationClassification(r,confirmed){
+  if(!r?.id)return false;
+  const {error}=await supabaseClient.rpc('set_reservation_cancellation_confirmed',{
+    p_reservation_id:r.id,
+    p_confirmed:!!confirmed
+  });
+  if(error){
+    console.error(error);
+    alert(v4Text('Could not update cancellation status.','Annuleringsstatus kon niet worden bijgewerkt.'));
+    return false;
+  }
+  await v4LogActivity(
+    r.id,
+    confirmed?'cancellation_confirmed':'cancellation_unconfirmed',
+    confirmed
+      ? v4Text('Cancellation confirmed manually','Annulering handmatig bevestigd')
+      : v4Text('Classified as removed from calendar feed','Geclassificeerd als verwijderd uit kalenderfeed')
+  );
+  const openId=v4CurrentReservation?.id||null;
+  await loadReservations();
+  if(openId===r.id){
+    const fresh=reservations.find(x=>x.id===r.id);
+    if(fresh)openV4Reservation(fresh);
+  }
+  return true;
+}
+
 function v4MenuButton(text,fn,{danger=false}={}){
   const b=document.createElement('button');b.type='button';b.textContent=text;if(danger)b.classList.add('danger');b.onclick=e=>{e.stopPropagation();fn();};return b;
 }
@@ -2402,6 +2432,7 @@ function renderReservationsV4(){
     const reg=reservationRegistration(r.id),linked=reg?linkedInvoiceForRegistration(reg.id):null,n=reservationNightsBetween(r.checkin_date,r.checkout_date);
     const card=document.createElement('article');card.className='v4-reservation-card'+(r.needs_attention?' attention':'')+(r.no_show?' no-show':'');
     card.dataset.reservationId=r.id;
+    if(r.status!=='active')card.dataset.removalKind=r.cancellation_confirmed_at?'cancelled':'feed';
     const platform=r.platform==='airbnb'?'airbnb':r.platform==='booking'?'booking':'direct';
     card.innerHTML=`<div class="v4-res-card-top">
       <div>
@@ -2424,6 +2455,14 @@ function renderReservationsV4(){
       menu.push(v4MenuButton(r.needs_attention?v4Text('Edit attention note','Bewerk notitie'):v4Text('Mark for attention','Markeer voor aandacht'),()=>showReservationAttentionEditor(r,card)));
       if(r.needs_attention)menu.push(v4MenuButton(v4Text('Resolve attention','Los aandachtspunt op'),async()=>{await setReservationAttentionState(r,false,'');}));
       if(r.checkout_date<=localToday()||r.no_show)menu.push(v4MenuButton(r.no_show?tr[currentLang].undoNoShow:tr[currentLang].markNoShow,()=>toggleReservationNoShow(r),{danger:!r.no_show}));
+    }else{
+      menu.push(v4MenuButton(
+        r.cancellation_confirmed_at
+          ? v4Text('Treat as removed from feed','Markeer als verwijderd uit feed')
+          : v4Text('Confirm cancellation','Bevestig annulering'),
+        ()=>setV4CancellationClassification(r,!r.cancellation_confirmed_at),
+        {danger:!r.cancellation_confirmed_at}
+      ));
     }
     if(r.platform==='airbnb'&&r.reservation_url)menu.push(v4MenuLink(tr[currentLang].openAirbnb,r.reservation_url));
     if(r.platform==='booking'){
@@ -2484,6 +2523,7 @@ function openV4Reservation(r){
         <dt>${escapeHtml(v4Text('Check-in','Incheck'))}</dt><dd>${fmt(r.checkin_date)}</dd>
         <dt>${escapeHtml(v4Text('Check-out','Uitcheck'))}</dt><dd>${fmt(r.checkout_date)}</dd>
         <dt>${escapeHtml(v4Text('Reference','Referentie'))}</dt><dd>${escapeHtml(reservationBookingReference(r)||'—')}</dd>
+        <dt>${escapeHtml(v4Text('Status','Status'))}</dt><dd>${escapeHtml(v4LifecycleLabel(r))}</dd>
       </dl></section>
       <section class="v4-workspace-card"><h3>${escapeHtml(v4Text('Workflow','Workflow'))}</h3><div class="v4-workflow-row">${v4WorkflowHtml(r)}</div></section>
     </div>
@@ -2502,8 +2542,18 @@ function openV4Reservation(r){
     if(linked){const i=document.createElement('button');i.className='action-btn secondary';i.textContent=v4Text('Open invoice','Open factuur');i.onclick=()=>openV4Invoice(linked);actions.appendChild(i);}
     else if(reg.invoice_requested&&r.checkout_date<=localToday()){const i=document.createElement('button');i.className='action-btn secondary';i.textContent=v4Text('Create invoice','Maak factuur');i.onclick=()=>useRegistrationForInvoiceFromV4(reg);actions.appendChild(i);}
   }
-  const att=document.createElement('button');att.className='action-btn secondary';att.textContent=r.needs_attention?v4Text('Edit note','Bewerk notitie'):v4Text('Mark for attention','Markeer voor aandacht');att.onclick=()=>showV4AttentionEditor(r);actions.appendChild(att);
-  if(r.needs_attention){const resolve=document.createElement('button');resolve.className='action-btn secondary';resolve.textContent=v4Text('Resolve','Oplossen');resolve.onclick=async()=>{await setReservationAttentionState(r,false,'');closeV4Reservation();};actions.appendChild(resolve);}
+  if(r.status==='active'){
+    const att=document.createElement('button');att.className='action-btn secondary';att.textContent=r.needs_attention?v4Text('Edit note','Bewerk notitie'):v4Text('Mark for attention','Markeer voor aandacht');att.onclick=()=>showV4AttentionEditor(r);actions.appendChild(att);
+    if(r.needs_attention){const resolve=document.createElement('button');resolve.className='action-btn secondary';resolve.textContent=v4Text('Resolve','Oplossen');resolve.onclick=async()=>{await setReservationAttentionState(r,false,'');closeV4Reservation();};actions.appendChild(resolve);}
+  }else{
+    const classify=document.createElement('button');
+    classify.className='action-btn secondary';
+    classify.textContent=r.cancellation_confirmed_at
+      ? v4Text('Treat as removed from feed','Markeer als verwijderd uit feed')
+      : v4Text('Confirm cancellation','Bevestig annulering');
+    classify.onclick=()=>setV4CancellationClassification(r,!r.cancellation_confirmed_at);
+    actions.appendChild(classify);
+  }
   $('v4ReservationWorkspace').classList.remove('hidden');$('v4ReservationBackdrop').classList.remove('hidden');loadV4Activity(r.id);
 }
 function showV4AttentionEditor(r){
@@ -2641,6 +2691,11 @@ function setV4Module(module){
   document.body.classList.add(`v4-module-${module}`);
   document.querySelectorAll('[data-v4-module]').forEach(b=>b.classList.toggle('active',b.dataset.v4Module===module));
   window.scrollTo({top:0,behavior:'auto'});
+  if(module==='calendar'&&!calendarRoomView&&!v4DesktopCalendarHasOpened){
+    v4DesktopCalendarHasOpened=true;
+    calendarHasVisited=true;
+    requestAnimationFrame(()=>requestAnimationFrame(()=>scrollCalendarToTodayStart('auto')));
+  }
 }
 function v4GlobalSearch(){
   const q=$('v4GlobalSearch').value.trim().toLowerCase(),box=$('v4GlobalSearchResults');
