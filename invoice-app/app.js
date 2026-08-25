@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.1.1';
+const NGR_ADMIN_BUILD='4.1.3';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -2657,8 +2657,16 @@ function renderV4WorkspaceActivity(){
   if(!all.length){host.innerHTML=`<div class="muted">${escapeHtml(v4Text('No activity recorded yet.','Nog geen activiteit geregistreerd.'))}</div>`;return;}
   all.forEach(a=>{const d=document.createElement('div');d.className='v4-activity-item';d.innerHTML=`<span class="v4-activity-dot"></span><div><strong>${escapeHtml(a.detail)}</strong><small>${new Date(a.created_at).toLocaleString(currentLang==='nl'?'nl-NL':'en-GB')}</small></div>`;host.appendChild(d);});
 }
+
 function closeV4Reservation(){
-  v4CurrentReservation=null;$('v4ReservationWorkspace').classList.add('hidden');$('v4ReservationBackdrop').classList.add('hidden');
+  v4CurrentReservation=null;
+  const sheet=$('v4ReservationWorkspace');
+  sheet.classList.add('hidden');
+  sheet.classList.remove('v4-mobile-fullscreen','is-edge-swiping','is-edge-dismissing');
+  sheet.style.removeProperty('--edge-swipe-x');
+  $('v4ReservationBackdrop').classList.add('hidden');
+  document.documentElement.classList.remove('v4-mobile-reservation-open');
+  document.body.classList.remove('v4-mobile-reservation-open');
 }
 function openV4Reservation(r){
   if(!r)return;v4CurrentReservation=r;
@@ -2704,7 +2712,21 @@ function openV4Reservation(r){
     classify.onclick=()=>setV4CancellationClassification(r,!r.cancellation_confirmed_at);
     actions.appendChild(classify);
   }
-  $('v4ReservationWorkspace').classList.remove('hidden');$('v4ReservationBackdrop').classList.remove('hidden');loadV4Activity(r.id);
+  const workspace=$('v4ReservationWorkspace');
+  if(isMobileShell()){
+    workspace.classList.add('v4-mobile-fullscreen');
+    workspace.scrollTop=0;
+    document.documentElement.classList.add('v4-mobile-reservation-open');
+    document.body.classList.add('v4-mobile-reservation-open');
+    if($('v4MobileReservationHeaderLabel')){
+      $('v4MobileReservationHeaderLabel').textContent=v4Text('Reservation','Reservering');
+    }
+  }else{
+    workspace.classList.remove('v4-mobile-fullscreen');
+  }
+  workspace.classList.remove('hidden');
+  $('v4ReservationBackdrop').classList.remove('hidden');
+  loadV4Activity(r.id);
 }
 function showV4AttentionEditor(r){
   const body=$('v4ReservationWorkspaceBody'),old=$('v4WorkspaceAttentionEditor');if(old){old.remove();return;}
@@ -2940,108 +2962,105 @@ toggleReservationNoShow=async function(r){
 };
 
 
-function initV4ReservationSwipeDismiss(){
-  const sheet=$('v4ReservationWorkspace');
-  if(!sheet)return;
+
+
+function initV4MobileReservationNavigation(){
+  const workspace=$('v4ReservationWorkspace');
+  const back=$('v4MobileReservationBack');
+  if(!workspace||!back)return;
+
+  back.onclick=e=>{
+    e.preventDefault();
+    e.stopPropagation();
+    closeV4Reservation();
+  };
 
   let tracking=false;
+  let startX=0;
   let startY=0;
-  let lastY=0;
+  let lastX=0;
   let startTime=0;
-  let dragged=false;
   let pointerId=null;
+  let committedHorizontal=false;
 
-  const resetVisual=()=>{
-    sheet.classList.remove('is-dragging','is-dismissing');
-    sheet.style.removeProperty('--sheet-drag-y');
-    $('v4ReservationBackdrop')?.style.removeProperty('opacity');
+  const reset=()=>{
+    tracking=false;
+    committedHorizontal=false;
+    pointerId=null;
+    workspace.classList.remove('is-edge-swiping','is-edge-dismissing');
+    workspace.style.removeProperty('--edge-swipe-x');
   };
 
-  const canStart=e=>{
-    if(!isMobileShell())return false;
-    if(sheet.classList.contains('hidden'))return false;
-    // Only dismiss from the top of the sheet. If content is scrolled,
-    // normal vertical scrolling should win.
-    if(sheet.scrollTop>0)return false;
-    // Interactive controls must still receive taps normally.
-    if(e.target.closest('button,a,input,textarea,select,label'))return false;
-    return true;
-  };
+  workspace.addEventListener('pointerdown',e=>{
+    if(!isMobileShell()||workspace.classList.contains('hidden'))return;
+    // Native-like back gesture: only initiate near the left screen edge.
+    if(e.clientX>34)return;
+    if(e.target.closest('button,a,input,textarea,select,label'))return;
 
-  sheet.addEventListener('pointerdown',e=>{
-    if(!canStart(e))return;
     tracking=true;
-    dragged=false;
     pointerId=e.pointerId;
-    startY=lastY=e.clientY;
+    startX=lastX=e.clientX;
+    startY=e.clientY;
     startTime=performance.now();
-    sheet.setPointerCapture?.(pointerId);
   });
 
-  sheet.addEventListener('pointermove',e=>{
+  workspace.addEventListener('pointermove',e=>{
     if(!tracking||e.pointerId!==pointerId)return;
+    const dx=e.clientX-startX;
     const dy=e.clientY-startY;
-    lastY=e.clientY;
 
-    // Upward motion stays with normal scroll behavior.
-    if(dy<=0){
-      if(dragged){
-        sheet.style.setProperty('--sheet-drag-y','0px');
-        $('v4ReservationBackdrop')?.style.setProperty('opacity','1');
+    // Do not hijack normal vertical scrolling.
+    if(!committedHorizontal){
+      if(Math.abs(dy)>12 && Math.abs(dy)>Math.abs(dx)){
+        reset();
+        return;
       }
-      return;
+      if(dx>10 && dx>Math.abs(dy)*1.25){
+        committedHorizontal=true;
+        workspace.classList.add('is-edge-swiping');
+        try{ workspace.setPointerCapture?.(pointerId); }catch(_){}
+      }else{
+        return;
+      }
     }
 
-    if(dy>5)dragged=true;
-    if(!dragged)return;
-
+    if(dx<=0)return;
+    lastX=e.clientX;
     e.preventDefault();
-    sheet.classList.add('is-dragging');
-    const eased=dy<180?dy:180+(dy-180)*0.45;
-    sheet.style.setProperty('--sheet-drag-y',`${Math.max(0,eased)}px`);
-
-    const fade=Math.max(.22,1-Math.min(dy,360)/460);
-    $('v4ReservationBackdrop')?.style.setProperty('opacity',String(fade));
+    const width=Math.max(1,workspace.clientWidth);
+    const resisted=dx>width*.72 ? width*.72+(dx-width*.72)*.25 : dx;
+    workspace.style.setProperty('--edge-swipe-x',`${Math.max(0,resisted)}px`);
   },{passive:false});
 
   const finish=e=>{
     if(!tracking)return;
     if(pointerId!==null && e.pointerId!==undefined && e.pointerId!==pointerId)return;
 
-    const dy=Math.max(0,lastY-startY);
+    const dx=Math.max(0,lastX-startX);
     const elapsed=Math.max(1,performance.now()-startTime);
-    const velocity=dy/elapsed; // px/ms
-    const shouldDismiss=dragged && (dy>=120 || velocity>=0.72);
+    const velocity=dx/elapsed;
+    const threshold=Math.min(120,workspace.clientWidth*.28);
+    const shouldClose=committedHorizontal && (dx>=threshold || velocity>=0.65);
 
-    tracking=false;
-    try{ if(pointerId!==null)sheet.releasePointerCapture?.(pointerId); }catch(_){}
-    pointerId=null;
+    try{ if(pointerId!==null)workspace.releasePointerCapture?.(pointerId); }catch(_){}
 
-    if(shouldDismiss){
-      sheet.classList.remove('is-dragging');
-      sheet.classList.add('is-dismissing');
-      sheet.style.setProperty('--sheet-drag-y','105vh');
-      $('v4ReservationBackdrop')?.style.setProperty('opacity','0');
+    if(shouldClose){
+      workspace.classList.remove('is-edge-swiping');
+      workspace.classList.add('is-edge-dismissing');
+      workspace.style.setProperty('--edge-swipe-x','100vw');
       window.setTimeout(()=>{
         closeV4Reservation();
-        resetVisual();
-      },210);
+        reset();
+      },180);
     }else{
-      sheet.classList.remove('is-dragging');
-      sheet.style.setProperty('--sheet-drag-y','0px');
-      $('v4ReservationBackdrop')?.style.setProperty('opacity','1');
-      window.setTimeout(resetVisual,220);
+      workspace.classList.remove('is-edge-swiping');
+      workspace.style.setProperty('--edge-swipe-x','0px');
+      window.setTimeout(reset,190);
     }
   };
 
-  sheet.addEventListener('pointerup',finish);
-  sheet.addEventListener('pointercancel',finish);
-
-  // Explicit close/reopen should never inherit a previous drag transform.
-  const observer=new MutationObserver(()=>{
-    if(sheet.classList.contains('hidden'))resetVisual();
-  });
-  observer.observe(sheet,{attributes:true,attributeFilter:['class']});
+  workspace.addEventListener('pointerup',finish);
+  workspace.addEventListener('pointercancel',finish);
 }
 
 
@@ -3092,7 +3111,7 @@ function initV4(){
   // Hide invoice task from Guests: it lives on Home.
   $('filterInvoice')?.classList.add('hidden');
 
-  initV4ReservationSwipeDismiss();
+  initV4MobileReservationNavigation();
   renderV4All();
 }
 
@@ -3127,6 +3146,7 @@ setTexts=function(){
   if($('registrationTitle'))$('registrationTitle').textContent=v4Text('Guests','Gasten');
   if($('registrationArchiveSubtitle'))$('registrationArchiveSubtitle').textContent=v4Text('Guest profiles, registrations and stay history.','Gastprofielen, registraties en verblijfsgeschiedenis.');
   if($('savedInvoicesTitle'))$('savedInvoicesTitle').textContent=v4Text('Invoices','Facturen');
+  if($('v4MobileReservationHeaderLabel'))$('v4MobileReservationHeaderLabel').textContent=v4Text('Reservation','Reservering');
   if(!$('v4HomeSyncBtn')?.disabled && !$('syncCalendarsBtn')?.disabled)setManualCalendarSyncUi('idle');
   renderV4All();
 };

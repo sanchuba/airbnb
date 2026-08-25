@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css?v=4.1.1" />
+  <link rel="stylesheet" href="./style.css?v=4.1.3" />
 </head>
 <body>
   <div class="container">
@@ -544,7 +544,12 @@
 
   <div id="v4ReservationBackdrop" class="v4-workspace-backdrop hidden screen-only"></div>
   <section id="v4ReservationWorkspace" class="v4-reservation-workspace hidden screen-only" role="dialog" aria-modal="true" aria-labelledby="v4ReservationWorkspaceTitle">
-    <div class="v4-mobile-sheet-handle" aria-hidden="true"></div>
+    <div class="v4-mobile-reservation-header mobile-shell-only">
+      <button id="v4MobileReservationBack" class="v4-mobile-back-btn" type="button" aria-label="Back">‹</button>
+      <div class="v4-mobile-reservation-header-title">
+        <span id="v4MobileReservationHeaderLabel">Reservation</span>
+      </div>
+    </div>
     <div class="v4-workspace-head">
       <div>
         <div id="v4ReservationWorkspacePlatform"></div>
@@ -641,7 +646,7 @@
   </div>
   <button id="backToTopBtn" class="back-to-top-btn screen-only" type="button" aria-label="Back to top" title="Back to top">↑</button>
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-  <script type="module" src="./app.js?v=4.1.1"></script>
+  <script type="module" src="./app.js?v=4.1.3"></script>
   <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.16.10').catch(() => {}));
