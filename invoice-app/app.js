@@ -2253,6 +2253,7 @@ function v4ReservationDisplayName(r){
   return r.reservation_code||v4PlatformLabel(r);
 }
 function v4WorkflowHtml(r){
+  if(r.status!=='active' && r.cancellation_confirmed_at) return '';
   const reg=reservationRegistration(r.id), inv=reg?linkedInvoiceForRegistration(reg.id):null;
   const registration=reg
     ? `<span class="v4-workflow-chip good">✓ ${escapeHtml(v4Text('Registration','Registratie'))}</span>`
