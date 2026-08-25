@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.1.0';
+const NGR_ADMIN_BUILD='4.0.9';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -2452,31 +2452,6 @@ function v4MenuButton(text,fn,{danger=false}={}){
 function v4MenuLink(text,href){
   const a=document.createElement('a');a.textContent=text;a.href=href;a.target='_blank';a.rel='noopener';a.onclick=e=>e.stopPropagation();return a;
 }
-function v4ExternalReservationAction(r){
-  if(!r)return null;
-  if(r.platform==='airbnb' && r.reservation_url){
-    return {label:v4Text('Open in Airbnb ↗','Open in Airbnb ↗'), url:r.reservation_url};
-  }
-  if(r.platform==='booking'){
-    const url=bookingAdminReservationUrl(bookingReferenceForReservation(r));
-    if(url)return {label:v4Text('Open in Booking.com ↗','Open in Booking.com ↗'), url};
-  }
-  return null;
-}
-
-function v4ExternalReservationButton(r,{compact=false}={}){
-  const action=v4ExternalReservationAction(r);
-  if(!action)return null;
-  const a=document.createElement('a');
-  a.className=compact?'action-btn secondary v4-platform-action compact':'action-btn secondary v4-platform-action';
-  a.href=action.url;
-  a.target='_blank';
-  a.rel='noopener';
-  a.textContent=action.label;
-  a.onclick=e=>e.stopPropagation();
-  return a;
-}
-
 function v4PrimaryAction(r,card){
   const x=tr[currentLang],reg=reservationRegistration(r.id),inv=reservationInvite(r.id),linked=reg?linkedInvoiceForRegistration(reg.id):null;
   let b=document.createElement('button');b.className='action-btn primary v4-primary-card-action';b.type='button';
@@ -2516,15 +2491,7 @@ function renderReservationsV4(){
     <div class="v4-workflow-row">${v4WorkflowHtml(r)}</div>
     ${r.needs_attention&&r.attention_note?`<div class="v4-card-note">${escapeHtml(r.attention_note)}</div>`:''}
     <div class="v4-card-actions"></div>`;
-    const actions=card.querySelector('.v4-card-actions');
-    const primaryAction=v4PrimaryAction(r,card);
-    actions.appendChild(primaryAction);
-
-    // Workflow shortcut: after copying/generating a registration link, the
-    // host's next step is usually to open Booking.com/Airbnb and send it.
-    const externalAction=v4ExternalReservationButton(r,{compact:true});
-    if(externalAction)actions.appendChild(externalAction);
-
+    const actions=card.querySelector('.v4-card-actions');actions.appendChild(v4PrimaryAction(r,card));
     const menu=[];
     menu.push(v4MenuButton(v4Text('Open reservation','Open reservering'),()=>openV4Reservation(r)));
     const qrInvite=reservationInvite(r.id);
@@ -2544,11 +2511,9 @@ function renderReservationsV4(){
         {danger:!r.cancellation_confirmed_at}
       ));
     }
-    if(!v4ExternalReservationAction(r)){
-      if(r.platform==='airbnb'&&r.reservation_url)menu.push(v4MenuLink(tr[currentLang].openAirbnb,r.reservation_url));
-      if(r.platform==='booking'){
-        const url=bookingAdminReservationUrl(bookingReferenceForReservation(r));if(url)menu.push(v4MenuLink(tr[currentLang].openBooking,url));
-      }
+    if(r.platform==='airbnb'&&r.reservation_url)menu.push(v4MenuLink(tr[currentLang].openAirbnb,r.reservation_url));
+    if(r.platform==='booking'){
+      const url=bookingAdminReservationUrl(bookingReferenceForReservation(r));if(url)menu.push(v4MenuLink(tr[currentLang].openBooking,url));
     }
     actions.appendChild(v4MakeOverflow(menu));
     card.onclick=e=>{if(e.target.closest('button,a,input,select,textarea'))return;openV4Reservation(r);};
@@ -2613,7 +2578,6 @@ function openV4Reservation(r){
     <div class="v4-workspace-actions" id="v4WorkspaceActions"></div>
     <section class="v4-activity"><h3>${escapeHtml(v4Text('Activity','Activiteit'))}</h3><div id="v4WorkspaceActivity" class="v4-activity-list"></div></section>`;
   const actions=$('v4WorkspaceActions');
-  const workspaceExternal=v4ExternalReservationButton(r);
   if(!reg){
     const b=document.createElement('button');b.className='action-btn primary';b.textContent=inv?v4Text('Copy registration link','Kopieer registratielink'):v4Text('Create registration link','Maak registratielink');
     b.onclick=async()=>{if(inv)await v4CopyRegistrationLink(r,b);else{await createReservationInvite(r,b,body);await v4LogActivity(r.id,'registration_link_generated',v4Text('Registration link generated','Registratielink gemaakt'));}};actions.appendChild(b);
@@ -2625,8 +2589,6 @@ function openV4Reservation(r){
     if(linked){const i=document.createElement('button');i.className='action-btn secondary';i.textContent=v4Text('Open invoice','Open factuur');i.onclick=()=>openV4Invoice(linked);actions.appendChild(i);}
     else if(reg.invoice_requested&&r.checkout_date<=localToday()){const i=document.createElement('button');i.className='action-btn secondary';i.textContent=v4Text('Create invoice','Maak factuur');i.onclick=()=>useRegistrationForInvoiceFromV4(reg);actions.appendChild(i);}
   }
-  if(workspaceExternal)actions.appendChild(workspaceExternal);
-
   if(r.status==='active'){
     const att=document.createElement('button');att.className='action-btn secondary';att.textContent=r.needs_attention?v4Text('Edit note','Bewerk notitie'):v4Text('Mark for attention','Markeer voor aandacht');att.onclick=()=>showV4AttentionEditor(r);actions.appendChild(att);
     if(r.needs_attention){const resolve=document.createElement('button');resolve.className='action-btn secondary';resolve.textContent=v4Text('Resolve','Oplossen');resolve.onclick=async()=>{await setReservationAttentionState(r,false,'');closeV4Reservation();};actions.appendChild(resolve);}

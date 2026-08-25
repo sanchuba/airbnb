@@ -3129,35 +3129,3 @@ body.v4-invoices-module #savedInvoicesCard { display:block; }
 .v4-reservation-card[data-removal-kind="feed"] .v4-res-relative {
   color:#7c746e;
 }
-
-
-/* =========================================================
-   v4.1.0 – external platform workflow shortcut
-   ========================================================= */
-.v4-platform-action {
-  text-decoration:none !important;
-  white-space:nowrap;
-  border:1px solid rgba(48,77,64,.13) !important;
-  background:#f4f0e9 !important;
-  color:var(--brand-brown) !important;
-}
-.v4-platform-action:hover {
-  background:#ece6dc !important;
-  border-color:rgba(48,77,64,.22) !important;
-}
-.v4-platform-action.compact {
-  min-height:38px;
-  padding:0 13px;
-  font-size:11.5px;
-}
-
-@media(max-width:700px){
-  .v4-card-actions {
-    flex-wrap:wrap;
-  }
-  .v4-card-actions .v4-platform-action {
-    flex:1 1 auto;
-    justify-content:center;
-    text-align:center;
-  }
-}
