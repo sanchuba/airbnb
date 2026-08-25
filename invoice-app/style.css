@@ -3380,3 +3380,9 @@ body.v4-invoices-module #savedInvoicesCard { display:block; }
 .qr-modal {
   z-index:10100 !important;
 }
+
+/* v4.1.5 – settings save acknowledgement */
+.v4-settings-save-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.v4-settings-save-feedback{font-size:12px;font-weight:750;color:#356a46;opacity:0;transform:translateY(2px);transition:opacity .18s ease,transform .18s ease}
+.v4-settings-save-feedback.visible{opacity:1;transform:translateY(0)}
+#v4SaveSettings.is-saved{background:#edf7f0!important;color:#356a46!important;border-color:#c6ddcc!important}

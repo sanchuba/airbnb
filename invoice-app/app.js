@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.1.4';
+const NGR_ADMIN_BUILD='4.1.5';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -2351,6 +2351,7 @@ function v4Settings(){
     return {...{cleaning:5,touristTax:3.71,extraGuest:20,taxMode:'included'},...JSON.parse(localStorage.getItem(V4_SETTINGS_KEY)||'{}')};
   }catch(e){ return {cleaning:5,touristTax:3.71,extraGuest:20,taxMode:'included'}; }
 }
+let v4SettingsSavedTimer=null;
 function v4SaveSettings(){
   const s={
     cleaning:Number($('v4DefaultCleaning').value||0),
@@ -2359,9 +2360,20 @@ function v4SaveSettings(){
     taxMode:$('v4DefaultTaxMode').value||'included'
   };
   localStorage.setItem(V4_SETTINGS_KEY,JSON.stringify(s));
-  closeV4Settings();
+  const btn=$('v4SaveSettings'),feedback=$('v4SettingsSaveFeedback');
+  window.clearTimeout(v4SettingsSavedTimer);
+  if(btn){btn.disabled=true;btn.classList.add('is-saved');btn.textContent=v4Text('Saved ✓','Opgeslagen ✓');}
+  if(feedback){feedback.textContent=v4Text('Settings saved successfully.','Instellingen succesvol opgeslagen.');feedback.classList.add('visible');}
+  v4SettingsSavedTimer=window.setTimeout(()=>{
+    if(btn){btn.disabled=false;btn.classList.remove('is-saved');btn.textContent=v4Text('Save settings','Instellingen opslaan');}
+    feedback?.classList.remove('visible');
+  },2200);
 }
 function openV4Settings(){
+  window.clearTimeout(v4SettingsSavedTimer);
+  $('v4SettingsSaveFeedback')?.classList.remove('visible');
+  const saveBtn=$('v4SaveSettings');
+  if(saveBtn){saveBtn.disabled=false;saveBtn.classList.remove('is-saved');saveBtn.textContent=v4Text('Save settings','Instellingen opslaan');}
   const s=v4Settings();
   $('v4DefaultCleaning').value=Number(s.cleaning).toFixed(2);
   $('v4DefaultTouristTax').value=Number(s.touristTax).toFixed(2);
@@ -2829,7 +2841,18 @@ function openV4GuestProfile(reg,knownStays=null){
 }
 
 function openV4Invoice(inv){
-  setV4Module('invoices');loadInvoice(inv);$('invoiceDetailsCard').classList.add('v4-invoice-open');$('previewWrapper').classList.add('v4-invoice-open');
+  if(isMobileShell()){
+    mobileShellState.scroll.invoices=window.scrollY;
+    loadInvoice(inv);
+    $('invoiceDetailsCard').classList.add('v4-invoice-open');
+    $('previewWrapper').classList.add('v4-invoice-open');
+    openMobileDetail('invoice','invoices');
+    return;
+  }
+  setV4Module('invoices');
+  loadInvoice(inv);
+  $('invoiceDetailsCard').classList.add('v4-invoice-open');
+  $('previewWrapper').classList.add('v4-invoice-open');
 }
 function useRegistrationForInvoiceFromV4(reg){
   currentRegistrationId=reg.id;

@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css?v=4.1.4" />
+  <link rel="stylesheet" href="./style.css?v=4.1.5" />
 </head>
 <body>
   <div class="container">
@@ -574,7 +574,7 @@
       <label>Default tax handling<select id="v4DefaultTaxMode"><option value="included">Included in accommodation</option><option value="excluded">Added on top</option></select></label>
     </div>
     <p class="muted">These defaults are stored on this device and are applied when creating a new invoice or manual guest registration.</p>
-    <button id="v4SaveSettings" class="action-btn primary" type="button">Save settings</button>
+    <div class="v4-settings-save-row"><button id="v4SaveSettings" class="action-btn primary" type="button">Save settings</button><span id="v4SettingsSaveFeedback" class="v4-settings-save-feedback" role="status" aria-live="polite"></span></div>
   </section>
 
   <div id="v4QrPickerBackdrop" class="v4-workspace-backdrop hidden screen-only"></div>
@@ -646,7 +646,7 @@
   </div>
   <button id="backToTopBtn" class="back-to-top-btn screen-only" type="button" aria-label="Back to top" title="Back to top">↑</button>
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-  <script type="module" src="./app.js?v=4.1.4"></script>
+  <script type="module" src="./app.js?v=4.1.5"></script>
   <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.16.10').catch(() => {}));
