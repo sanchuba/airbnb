@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.1.0-sync';
+const NGR_ADMIN_BUILD='4.1.1';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -2939,6 +2939,112 @@ toggleReservationNoShow=async function(r){
   const target=!r.no_show;await _v4ToggleNoShow(r);await v4LogActivity(r.id,target?'no_show_marked':'no_show_undone',target?v4Text('Marked as no-show','Gemarkeerd als no-show'):v4Text('No-show undone','No-show ongedaan gemaakt'));
 };
 
+
+function initV4ReservationSwipeDismiss(){
+  const sheet=$('v4ReservationWorkspace');
+  if(!sheet)return;
+
+  let tracking=false;
+  let startY=0;
+  let lastY=0;
+  let startTime=0;
+  let dragged=false;
+  let pointerId=null;
+
+  const resetVisual=()=>{
+    sheet.classList.remove('is-dragging','is-dismissing');
+    sheet.style.removeProperty('--sheet-drag-y');
+    $('v4ReservationBackdrop')?.style.removeProperty('opacity');
+  };
+
+  const canStart=e=>{
+    if(!isMobileShell())return false;
+    if(sheet.classList.contains('hidden'))return false;
+    // Only dismiss from the top of the sheet. If content is scrolled,
+    // normal vertical scrolling should win.
+    if(sheet.scrollTop>0)return false;
+    // Interactive controls must still receive taps normally.
+    if(e.target.closest('button,a,input,textarea,select,label'))return false;
+    return true;
+  };
+
+  sheet.addEventListener('pointerdown',e=>{
+    if(!canStart(e))return;
+    tracking=true;
+    dragged=false;
+    pointerId=e.pointerId;
+    startY=lastY=e.clientY;
+    startTime=performance.now();
+    sheet.setPointerCapture?.(pointerId);
+  });
+
+  sheet.addEventListener('pointermove',e=>{
+    if(!tracking||e.pointerId!==pointerId)return;
+    const dy=e.clientY-startY;
+    lastY=e.clientY;
+
+    // Upward motion stays with normal scroll behavior.
+    if(dy<=0){
+      if(dragged){
+        sheet.style.setProperty('--sheet-drag-y','0px');
+        $('v4ReservationBackdrop')?.style.setProperty('opacity','1');
+      }
+      return;
+    }
+
+    if(dy>5)dragged=true;
+    if(!dragged)return;
+
+    e.preventDefault();
+    sheet.classList.add('is-dragging');
+    const eased=dy<180?dy:180+(dy-180)*0.45;
+    sheet.style.setProperty('--sheet-drag-y',`${Math.max(0,eased)}px`);
+
+    const fade=Math.max(.22,1-Math.min(dy,360)/460);
+    $('v4ReservationBackdrop')?.style.setProperty('opacity',String(fade));
+  },{passive:false});
+
+  const finish=e=>{
+    if(!tracking)return;
+    if(pointerId!==null && e.pointerId!==undefined && e.pointerId!==pointerId)return;
+
+    const dy=Math.max(0,lastY-startY);
+    const elapsed=Math.max(1,performance.now()-startTime);
+    const velocity=dy/elapsed; // px/ms
+    const shouldDismiss=dragged && (dy>=120 || velocity>=0.72);
+
+    tracking=false;
+    try{ if(pointerId!==null)sheet.releasePointerCapture?.(pointerId); }catch(_){}
+    pointerId=null;
+
+    if(shouldDismiss){
+      sheet.classList.remove('is-dragging');
+      sheet.classList.add('is-dismissing');
+      sheet.style.setProperty('--sheet-drag-y','105vh');
+      $('v4ReservationBackdrop')?.style.setProperty('opacity','0');
+      window.setTimeout(()=>{
+        closeV4Reservation();
+        resetVisual();
+      },210);
+    }else{
+      sheet.classList.remove('is-dragging');
+      sheet.style.setProperty('--sheet-drag-y','0px');
+      $('v4ReservationBackdrop')?.style.setProperty('opacity','1');
+      window.setTimeout(resetVisual,220);
+    }
+  };
+
+  sheet.addEventListener('pointerup',finish);
+  sheet.addEventListener('pointercancel',finish);
+
+  // Explicit close/reopen should never inherit a previous drag transform.
+  const observer=new MutationObserver(()=>{
+    if(sheet.classList.contains('hidden'))resetVisual();
+  });
+  observer.observe(sheet,{attributes:true,attributeFilter:['class']});
+}
+
+
 function initV4(){
   // Desktop module navigation.
   document.querySelectorAll('[data-v4-module]').forEach(b=>b.onclick=()=>setV4Module(b.dataset.v4Module));
@@ -2986,6 +3092,7 @@ function initV4(){
   // Hide invoice task from Guests: it lives on Home.
   $('filterInvoice')?.classList.add('hidden');
 
+  initV4ReservationSwipeDismiss();
   renderV4All();
 }
 

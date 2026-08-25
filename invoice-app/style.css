@@ -3190,3 +3190,45 @@ body.v4-invoices-module #savedInvoicesCard { display:block; }
     text-align:center;
   }
 }
+
+
+/* =========================================================
+   v4.1.1 – mobile reservation swipe-to-dismiss
+   ========================================================= */
+.v4-mobile-sheet-handle {
+  display:none;
+}
+
+@media(max-width:700px){
+  .v4-reservation-workspace {
+    --sheet-drag-y:0px;
+    transform:translateY(var(--sheet-drag-y)) !important;
+    will-change:transform;
+    touch-action:pan-y;
+    transition:transform .20s cubic-bezier(.22,.8,.28,1);
+  }
+
+  .v4-reservation-workspace.is-dragging {
+    transition:none;
+    user-select:none;
+    -webkit-user-select:none;
+  }
+
+  .v4-reservation-workspace.is-dismissing {
+    pointer-events:none;
+  }
+
+  .v4-mobile-sheet-handle {
+    display:block;
+    width:38px;
+    height:4px;
+    margin:-5px auto 11px;
+    border-radius:999px;
+    background:#d0c8bf;
+    opacity:.9;
+  }
+
+  #v4ReservationBackdrop {
+    transition:opacity .20s ease;
+  }
+}
