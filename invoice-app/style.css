@@ -3372,3 +3372,11 @@ body.v4-invoices-module #savedInvoicesCard { display:block; }
     overflow:auto !important;
   }
 }
+
+
+/* =========================================================
+   v4.1.4 – QR modal above mobile reservation detail
+   ========================================================= */
+.qr-modal {
+  z-index:10100 !important;
+}
