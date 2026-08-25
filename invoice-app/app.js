@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.1.7';
+const NGR_ADMIN_BUILD='4.1.8';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -25,7 +25,14 @@ const tr = {
   }
 };
 
-let currentLang='en', currentRegistrationId=null, currentDraftReservationId=null, currentInvoiceId=null, registrations=[], invoices=[], reservations=[], reservationInvites=[], manualNights=false, registrationFilter='all', reservationFilter='upcoming', registrationDirty=false, invoiceDirty=false, suppressDirty=false;
+const NGR_LANGUAGE_KEY='ngrAdminPreferredLanguage';
+function ngrStoredLanguage(){
+  try{
+    const value=localStorage.getItem(NGR_LANGUAGE_KEY);
+    return value==='nl'||value==='en'?value:'en';
+  }catch(e){ return 'en'; }
+}
+let currentLang=ngrStoredLanguage(), currentRegistrationId=null, currentDraftReservationId=null, currentInvoiceId=null, registrations=[], invoices=[], reservations=[], reservationInvites=[], manualNights=false, registrationFilter='all', reservationFilter='upcoming', registrationDirty=false, invoiceDirty=false, suppressDirty=false;
 let lastDirtyScope='registration';
 const $=id=>document.getElementById(id);
 function updateMobileSaveBar(){
@@ -1533,6 +1540,87 @@ function renderAttention(){
 
 async function session(){ return (await supabaseClient.auth.getSession()).data.session; }
 async function allowed(){ const {data,error}=await supabaseClient.rpc('is_allowed_user'); return !error&&data===true; }
+
+async function loadAccountLanguagePreference(){
+  try{
+    const s=await session();
+    if(!s?.user?.id)return currentLang;
+    const {data,error}=await supabaseClient
+      .from('admin_user_preferences')
+      .select('preferred_language')
+      .eq('user_id',s.user.id)
+      .maybeSingle();
+
+    if(error){
+      console.warn('Could not load language preference',error);
+      return currentLang;
+    }
+
+    const remote=data?.preferred_language;
+    if(remote==='en'||remote==='nl'){
+      currentLang=remote;
+      try{ localStorage.setItem(NGR_LANGUAGE_KEY,remote); }catch(e){}
+      return remote;
+    }
+
+    // First use on this account: seed Supabase with the local preference.
+    await saveAccountLanguagePreference(currentLang,{silent:true});
+    return currentLang;
+  }catch(e){
+    console.warn('Could not load language preference',e);
+    return currentLang;
+  }
+}
+
+async function saveAccountLanguagePreference(lang,{silent=false}={}){
+  if(lang!=='en'&&lang!=='nl')return false;
+  try{ localStorage.setItem(NGR_LANGUAGE_KEY,lang); }catch(e){}
+
+  try{
+    const s=await session();
+    if(!s?.user?.id)return true;
+    const {error}=await supabaseClient
+      .from('admin_user_preferences')
+      .upsert({
+        user_id:s.user.id,
+        preferred_language:lang,
+        updated_at:new Date().toISOString()
+      },{onConflict:'user_id'});
+
+    if(error){
+      if(!silent)console.warn('Could not sync language preference',error);
+      return false;
+    }
+    return true;
+  }catch(e){
+    if(!silent)console.warn('Could not sync language preference',e);
+    return false;
+  }
+}
+
+async function applyAdminLanguage(lang,{persist=true}={}){
+  if(lang!=='en'&&lang!=='nl')return;
+  currentLang=lang;
+  if(persist){
+    // Local persistence happens synchronously inside this function; remote
+    // persistence may complete shortly afterwards.
+    saveAccountLanguagePreference(lang).catch(()=>{});
+  }else{
+    try{ localStorage.setItem(NGR_LANGUAGE_KEY,lang); }catch(e){}
+  }
+
+  setTexts();
+  toggleRegInvoice();
+  toggleIdOther();
+  toggleInvoiceCustom();
+  renderReservations();
+  updateMobileSaveBar();
+  renderCalendarSyncAge();
+  renderCalendar();
+  updateMobileShellText();
+  if(pendingLoginEmail)startOtpCooldown(pendingLoginEmail);
+}
+
 let pendingLoginEmail='';
 let otpCooldownTimer=null;
 const OTP_COOLDOWN_MS=60*1000;
@@ -2198,7 +2286,7 @@ Object.values(rf).forEach(v=>{if(!v||v.type==='hidden')return; const ev=(v.tagNa
 Object.values(f).forEach(v=>{if(!v||v.type==='hidden')return; const ev=(v.tagName==='SELECT'||v.type==='checkbox')?'change':'input'; v.addEventListener(ev,markInvoiceDirty);});
 document.querySelectorAll('#invoiceDetailsCard input,#invoiceDetailsCard select,#invoiceDetailsCard textarea').forEach(el=>{el.addEventListener('input',()=>clearInvoiceFieldError(el));el.addEventListener('change',()=>clearInvoiceFieldError(el));});
 document.querySelectorAll('[data-reservation-filter]').forEach(b=>b.onclick=()=>setReservationFilter(b.dataset.reservationFilter));
-document.querySelectorAll('.lang-btn').forEach(b=>b.onclick=()=>{currentLang=b.dataset.lang;setTexts();toggleRegInvoice();toggleIdOther();toggleInvoiceCustom();renderReservations();updateMobileSaveBar();renderCalendarSyncAge();renderCalendar();updateMobileShellText();if(pendingLoginEmail)startOtpCooldown(pendingLoginEmail);});
+document.querySelectorAll('.lang-btn').forEach(b=>b.onclick=()=>applyAdminLanguage(b.dataset.lang,{persist:true}));
 
 
 $('calendarViewMonthBtn').onclick=()=>{
@@ -3223,7 +3311,45 @@ initV4();
 
 initAdminNav();
 
-async function init(){setTexts();setReservationFilter(reservationFilter);toggleRegInvoice();toggleIdOther();toggleInvoiceCustom();const s=await session();if(!s){document.body.classList.remove('mobile-app-active');$('loginView').classList.remove('hidden');$('appView').classList.add('hidden');return;}if(!(await allowed())){await supabaseClient.auth.signOut();$('loginMessage').textContent=tr[currentLang].denied;return;}$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');$('logoutBtn').classList.remove('hidden');initMobileAppShell();await Promise.all([loadRegs(),loadInvoices(),loadReservations(),newInvoice(true)]); setReservationFilter(reservationFilter||'upcoming'); await autoSyncCalendars();}
+async function init(){
+  // Render immediately in the locally remembered language, including login.
+  setTexts();
+  setReservationFilter(reservationFilter);
+  toggleRegInvoice();
+  toggleIdOther();
+  toggleInvoiceCustom();
+
+  const s=await session();
+  if(!s){
+    document.body.classList.remove('mobile-app-active');
+    $('loginView').classList.remove('hidden');
+    $('appView').classList.add('hidden');
+    return;
+  }
+
+  if(!(await allowed())){
+    await supabaseClient.auth.signOut();
+    $('loginMessage').textContent=tr[currentLang].denied;
+    return;
+  }
+
+  // Supabase is authoritative after login, enabling cross-device language sync.
+  const before=currentLang;
+  await loadAccountLanguagePreference();
+  if(currentLang!==before){
+    await applyAdminLanguage(currentLang,{persist:false});
+  }else{
+    setTexts();
+  }
+
+  $('loginView').classList.add('hidden');
+  $('appView').classList.remove('hidden');
+  $('logoutBtn').classList.remove('hidden');
+  initMobileAppShell();
+  await Promise.all([loadRegs(),loadInvoices(),loadReservations(),newInvoice(true)]);
+  setReservationFilter(reservationFilter||'upcoming');
+  await autoSyncCalendars();
+}
 init().catch(err=>{
   console.error('Admin initialization failed:', err);
   const msg=document.getElementById('loginMessage');
