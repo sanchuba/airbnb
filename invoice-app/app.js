@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.0.9';
+const NGR_ADMIN_BUILD='4.1.0-sync';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -1378,15 +1378,118 @@ function renderCalendarSyncAge(){
   else if(mins<60)status.textContent=x.calendarUpdatedMinutes.replace('{minutes}',mins);
   else{const hours=Math.floor(mins/60);status.textContent=hours===1?x.calendarUpdatedHour:x.calendarUpdatedHours.replace('{hours}',hours);}
 }
+let manualCalendarSyncResetTimer=null;
+
+function ensureCalendarSyncToast(){
+  let toast=document.getElementById('calendarSyncToast');
+  if(toast)return toast;
+  toast=document.createElement('div');
+  toast.id='calendarSyncToast';
+  toast.className='calendar-sync-toast hidden';
+  toast.setAttribute('role','status');
+  toast.setAttribute('aria-live','polite');
+  document.body.appendChild(toast);
+  return toast;
+}
+
+function setManualCalendarSyncUi(state,errorMessage=''){
+  const homeBtn=$('v4HomeSyncBtn');
+  const reservationsBtn=$('syncCalendarsBtn');
+  const toolsBtn=$('v4ToolsSyncBtn');
+  const toolsStrong=toolsBtn?.querySelector('strong');
+  const toolsSmall=toolsBtn?.querySelector('small');
+  const toast=ensureCalendarSyncToast();
+
+  window.clearTimeout(manualCalendarSyncResetTimer);
+
+  const labels={
+    idle:{
+      button:currentLang==='nl'?'Kalenders synchroniseren':'Sync calendars',
+      tools:currentLang==='nl'?'Kalenders synchroniseren':'Sync calendars',
+      small:currentLang==='nl'?'Airbnb & Booking.com vernieuwen':'Refresh Airbnb & Booking.com'
+    },
+    syncing:{
+      button:currentLang==='nl'?'Synchroniseren…':'Syncing…',
+      tools:currentLang==='nl'?'Synchroniseren…':'Syncing…',
+      small:currentLang==='nl'?'Even geduld':'Please wait'
+    },
+    success:{
+      button:currentLang==='nl'?'Gesynchroniseerd ✓':'Synced ✓',
+      tools:currentLang==='nl'?'Gesynchroniseerd ✓':'Synced ✓',
+      small:currentLang==='nl'?'Zojuist bijgewerkt':'Updated just now'
+    },
+    error:{
+      button:currentLang==='nl'?'Synchronisatie mislukt':'Sync failed',
+      tools:currentLang==='nl'?'Synchronisatie mislukt':'Sync failed',
+      small:currentLang==='nl'?'Klik om opnieuw te proberen':'Click to try again'
+    }
+  };
+  const label=labels[state]||labels.idle;
+  const busy=state==='syncing';
+
+  [homeBtn,reservationsBtn,toolsBtn].forEach(btn=>{
+    if(btn)btn.disabled=busy;
+  });
+  if(homeBtn)homeBtn.textContent=label.button;
+  if(reservationsBtn)reservationsBtn.textContent=label.button;
+  if(toolsStrong)toolsStrong.textContent=label.tools;
+  if(toolsSmall)toolsSmall.textContent=label.small;
+
+  [homeBtn,reservationsBtn,toolsBtn].forEach(btn=>{
+    if(!btn)return;
+    btn.classList.toggle('sync-state-success',state==='success');
+    btn.classList.toggle('sync-state-error',state==='error');
+    btn.classList.toggle('sync-state-syncing',state==='syncing');
+  });
+
+  if(state==='syncing'){
+    toast.textContent=currentLang==='nl'?'Kalenders worden gesynchroniseerd…':'Syncing calendars…';
+    toast.className='calendar-sync-toast is-syncing';
+  }else if(state==='success'){
+    toast.textContent=currentLang==='nl'?'Kalenders succesvol gesynchroniseerd ✓':'Calendars synced successfully ✓';
+    toast.className='calendar-sync-toast is-success';
+  }else if(state==='error'){
+    toast.textContent=(currentLang==='nl'?'Synchronisatie mislukt':'Calendar sync failed')+(errorMessage?` · ${errorMessage}`:'');
+    toast.className='calendar-sync-toast is-error';
+  }else{
+    toast.className='calendar-sync-toast hidden';
+  }
+
+  if(state==='success'||state==='error'){
+    manualCalendarSyncResetTimer=window.setTimeout(()=>{
+      setManualCalendarSyncUi('idle');
+    },state==='success'?2800:4500);
+  }
+}
+
 async function syncCalendars(showFeedback=true){
-  const btn=$('syncCalendarsBtn'),status=$('calendarSyncStatus'); if(btn)btn.disabled=true;
-  calendarStatusMode='syncing';if(status)status.textContent=tr[currentLang].syncingCalendars;
-  const {data,error}=await supabaseClient.functions.invoke('sync-ical');
-  if(btn)btn.disabled=false;
-  if(error){calendarStatusMode='error';if(status)status.textContent=`${tr[currentLang].syncFailed}: ${error.message}`;return false;}
+  const status=$('calendarSyncStatus');
+  if(showFeedback)setManualCalendarSyncUi('syncing');
+  calendarStatusMode='syncing';
+  if(status)status.textContent=tr[currentLang].syncingCalendars;
+
+  let data,error;
+  try{
+    const result=await supabaseClient.functions.invoke('sync-ical');
+    data=result.data;
+    error=result.error;
+  }catch(err){
+    error=err;
+  }
+
+  if(error){
+    calendarStatusMode='error';
+    if(status)status.textContent=`${tr[currentLang].syncFailed}: ${error.message||error}`;
+    if(showFeedback)setManualCalendarSyncUi('error',error.message||String(error));
+    return false;
+  }
+
   localStorage.setItem('ngrLastIcalSync',String(Date.now()));
-  calendarStatusMode='relative';renderCalendarSyncAge();
-  await loadReservations();return true;
+  calendarStatusMode='relative';
+  renderCalendarSyncAge();
+  await loadReservations();
+  if(showFeedback)setManualCalendarSyncUi('success');
+  return true;
 }
 async function autoSyncCalendars(){const last=Number(localStorage.getItem('ngrLastIcalSync')||0);renderCalendarSyncAge();if(Date.now()-last>15*60*1000)await syncCalendars(false);}
 setInterval(renderCalendarSyncAge,30000);
@@ -2917,6 +3020,7 @@ setTexts=function(){
   if($('registrationTitle'))$('registrationTitle').textContent=v4Text('Guests','Gasten');
   if($('registrationArchiveSubtitle'))$('registrationArchiveSubtitle').textContent=v4Text('Guest profiles, registrations and stay history.','Gastprofielen, registraties en verblijfsgeschiedenis.');
   if($('savedInvoicesTitle'))$('savedInvoicesTitle').textContent=v4Text('Invoices','Facturen');
+  if(!$('v4HomeSyncBtn')?.disabled && !$('syncCalendarsBtn')?.disabled)setManualCalendarSyncUi('idle');
   renderV4All();
 };
 
