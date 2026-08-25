@@ -700,10 +700,24 @@ function openCalendarDetail(r){
 }
 function closeCalendarDetail(){$('calendarDetailBackdrop')?.classList.add('hidden');$('calendarDetailSheet')?.classList.add('hidden');}
 function openReservationFromCalendar(id){
-  if(isMobileShell()){setMobileTab('reservations',{restore:false});}
-  else document.querySelector('#navReservations')?.click();
+  const reservation=reservations.find(r=>r.id===id);
+  if(!reservation)return;
+
   setReservationFilter('all');
-  requestAnimationFrame(()=>{const card=document.querySelector(`[data-reservation-id="${CSS.escape(id)}"]`);card?.scrollIntoView({behavior:'smooth',block:'center'});card?.classList.add('calendar-target-flash');setTimeout(()=>card?.classList.remove('calendar-target-flash'),1800);});
+
+  if(isMobileShell()){
+    setMobileTab('reservations',{restore:false});
+    requestAnimationFrame(()=>{
+      const card=document.querySelector(`[data-reservation-id="${CSS.escape(id)}"]`);
+      card?.scrollIntoView({behavior:'smooth',block:'center'});
+      card?.classList.add('calendar-target-flash');
+      setTimeout(()=>card?.classList.remove('calendar-target-flash'),1800);
+    });
+    return;
+  }
+
+  setV4Module('reservations');
+  requestAnimationFrame(()=>openV4Reservation(reservation));
 }
 function changeCalendarMonth(delta){
   if(!calendarRoomView)return;
@@ -1500,6 +1514,19 @@ function populateCountries(select, selected=''){
   const items=COUNTRY_CODES.map(code=>({code,name:dn.of(code)})).sort((a,b)=>a.name.localeCompare(b.name,currentLang));
   select.innerHTML='<option value="">'+placeholder+'</option>'+items.map(i=>'<option value="'+i.code+'">'+i.name+'</option>').join('');
   if(selected){ select.value=selected; if(!select.value){const o=document.createElement('option');o.value=selected;o.textContent=selected;select.appendChild(o);select.value=selected;} }
+}
+
+function countryDisplayName(value){
+  const raw=String(value||'').trim();
+  if(!raw)return '';
+  const code=raw.toUpperCase();
+  if(/^[A-Z]{2}$/.test(code)){
+    try{
+      const dn=new Intl.DisplayNames([currentLang==='nl'?'nl':'en'],{type:'region'});
+      return dn.of(code)||raw;
+    }catch(e){}
+  }
+  return raw;
 }
 
 
@@ -2577,7 +2604,7 @@ function v4GuestGroups(){
 function renderRegsV4(){
   const x=tr[currentLang],q=($('registrationSearch').value||'').trim().toLowerCase(),t=localToday();
   const groups=v4GuestGroups().filter(stays=>{
-    if(q&&!stays.some(r=>[r.full_name,r.email,r.booking_reference,r.country].filter(Boolean).some(v=>String(v).toLowerCase().includes(q))))return false;
+    if(q&&!stays.some(r=>[r.full_name,r.email,r.booking_reference,r.country,countryDisplayName(r.country)].filter(Boolean).some(v=>String(v).toLowerCase().includes(q))))return false;
     if(registrationFilter==='all')return true;
     return stays.some(r=>{
       if(registrationFilter==='upcoming')return r.checkin_date>t;
@@ -2596,7 +2623,7 @@ function renderRegsV4(){
     const latest=stays[0],current=stays.find(r=>r.checkin_date<=t&&r.checkout_date>t),next=stays.filter(r=>r.checkin_date>t).sort((a,b)=>a.checkin_date.localeCompare(b.checkin_date))[0];
     const d=document.createElement('div');d.className='registration-item clickable-list-card';
     d.innerHTML=`<div class="list-item-content"><strong>${escapeHtml(latest.full_name)}</strong>
-      <span class="muted">${escapeHtml(latest.country||'')} ${stays.length>1?'· '+stays.length+' '+v4Text('stays','verblijven'):''}</span>
+      <span class="muted">${escapeHtml(countryDisplayName(latest.country))} ${stays.length>1?'· '+stays.length+' '+v4Text('stays','verblijven'):''}</span>
       <div class="registration-badges">
         ${current?`<span class="badge good">${escapeHtml(v4Text('Staying now','Verblijft nu'))}</span>`:''}
         ${next?`<span class="badge">${escapeHtml(v4Text('Next','Volgende'))}: ${fmt(next.checkin_date)}</span>`:''}
@@ -2617,7 +2644,7 @@ function openV4GuestProfile(reg,knownStays=null){
   loadReg(reg,'heading');
   const summary=$('v4GuestProfileSummary');
   if(summary){
-    summary.innerHTML=`<h3>${escapeHtml(reg.full_name)}</h3><p>${escapeHtml(reg.email||reg.country||'')} · ${stays.length} ${escapeHtml(v4Text(stays.length===1?'stay':'stays',stays.length===1?'verblijf':'verblijven'))}</p>
+    summary.innerHTML=`<h3>${escapeHtml(reg.full_name)}</h3><p>${escapeHtml(reg.email||countryDisplayName(reg.country)||'')} · ${stays.length} ${escapeHtml(v4Text(stays.length===1?'stay':'stays',stays.length===1?'verblijf':'verblijven'))}</p>
       <div class="v4-guest-stays">${stays.map(s=>`<button type="button" class="v4-stay-chip" data-reg-id="${s.id}">${fmt(s.checkin_date)} → ${fmt(s.checkout_date)}</button>`).join('')}</div>`;
     summary.classList.remove('hidden');
     summary.querySelectorAll('[data-reg-id]').forEach(b=>b.onclick=()=>{const target=registrations.find(x=>x.id===b.dataset.regId);if(target)openV4GuestProfile(target,stays);});
@@ -2704,7 +2731,7 @@ function v4GlobalSearch(){
   if(!q){box.classList.add('hidden');box.innerHTML='';return;}
   const results=[];
   reservations.filter(isReservationListRecord).forEach(r=>{const reg=reservationRegistration(r.id);const values=[v4ReservationDisplayName(r),reservationBookingReference(r),roomLabel(r.room_key),reg?.email];if(values.filter(Boolean).some(v=>String(v).toLowerCase().includes(q)))results.push({type:v4Text('Reservation','Reservering'),title:v4ReservationDisplayName(r),meta:`${fmt(r.checkin_date)} → ${fmt(r.checkout_date)}`,go:()=>openV4Reservation(r)});});
-  v4GuestGroups().forEach(g=>{const r=g[0];if([r.full_name,r.email,r.country].filter(Boolean).some(v=>String(v).toLowerCase().includes(q)))results.push({type:v4Text('Guest','Gast'),title:r.full_name,meta:`${g.length} ${v4Text('stay(s)','verblijf/verblijven')}`,go:()=>openV4GuestProfile(r,g)});});
+  v4GuestGroups().forEach(g=>{const r=g[0];if([r.full_name,r.email,r.country,countryDisplayName(r.country)].filter(Boolean).some(v=>String(v).toLowerCase().includes(q)))results.push({type:v4Text('Guest','Gast'),title:r.full_name,meta:`${g.length} ${v4Text('stay(s)','verblijf/verblijven')}`,go:()=>openV4GuestProfile(r,g)});});
   invoices.forEach(i=>{if([i.invoice_number,i.guest_name,i.booking_reference,i.guest_email].filter(Boolean).some(v=>String(v).toLowerCase().includes(q)))results.push({type:v4Text('Invoice','Factuur'),title:i.invoice_number,meta:i.guest_name,go:()=>openV4Invoice(i)});});
   box.innerHTML='';results.slice(0,12).forEach(r=>{const b=document.createElement('button');b.type='button';b.className='v4-search-result';b.innerHTML=`<div><strong>${escapeHtml(r.title)}</strong><small>${escapeHtml(r.meta||'')}</small></div><span class="v4-search-type">${escapeHtml(r.type)}</span>`;b.onclick=()=>{box.classList.add('hidden');$('v4GlobalSearch').value='';r.go();};box.appendChild(b);});
   if(!results.length)box.innerHTML=`<div class="v4-empty-state">${escapeHtml(v4Text('No results','Geen resultaten'))}</div>`;
