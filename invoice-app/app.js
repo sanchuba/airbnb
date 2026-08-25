@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.1.5';
+const NGR_ADMIN_BUILD='4.1.6';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -2908,8 +2908,11 @@ function closeV4Tools(){
 
 function setV4Module(module){
   if(isMobileShell()){
-    if(module==='home'||module==='reservations'||module==='calendar'||module==='guests')setMobileTab(module,{restore:false});
-    else if(module==='invoices'){closeMobileMore();mobileShellState.detail=null;mobileMainElements().forEach(el=>el.classList.add('mobile-shell-hidden'));$('savedInvoicesCard').classList.remove('mobile-shell-hidden');$('mobileBottomNav').classList.remove('hidden');window.scrollTo({top:0,behavior:'auto'});}
+    // Invoices is a real internal mobile route even though it intentionally
+    // has no bottom-navigation button and is reached through More.
+    if(['home','reservations','calendar','guests','invoices'].includes(module)){
+      setMobileTab(module,{restore:module==='invoices',replaceHistory:true});
+    }
     return;
   }
   v4DesktopModule=module;
@@ -3158,7 +3161,11 @@ updateMobileShellText=function(){
 const _v4InitMobileShell=initMobileAppShell;
 initMobileAppShell=function(){
   _v4InitMobileShell();
-  if(isMobileShell()&&!mobileShellState.detail)setMobileTab('home',{restore:false,replaceHistory:true});
+  if(isMobileShell()&&!mobileShellState.detail){
+    mobileShellState.tab='home';
+    mobileShellState.scroll.home=mobileShellState.scroll.home||0;
+    setMobileTab('home',{restore:false,replaceHistory:true});
+  }
 };
 
 // Replace descriptive labels with the v4 information architecture.
