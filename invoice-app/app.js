@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.1.6';
+const NGR_ADMIN_BUILD='4.1.7';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -2406,6 +2406,29 @@ function v4PlatformLabel(r){
   if(r.platform==='booking')return 'Booking.com';
   return v4Text('Direct','Direct');
 }
+
+function v4ReservationExternalLink(r){
+  if(!r)return null;
+  if(r.platform==='airbnb' && r.reservation_url){
+    return {
+      label:v4Text('Open in Airbnb ↗','Open in Airbnb ↗'),
+      shortLabel:v4Text('Open reservation ↗','Open reservering ↗'),
+      url:r.reservation_url
+    };
+  }
+  if(r.platform==='booking'){
+    const url=bookingAdminReservationUrl(bookingReferenceForReservation(r));
+    if(url){
+      return {
+        label:v4Text('Open in Booking.com ↗','Open in Booking.com ↗'),
+        shortLabel:v4Text('Open reservation ↗','Open reservering ↗'),
+        url
+      };
+    }
+  }
+  return null;
+}
+
 function v4ReservationDisplayName(r){
   const reg=reservationRegistration(r.id);
   if(reg?.full_name)return reg.full_name;
@@ -2683,7 +2706,11 @@ function closeV4Reservation(){
 function openV4Reservation(r){
   if(!r)return;v4CurrentReservation=r;
   const reg=reservationRegistration(r.id),inv=reservationInvite(r.id),linked=reg?linkedInvoiceForRegistration(reg.id):null;
-  $('v4ReservationWorkspacePlatform').innerHTML=`<span class="platform-pill ${r.platform==='airbnb'?'airbnb':'booking'}">${escapeHtml(v4PlatformLabel(r))}</span>`;
+  const externalLink=v4ReservationExternalLink(r);
+  $('v4ReservationWorkspacePlatform').innerHTML=`<div class="v4-workspace-platform-row">
+    <span class="platform-pill ${r.platform==='airbnb'?'airbnb':'booking'}">${escapeHtml(v4PlatformLabel(r))}</span>
+    ${externalLink?`<a class="v4-platform-inline-link" href="${escapeHtml(externalLink.url)}" target="_blank" rel="noopener">${escapeHtml(externalLink.shortLabel)}</a>`:''}
+  </div>`;
   $('v4ReservationWorkspaceTitle').textContent=v4ReservationDisplayName(r);
   $('v4ReservationWorkspaceSubtitle').textContent=`${roomLabel(r.room_key)} · ${fmt(r.checkin_date)} → ${fmt(r.checkout_date)} · ${reservationNightsBetween(r.checkin_date,r.checkout_date)} ${tr[currentLang].nightsWord}`;
   const body=$('v4ReservationWorkspaceBody');body.innerHTML=`
@@ -2692,7 +2719,12 @@ function openV4Reservation(r){
         <dt>${escapeHtml(v4Text('Room','Kamer'))}</dt><dd>${escapeHtml(roomLabel(r.room_key))}</dd>
         <dt>${escapeHtml(v4Text('Check-in','Incheck'))}</dt><dd>${fmt(r.checkin_date)}</dd>
         <dt>${escapeHtml(v4Text('Check-out','Uitcheck'))}</dt><dd>${fmt(r.checkout_date)}</dd>
-        <dt>${escapeHtml(v4Text('Reference','Referentie'))}</dt><dd>${escapeHtml(reservationBookingReference(r)||'—')}</dd>
+        <dt>${escapeHtml(v4Text('Reference','Referentie'))}</dt><dd>
+          <div class="v4-reference-with-link">
+            <span>${escapeHtml(reservationBookingReference(r)||'—')}</span>
+            ${externalLink?`<a class="v4-reference-platform-link" href="${escapeHtml(externalLink.url)}" target="_blank" rel="noopener">${escapeHtml(externalLink.label)}</a>`:''}
+          </div>
+        </dd>
         <dt>${escapeHtml(v4Text('Status','Status'))}</dt><dd>${escapeHtml(v4LifecycleLabel(r))}</dd>
       </dl></section>
       <section class="v4-workspace-card"><h3>${escapeHtml(v4Text('Workflow','Workflow'))}</h3><div class="v4-workflow-row">${v4WorkflowHtml(r)}</div></section>

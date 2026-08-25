@@ -3386,3 +3386,47 @@ body.v4-invoices-module #savedInvoicesCard { display:block; }
 .v4-settings-save-feedback{font-size:12px;font-weight:750;color:#356a46;opacity:0;transform:translateY(2px);transition:opacity .18s ease,transform .18s ease}
 .v4-settings-save-feedback.visible{opacity:1;transform:translateY(0)}
 #v4SaveSettings.is-saved{background:#edf7f0!important;color:#356a46!important;border-color:#c6ddcc!important}
+
+
+/* =========================================================
+   v4.1.7 – reservation external platform shortcut
+   ========================================================= */
+.v4-workspace-platform-row {
+  display:flex;
+  align-items:center;
+  gap:9px;
+  flex-wrap:wrap;
+}
+.v4-platform-inline-link,
+.v4-reference-platform-link {
+  color:var(--brand-green);
+  text-decoration:none;
+  font-weight:750;
+}
+.v4-platform-inline-link {
+  font-size:11.5px;
+  padding:5px 8px;
+  border-radius:999px;
+  background:#f4f0e9;
+  border:1px solid rgba(48,77,64,.10);
+}
+.v4-platform-inline-link:hover,
+.v4-reference-platform-link:hover {
+  text-decoration:underline;
+}
+.v4-reference-with-link {
+  display:flex;
+  flex-direction:column;
+  align-items:flex-end;
+  gap:4px;
+}
+.v4-reference-platform-link {
+  font-size:10.5px;
+  line-height:1.25;
+}
+@media(max-width:700px){
+  .v4-workspace-platform-row { gap:8px; }
+  .v4-platform-inline-link { font-size:11px; padding:5px 8px; }
+  .v4-reference-with-link { align-items:flex-end; max-width:100%; }
+  .v4-reference-platform-link { max-width:190px; text-align:right; }
+}
