@@ -760,6 +760,7 @@ const reservationFilterPredicates={
   upcoming:(r,c)=>c.active&&c.live&&r.checkin_date>c.today,
   arrivingSoon:(r,c)=>c.active&&c.live&&r.checkin_date>=c.today&&r.checkin_date<=addDaysIso(c.today,3),
   staying:(r,c)=>c.active&&c.live&&r.checkin_date<=c.today&&r.checkout_date>c.today,
+  departures:(r,c)=>c.active&&c.live&&r.checkout_date===c.today,
 
   // Host action queues.
   registrationLinkNotCreated:(r,c)=>c.active&&c.live&&c.stayOpen&&!c.reg&&(!c.validInvite||!r.registration_link_copied_at),
@@ -779,6 +780,7 @@ const reservationFilterSortModes={
   upcoming:'checkinAsc',
   arrivingSoon:'checkinAsc',
   staying:'checkinAsc',
+  departures:'checkoutAsc',
   registrationLinkNotCreated:'checkinAsc',
   needsAttention:'checkinAsc',
   idToVerify:'checkinAsc',
@@ -1651,7 +1653,7 @@ function initMobileAppShell(){
 
     // Native-app style behavior: tapping the already-active primary tab again
     // returns that list to the top instead of appearing to do nothing.
-    if(!mobileShellState.detail && mobileShellState.tab===tab && ['reservations','guests','invoices'].includes(tab)){
+    if(!mobileShellState.detail && mobileShellState.tab===tab && ['home','reservations','guests','invoices'].includes(tab)){
       mobileShellState.scroll[tab]=0;
       window.scrollTo({top:0,behavior:'smooth'});
       return;
@@ -2177,6 +2179,525 @@ if(backToTopBtn){
 }
 
 window.addEventListener('beforeunload',e=>{if(registrationDirty||invoiceDirty){e.preventDefault();e.returnValue='';}});
+
+// ================================================================
+// v4.0.0 – Product architecture layer
+// ================================================================
+let v4DesktopModule='home';
+let v4ReservationPlatform='';
+let v4ReservationRoom='';
+let v4CurrentReservation=null;
+let v4Activities=[];
+const V4_SETTINGS_KEY='ngrAdminV4Settings';
+
+function v4Text(en,nl){ return currentLang==='nl'?nl:en; }
+function v4Settings(){
+  try{
+    return {...{cleaning:5,touristTax:3.71,extraGuest:20,taxMode:'included'},...JSON.parse(localStorage.getItem(V4_SETTINGS_KEY)||'{}')};
+  }catch(e){ return {cleaning:5,touristTax:3.71,extraGuest:20,taxMode:'included'}; }
+}
+function v4SaveSettings(){
+  const s={
+    cleaning:Number($('v4DefaultCleaning').value||0),
+    touristTax:Number($('v4DefaultTouristTax').value||0),
+    extraGuest:Number($('v4DefaultExtraGuest').value||0),
+    taxMode:$('v4DefaultTaxMode').value||'included'
+  };
+  localStorage.setItem(V4_SETTINGS_KEY,JSON.stringify(s));
+  closeV4Settings();
+}
+function openV4Settings(){
+  const s=v4Settings();
+  $('v4DefaultCleaning').value=Number(s.cleaning).toFixed(2);
+  $('v4DefaultTouristTax').value=Number(s.touristTax).toFixed(2);
+  $('v4DefaultExtraGuest').value=Number(s.extraGuest).toFixed(2);
+  $('v4DefaultTaxMode').value=s.taxMode;
+  $('v4SettingsSheet').classList.remove('hidden');
+  $('v4SettingsBackdrop').classList.remove('hidden');
+}
+function closeV4Settings(){
+  $('v4SettingsSheet').classList.add('hidden');
+  $('v4SettingsBackdrop').classList.add('hidden');
+}
+
+function v4LifecycleLabel(r){
+  const t=localToday();
+  if(r.status!=='active') return v4Text('Cancelled','Geannuleerd');
+  if(r.no_show) return v4Text('No-show','No-show');
+  if(r.checkin_date===t) return v4Text('Arrives today','Komt vandaag');
+  if(r.checkout_date===t) return v4Text('Departs today','Vertrekt vandaag');
+  if(r.checkin_date<=t && r.checkout_date>t) return v4Text('Staying now','Verblijft nu');
+  const tomorrow=addDaysIso(t,1);
+  if(r.checkin_date===tomorrow) return v4Text('Arrives tomorrow','Komt morgen');
+  if(r.checkin_date>t) return v4Text('Upcoming','Aankomend');
+  return v4Text('Past stay','Verleden verblijf');
+}
+function v4PlatformLabel(r){
+  if(r.platform==='airbnb')return 'Airbnb';
+  if(r.platform==='booking')return 'Booking.com';
+  return v4Text('Direct','Direct');
+}
+function v4ReservationDisplayName(r){
+  const reg=reservationRegistration(r.id);
+  if(reg?.full_name)return reg.full_name;
+  const ref=bookingReferenceForReservation(r);
+  if(ref)return ref;
+  return r.reservation_code||v4PlatformLabel(r);
+}
+function v4WorkflowHtml(r){
+  const reg=reservationRegistration(r.id), inv=reg?linkedInvoiceForRegistration(reg.id):null;
+  const registration=reg
+    ? `<span class="v4-workflow-chip good">✓ ${escapeHtml(v4Text('Registration','Registratie'))}</span>`
+    : `<span class="v4-workflow-chip warn">${escapeHtml(v4Text('Registration pending','Registratie open'))}</span>`;
+  const id=reg
+    ? `<span class="v4-workflow-chip ${reg.id_verified?'good':'warn'}">${reg.id_verified?'✓ ':''}${escapeHtml(reg.id_verified?v4Text('ID verified','ID geverifieerd'):v4Text('ID pending','ID open'))}</span>`
+    : `<span class="v4-workflow-chip muted">${escapeHtml(v4Text('ID later','ID later'))}</span>`;
+  let invoice='';
+  if(inv) invoice=`<span class="v4-workflow-chip good">✓ ${escapeHtml(v4Text('Invoice','Factuur'))} ${escapeHtml(inv.invoice_number)}</span>`;
+  else if(reg?.invoice_requested && r.checkout_date<=localToday()) invoice=`<span class="v4-workflow-chip warn">${escapeHtml(v4Text('Invoice to create','Factuur maken'))}</span>`;
+  else invoice=`<span class="v4-workflow-chip muted">${escapeHtml(v4Text('Invoice later','Factuur later'))}</span>`;
+  return registration+id+invoice;
+}
+function v4TaskCount(){
+  return ['registrationLinkNotCreated','idToVerify','invoiceToCreate','missingBookingReference','expiredRegistrationLink','needsAttention']
+    .reduce((n,key)=>n+reservationFilterCount(key),0);
+}
+function v4DepartureCount(){
+  const t=localToday();
+  return reservations.filter(isRealReservation).filter(r=>r.status==='active'&&!r.no_show&&r.checkout_date===t).length;
+}
+
+function v4TaskDefinition(r){
+  const c=reservationFilterContext(r);
+  if(reservationMatchesFilter(r,'registrationLinkNotCreated')) return {type:'link',label:v4Text('Registration link to send','Registratielink versturen')};
+  if(reservationMatchesFilter(r,'idToVerify')) return {type:'id',label:v4Text('ID to verify','ID verifiëren')};
+  if(reservationMatchesFilter(r,'invoiceToCreate')) return {type:'invoice',label:v4Text('Invoice to create','Factuur maken')};
+  if(reservationMatchesFilter(r,'missingBookingReference')) return {type:'bookingref',label:v4Text('Booking reference missing','Booking-referentie ontbreekt')};
+  if(reservationMatchesFilter(r,'expiredRegistrationLink')) return {type:'expired',label:v4Text('Registration link expired','Registratielink verlopen')};
+  if(reservationMatchesFilter(r,'needsAttention')) return {type:'attention',label:v4Text('Needs attention','Aandacht nodig')};
+  return null;
+}
+function v4AllTasks(){
+  const order={link:1,id:2,attention:3,bookingref:4,expired:5,invoice:6};
+  return reservations.filter(isRealReservation).map(r=>({r,task:v4TaskDefinition(r)})).filter(x=>x.task)
+    .sort((a,b)=>(order[a.task.type]-order[b.task.type])||String(a.r.checkin_date).localeCompare(String(b.r.checkin_date)));
+}
+
+async function v4CopyRegistrationLink(r,btn){
+  const inv=reservationInvite(r.id);
+  if(!inv){ await createReservationInvite(r,btn,btn.closest('.v4-task,.v4-reservation-card,.v4-reservation-workspace')||document.body); return; }
+  try{
+    await navigator.clipboard.writeText(reservationLink(inv));
+    btn.textContent=v4Text('✓ Link copied','✓ Link gekopieerd');
+    btn.disabled=true;
+    await markReservationLinkCopied(r.id,true);
+    await v4LogActivity(r.id,'registration_link_copied',v4Text('Registration link copied','Registratielink gekopieerd'));
+    setTimeout(async()=>{await loadReservations();},600);
+  }catch(e){ console.error(e); btn.disabled=false; }
+}
+
+function renderV4Home(){
+  const home=$('homeOverview'); if(!home)return;
+  $('v4HomeTitle').textContent=v4Text('Today','Vandaag');
+  $('v4HomeSubtitle').textContent=v4Text('What needs your attention right now.','Wat heeft nu jouw aandacht nodig.');
+  $('v4ArrivalsLabel').textContent=v4Text('Arriving soon','Binnenkort aankomst');
+  $('v4StayingLabel').textContent=v4Text('Staying now','Verblijft nu');
+  $('v4DeparturesLabel').textContent=v4Text('Departing today','Vertrekt vandaag');
+  $('v4OpenTasksLabel').textContent=v4Text('Open tasks','Open taken');
+  $('v4TaskTitle').textContent=v4Text('Needs attention','Aandacht nodig');
+  $('v4TaskSubtitle').textContent=v4Text('Do the next action directly from here.','Voer de volgende actie direct hier uit.');
+  $('v4HomeSyncBtn').textContent=tr[currentLang].syncCalendars;
+  $('v4ArrivalsCount').textContent=reservationFilterCount('arrivingSoon');
+  $('v4StayingCount').textContent=reservationFilterCount('staying');
+  $('v4DeparturesCount').textContent=v4DepartureCount();
+  $('v4OpenTasksCount').textContent=v4TaskCount();
+  const list=$('v4TaskList'); list.innerHTML='';
+  const tasks=v4AllTasks();
+  if(!tasks.length){
+    list.innerHTML=`<div class="v4-empty-state">✓ ${escapeHtml(v4Text('Nothing needs your attention.','Niets heeft je aandacht nodig.'))}</div>`;
+    return;
+  }
+  tasks.forEach(({r,task})=>{
+    const item=document.createElement('div'); item.className='v4-task';
+    const reg=reservationRegistration(r.id);
+    item.innerHTML=`<div class="v4-task-main">
+      <div class="v4-task-kicker">${escapeHtml(task.label)}</div>
+      <div class="v4-task-title">${escapeHtml(v4ReservationDisplayName(r))}</div>
+      <div class="v4-task-meta">${escapeHtml(roomLabel(r.room_key))} · ${fmt(r.checkin_date)} → ${fmt(r.checkout_date)}</div>
+      ${task.type==='attention'&&r.attention_note?`<div class="v4-task-note">${escapeHtml(r.attention_note)}</div>`:''}
+    </div><div class="v4-task-actions"></div>`;
+    const actions=item.querySelector('.v4-task-actions');
+    if(task.type==='link'){
+      const inv=reservationInvite(r.id);
+      const b=document.createElement('button'); b.className='action-btn primary'; b.textContent=inv?v4Text('Copy link','Kopieer link'):v4Text('Generate link','Maak link');
+      b.onclick=async()=>{ if(inv)await v4CopyRegistrationLink(r,b); else {await createReservationInvite(r,b,item); await v4LogActivity(r.id,'registration_link_generated',v4Text('Registration link generated','Registratielink gemaakt'));} };
+      actions.appendChild(b);
+    }else if(task.type==='id' && reg){
+      const b=document.createElement('button'); b.className='action-btn primary'; b.textContent=v4Text('Open guest','Open gast'); b.onclick=()=>openV4GuestProfile(reg);
+      actions.appendChild(b);
+    }else if(task.type==='invoice' && reg){
+      const b=document.createElement('button'); b.className='action-btn primary'; b.textContent=v4Text('Create invoice','Maak factuur'); b.onclick=()=>{useRegistrationForInvoiceFromV4(reg);};
+      actions.appendChild(b);
+    }else{
+      const b=document.createElement('button'); b.className='action-btn primary'; b.textContent=v4Text('Open reservation','Open reservering'); b.onclick=()=>openV4Reservation(r);
+      actions.appendChild(b);
+    }
+    const open=document.createElement('button');open.className='action-btn secondary';open.textContent=v4Text('Details','Details');open.onclick=()=>openV4Reservation(r);actions.appendChild(open);
+    list.appendChild(item);
+  });
+}
+
+function v4ReservationPassesSecondary(r){
+  if(v4ReservationPlatform && r.platform!==v4ReservationPlatform)return false;
+  if(v4ReservationRoom && r.room_key!==v4ReservationRoom)return false;
+  return true;
+}
+function v4MakeOverflow(actions){
+  const wrap=document.createElement('div');wrap.className='v4-overflow';
+  const toggle=document.createElement('button');toggle.className='v4-overflow-toggle';toggle.type='button';toggle.textContent='•••';toggle.setAttribute('aria-label',tr[currentLang].moreActions);
+  const menu=document.createElement('div');menu.className='v4-overflow-menu';
+  actions.filter(Boolean).forEach(a=>menu.appendChild(a));
+  toggle.onclick=e=>{e.stopPropagation();wrap.classList.toggle('open');};
+  wrap.append(toggle,menu);return wrap;
+}
+function v4MenuButton(text,fn,{danger=false}={}){
+  const b=document.createElement('button');b.type='button';b.textContent=text;if(danger)b.classList.add('danger');b.onclick=e=>{e.stopPropagation();fn();};return b;
+}
+function v4MenuLink(text,href){
+  const a=document.createElement('a');a.textContent=text;a.href=href;a.target='_blank';a.rel='noopener';a.onclick=e=>e.stopPropagation();return a;
+}
+function v4PrimaryAction(r,card){
+  const x=tr[currentLang],reg=reservationRegistration(r.id),inv=reservationInvite(r.id),linked=reg?linkedInvoiceForRegistration(reg.id):null;
+  let b=document.createElement('button');b.className='action-btn primary v4-primary-card-action';b.type='button';
+  if(!reg && r.status==='active' && r.checkout_date>localToday()){
+    b.textContent=inv?v4Text('Copy registration link','Kopieer registratielink'):v4Text('Create registration link','Maak registratielink');
+    b.onclick=async e=>{e.stopPropagation();if(inv)await v4CopyRegistrationLink(r,b);else await createReservationInvite(r,b,card);};
+    return b;
+  }
+  if(reg && !reg.id_verified && r.checkin_date<=localToday() && r.checkout_date>localToday()){
+    b.textContent=v4Text('Verify ID','Verifieer ID');b.onclick=e=>{e.stopPropagation();openV4GuestProfile(reg);};return b;
+  }
+  if(reg?.invoice_requested&&!linked&&r.checkout_date<=localToday()){
+    b.textContent=v4Text('Create invoice','Maak factuur');b.onclick=e=>{e.stopPropagation();useRegistrationForInvoiceFromV4(reg);};return b;
+  }
+  b.textContent=v4Text('Open reservation','Open reservering');b.onclick=e=>{e.stopPropagation();openV4Reservation(r);};return b;
+}
+
+function renderReservationsV4(){
+  updateReservationFilterCounts();
+  const rows=reservations.filter(isRealReservation).filter(r=>reservationMatchesFilter(r,reservationFilter)).filter(v4ReservationPassesSecondary).sort((a,b)=>compareReservationsForFilter(a,b,reservationFilter));
+  const box=$('reservationList');if(!box)return;box.innerHTML='';
+  if(!rows.length){box.innerHTML=`<div class="v4-empty-state">${escapeHtml(tr[currentLang].noReservations)}</div>`;return;}
+  rows.forEach(r=>{
+    const reg=reservationRegistration(r.id),linked=reg?linkedInvoiceForRegistration(reg.id):null,n=reservationNightsBetween(r.checkin_date,r.checkout_date);
+    const card=document.createElement('article');card.className='v4-reservation-card'+(r.needs_attention?' attention':'')+(r.no_show?' no-show':'');
+    card.dataset.reservationId=r.id;
+    const platform=r.platform==='airbnb'?'airbnb':r.platform==='booking'?'booking':'direct';
+    card.innerHTML=`<div class="v4-res-card-top">
+      <div>
+        <div class="v4-res-title-line"><span class="platform-pill ${platform}">${escapeHtml(v4PlatformLabel(r))}</span><strong>${escapeHtml(v4ReservationDisplayName(r))}</strong></div>
+        <div class="v4-res-meta">${escapeHtml(roomLabel(r.room_key))}<br>${fmt(r.checkin_date)} → ${fmt(r.checkout_date)} · ${n} ${escapeHtml(tr[currentLang].nightsWord)}</div>
+      </div>
+      <span class="v4-res-relative">${escapeHtml(v4LifecycleLabel(r))}</span>
+    </div>
+    <div class="v4-workflow-row">${v4WorkflowHtml(r)}</div>
+    ${r.needs_attention&&r.attention_note?`<div class="v4-card-note">${escapeHtml(r.attention_note)}</div>`:''}
+    <div class="v4-card-actions"></div>`;
+    const actions=card.querySelector('.v4-card-actions');actions.appendChild(v4PrimaryAction(r,card));
+    const menu=[];
+    menu.push(v4MenuButton(v4Text('Open reservation','Open reservering'),()=>openV4Reservation(r)));
+    if(reg)menu.push(v4MenuButton(v4Text('Open guest profile','Open gastprofiel'),()=>openV4GuestProfile(reg)));
+    if(linked)menu.push(v4MenuButton(`${v4Text('Open invoice','Open factuur')} ${linked.invoice_number}`,()=>openV4Invoice(linked)));
+    if(r.status==='active'){
+      menu.push(v4MenuButton(r.needs_attention?v4Text('Edit attention note','Bewerk notitie'):v4Text('Mark for attention','Markeer voor aandacht'),()=>showReservationAttentionEditor(r,card)));
+      if(r.needs_attention)menu.push(v4MenuButton(v4Text('Resolve attention','Los aandachtspunt op'),async()=>{await setReservationAttentionState(r,false,'');}));
+      if(r.checkout_date<=localToday()||r.no_show)menu.push(v4MenuButton(r.no_show?tr[currentLang].undoNoShow:tr[currentLang].markNoShow,()=>toggleReservationNoShow(r),{danger:!r.no_show}));
+    }
+    if(r.platform==='airbnb'&&r.reservation_url)menu.push(v4MenuLink(tr[currentLang].openAirbnb,r.reservation_url));
+    if(r.platform==='booking'){
+      const url=bookingAdminReservationUrl(bookingReferenceForReservation(r));if(url)menu.push(v4MenuLink(tr[currentLang].openBooking,url));
+    }
+    actions.appendChild(v4MakeOverflow(menu));
+    card.onclick=e=>{if(e.target.closest('button,a,input,select,textarea'))return;openV4Reservation(r);};
+    box.appendChild(card);
+  });
+}
+renderReservations=renderReservationsV4;
+
+async function v4LogActivity(reservationId,action,detail=''){
+  if(!reservationId)return;
+  try{
+    await supabaseClient.rpc('add_reservation_activity',{p_reservation_id:reservationId,p_action:action,p_detail:detail||null});
+    if(v4CurrentReservation?.id===reservationId)await loadV4Activity(reservationId);
+  }catch(e){console.warn('Activity log unavailable',e);}
+}
+async function loadV4Activity(reservationId){
+  const {data,error}=await supabaseClient.from('reservation_activity').select('id,action,detail,created_at').eq('reservation_id',reservationId).order('created_at',{ascending:false}).limit(50);
+  v4Activities=error?[]:(data||[]);
+  if(v4CurrentReservation?.id===reservationId)renderV4WorkspaceActivity();
+}
+function renderV4WorkspaceActivity(){
+  const host=$('v4WorkspaceActivity');if(!host)return;host.innerHTML='';
+  const r=v4CurrentReservation;if(!r)return;
+  const inferred=[];
+  const reg=reservationRegistration(r.id),inv=reg?linkedInvoiceForRegistration(reg.id):null;
+  if(inv)inferred.push({detail:`${v4Text('Invoice created','Factuur gemaakt')} · ${inv.invoice_number}`,created_at:inv.created_at||inv.invoice_date});
+  if(reg?.id_verified_at)inferred.push({detail:v4Text('ID verified','ID geverifieerd'),created_at:reg.id_verified_at});
+  if(reg?.submitted_at)inferred.push({detail:v4Text('Guest registration submitted','Gastenregistratie ingediend'),created_at:reg.submitted_at});
+  const all=[...v4Activities.map(a=>({detail:a.detail||a.action,created_at:a.created_at})),...inferred].filter(x=>x.created_at).sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)));
+  if(!all.length){host.innerHTML=`<div class="muted">${escapeHtml(v4Text('No activity recorded yet.','Nog geen activiteit geregistreerd.'))}</div>`;return;}
+  all.forEach(a=>{const d=document.createElement('div');d.className='v4-activity-item';d.innerHTML=`<span class="v4-activity-dot"></span><div><strong>${escapeHtml(a.detail)}</strong><small>${new Date(a.created_at).toLocaleString(currentLang==='nl'?'nl-NL':'en-GB')}</small></div>`;host.appendChild(d);});
+}
+function closeV4Reservation(){
+  v4CurrentReservation=null;$('v4ReservationWorkspace').classList.add('hidden');$('v4ReservationBackdrop').classList.add('hidden');
+}
+function openV4Reservation(r){
+  if(!r)return;v4CurrentReservation=r;
+  const reg=reservationRegistration(r.id),inv=reservationInvite(r.id),linked=reg?linkedInvoiceForRegistration(reg.id):null;
+  $('v4ReservationWorkspacePlatform').innerHTML=`<span class="platform-pill ${r.platform==='airbnb'?'airbnb':'booking'}">${escapeHtml(v4PlatformLabel(r))}</span>`;
+  $('v4ReservationWorkspaceTitle').textContent=v4ReservationDisplayName(r);
+  $('v4ReservationWorkspaceSubtitle').textContent=`${roomLabel(r.room_key)} · ${fmt(r.checkin_date)} → ${fmt(r.checkout_date)} · ${reservationNightsBetween(r.checkin_date,r.checkout_date)} ${tr[currentLang].nightsWord}`;
+  const body=$('v4ReservationWorkspaceBody');body.innerHTML=`
+    <div class="v4-workspace-grid">
+      <section class="v4-workspace-card"><h3>${escapeHtml(v4Text('Stay','Verblijf'))}</h3><dl>
+        <dt>${escapeHtml(v4Text('Room','Kamer'))}</dt><dd>${escapeHtml(roomLabel(r.room_key))}</dd>
+        <dt>${escapeHtml(v4Text('Check-in','Incheck'))}</dt><dd>${fmt(r.checkin_date)}</dd>
+        <dt>${escapeHtml(v4Text('Check-out','Uitcheck'))}</dt><dd>${fmt(r.checkout_date)}</dd>
+        <dt>${escapeHtml(v4Text('Reference','Referentie'))}</dt><dd>${escapeHtml(reservationBookingReference(r)||'—')}</dd>
+      </dl></section>
+      <section class="v4-workspace-card"><h3>${escapeHtml(v4Text('Workflow','Workflow'))}</h3><div class="v4-workflow-row">${v4WorkflowHtml(r)}</div></section>
+    </div>
+    ${r.needs_attention&&r.attention_note?`<div class="v4-workspace-note"><strong>${escapeHtml(v4Text('Needs attention','Aandacht nodig'))}</strong><br>${escapeHtml(r.attention_note)}</div>`:''}
+    <div class="v4-workspace-actions" id="v4WorkspaceActions"></div>
+    <section class="v4-activity"><h3>${escapeHtml(v4Text('Activity','Activiteit'))}</h3><div id="v4WorkspaceActivity" class="v4-activity-list"></div></section>`;
+  const actions=$('v4WorkspaceActions');
+  if(!reg){
+    const b=document.createElement('button');b.className='action-btn primary';b.textContent=inv?v4Text('Copy registration link','Kopieer registratielink'):v4Text('Create registration link','Maak registratielink');
+    b.onclick=async()=>{if(inv)await v4CopyRegistrationLink(r,b);else{await createReservationInvite(r,b,body);await v4LogActivity(r.id,'registration_link_generated',v4Text('Registration link generated','Registratielink gemaakt'));}};actions.appendChild(b);
+  }else{
+    const b=document.createElement('button');b.className='action-btn primary';b.textContent=v4Text('Open guest profile','Open gastprofiel');b.onclick=()=>openV4GuestProfile(reg);actions.appendChild(b);
+    if(linked){const i=document.createElement('button');i.className='action-btn secondary';i.textContent=v4Text('Open invoice','Open factuur');i.onclick=()=>openV4Invoice(linked);actions.appendChild(i);}
+    else if(reg.invoice_requested&&r.checkout_date<=localToday()){const i=document.createElement('button');i.className='action-btn secondary';i.textContent=v4Text('Create invoice','Maak factuur');i.onclick=()=>useRegistrationForInvoiceFromV4(reg);actions.appendChild(i);}
+  }
+  const att=document.createElement('button');att.className='action-btn secondary';att.textContent=r.needs_attention?v4Text('Edit note','Bewerk notitie'):v4Text('Mark for attention','Markeer voor aandacht');att.onclick=()=>showV4AttentionEditor(r);actions.appendChild(att);
+  if(r.needs_attention){const resolve=document.createElement('button');resolve.className='action-btn secondary';resolve.textContent=v4Text('Resolve','Oplossen');resolve.onclick=async()=>{await setReservationAttentionState(r,false,'');closeV4Reservation();};actions.appendChild(resolve);}
+  $('v4ReservationWorkspace').classList.remove('hidden');$('v4ReservationBackdrop').classList.remove('hidden');loadV4Activity(r.id);
+}
+function showV4AttentionEditor(r){
+  const body=$('v4ReservationWorkspaceBody'),old=$('v4WorkspaceAttentionEditor');if(old){old.remove();return;}
+  const div=document.createElement('div');div.id='v4WorkspaceAttentionEditor';div.className='reservation-attention-editor';div.innerHTML=`<label>${escapeHtml(v4Text('Internal note','Interne notitie'))}</label><textarea rows="4">${escapeHtml(r.attention_note||'')}</textarea><div class="button-row"><button class="action-btn secondary" type="button">${escapeHtml(v4Text('Cancel','Annuleren'))}</button><button class="action-btn primary" type="button">${escapeHtml(v4Text('Save note','Notitie opslaan'))}</button></div>`;
+  const [cancel,save]=div.querySelectorAll('button');cancel.onclick=()=>div.remove();save.onclick=async()=>{const note=div.querySelector('textarea').value;await setReservationAttentionState(r,true,note);closeV4Reservation();};
+  body.insertBefore(div,body.querySelector('.v4-activity'));
+}
+
+function v4GuestIdentityKey(reg){
+  const email=String(reg.email||'').trim().toLowerCase();
+  if(email)return `email:${email}`;
+  return `name:${String(reg.full_name||'').trim().toLowerCase()}|${String(reg.country||'').trim().toLowerCase()}`;
+}
+function v4GuestGroups(){
+  const m=new Map();
+  registrations.forEach(r=>{const k=v4GuestIdentityKey(r);if(!m.has(k))m.set(k,[]);m.get(k).push(r);});
+  return [...m.values()].map(stays=>stays.sort((a,b)=>String(b.checkin_date||'').localeCompare(String(a.checkin_date||''))));
+}
+function renderRegsV4(){
+  const x=tr[currentLang],q=($('registrationSearch').value||'').trim().toLowerCase(),t=localToday();
+  const groups=v4GuestGroups().filter(stays=>{
+    if(q&&!stays.some(r=>[r.full_name,r.email,r.booking_reference,r.country].filter(Boolean).some(v=>String(v).toLowerCase().includes(q))))return false;
+    if(registrationFilter==='all')return true;
+    return stays.some(r=>{
+      if(registrationFilter==='upcoming')return r.checkin_date>t;
+      if(registrationFilter==='arrivingSoon')return r.checkin_date>=t&&r.checkin_date<=addDaysIso(t,3);
+      if(registrationFilter==='staying')return r.checkin_date<=t&&r.checkout_date>t;
+      if(registrationFilter==='past')return r.checkout_date<=t;
+      if(registrationFilter==='idToVerify')return !r.id_verified&&r.checkin_date<=t&&r.checkout_date>t;
+      if(registrationFilter==='invoiceToCreate')return r.invoice_requested&&!linkedInvoiceForRegistration(r.id)&&r.checkout_date<=t;
+      return true;
+    });
+  }).sort((a,b)=>String(b[0].checkin_date||'').localeCompare(String(a[0].checkin_date||'')));
+  const box=$('registrationList');box.innerHTML='';
+  document.querySelectorAll('[data-filter]').forEach(b=>b.classList.toggle('active',b.dataset.filter===registrationFilter));
+  if(!groups.length){box.innerHTML=`<div class="v4-empty-state">${escapeHtml(x.noRegs)}</div>`;return;}
+  groups.forEach(stays=>{
+    const latest=stays[0],current=stays.find(r=>r.checkin_date<=t&&r.checkout_date>t),next=stays.filter(r=>r.checkin_date>t).sort((a,b)=>a.checkin_date.localeCompare(b.checkin_date))[0];
+    const d=document.createElement('div');d.className='registration-item clickable-list-card';
+    d.innerHTML=`<div class="list-item-content"><strong>${escapeHtml(latest.full_name)}</strong>
+      <span class="muted">${escapeHtml(latest.country||'')} ${stays.length>1?'· '+stays.length+' '+v4Text('stays','verblijven'):''}</span>
+      <div class="registration-badges">
+        ${current?`<span class="badge good">${escapeHtml(v4Text('Staying now','Verblijft nu'))}</span>`:''}
+        ${next?`<span class="badge">${escapeHtml(v4Text('Next','Volgende'))}: ${fmt(next.checkin_date)}</span>`:''}
+        <span class="badge ${latest.id_verified?'good':'warn'}">${escapeHtml(registrationIdStatusText(latest))}</span>
+      </div></div>`;
+    d.onclick=()=>openV4GuestProfile(latest,stays);box.appendChild(d);
+  });
+}
+renderRegs=renderRegsV4;
+
+function openV4GuestProfile(reg,knownStays=null){
+  const stays=knownStays||v4GuestGroups().find(g=>g.some(x=>x.id===reg.id))||[reg];
+  loadReg(reg,'heading');
+  const summary=$('v4GuestProfileSummary');
+  if(summary){
+    summary.innerHTML=`<h3>${escapeHtml(reg.full_name)}</h3><p>${escapeHtml(reg.email||reg.country||'')} · ${stays.length} ${escapeHtml(v4Text(stays.length===1?'stay':'stays',stays.length===1?'verblijf':'verblijven'))}</p>
+      <div class="v4-guest-stays">${stays.map(s=>`<button type="button" class="v4-stay-chip" data-reg-id="${s.id}">${fmt(s.checkin_date)} → ${fmt(s.checkout_date)}</button>`).join('')}</div>`;
+    summary.classList.remove('hidden');
+    summary.querySelectorAll('[data-reg-id]').forEach(b=>b.onclick=()=>{const target=registrations.find(x=>x.id===b.dataset.regId);if(target)openV4GuestProfile(target,stays);});
+  }
+  if(isMobileShell())openMobileDetail('guest','guests');
+  else setV4Module('guests');
+}
+
+function openV4Invoice(inv){
+  setV4Module('invoices');loadInvoice(inv);$('invoiceDetailsCard').classList.add('v4-invoice-open');$('previewWrapper').classList.add('v4-invoice-open');
+}
+function useRegistrationForInvoiceFromV4(reg){
+  currentRegistrationId=reg.id;
+  useRegistrationForInvoice();
+  $('invoiceDetailsCard').classList.add('v4-invoice-open');$('previewWrapper').classList.add('v4-invoice-open');
+  if(!isMobileShell())setV4Module('invoices');
+}
+
+function setV4Module(module){
+  if(isMobileShell()){
+    if(module==='home'||module==='reservations'||module==='calendar'||module==='guests')setMobileTab(module,{restore:false});
+    else if(module==='invoices'){closeMobileMore();mobileShellState.detail=null;mobileMainElements().forEach(el=>el.classList.add('mobile-shell-hidden'));$('savedInvoicesCard').classList.remove('mobile-shell-hidden');$('mobileBottomNav').classList.remove('hidden');window.scrollTo({top:0,behavior:'auto'});}
+    return;
+  }
+  v4DesktopModule=module;
+  document.body.classList.remove('v4-module-home','v4-module-reservations','v4-module-calendar','v4-module-guests','v4-module-invoices');
+  document.body.classList.add(`v4-module-${module}`);
+  document.querySelectorAll('[data-v4-module]').forEach(b=>b.classList.toggle('active',b.dataset.v4Module===module));
+  window.scrollTo({top:0,behavior:'auto'});
+}
+function v4GlobalSearch(){
+  const q=$('v4GlobalSearch').value.trim().toLowerCase(),box=$('v4GlobalSearchResults');
+  $('v4GlobalSearchClear').classList.toggle('hidden',!q);
+  if(!q){box.classList.add('hidden');box.innerHTML='';return;}
+  const results=[];
+  reservations.filter(isRealReservation).forEach(r=>{const reg=reservationRegistration(r.id);const values=[v4ReservationDisplayName(r),reservationBookingReference(r),roomLabel(r.room_key),reg?.email];if(values.filter(Boolean).some(v=>String(v).toLowerCase().includes(q)))results.push({type:v4Text('Reservation','Reservering'),title:v4ReservationDisplayName(r),meta:`${fmt(r.checkin_date)} → ${fmt(r.checkout_date)}`,go:()=>openV4Reservation(r)});});
+  v4GuestGroups().forEach(g=>{const r=g[0];if([r.full_name,r.email,r.country].filter(Boolean).some(v=>String(v).toLowerCase().includes(q)))results.push({type:v4Text('Guest','Gast'),title:r.full_name,meta:`${g.length} ${v4Text('stay(s)','verblijf/verblijven')}`,go:()=>openV4GuestProfile(r,g)});});
+  invoices.forEach(i=>{if([i.invoice_number,i.guest_name,i.booking_reference,i.guest_email].filter(Boolean).some(v=>String(v).toLowerCase().includes(q)))results.push({type:v4Text('Invoice','Factuur'),title:i.invoice_number,meta:i.guest_name,go:()=>openV4Invoice(i)});});
+  box.innerHTML='';results.slice(0,12).forEach(r=>{const b=document.createElement('button');b.type='button';b.className='v4-search-result';b.innerHTML=`<div><strong>${escapeHtml(r.title)}</strong><small>${escapeHtml(r.meta||'')}</small></div><span class="v4-search-type">${escapeHtml(r.type)}</span>`;b.onclick=()=>{box.classList.add('hidden');$('v4GlobalSearch').value='';r.go();};box.appendChild(b);});
+  if(!results.length)box.innerHTML=`<div class="v4-empty-state">${escapeHtml(v4Text('No results','Geen resultaten'))}</div>`;
+  box.classList.remove('hidden');
+}
+
+function renderV4All(){
+  renderV4Home();
+  if($('v4GlobalSearch')?.value)v4GlobalSearch();
+}
+const _v4LoadReservations=loadReservations;
+loadReservations=async function(){await _v4LoadReservations();renderV4All();};
+const _v4LoadRegs=loadRegs;
+loadRegs=async function(){await _v4LoadRegs();renderV4All();};
+const _v4LoadInvoices=loadInvoices;
+loadInvoices=async function(){await _v4LoadInvoices();renderV4All();};
+
+const _v4NewInvoice=newInvoice;
+newInvoice=async function(force=false){
+  await _v4NewInvoice(force);
+  const s=v4Settings();
+  if(!currentInvoiceId){
+    f.cleaning.value=Number(s.cleaning).toFixed(2);
+    f.tourist.value=Number(s.touristTax).toFixed(2);
+    f.taxMode.value=s.taxMode;
+    updatePreview();
+  }
+};
+const _v4BlankRegistration=blankRegistration;
+blankRegistration=function(){
+  _v4BlankRegistration();
+  const s=v4Settings();
+  rf.additionalGuestRate.value=Number(s.extraGuest).toFixed(2);
+};
+
+const _v4SaveInvoice=saveInvoice;
+saveInvoice=async function(){
+  const wasNew=!currentInvoiceId,regId=f.registrationId.value||null;
+  await _v4SaveInvoice();
+  if(wasNew&&currentInvoiceId&&regId){
+    const reg=registrations.find(g=>g.id===regId),r=reg?linkedReservationForRegistration(reg):null;
+    if(r)await v4LogActivity(r.id,'invoice_created',`${v4Text('Invoice created','Factuur gemaakt')} · ${f.invoiceNumber.value}`);
+  }
+};
+const _v4SetAttention=setReservationAttentionState;
+setReservationAttentionState=async function(r,needs,note){
+  await _v4SetAttention(r,needs,note);
+  await v4LogActivity(r.id,needs?'attention_marked':'attention_resolved',needs?(note||v4Text('Marked for attention','Gemarkeerd voor aandacht')):v4Text('Attention resolved','Aandachtspunt opgelost'));
+};
+const _v4ToggleNoShow=toggleReservationNoShow;
+toggleReservationNoShow=async function(r){
+  const target=!r.no_show;await _v4ToggleNoShow(r);await v4LogActivity(r.id,target?'no_show_marked':'no_show_undone',target?v4Text('Marked as no-show','Gemarkeerd als no-show'):v4Text('No-show undone','No-show ongedaan gemaakt'));
+};
+
+function initV4(){
+  // Desktop module navigation.
+  document.querySelectorAll('[data-v4-module]').forEach(b=>b.onclick=()=>setV4Module(b.dataset.v4Module));
+  setV4Module('home');
+
+  $('v4GlobalSearch').addEventListener('input',v4GlobalSearch);
+  $('v4GlobalSearchClear').onclick=()=>{$('v4GlobalSearch').value='';v4GlobalSearch();$('v4GlobalSearch').focus();};
+  document.addEventListener('click',e=>{if(!e.target.closest('.v4-global-search-wrap'))$('v4GlobalSearchResults')?.classList.add('hidden');});
+
+  $('v4MoreReservationFiltersBtn').onclick=()=>{
+    const p=$('v4AdvancedReservationFilters'),open=p.classList.toggle('hidden')===false;
+    $('v4MoreReservationFiltersBtn').setAttribute('aria-expanded',String(open));
+  };
+  $('v4ReservationPlatformFilter').onchange=e=>{v4ReservationPlatform=e.target.value;renderReservations();};
+  $('v4ReservationRoomFilter').onchange=e=>{v4ReservationRoom=e.target.value;renderReservations();};
+
+  document.querySelectorAll('[data-v4-home-filter]').forEach(b=>b.onclick=()=>{setV4Module('reservations');setReservationFilter(b.dataset.v4HomeFilter);});
+  $('v4HomeSyncBtn').onclick=()=>syncCalendars(true);
+
+  $('v4ReservationWorkspaceClose').onclick=closeV4Reservation;
+  $('v4ReservationBackdrop').onclick=closeV4Reservation;
+  $('v4SettingsClose').onclick=closeV4Settings;$('v4SettingsBackdrop').onclick=closeV4Settings;$('v4SaveSettings').onclick=v4SaveSettings;
+
+  $('v4MobileMoreInvoicesBtn').onclick=()=>{closeMobileMore();setV4Module('invoices');};
+  $('v4MobileMoreSettingsBtn').onclick=()=>{closeMobileMore();openV4Settings();};
+
+  // Invoice module is one destination. Opening/new invoice reveals editor + preview.
+  $('mobileNewInvoiceBtn').onclick=async()=>{await newInvoice();$('invoiceDetailsCard').classList.add('v4-invoice-open');$('previewWrapper').classList.add('v4-invoice-open');if(isMobileShell())openMobileDetail('invoice','invoices');else setV4Module('invoices');};
+  $('newInvoiceBtn').onclick=async()=>{await newInvoice();$('invoiceDetailsCard').classList.add('v4-invoice-open');$('previewWrapper').classList.add('v4-invoice-open');setV4Module('invoices');};
+
+  // Hide invoice task from Guests: it lives on Home.
+  $('filterInvoice')?.classList.add('hidden');
+
+  renderV4All();
+}
+
+// Override mobile shell definitions so Home becomes the entry tab and invoices move to More.
+mobileShellState.tab='home';
+mobileShellState.scroll.home=0;
+mobileTabElement=function(tab){return tab==='home'?$('homeOverview'):tab==='reservations'?$('reservationsOverview'):tab==='calendar'?$('calendarOverview'):tab==='guests'?$('registrationOverview'):tab==='invoices'?$('savedInvoicesCard'):null;};
+mobileMainElements=function(){return [$('homeOverview'),$('reservationsOverview'),$('calendarOverview'),$('registrationOverview'),$('registrationEditor'),$('invoiceDetailsCard'),$('savedInvoicesCard'),$('previewWrapper')].filter(Boolean);};
+const _v4UpdateMobileShellText=updateMobileShellText;
+updateMobileShellText=function(){
+  _v4UpdateMobileShellText();
+  if($('mobileTabHomeLabel'))$('mobileTabHomeLabel').textContent=v4Text('Home','Home');
+  if($('v4MobileMoreInvoicesBtn'))$('v4MobileMoreInvoicesBtn').textContent=v4Text('Invoices','Facturen');
+  if($('v4MobileMoreSettingsBtn'))$('v4MobileMoreSettingsBtn').textContent=v4Text('Settings','Instellingen');
+};
+const _v4InitMobileShell=initMobileAppShell;
+initMobileAppShell=function(){
+  _v4InitMobileShell();
+  if(isMobileShell()&&!mobileShellState.detail)setMobileTab('home',{restore:false,replaceHistory:true});
+};
+
+// Replace descriptive labels with the v4 information architecture.
+const _v4SetTexts=setTexts;
+setTexts=function(){
+  _v4SetTexts();
+  if($('reservationsSubtitle'))$('reservationsSubtitle').textContent=v4Text('All stays and booking lifecycle.','Alle verblijven en reserveringsstatussen.');
+  if($('registrationTitle'))$('registrationTitle').textContent=v4Text('Guests','Gasten');
+  if($('registrationArchiveSubtitle'))$('registrationArchiveSubtitle').textContent=v4Text('Guest profiles, registrations and stay history.','Gastprofielen, registraties en verblijfsgeschiedenis.');
+  if($('savedInvoicesTitle'))$('savedInvoicesTitle').textContent=v4Text('Invoices','Facturen');
+  renderV4All();
+};
+
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('v4ReservationWorkspace').classList.contains('hidden'))closeV4Reservation();if(!$('v4SettingsSheet').classList.contains('hidden'))closeV4Settings();}});
+initV4();
+
 initAdminNav();
 
 async function init(){setTexts();setReservationFilter(reservationFilter);toggleRegInvoice();toggleIdOther();toggleInvoiceCustom();const s=await session();if(!s){document.body.classList.remove('mobile-app-active');$('loginView').classList.remove('hidden');$('appView').classList.add('hidden');return;}if(!(await allowed())){await supabaseClient.auth.signOut();$('loginMessage').textContent=tr[currentLang].denied;return;}$('loginView').classList.add('hidden');$('appView').classList.remove('hidden');$('logoutBtn').classList.remove('hidden');initMobileAppShell();await Promise.all([loadRegs(),loadInvoices(),loadReservations(),newInvoice(true)]); setReservationFilter(reservationFilter||'upcoming'); await autoSyncCalendars();}

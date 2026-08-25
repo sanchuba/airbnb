@@ -8,14 +8,14 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="default" />
   <meta name="apple-mobile-web-app-title" content="NGR Admin" />
-  <link rel="manifest" href="./manifest.webmanifest?v=3.18.0" />
+  <link rel="manifest" href="./manifest.webmanifest?v=4.0.0" />
   <link rel="apple-touch-icon" sizes="180x180" href="./icons/apple-touch-icon.png?v=3.5.0" />
   <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png?v=3.5.0" />
   <title>Nijmegen Guest Rooms – Admin</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css?v=3.18.2-attention-lines" />
+  <link rel="stylesheet" href="./style.css?v=4.0.0" />
 </head>
 <body>
   <div class="container">
@@ -73,7 +73,22 @@
           <button class="mobile-nav-btn" type="button" data-target="savedInvoicesCard" id="mobileNavSavedInvoices">Saved invoices</button>
         </div>
       </div>
-      <nav class="admin-nav screen-only" id="adminNav" aria-label="Admin sections">
+      <div class="v4-command-bar screen-only">
+        <nav class="v4-admin-nav" id="v4AdminNav" aria-label="Admin sections">
+          <button class="v4-nav-btn active" type="button" data-v4-module="home" id="v4NavHome">Home</button>
+          <button class="v4-nav-btn" type="button" data-v4-module="reservations" id="v4NavReservations">Reservations</button>
+          <button class="v4-nav-btn" type="button" data-v4-module="calendar" id="v4NavCalendar">Calendar</button>
+          <button class="v4-nav-btn" type="button" data-v4-module="guests" id="v4NavGuests">Guests</button>
+          <button class="v4-nav-btn" type="button" data-v4-module="invoices" id="v4NavInvoices">Invoices</button>
+        </nav>
+        <div class="v4-global-search-wrap">
+          <input id="v4GlobalSearch" type="search" autocomplete="off" placeholder="Search guests, reservations, invoices or booking references" aria-label="Global search">
+          <button id="v4GlobalSearchClear" type="button" class="v4-search-clear hidden" aria-label="Clear search">×</button>
+          <div id="v4GlobalSearchResults" class="v4-global-search-results hidden"></div>
+        </div>
+      </div>
+
+      <nav class="admin-nav screen-only v4-legacy-nav" id="adminNav" aria-label="Legacy admin sections">
         <button class="admin-nav-btn active" type="button" data-target="reservationsOverview" id="navReservations">Reservations</button>
         <button class="admin-nav-btn" type="button" data-target="calendarOverview" id="navCalendar">Calendar</button>
         <button class="admin-nav-btn" type="button" data-target="registrationOverview" id="navRegistrations">Guest registrations</button>
@@ -81,6 +96,27 @@
         <button class="admin-nav-btn" type="button" data-target="invoiceDetailsCard" id="navInvoiceDetails">Invoice details</button>
         <button class="admin-nav-btn" type="button" data-target="savedInvoicesCard" id="navSavedInvoices">Saved invoices</button>
       </nav>
+
+      <section class="card screen-only v4-home-card" id="homeOverview">
+        <div class="section-header v4-home-header">
+          <div>
+            <span class="v4-eyebrow" id="v4HomeEyebrow">Operations</span>
+            <h2 id="v4HomeTitle">Today</h2>
+            <p id="v4HomeSubtitle" class="muted">What needs your attention right now.</p>
+          </div>
+          <button id="v4HomeSyncBtn" class="action-btn secondary" type="button">Sync calendars</button>
+        </div>
+        <div class="v4-today-grid">
+          <button class="v4-stat-card" type="button" data-v4-home-filter="arrivingSoon"><span id="v4ArrivalsCount">0</span><small id="v4ArrivalsLabel">Arriving soon</small></button>
+          <button class="v4-stat-card" type="button" data-v4-home-filter="staying"><span id="v4StayingCount">0</span><small id="v4StayingLabel">Staying now</small></button>
+          <button class="v4-stat-card" type="button" data-v4-home-filter="departures"><span id="v4DeparturesCount">0</span><small id="v4DeparturesLabel">Departing today</small></button>
+          <div class="v4-stat-card v4-stat-card-accent"><span id="v4OpenTasksCount">0</span><small id="v4OpenTasksLabel">Open tasks</small></div>
+        </div>
+        <div class="v4-home-section-head">
+          <div><h3 id="v4TaskTitle">Needs attention</h3><p id="v4TaskSubtitle" class="muted">Do the next action directly from here.</p></div>
+        </div>
+        <div id="v4TaskList" class="v4-task-list"></div>
+      </section>
       <div class="card screen-only reservations-card" id="reservationsOverview">
         <div class="section-header">
           <div>
@@ -140,20 +176,31 @@
           </div>
           <span id="calendarSyncStatus" class="muted"></span>
         </div>
-        <div class="reservation-filters" id="reservationFilters" aria-label="Reservation filters">
-          <button type="button" class="filter-pill active" data-reservation-filter="upcoming" id="reservationFilterUpcoming">Upcoming</button>
-          <button type="button" class="filter-pill" data-reservation-filter="arrivingSoon" id="reservationFilterArrivingSoon">Arriving soon</button>
-          <button type="button" class="filter-pill" data-reservation-filter="staying" id="reservationFilterStaying">Staying now</button>
-          <button type="button" class="filter-pill" data-reservation-filter="registrationLinkNotCreated" id="reservationFilterLinkNotCreated">Link not created</button>
-          <button type="button" class="filter-pill" data-reservation-filter="needsAttention" id="reservationFilterAttention">Needs attention</button>
-          <button type="button" class="filter-pill" data-reservation-filter="idToVerify" id="reservationFilterId">ID to verify</button>
-          <button type="button" class="filter-pill" data-reservation-filter="missingBookingReference" id="reservationFilterBookingRef">Booking ref missing</button>
-          <button type="button" class="filter-pill" data-reservation-filter="expiredRegistrationLink" id="reservationFilterExpiredLink">Link expired</button>
-          <button type="button" class="filter-pill" data-reservation-filter="invoiceToCreate" id="reservationFilterInvoice">Invoice to create</button>
-          <button type="button" class="filter-pill archive-filter-start" data-reservation-filter="past" id="reservationFilterPast">Past</button>
-          <button type="button" class="filter-pill" data-reservation-filter="noShow" id="reservationFilterNoShow">No-show</button>
-          <button type="button" class="filter-pill" data-reservation-filter="removed" id="reservationFilterRemoved">Removed / cancelled</button>
-          <button type="button" class="filter-pill" data-reservation-filter="all" id="reservationFilterAll">All</button>
+        <div class="v4-reservation-controls">
+          <div class="reservation-filters v4-primary-filters" id="reservationFilters" aria-label="Reservation filters">
+            <button type="button" class="filter-pill active" data-reservation-filter="upcoming" id="reservationFilterUpcoming">Upcoming</button>
+            <button type="button" class="filter-pill" data-reservation-filter="staying" id="reservationFilterStaying">Staying now</button>
+            <button type="button" class="filter-pill" data-reservation-filter="past" id="reservationFilterPast">Past</button>
+            <button type="button" class="filter-pill" data-reservation-filter="noShow" id="reservationFilterNoShow">No-show</button>
+            <button type="button" class="filter-pill" data-reservation-filter="removed" id="reservationFilterRemoved">Cancelled</button>
+            <button type="button" class="filter-pill" data-reservation-filter="all" id="reservationFilterAll">All</button>
+          </div>
+          <button id="v4MoreReservationFiltersBtn" type="button" class="v4-filter-toggle" aria-expanded="false">Filters</button>
+        </div>
+        <div id="v4AdvancedReservationFilters" class="v4-advanced-filters hidden">
+          <div class="v4-advanced-filter-pills">
+            <button type="button" class="filter-pill" data-reservation-filter="arrivingSoon" id="reservationFilterArrivingSoon">Arriving soon</button>
+            <button type="button" class="filter-pill" data-reservation-filter="registrationLinkNotCreated" id="reservationFilterLinkNotCreated">Link to send</button>
+            <button type="button" class="filter-pill" data-reservation-filter="needsAttention" id="reservationFilterAttention">Needs attention</button>
+            <button type="button" class="filter-pill" data-reservation-filter="idToVerify" id="reservationFilterId">ID to verify</button>
+            <button type="button" class="filter-pill" data-reservation-filter="missingBookingReference" id="reservationFilterBookingRef">Booking ref missing</button>
+            <button type="button" class="filter-pill" data-reservation-filter="expiredRegistrationLink" id="reservationFilterExpiredLink">Link expired</button>
+            <button type="button" class="filter-pill" data-reservation-filter="invoiceToCreate" id="reservationFilterInvoice">Invoice to create</button>
+          </div>
+          <div class="v4-filter-selects">
+            <label>Platform<select id="v4ReservationPlatformFilter"><option value="">All</option><option value="booking">Booking.com</option><option value="airbnb">Airbnb</option></select></label>
+            <label>Room<select id="v4ReservationRoomFilter"><option value="">Both</option><option value="cozy">Cozy room</option><option value="spacious">Spacious room</option></select></label>
+          </div>
         </div>
         <div id="reservationList" class="reservation-list"></div>
       </div>
@@ -208,8 +255,8 @@
           <div class="card screen-only" id="registrationOverview">
             <div class="section-header registration-header">
               <div>
-                <h2 id="registrationTitle">Guest registrations</h2>
-                <p id="registrationArchiveSubtitle" class="muted section-subtitle">Detailed guest administration and archive.</p>
+                <h2 id="registrationTitle">Guests</h2>
+                <p id="registrationArchiveSubtitle" class="muted section-subtitle">Guest profiles, registrations and stay history.</p>
               </div>
               <div class="registration-header-actions">
                 <button id="newPaperBtn" class="action-btn secondary">Add paper registration</button>
@@ -259,6 +306,7 @@
 
           <div id="registrationEditor" class="card screen-only hidden">
             <div class="section-header"><h2 id="registrationEditorTitle">Guest registration</h2><button id="closeRegistrationBtn" class="action-btn secondary">Close</button></div>
+            <div id="v4GuestProfileSummary" class="v4-guest-profile-summary hidden"></div>
             <input id="registrationId" type="hidden" />
             <input id="registrationSource" type="hidden" value="paper_manual" />
             <div class="field"><label id="labelRegName" for="regName">Full name</label><input id="regName" /></div>
@@ -371,7 +419,10 @@
           </div>
 
           <div class="card saved-card screen-only" id="savedInvoicesCard">
-            <div class="section-header"><h2 id="savedInvoicesTitle">Saved Invoices</h2><button id="mobileNewInvoiceBtn" class="action-btn primary mobile-shell-only" type="button">New invoice</button></div>
+            <div class="section-header">
+              <div><h2 id="savedInvoicesTitle">Invoices</h2><p id="v4InvoiceSubtitle" class="muted section-subtitle">Saved invoices and invoice creation.</p></div>
+              <button id="mobileNewInvoiceBtn" class="action-btn primary" type="button">New invoice</button>
+            </div>
             <div class="field"><label id="labelSearchInvoices" for="searchInvoices">Search / filter invoices</label><div class="search-input-wrap"><input id="searchInvoices" type="search" placeholder="Search by invoice number, guest name, company, email or booking reference" /><button id="clearInvoiceSearch" class="search-clear-btn hidden" type="button" aria-label="Clear search">×</button></div></div>
             <div id="invoiceList" class="invoice-list"></div>
           </div>
@@ -481,6 +532,35 @@
     </div>
   </section>
 
+  <div id="v4ReservationBackdrop" class="v4-workspace-backdrop hidden screen-only"></div>
+  <section id="v4ReservationWorkspace" class="v4-reservation-workspace hidden screen-only" role="dialog" aria-modal="true" aria-labelledby="v4ReservationWorkspaceTitle">
+    <div class="v4-workspace-head">
+      <div>
+        <div id="v4ReservationWorkspacePlatform"></div>
+        <h2 id="v4ReservationWorkspaceTitle">Reservation</h2>
+        <p id="v4ReservationWorkspaceSubtitle" class="muted"></p>
+      </div>
+      <button id="v4ReservationWorkspaceClose" type="button" class="v4-icon-btn" aria-label="Close">×</button>
+    </div>
+    <div id="v4ReservationWorkspaceBody"></div>
+  </section>
+
+  <div id="v4SettingsBackdrop" class="v4-workspace-backdrop hidden screen-only"></div>
+  <section id="v4SettingsSheet" class="v4-settings-sheet hidden screen-only" role="dialog" aria-modal="true" aria-labelledby="v4SettingsTitle">
+    <div class="v4-workspace-head">
+      <div><span class="v4-eyebrow">Nijmegen Guest Rooms</span><h2 id="v4SettingsTitle">Settings</h2></div>
+      <button id="v4SettingsClose" type="button" class="v4-icon-btn" aria-label="Close">×</button>
+    </div>
+    <div class="v4-settings-grid">
+      <label>Default cleaning fee (€)<input id="v4DefaultCleaning" type="number" step="0.01" min="0"></label>
+      <label>Tourist tax (€ / guest / night)<input id="v4DefaultTouristTax" type="number" step="0.01" min="0"></label>
+      <label>Additional guest (€ / night)<input id="v4DefaultExtraGuest" type="number" step="0.01" min="0"></label>
+      <label>Default tax handling<select id="v4DefaultTaxMode"><option value="included">Included in accommodation</option><option value="excluded">Added on top</option></select></label>
+    </div>
+    <p class="muted">These defaults are stored on this device and are applied when creating a new invoice or manual guest registration.</p>
+    <button id="v4SaveSettings" class="action-btn primary" type="button">Save settings</button>
+  </section>
+
   <div id="qrModal" class="qr-modal hidden screen-only" role="dialog" aria-modal="true" aria-labelledby="qrModalTitle">
     <div class="qr-modal-toolbar">
       <button id="closeQrModalBtn" class="qr-close-btn" type="button" aria-label="Close">×</button>
@@ -496,10 +576,11 @@
   </div>
   
   <nav id="mobileBottomNav" class="mobile-bottom-nav mobile-shell-only screen-only" aria-label="Main navigation">
-    <button type="button" class="mobile-bottom-tab active" data-mobile-tab="reservations"><span class="mobile-tab-icon">▣</span><span id="mobileTabReservationsLabel">Reservations</span></button>
+    <button type="button" class="mobile-bottom-tab active" data-mobile-tab="home"><span class="mobile-tab-icon">⌂</span><span id="mobileTabHomeLabel">Home</span></button>
+    <button type="button" class="mobile-bottom-tab" data-mobile-tab="reservations"><span class="mobile-tab-icon">▣</span><span id="mobileTabReservationsLabel">Reservations</span></button>
     <button type="button" class="mobile-bottom-tab" data-mobile-tab="calendar"><span class="mobile-tab-icon">▦</span><span id="mobileTabCalendarLabel">Calendar</span></button>
     <button type="button" class="mobile-bottom-tab" data-mobile-tab="guests"><span class="mobile-tab-icon">♙</span><span id="mobileTabGuestsLabel">Guests</span></button>
-    <button type="button" class="mobile-bottom-tab" data-mobile-tab="invoices"><span class="mobile-tab-icon">▤</span><span id="mobileTabInvoicesLabel">Invoices</span></button>
+    <span id="mobileTabInvoicesLabel" class="hidden" aria-hidden="true">Invoices</span>
     <button type="button" class="mobile-bottom-tab" data-mobile-tab="more" id="mobileTabMore"><span class="mobile-tab-icon">•••</span><span id="mobileTabMoreLabel">More</span></button>
   </nav>
   <div id="mobileMoreBackdrop" class="mobile-more-backdrop mobile-shell-only hidden screen-only"></div>
@@ -509,6 +590,8 @@
     <button id="mobileMoreSyncBtn" class="mobile-more-action" type="button">Sync calendars</button>
     <button id="mobileMorePaperBtn" class="mobile-more-action" type="button">Add paper registration</button>
     <button id="mobileMoreLinkBtn" class="mobile-more-action" type="button">Create manual guest link</button>
+    <button id="v4MobileMoreInvoicesBtn" class="mobile-more-action" type="button">Invoices</button>
+    <button id="v4MobileMoreSettingsBtn" class="mobile-more-action" type="button">Settings</button>
     <div class="mobile-more-language">
       <span id="mobileMoreLanguageLabel">Language</span>
       <div>
@@ -530,7 +613,7 @@
   </div>
   <button id="backToTopBtn" class="back-to-top-btn screen-only" type="button" aria-label="Back to top" title="Back to top">↑</button>
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-  <script type="module" src="./app.js?v=3.18.1-attention-workflow"></script>
+  <script type="module" src="./app.js?v=4.0.0"></script>
   <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.16.10').catch(() => {}));
