@@ -2829,3 +2829,12 @@ button.badge.invoice-created,
   background: var(--brand-gold);
   margin-left: 2px;
 }
+
+
+/* =========================================================
+   v3.18.2 – Preserve line breaks in saved attention notes
+   ========================================================= */
+.reservation-attention-note {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
