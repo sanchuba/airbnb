@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.2.1';
+const NGR_ADMIN_BUILD='4.2.3';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -2295,7 +2295,7 @@ $('regAdditionalGuestPayment').onchange=()=>{markRegistrationDirty();};
 $('regAdditionalGuestPaid').onchange=()=>{markRegistrationDirty();};$('useForInvoiceBtn').onclick=useRegistrationForInvoice;$('deleteRegistrationBtn').onclick=deleteRegistration;function updateSearchClearButtons(){$('clearRegistrationSearch').classList.toggle('hidden',!$('registrationSearch').value);$('clearInvoiceSearch').classList.toggle('hidden',!$('searchInvoices').value);}
 $('registrationSearch').oninput=()=>{updateSearchClearButtons();renderRegs();};$('clearRegistrationSearch').onclick=()=>{$('registrationSearch').value='';updateSearchClearButtons();renderRegs();$('registrationSearch').focus();};rf.invoiceRequested.onchange=toggleRegInvoice;rf.invoiceType.onchange=toggleRegInvoice;rf.idType.onchange=toggleIdOther;
 document.querySelectorAll('.filter-pill').forEach(b=>b.onclick=()=>setRegistrationFilter(b.dataset.filter));
-document.querySelectorAll('[data-reservation-attention]').forEach(b=>b.onclick=()=>{setReservationFilter(b.dataset.reservationAttention);$('reservationsOverview').scrollIntoView({behavior:'smooth',block:'start'});});
+document.querySelectorAll('[data-reservation-attention]').forEach(b=>b.onclick=()=>applyReservationAttentionFilter(b.dataset.reservationAttention));
 $('saveBtn').onclick=async()=>{await saveInvoice();updateMobileSaveBar();};$('deleteBtn').onclick=deleteInvoice;$('duplicateBtn').onclick=duplicateInvoice;$('newInvoiceBtn').onclick=()=>newInvoice();$('printBtn').onclick=()=>{if(validateInvoice(true))window.print();else $('saveMessage').textContent=tr[currentLang].required;};$('searchInvoices').oninput=()=>{updateSearchClearButtons();renderInvoices();};$('clearInvoiceSearch').onclick=()=>{$('searchInvoices').value='';updateSearchClearButtons();renderInvoices();$('searchInvoices').focus();};f.room.onchange=()=>{toggleInvoiceCustom();updatePreview()};f.payment.onchange=()=>{toggleInvoiceCustom();updatePreview()};f.taxMode.onchange=()=>updatePreview();f.checkin.onchange=()=>{manualNights=false;autoNights();updatePreview()};f.checkout.onchange=()=>{manualNights=false;autoNights();updatePreview()};f.nights.oninput=()=>{manualNights=true;updatePreview()};
 Object.values(f).filter(v=>v&&v.tagName!=='SELECT').forEach(v=>{if(v.type!=='hidden')v.addEventListener('input',updatePreview)});
 Object.values(rf).forEach(v=>{if(!v||v.type==='hidden')return; const ev=(v.tagName==='SELECT'||v.type==='checkbox')?'change':'input'; v.addEventListener(ev,markRegistrationDirty);v.addEventListener('input',()=>{if(String(v.value||'').trim()){v.closest('.field')?.classList.remove('field-invalid','invalid');v.classList.remove('invalid-control');v.removeAttribute('aria-invalid');}});v.addEventListener('change',()=>{if(String(v.value||'').trim()){v.closest('.field')?.classList.remove('field-invalid','invalid');v.classList.remove('invalid-control');v.removeAttribute('aria-invalid');}});});
@@ -3227,15 +3227,7 @@ function initV4MobileReservationNavigation(){
 
 
 
-function openReservationFilterFromHome(filter){
-  // Set the destination and requested filter first.
-  setV4Module('reservations');
-  setReservationFilter(filter);
-
-  // setMobileTab() performs its own scroll restoration on the next frame.
-  // Wait until that navigation + reservation render has settled, then land
-  // precisely on the filter controls so the active filter and first cards
-  // are both immediately visible.
+function scrollToReservationResults(){
   requestAnimationFrame(()=>{
     requestAnimationFrame(()=>{
       const target=$('reservationFilters')||$('reservationList');
@@ -3245,6 +3237,17 @@ function openReservationFilterFromHome(filter){
       mobileShellState.scroll.reservations=top;
     });
   });
+}
+
+function openReservationFilterFromHome(filter){
+  setV4Module('reservations');
+  setReservationFilter(filter);
+  scrollToReservationResults();
+}
+
+function applyReservationAttentionFilter(filter){
+  setReservationFilter(filter);
+  scrollToReservationResults();
 }
 
 function initV4(){

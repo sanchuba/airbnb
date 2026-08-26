@@ -3455,3 +3455,9 @@ body.app-starting #mobileBottomNav,body.app-starting #mobileDetailBar{visibility
   display:block;
   white-space:pre-line;
 }
+
+
+/* v4.2.3 – calendar detail: breathing room below attention note */
+.calendar-detail-alert:not(.hidden) + #calendarDetailBadges {
+  margin-top:12px;
+}
