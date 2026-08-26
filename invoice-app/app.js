@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.2.0';
+const NGR_ADMIN_BUILD='4.2.1';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';

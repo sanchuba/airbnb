@@ -3446,3 +3446,12 @@ body.app-starting #mobileBottomNav,body.app-starting #mobileDetailBar{visibility
 #reservationFilters {
   scroll-margin-top:14px;
 }
+
+
+/* =========================================================
+   v4.2.1 – calendar reservation note line breaks
+   ========================================================= */
+.calendar-detail-alert > span {
+  display:block;
+  white-space:pre-line;
+}
