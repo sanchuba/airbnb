@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.2.3';
+const NGR_ADMIN_BUILD='4.2.4';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -3233,7 +3233,7 @@ function scrollToReservationResults(){
       const target=$('reservationFilters')||$('reservationList');
       if(!target)return;
       const top=Math.max(0,target.getBoundingClientRect().top+window.scrollY-14);
-      window.scrollTo({top,behavior:'auto'});
+      window.scrollTo({top,behavior:'smooth'});
       mobileShellState.scroll.reservations=top;
     });
   });

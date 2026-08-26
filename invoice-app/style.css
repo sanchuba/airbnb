@@ -3461,3 +3461,9 @@ body.app-starting #mobileBottomNav,body.app-starting #mobileDetailBar{visibility
 .calendar-detail-alert:not(.hidden) + #calendarDetailBadges {
   margin-top:12px;
 }
+
+
+/* v4.2.4 – smoother reservation shortcut landing */
+#reservationFilters {
+  scroll-margin-top:18px;
+}
