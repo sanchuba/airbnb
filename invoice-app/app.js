@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.1.8';
+const NGR_ADMIN_BUILD='4.2.0';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -1536,6 +1536,22 @@ function renderAttention(){
   });
   $('attentionClearState')?.classList.toggle('hidden',any);
   $('attentionSubtitle')?.classList.toggle('hidden',!any);
+}
+
+function setStartupStatus(){
+  const el=$('startupStatus');
+  if(el)el.textContent=currentLang==='nl'?'Even geduld…':'Loading…';
+}
+function showStartupView(){
+  $('startupView')?.classList.remove('hidden');
+  $('loginView')?.classList.add('hidden');
+  $('appView')?.classList.add('hidden');
+  document.body.classList.add('app-starting');
+  setStartupStatus();
+}
+function hideStartupView(){
+  $('startupView')?.classList.add('hidden');
+  document.body.classList.remove('app-starting');
 }
 
 async function session(){ return (await supabaseClient.auth.getSession()).data.session; }
@@ -3210,6 +3226,27 @@ function initV4MobileReservationNavigation(){
 }
 
 
+
+function openReservationFilterFromHome(filter){
+  // Set the destination and requested filter first.
+  setV4Module('reservations');
+  setReservationFilter(filter);
+
+  // setMobileTab() performs its own scroll restoration on the next frame.
+  // Wait until that navigation + reservation render has settled, then land
+  // precisely on the filter controls so the active filter and first cards
+  // are both immediately visible.
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      const target=$('reservationFilters')||$('reservationList');
+      if(!target)return;
+      const top=Math.max(0,target.getBoundingClientRect().top+window.scrollY-14);
+      window.scrollTo({top,behavior:'auto'});
+      mobileShellState.scroll.reservations=top;
+    });
+  });
+}
+
 function initV4(){
   // Desktop module navigation.
   document.querySelectorAll('[data-v4-module]').forEach(b=>b.onclick=()=>setV4Module(b.dataset.v4Module));
@@ -3226,7 +3263,7 @@ function initV4(){
   $('v4ReservationPlatformFilter').onchange=e=>{v4ReservationPlatform=e.target.value;renderReservations();};
   $('v4ReservationRoomFilter').onchange=e=>{v4ReservationRoom=e.target.value;renderReservations();};
 
-  document.querySelectorAll('[data-v4-home-filter]').forEach(b=>b.onclick=()=>{setV4Module('reservations');setReservationFilter(b.dataset.v4HomeFilter);});
+  document.querySelectorAll('[data-v4-home-filter]').forEach(b=>b.onclick=()=>openReservationFilterFromHome(b.dataset.v4HomeFilter));
   $('v4HomeSyncBtn').onclick=()=>syncCalendars(true);
 
   $('v4ToolsBtn').onclick=e=>{
@@ -3312,7 +3349,7 @@ initV4();
 initAdminNav();
 
 async function init(){
-  // Render immediately in the locally remembered language, including login.
+  showStartupView();
   setTexts();
   setReservationFilter(reservationFilter);
   toggleRegInvoice();
@@ -3321,34 +3358,37 @@ async function init(){
 
   const s=await session();
   if(!s){
+    hideStartupView();
     document.body.classList.remove('mobile-app-active');
-    $('loginView').classList.remove('hidden');
     $('appView').classList.add('hidden');
+    $('loginView').classList.remove('hidden');
+    setTexts();
     return;
   }
 
   if(!(await allowed())){
     await supabaseClient.auth.signOut();
+    hideStartupView();
+    $('appView').classList.add('hidden');
+    $('loginView').classList.remove('hidden');
     $('loginMessage').textContent=tr[currentLang].denied;
     return;
   }
 
-  // Supabase is authoritative after login, enabling cross-device language sync.
   const before=currentLang;
   await loadAccountLanguagePreference();
-  if(currentLang!==before){
-    await applyAdminLanguage(currentLang,{persist:false});
-  }else{
-    setTexts();
-  }
+  if(currentLang!==before) await applyAdminLanguage(currentLang,{persist:false});
+  else setTexts();
 
   $('loginView').classList.add('hidden');
   $('appView').classList.remove('hidden');
   $('logoutBtn').classList.remove('hidden');
   initMobileAppShell();
+
   await Promise.all([loadRegs(),loadInvoices(),loadReservations(),newInvoice(true)]);
   setReservationFilter(reservationFilter||'upcoming');
   await autoSyncCalendars();
+  hideStartupView();
 }
 init().catch(err=>{
   console.error('Admin initialization failed:', err);
