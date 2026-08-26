@@ -3467,3 +3467,11 @@ body.app-starting #mobileBottomNav,body.app-starting #mobileDetailBar{visibility
 #reservationFilters {
   scroll-margin-top:18px;
 }
+
+
+/* v4.2.5 – private admin mobile zoom restriction */
+@media(max-width:700px){
+  html,body,#appView {
+    touch-action:pan-x pan-y;
+  }
+}

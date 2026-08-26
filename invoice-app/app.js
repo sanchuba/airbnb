@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.2.4';
+const NGR_ADMIN_BUILD='4.2.5';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -3250,6 +3250,31 @@ function applyReservationAttentionFilter(filter){
   scrollToReservationResults();
 }
 
+
+function initMobileZoomGuard(){
+  if(!isMobileShell())return;
+
+  // Prevent multi-touch pinch gestures inside the private admin app.
+  document.addEventListener('touchmove',e=>{
+    if(e.touches && e.touches.length>1)e.preventDefault();
+  },{passive:false});
+
+  // Prevent Safari gesture zoom events where supported.
+  ['gesturestart','gesturechange','gestureend'].forEach(type=>{
+    document.addEventListener(type,e=>e.preventDefault(),{passive:false});
+  });
+
+  // Prevent accidental double-tap zoom while preserving normal single taps.
+  let lastTouchEnd=0;
+  document.addEventListener('touchend',e=>{
+    const now=Date.now();
+    if(now-lastTouchEnd<=300){
+      e.preventDefault();
+    }
+    lastTouchEnd=now;
+  },{passive:false});
+}
+
 function initV4(){
   // Desktop module navigation.
   document.querySelectorAll('[data-v4-module]').forEach(b=>b.onclick=()=>setV4Module(b.dataset.v4Module));
@@ -3298,6 +3323,7 @@ function initV4(){
   $('filterInvoice')?.classList.add('hidden');
 
   initV4MobileReservationNavigation();
+  initMobileZoomGuard();
   renderV4All();
 }
 
