@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.2.5';
+const NGR_ADMIN_BUILD='4.2.6';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -659,7 +659,11 @@ function openCalendarDetail(r){
     alertBox.innerHTML='';alertBox.className='calendar-detail-alert hidden';
   }
 
-  $('calendarDetailBadges').innerHTML=calendarEventStatusBadges(r);
+  let calendarBadges=calendarEventStatusBadges(r);
+  if(r.needs_attention){
+    calendarBadges=calendarBadges.replace(/<span class="badge reservation-attention-badge">.*?<\/span>/,'');
+  }
+  $('calendarDetailBadges').innerHTML=calendarBadges;
 
   const openInternal=()=>{
     if(blocked)return;
