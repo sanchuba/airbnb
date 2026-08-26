@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.2.6';
+const NGR_ADMIN_BUILD='4.2.7';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -277,12 +277,12 @@ function calendarEventName(r){
   return prefix+(r.reservation_code||'Airbnb');
 }
 function calendarMonthText(){return new Intl.DateTimeFormat(currentLang==='nl'?'nl-NL':'en-GB',{month:'long',year:'numeric'}).format(calendarCursor);}
-function calendarEventStatusBadges(r){
+function calendarEventStatusBadges(r,{hideAttention=false}={}){
   if(isAirbnbBlock(r))return '';
   const reg=reservationRegistration(r.id),invoice=reg?linkedInvoiceForRegistration(reg.id):null,x=tr[currentLang];
   let out='';
   if(r.no_show)out+=`<span class="calendar-mini-status no-show">${escapeHtml(x.noShow)}</span>`;
-  if(r.needs_attention)out+=`<span class="calendar-mini-status attention">⚠ ${escapeHtml(x.reservationNeedsAttention)}</span>`;
+  if(r.needs_attention&&!hideAttention)out+=`<span class="calendar-mini-status attention">⚠ ${escapeHtml(x.reservationNeedsAttention)}</span>`;
   if(!r.no_show)out+=`<span class="calendar-mini-status ${reg?'good':'warn'}">${x.calendarRegistration}: ${reg?x.calendarSubmitted:x.calendarNotSubmitted}</span>`;
   if(reg&&!r.no_show)out+=`<span class="calendar-mini-status ${reg.id_verified?'good':'warn'}">${x.calendarId}: ${reg.id_verified?x.calendarVerified:x.calendarNotVerified}</span>`;
   if(reg?.invoice_requested)out+=`<span class="calendar-mini-status ${invoice?'good':'warn'}">${x.calendarInvoice}: ${invoice?escapeHtml(invoice.invoice_number):x.calendarNone}</span>`;
@@ -659,11 +659,9 @@ function openCalendarDetail(r){
     alertBox.innerHTML='';alertBox.className='calendar-detail-alert hidden';
   }
 
-  let calendarBadges=calendarEventStatusBadges(r);
-  if(r.needs_attention){
-    calendarBadges=calendarBadges.replace(/<span class="badge reservation-attention-badge">.*?<\/span>/,'');
-  }
-  $('calendarDetailBadges').innerHTML=calendarBadges;
+  $('calendarDetailBadges').innerHTML=calendarEventStatusBadges(r,{
+    hideAttention:!!r.needs_attention
+  });
 
   const openInternal=()=>{
     if(blocked)return;
