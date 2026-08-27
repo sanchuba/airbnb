@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.4.1';
+const NGR_ADMIN_BUILD='4.4.2';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -807,7 +807,11 @@ const reservationFilterPredicates={
   idToVerify:(r,c)=>c.active&&c.live&&!!c.reg&&!c.reg.id_verified&&r.checkin_date<=c.today&&r.checkout_date>c.today,
   missingBookingReference:(r,c)=>c.active&&c.live&&c.stayOpen&&r.platform==='booking'&&!bookingReferenceForReservation(r),
   expiredRegistrationLink:(r,c)=>c.active&&c.live&&c.stayOpen&&!c.reg&&!c.validInvite&&!!c.expiredInvite,
-  invoiceToCreate:(r,c)=>c.active&&!!c.reg&&!!c.reg.invoice_requested&&!c.invoice&&r.checkout_date<=c.today,
+  // Invoice follow-up survives disappearance from an OTA/iCal feed.
+  // A reservation is only removed from this queue when:
+  // - the invoice has been created, or
+  // - the host explicitly confirms that the reservation was cancelled.
+  invoiceToCreate:(r,c)=>!r.cancellation_confirmed_at&&!!c.reg&&!!c.reg.invoice_requested&&!c.invoice&&r.checkout_date<=c.today,
 
   // History / archive views.
   past:(r,c)=>c.active&&r.checkout_date<=c.today,
@@ -2605,7 +2609,7 @@ function v4WorkflowHtml(r){
   let invoice='';
   if(inv){
     invoice=`<span class="v4-workflow-chip good">✓ ${escapeHtml(v4Text('Invoice created','Factuur gemaakt'))} · ${escapeHtml(inv.invoice_number)}</span>`;
-  }else if(reg?.invoice_requested && r.checkout_date<=localToday()){
+  }else if(reg?.invoice_requested && !r.cancellation_confirmed_at && r.checkout_date<=localToday()){
     invoice=`<span class="v4-workflow-chip warn">${escapeHtml(v4Text('Invoice to create','Factuur maken'))}</span>`;
   }else if(reg?.invoice_requested){
     invoice=`<span class="v4-workflow-chip muted">${escapeHtml(v4Text('Invoice later','Factuur later'))}</span>`;
@@ -2757,7 +2761,7 @@ function v4PrimaryAction(r,card){
   if(reg && !reg.id_verified && r.checkin_date<=localToday() && r.checkout_date>localToday()){
     b.textContent=v4Text('Verify ID','Verifieer ID');b.onclick=e=>{e.stopPropagation();openV4GuestProfile(reg);};return b;
   }
-  if(reg?.invoice_requested&&!linked&&r.checkout_date<=localToday()){
+  if(reg?.invoice_requested&&!linked&&!r.cancellation_confirmed_at&&r.checkout_date<=localToday()){
     b.textContent=v4Text('Create invoice','Maak factuur');b.onclick=e=>{e.stopPropagation();useRegistrationForInvoiceFromV4(reg);};return b;
   }
   b.textContent=v4Text('Open reservation','Open reservering');b.onclick=e=>{e.stopPropagation();openV4Reservation(r);};return b;
