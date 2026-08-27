@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.2.9';
+const NGR_ADMIN_BUILD='4.1.8';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -277,12 +277,12 @@ function calendarEventName(r){
   return prefix+(r.reservation_code||'Airbnb');
 }
 function calendarMonthText(){return new Intl.DateTimeFormat(currentLang==='nl'?'nl-NL':'en-GB',{month:'long',year:'numeric'}).format(calendarCursor);}
-function calendarEventStatusBadges(r,{hideAttention=false}={}){
+function calendarEventStatusBadges(r){
   if(isAirbnbBlock(r))return '';
   const reg=reservationRegistration(r.id),invoice=reg?linkedInvoiceForRegistration(reg.id):null,x=tr[currentLang];
   let out='';
   if(r.no_show)out+=`<span class="calendar-mini-status no-show">${escapeHtml(x.noShow)}</span>`;
-  if(r.needs_attention&&!hideAttention)out+=`<span class="calendar-mini-status attention">⚠ ${escapeHtml(x.reservationNeedsAttention)}</span>`;
+  if(r.needs_attention)out+=`<span class="calendar-mini-status attention">⚠ ${escapeHtml(x.reservationNeedsAttention)}</span>`;
   if(!r.no_show)out+=`<span class="calendar-mini-status ${reg?'good':'warn'}">${x.calendarRegistration}: ${reg?x.calendarSubmitted:x.calendarNotSubmitted}</span>`;
   if(reg&&!r.no_show)out+=`<span class="calendar-mini-status ${reg.id_verified?'good':'warn'}">${x.calendarId}: ${reg.id_verified?x.calendarVerified:x.calendarNotVerified}</span>`;
   if(reg?.invoice_requested)out+=`<span class="calendar-mini-status ${invoice?'good':'warn'}">${x.calendarInvoice}: ${invoice?escapeHtml(invoice.invoice_number):x.calendarNone}</span>`;
@@ -659,9 +659,7 @@ function openCalendarDetail(r){
     alertBox.innerHTML='';alertBox.className='calendar-detail-alert hidden';
   }
 
-  $('calendarDetailBadges').innerHTML=calendarEventStatusBadges(r,{
-    hideAttention:!!r.needs_attention
-  });
+  $('calendarDetailBadges').innerHTML=calendarEventStatusBadges(r);
 
   const openInternal=()=>{
     if(blocked)return;
@@ -1540,22 +1538,6 @@ function renderAttention(){
   $('attentionSubtitle')?.classList.toggle('hidden',!any);
 }
 
-function setStartupStatus(){
-  const el=$('startupStatus');
-  if(el)el.textContent=currentLang==='nl'?'Even geduld…':'Loading…';
-}
-function showStartupView(){
-  $('startupView')?.classList.remove('hidden');
-  $('loginView')?.classList.add('hidden');
-  $('appView')?.classList.add('hidden');
-  document.body.classList.add('app-starting');
-  setStartupStatus();
-}
-function hideStartupView(){
-  $('startupView')?.classList.add('hidden');
-  document.body.classList.remove('app-starting');
-}
-
 async function session(){ return (await supabaseClient.auth.getSession()).data.session; }
 async function allowed(){ const {data,error}=await supabaseClient.rpc('is_allowed_user'); return !error&&data===true; }
 
@@ -2297,7 +2279,7 @@ $('regAdditionalGuestPayment').onchange=()=>{markRegistrationDirty();};
 $('regAdditionalGuestPaid').onchange=()=>{markRegistrationDirty();};$('useForInvoiceBtn').onclick=useRegistrationForInvoice;$('deleteRegistrationBtn').onclick=deleteRegistration;function updateSearchClearButtons(){$('clearRegistrationSearch').classList.toggle('hidden',!$('registrationSearch').value);$('clearInvoiceSearch').classList.toggle('hidden',!$('searchInvoices').value);}
 $('registrationSearch').oninput=()=>{updateSearchClearButtons();renderRegs();};$('clearRegistrationSearch').onclick=()=>{$('registrationSearch').value='';updateSearchClearButtons();renderRegs();$('registrationSearch').focus();};rf.invoiceRequested.onchange=toggleRegInvoice;rf.invoiceType.onchange=toggleRegInvoice;rf.idType.onchange=toggleIdOther;
 document.querySelectorAll('.filter-pill').forEach(b=>b.onclick=()=>setRegistrationFilter(b.dataset.filter));
-document.querySelectorAll('[data-reservation-attention]').forEach(b=>b.onclick=()=>applyReservationAttentionFilter(b.dataset.reservationAttention));
+document.querySelectorAll('[data-reservation-attention]').forEach(b=>b.onclick=()=>{setReservationFilter(b.dataset.reservationAttention);$('reservationsOverview').scrollIntoView({behavior:'smooth',block:'start'});});
 $('saveBtn').onclick=async()=>{await saveInvoice();updateMobileSaveBar();};$('deleteBtn').onclick=deleteInvoice;$('duplicateBtn').onclick=duplicateInvoice;$('newInvoiceBtn').onclick=()=>newInvoice();$('printBtn').onclick=()=>{if(validateInvoice(true))window.print();else $('saveMessage').textContent=tr[currentLang].required;};$('searchInvoices').oninput=()=>{updateSearchClearButtons();renderInvoices();};$('clearInvoiceSearch').onclick=()=>{$('searchInvoices').value='';updateSearchClearButtons();renderInvoices();$('searchInvoices').focus();};f.room.onchange=()=>{toggleInvoiceCustom();updatePreview()};f.payment.onchange=()=>{toggleInvoiceCustom();updatePreview()};f.taxMode.onchange=()=>updatePreview();f.checkin.onchange=()=>{manualNights=false;autoNights();updatePreview()};f.checkout.onchange=()=>{manualNights=false;autoNights();updatePreview()};f.nights.oninput=()=>{manualNights=true;updatePreview()};
 Object.values(f).filter(v=>v&&v.tagName!=='SELECT').forEach(v=>{if(v.type!=='hidden')v.addEventListener('input',updatePreview)});
 Object.values(rf).forEach(v=>{if(!v||v.type==='hidden')return; const ev=(v.tagName==='SELECT'||v.type==='checkbox')?'change':'input'; v.addEventListener(ev,markRegistrationDirty);v.addEventListener('input',()=>{if(String(v.value||'').trim()){v.closest('.field')?.classList.remove('field-invalid','invalid');v.classList.remove('invalid-control');v.removeAttribute('aria-invalid');}});v.addEventListener('change',()=>{if(String(v.value||'').trim()){v.closest('.field')?.classList.remove('field-invalid','invalid');v.classList.remove('invalid-control');v.removeAttribute('aria-invalid');}});});
@@ -2562,7 +2544,8 @@ function v4WorkflowHtml(r){
   return registration+id+invoice;
 }
 function v4TaskCount(){
-  return v4AllTasks().length;
+  return ['registrationLinkNotCreated','idToVerify','invoiceToCreate','missingBookingReference','expiredRegistrationLink','needsAttention']
+    .reduce((n,key)=>n+reservationFilterCount(key),0);
 }
 function v4DepartureCount(){
   const t=localToday();
@@ -2790,8 +2773,7 @@ function renderV4WorkspaceActivity(){
   const r=v4CurrentReservation;if(!r)return;
   const inferred=[];
   const reg=reservationRegistration(r.id),inv=reg?linkedInvoiceForRegistration(reg.id):null;
-  const hasLoggedInvoiceCreated=v4Activities.some(a=>a.action==='invoice_created');
-  if(inv&&!hasLoggedInvoiceCreated)inferred.push({detail:`${v4Text('Invoice created','Factuur gemaakt')} · ${inv.invoice_number}`,created_at:inv.created_at||inv.invoice_date});
+  if(inv)inferred.push({detail:`${v4Text('Invoice created','Factuur gemaakt')} · ${inv.invoice_number}`,created_at:inv.created_at||inv.invoice_date});
   if(reg?.id_verified_at)inferred.push({detail:v4Text('ID verified','ID geverifieerd'),created_at:reg.id_verified_at});
   if(reg?.submitted_at)inferred.push({detail:v4Text('Guest registration submitted','Gastenregistratie ingediend'),created_at:reg.submitted_at});
   const all=[...v4Activities.map(a=>({detail:a.detail||a.action,created_at:a.created_at})),...inferred].filter(x=>x.created_at).sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)));
@@ -2992,84 +2974,11 @@ function openV4Invoice(inv){
   $('invoiceDetailsCard').classList.add('v4-invoice-open');
   $('previewWrapper').classList.add('v4-invoice-open');
 }
-async function useRegistrationForInvoiceFromV4(reg){
-  if(!reg)return;
-  const linked=linkedInvoiceForRegistration(reg.id);
-  if(linked){
-    // A reservation workspace is a full-screen layer on mobile. Close it before
-    // navigating to the invoice so the invoice can never render behind it.
-    if(v4CurrentReservation)closeV4Reservation();
-    openV4Invoice(linked);
-    return;
-  }
-  if(!guardUnsaved('invoice'))return;
-
-  // Remember where the action originated. This lets the mobile invoice detail
-  // return to Home when launched from an open task, and to Reservations when
-  // launched from a reservation, while still presenting the invoice in front.
-  const sourceTab=isMobileShell()?(mobileShellState.tab||'reservations'):'invoices';
-
-  // Always begin with a clean invoice draft before applying reservation data.
-  // This prevents values from a previously opened invoice from carrying over.
-  await newInvoice(true);
-  const invoiceDefaults=v4Settings();
-
-  suppressDirty=true;
-  f.cleaning.value=Number(invoiceDefaults.cleaning||0).toFixed(2);
-  f.tourist.value=Number(invoiceDefaults.touristTax||0).toFixed(2);
-  f.taxMode.value=invoiceDefaults.taxMode||'included';
-
-  // Populate directly from the selected registration/reservation context.
+function useRegistrationForInvoiceFromV4(reg){
   currentRegistrationId=reg.id;
-  currentInvoiceId=null;
-  manualNights=false;
-  f.registrationId.value=reg.id||'';
-  f.invoiceDate.value=today();
-  // Invoice number was already allocated by newInvoice(true).
-  f.guestName.value=reg.full_name||'';
-  f.guestAddress.value='';
-  f.guestPostal.value='';
-  f.guestCity.value=reg.city||'';
-  f.guestCountry.value=reg.country||'';
-  f.companyName.value=reg.invoice_type==='company'?(reg.company_name||''):'';
-  f.companyAddress.value=reg.invoice_type==='company'?(reg.company_address||''):'';
-  f.vat.value=reg.invoice_type==='company'?(reg.vat_number||''):'';
-  f.email.value=reg.email||'';
-  f.booking.value=reg.booking_reference||'';
-  f.checkin.value=reg.checkin_date||'';
-  f.checkout.value=reg.checkout_date||'';
-  applyReservationRoomToInvoice(reg.id);
-  applyReservationPaymentToInvoice(reg.id);
-
-  const hasExtra=registrationGuestCount(reg)>1&&Number(reg.additional_guest_nights||0)>0;
-  const extraNights=hasExtra?Number(reg.additional_guest_nights||0):0;
-  const extraFee=hasExtra?additionalGuestTotalFromRegistration(reg):0;
-  f.additionalGuestFee.value=extraFee.toFixed(2);
-  f.additionalGuestNights.value=extraNights;
-  f.guests.value=registrationGuestCount(reg);
-  $('additionalGuestInvoiceFields').classList.toggle('hidden',!hasExtra);
-  applyCombinedPaymentToInvoice(reg.id);
-  autoNights();
-  $('deleteBtn').classList.add('hidden');
-  $('duplicateBtn').classList.add('hidden');
-  $('saveMessage').textContent='';
-  toggleInvoiceCustom();
-  updatePreview();
-  suppressDirty=false;
-  markInvoiceDirty();
-  updateMobileSaveBar();
-
-  // The reservation workspace must be gone before the invoice detail is shown;
-  // otherwise its fixed layer sits above the invoice on mobile.
-  if(v4CurrentReservation)closeV4Reservation();
-  $('invoiceDetailsCard').classList.add('v4-invoice-open');
-  $('previewWrapper').classList.add('v4-invoice-open');
-  if(isMobileShell()){
-    openMobileDetail('invoice',sourceTab);
-  }else{
-    setV4Module('invoices');
-    requestAnimationFrame(()=>document.querySelector('.form-card')?.scrollIntoView({behavior:'smooth',block:'start'}));
-  }
+  useRegistrationForInvoice();
+  $('invoiceDetailsCard').classList.add('v4-invoice-open');$('previewWrapper').classList.add('v4-invoice-open');
+  if(!isMobileShell())setV4Module('invoices');
 }
 
 
@@ -3301,55 +3210,6 @@ function initV4MobileReservationNavigation(){
 }
 
 
-
-function scrollToReservationResults(){
-  requestAnimationFrame(()=>{
-    requestAnimationFrame(()=>{
-      const target=$('reservationFilters')||$('reservationList');
-      if(!target)return;
-      const top=Math.max(0,target.getBoundingClientRect().top+window.scrollY-14);
-      window.scrollTo({top,behavior:'smooth'});
-      mobileShellState.scroll.reservations=top;
-    });
-  });
-}
-
-function openReservationFilterFromHome(filter){
-  setV4Module('reservations');
-  setReservationFilter(filter);
-  scrollToReservationResults();
-}
-
-function applyReservationAttentionFilter(filter){
-  setReservationFilter(filter);
-  scrollToReservationResults();
-}
-
-
-function initMobileZoomGuard(){
-  if(!isMobileShell())return;
-
-  // Prevent multi-touch pinch gestures inside the private admin app.
-  document.addEventListener('touchmove',e=>{
-    if(e.touches && e.touches.length>1)e.preventDefault();
-  },{passive:false});
-
-  // Prevent Safari gesture zoom events where supported.
-  ['gesturestart','gesturechange','gestureend'].forEach(type=>{
-    document.addEventListener(type,e=>e.preventDefault(),{passive:false});
-  });
-
-  // Prevent accidental double-tap zoom while preserving normal single taps.
-  let lastTouchEnd=0;
-  document.addEventListener('touchend',e=>{
-    const now=Date.now();
-    if(now-lastTouchEnd<=300){
-      e.preventDefault();
-    }
-    lastTouchEnd=now;
-  },{passive:false});
-}
-
 function initV4(){
   // Desktop module navigation.
   document.querySelectorAll('[data-v4-module]').forEach(b=>b.onclick=()=>setV4Module(b.dataset.v4Module));
@@ -3366,7 +3226,7 @@ function initV4(){
   $('v4ReservationPlatformFilter').onchange=e=>{v4ReservationPlatform=e.target.value;renderReservations();};
   $('v4ReservationRoomFilter').onchange=e=>{v4ReservationRoom=e.target.value;renderReservations();};
 
-  document.querySelectorAll('[data-v4-home-filter]').forEach(b=>b.onclick=()=>openReservationFilterFromHome(b.dataset.v4HomeFilter));
+  document.querySelectorAll('[data-v4-home-filter]').forEach(b=>b.onclick=()=>{setV4Module('reservations');setReservationFilter(b.dataset.v4HomeFilter);});
   $('v4HomeSyncBtn').onclick=()=>syncCalendars(true);
 
   $('v4ToolsBtn').onclick=e=>{
@@ -3398,7 +3258,6 @@ function initV4(){
   $('filterInvoice')?.classList.add('hidden');
 
   initV4MobileReservationNavigation();
-  initMobileZoomGuard();
   renderV4All();
 }
 
@@ -3453,7 +3312,7 @@ initV4();
 initAdminNav();
 
 async function init(){
-  showStartupView();
+  // Render immediately in the locally remembered language, including login.
   setTexts();
   setReservationFilter(reservationFilter);
   toggleRegInvoice();
@@ -3462,37 +3321,34 @@ async function init(){
 
   const s=await session();
   if(!s){
-    hideStartupView();
     document.body.classList.remove('mobile-app-active');
-    $('appView').classList.add('hidden');
     $('loginView').classList.remove('hidden');
-    setTexts();
+    $('appView').classList.add('hidden');
     return;
   }
 
   if(!(await allowed())){
     await supabaseClient.auth.signOut();
-    hideStartupView();
-    $('appView').classList.add('hidden');
-    $('loginView').classList.remove('hidden');
     $('loginMessage').textContent=tr[currentLang].denied;
     return;
   }
 
+  // Supabase is authoritative after login, enabling cross-device language sync.
   const before=currentLang;
   await loadAccountLanguagePreference();
-  if(currentLang!==before) await applyAdminLanguage(currentLang,{persist:false});
-  else setTexts();
+  if(currentLang!==before){
+    await applyAdminLanguage(currentLang,{persist:false});
+  }else{
+    setTexts();
+  }
 
   $('loginView').classList.add('hidden');
   $('appView').classList.remove('hidden');
   $('logoutBtn').classList.remove('hidden');
   initMobileAppShell();
-
   await Promise.all([loadRegs(),loadInvoices(),loadReservations(),newInvoice(true)]);
   setReservationFilter(reservationFilter||'upcoming');
   await autoSyncCalendars();
-  hideStartupView();
 }
 init().catch(err=>{
   console.error('Admin initialization failed:', err);
