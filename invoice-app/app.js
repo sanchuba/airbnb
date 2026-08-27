@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.2.7';
+const NGR_ADMIN_BUILD='4.2.9';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -2562,8 +2562,7 @@ function v4WorkflowHtml(r){
   return registration+id+invoice;
 }
 function v4TaskCount(){
-  return ['registrationLinkNotCreated','idToVerify','invoiceToCreate','missingBookingReference','expiredRegistrationLink','needsAttention']
-    .reduce((n,key)=>n+reservationFilterCount(key),0);
+  return v4AllTasks().length;
 }
 function v4DepartureCount(){
   const t=localToday();
@@ -2791,7 +2790,8 @@ function renderV4WorkspaceActivity(){
   const r=v4CurrentReservation;if(!r)return;
   const inferred=[];
   const reg=reservationRegistration(r.id),inv=reg?linkedInvoiceForRegistration(reg.id):null;
-  if(inv)inferred.push({detail:`${v4Text('Invoice created','Factuur gemaakt')} · ${inv.invoice_number}`,created_at:inv.created_at||inv.invoice_date});
+  const hasLoggedInvoiceCreated=v4Activities.some(a=>a.action==='invoice_created');
+  if(inv&&!hasLoggedInvoiceCreated)inferred.push({detail:`${v4Text('Invoice created','Factuur gemaakt')} · ${inv.invoice_number}`,created_at:inv.created_at||inv.invoice_date});
   if(reg?.id_verified_at)inferred.push({detail:v4Text('ID verified','ID geverifieerd'),created_at:reg.id_verified_at});
   if(reg?.submitted_at)inferred.push({detail:v4Text('Guest registration submitted','Gastenregistratie ingediend'),created_at:reg.submitted_at});
   const all=[...v4Activities.map(a=>({detail:a.detail||a.action,created_at:a.created_at})),...inferred].filter(x=>x.created_at).sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)));
@@ -3009,16 +3009,23 @@ async function useRegistrationForInvoiceFromV4(reg){
   // launched from a reservation, while still presenting the invoice in front.
   const sourceTab=isMobileShell()?(mobileShellState.tab||'reservations'):'invoices';
 
-  // Do not depend on the guest editor (rf) being open/populated. Dashboard and
-  // reservation actions pass a registration object directly, so populate the
-  // invoice from that object itself.
+  // Always begin with a clean invoice draft before applying reservation data.
+  // This prevents values from a previously opened invoice from carrying over.
+  await newInvoice(true);
+  const invoiceDefaults=v4Settings();
+
   suppressDirty=true;
+  f.cleaning.value=Number(invoiceDefaults.cleaning||0).toFixed(2);
+  f.tourist.value=Number(invoiceDefaults.touristTax||0).toFixed(2);
+  f.taxMode.value=invoiceDefaults.taxMode||'included';
+
+  // Populate directly from the selected registration/reservation context.
   currentRegistrationId=reg.id;
   currentInvoiceId=null;
   manualNights=false;
   f.registrationId.value=reg.id||'';
   f.invoiceDate.value=today();
-  f.invoiceNumber.value=await nextInvoice();
+  // Invoice number was already allocated by newInvoice(true).
   f.guestName.value=reg.full_name||'';
   f.guestAddress.value='';
   f.guestPostal.value='';
