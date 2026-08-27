@@ -2992,11 +2992,77 @@ function openV4Invoice(inv){
   $('invoiceDetailsCard').classList.add('v4-invoice-open');
   $('previewWrapper').classList.add('v4-invoice-open');
 }
-function useRegistrationForInvoiceFromV4(reg){
+async function useRegistrationForInvoiceFromV4(reg){
+  if(!reg)return;
+  const linked=linkedInvoiceForRegistration(reg.id);
+  if(linked){
+    // A reservation workspace is a full-screen layer on mobile. Close it before
+    // navigating to the invoice so the invoice can never render behind it.
+    if(v4CurrentReservation)closeV4Reservation();
+    openV4Invoice(linked);
+    return;
+  }
+  if(!guardUnsaved('invoice'))return;
+
+  // Remember where the action originated. This lets the mobile invoice detail
+  // return to Home when launched from an open task, and to Reservations when
+  // launched from a reservation, while still presenting the invoice in front.
+  const sourceTab=isMobileShell()?(mobileShellState.tab||'reservations'):'invoices';
+
+  // Do not depend on the guest editor (rf) being open/populated. Dashboard and
+  // reservation actions pass a registration object directly, so populate the
+  // invoice from that object itself.
+  suppressDirty=true;
   currentRegistrationId=reg.id;
-  useRegistrationForInvoice();
-  $('invoiceDetailsCard').classList.add('v4-invoice-open');$('previewWrapper').classList.add('v4-invoice-open');
-  if(!isMobileShell())setV4Module('invoices');
+  currentInvoiceId=null;
+  manualNights=false;
+  f.registrationId.value=reg.id||'';
+  f.invoiceDate.value=today();
+  f.invoiceNumber.value=await nextInvoice();
+  f.guestName.value=reg.full_name||'';
+  f.guestAddress.value='';
+  f.guestPostal.value='';
+  f.guestCity.value=reg.city||'';
+  f.guestCountry.value=reg.country||'';
+  f.companyName.value=reg.invoice_type==='company'?(reg.company_name||''):'';
+  f.companyAddress.value=reg.invoice_type==='company'?(reg.company_address||''):'';
+  f.vat.value=reg.invoice_type==='company'?(reg.vat_number||''):'';
+  f.email.value=reg.email||'';
+  f.booking.value=reg.booking_reference||'';
+  f.checkin.value=reg.checkin_date||'';
+  f.checkout.value=reg.checkout_date||'';
+  applyReservationRoomToInvoice(reg.id);
+  applyReservationPaymentToInvoice(reg.id);
+
+  const hasExtra=registrationGuestCount(reg)>1&&Number(reg.additional_guest_nights||0)>0;
+  const extraNights=hasExtra?Number(reg.additional_guest_nights||0):0;
+  const extraFee=hasExtra?additionalGuestTotalFromRegistration(reg):0;
+  f.additionalGuestFee.value=extraFee.toFixed(2);
+  f.additionalGuestNights.value=extraNights;
+  f.guests.value=registrationGuestCount(reg);
+  $('additionalGuestInvoiceFields').classList.toggle('hidden',!hasExtra);
+  applyCombinedPaymentToInvoice(reg.id);
+  autoNights();
+  $('deleteBtn').classList.add('hidden');
+  $('duplicateBtn').classList.add('hidden');
+  $('saveMessage').textContent='';
+  toggleInvoiceCustom();
+  updatePreview();
+  suppressDirty=false;
+  markInvoiceDirty();
+  updateMobileSaveBar();
+
+  // The reservation workspace must be gone before the invoice detail is shown;
+  // otherwise its fixed layer sits above the invoice on mobile.
+  if(v4CurrentReservation)closeV4Reservation();
+  $('invoiceDetailsCard').classList.add('v4-invoice-open');
+  $('previewWrapper').classList.add('v4-invoice-open');
+  if(isMobileShell()){
+    openMobileDetail('invoice',sourceTab);
+  }else{
+    setV4Module('invoices');
+    requestAnimationFrame(()=>document.querySelector('.form-card')?.scrollIntoView({behavior:'smooth',block:'start'}));
+  }
 }
 
 
