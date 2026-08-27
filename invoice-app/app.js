@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.1.8';
+const NGR_ADMIN_BUILD='4.4.1';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -277,12 +277,12 @@ function calendarEventName(r){
   return prefix+(r.reservation_code||'Airbnb');
 }
 function calendarMonthText(){return new Intl.DateTimeFormat(currentLang==='nl'?'nl-NL':'en-GB',{month:'long',year:'numeric'}).format(calendarCursor);}
-function calendarEventStatusBadges(r){
+function calendarEventStatusBadges(r,{hideAttention=false}={}){
   if(isAirbnbBlock(r))return '';
   const reg=reservationRegistration(r.id),invoice=reg?linkedInvoiceForRegistration(reg.id):null,x=tr[currentLang];
   let out='';
   if(r.no_show)out+=`<span class="calendar-mini-status no-show">${escapeHtml(x.noShow)}</span>`;
-  if(r.needs_attention)out+=`<span class="calendar-mini-status attention">⚠ ${escapeHtml(x.reservationNeedsAttention)}</span>`;
+  if(r.needs_attention&&!hideAttention)out+=`<span class="calendar-mini-status attention">⚠ ${escapeHtml(x.reservationNeedsAttention)}</span>`;
   if(!r.no_show)out+=`<span class="calendar-mini-status ${reg?'good':'warn'}">${x.calendarRegistration}: ${reg?x.calendarSubmitted:x.calendarNotSubmitted}</span>`;
   if(reg&&!r.no_show)out+=`<span class="calendar-mini-status ${reg.id_verified?'good':'warn'}">${x.calendarId}: ${reg.id_verified?x.calendarVerified:x.calendarNotVerified}</span>`;
   if(reg?.invoice_requested)out+=`<span class="calendar-mini-status ${invoice?'good':'warn'}">${x.calendarInvoice}: ${invoice?escapeHtml(invoice.invoice_number):x.calendarNone}</span>`;
@@ -659,7 +659,9 @@ function openCalendarDetail(r){
     alertBox.innerHTML='';alertBox.className='calendar-detail-alert hidden';
   }
 
-  $('calendarDetailBadges').innerHTML=calendarEventStatusBadges(r);
+  $('calendarDetailBadges').innerHTML=calendarEventStatusBadges(r,{
+    hideAttention:!!r.needs_attention
+  });
 
   const openInternal=()=>{
     if(blocked)return;
@@ -742,10 +744,20 @@ function calendarToday(){
 }
 function reservationNightsBetween(a,b){ const A=new Date(`${a}T12:00:00`),B=new Date(`${b}T12:00:00`); return Math.max(0,Math.round((B-A)/86400000)); }
 
+async function fetchAllRows(buildQuery,{pageSize=500}={}){
+  const all=[];
+  for(let from=0;;from+=pageSize){
+    const {data,error}=await buildQuery().range(from,from+pageSize-1);
+    if(error)return {data:all,error};
+    const page=data||[];
+    all.push(...page);
+    if(page.length<pageSize)return {data:all,error:null};
+  }
+}
 async function loadReservations(){
   const [{data:r,error:re},{data:iv,error:ie}]=await Promise.all([
-    supabaseClient.from('reservations').select('*').order('checkin_date',{ascending:true}).limit(300),
-    supabaseClient.from('guest_registration_invites').select('id,token,reservation_id,booking_reference,booking_platform,used_at,expires_at').not('reservation_id','is',null).order('created_at',{ascending:false}).limit(300)
+    fetchAllRows(()=>supabaseClient.from('reservations').select('*').order('checkin_date',{ascending:true})),
+    fetchAllRows(()=>supabaseClient.from('guest_registration_invites').select('id,token,reservation_id,booking_reference,booking_platform,used_at,expires_at').not('reservation_id','is',null).order('created_at',{ascending:false}))
   ]);
   if(re){ $('reservationList').innerHTML=`<p class="muted">${escapeHtml(re.message)}</p>`; return; }
   reservations=r||[]; reservationInvites=ie?[]:(iv||[]); renderReservations(); renderAttention(); renderCalendar();
@@ -1538,6 +1550,22 @@ function renderAttention(){
   $('attentionSubtitle')?.classList.toggle('hidden',!any);
 }
 
+function setStartupStatus(){
+  const el=$('startupStatus');
+  if(el)el.textContent=currentLang==='nl'?'Even geduld…':'Loading…';
+}
+function showStartupView(){
+  $('startupView')?.classList.remove('hidden');
+  $('loginView')?.classList.add('hidden');
+  $('appView')?.classList.add('hidden');
+  document.body.classList.add('app-starting');
+  setStartupStatus();
+}
+function hideStartupView(){
+  $('startupView')?.classList.add('hidden');
+  document.body.classList.remove('app-starting');
+}
+
 async function session(){ return (await supabaseClient.auth.getSession()).data.session; }
 async function allowed(){ const {data,error}=await supabaseClient.rpc('is_allowed_user'); return !error&&data===true; }
 
@@ -1547,7 +1575,7 @@ async function loadAccountLanguagePreference(){
     if(!s?.user?.id)return currentLang;
     const {data,error}=await supabaseClient
       .from('admin_user_preferences')
-      .select('preferred_language')
+      .select('preferred_language,cleaning_fee,tourist_tax_rate,extra_guest_fee,default_tax_mode')
       .eq('user_id',s.user.id)
       .maybeSingle();
 
@@ -1557,6 +1585,15 @@ async function loadAccountLanguagePreference(){
     }
 
     const remote=data?.preferred_language;
+    if(data){
+      const remoteSettings={
+        cleaning:Number(data.cleaning_fee ?? 5),
+        touristTax:Number(data.tourist_tax_rate ?? 3.71),
+        extraGuest:Number(data.extra_guest_fee ?? 20),
+        taxMode:data.default_tax_mode||'included'
+      };
+      try{ localStorage.setItem(V4_SETTINGS_KEY,JSON.stringify(remoteSettings)); }catch(e){}
+    }
     if(remote==='en'||remote==='nl'){
       currentLang=remote;
       try{ localStorage.setItem(NGR_LANGUAGE_KEY,remote); }catch(e){}
@@ -1584,6 +1621,10 @@ async function saveAccountLanguagePreference(lang,{silent=false}={}){
       .upsert({
         user_id:s.user.id,
         preferred_language:lang,
+        cleaning_fee:Number(v4Settings().cleaning||0),
+        tourist_tax_rate:Number(v4Settings().touristTax||0),
+        extra_guest_fee:Number(v4Settings().extraGuest||0),
+        default_tax_mode:v4Settings().taxMode||'included',
         updated_at:new Date().toISOString()
       },{onConflict:'user_id'});
 
@@ -2205,7 +2246,17 @@ function useRegistrationForInvoice(){
   manualNights=false;autoNights();$('deleteBtn').classList.add('hidden');$('duplicateBtn').classList.add('hidden');updatePreview();markInvoiceDirty();suppressDirty=false;if(isMobileShell()){openMobileDetail('invoice',mobileShellState.tab);return;}document.querySelector('.form-card').scrollIntoView({behavior:'smooth'});
 }
 
-async function nextInvoice(){const y=new Date(f.invoiceDate.value||today()).getFullYear();const {data}=await supabaseClient.from('invoices').select('invoice_sequence').eq('invoice_year',y).order('invoice_sequence',{ascending:false}).limit(1);const n=data?.length?data[0].invoice_sequence+1:1;return `${y}-${String(n).padStart(3,'0')}`;}
+async function nextInvoice(){
+  const y=new Date(f.invoiceDate.value||today()).getFullYear();
+  const {data,error}=await supabaseClient.rpc('next_invoice_sequence',{p_year:y});
+  if(!error&&Number(data)>0)return `${y}-${String(Number(data)).padStart(3,'0')}`;
+
+  // Backwards-compatible fallback until the v4.3.0 Supabase migration is applied.
+  console.warn('Atomic invoice sequence unavailable; using legacy allocator.',error);
+  const {data:rows}=await supabaseClient.from('invoices').select('invoice_sequence').eq('invoice_year',y).order('invoice_sequence',{ascending:false}).limit(1);
+  const n=rows?.length?rows[0].invoice_sequence+1:1;
+  return `${y}-${String(n).padStart(3,'0')}`;
+}
 function autoNights(){if(manualNights)return;const n=invoiceNightsBetween();if(n)f.nights.value=n;}
 async function newInvoice(force=false){clearAdminValidationState('invoice');if(!force&&!guardUnsaved('invoice'))return; suppressDirty=true;currentInvoiceId=null;manualNights=false;f.registrationId.value='';f.invoiceDate.value=today();f.invoiceNumber.value=await nextInvoice();for(const k of ['guestName','guestAddress','guestPostal','guestCity','guestCountry','companyName','companyAddress','vat','email','booking','customRoom','checkin','checkout','nights','accommodation','customPayment'])f[k].value='';f.guests.value=1;f.cleaning.value='5.00';f.additionalGuestFee.value='0.00';f.additionalGuestNights.value='0';$('additionalGuestInvoiceFields').classList.add('hidden');f.tourist.value='3.71';f.taxMode.value='included';f.room.value=tr[currentLang].cozy;f.payment.value=tr[currentLang].booking;$('deleteBtn').classList.add('hidden');$('duplicateBtn').classList.add('hidden');toggleInvoiceCustom();updatePreview();$('saveMessage').textContent='';invoiceDirty=false;suppressDirty=false;updateMobileSaveBar();}
 function validateInvoice(showErrors=false){const keys=['invoiceNumber','invoiceDate','guestName','room','checkin','checkout','nights','guests','accommodation','cleaning','tourist','taxMode','payment'],invalid=[];keys.forEach(k=>{const el=f[k],empty=!String(el.value??'').trim(),badNum=(k==='nights'||k==='guests')&&Number(el.value)<=0;if(empty||badNum)invalid.push(el);});if(f.room.value==='custom'&&!f.customRoom.value.trim())invalid.push(f.customRoom);if(f.payment.value==='custom'&&!f.customPayment.value.trim())invalid.push(f.customPayment);document.querySelectorAll('#invoiceDetailsCard .field-invalid').forEach(el=>el.classList.remove('field-invalid'));invalid.forEach(el=>el.closest('.field')?.classList.add('field-invalid'));if(showErrors&&invalid.length){const first=invalid[0];requestAnimationFrame(()=>{first.scrollIntoView({behavior:'smooth',block:'center'});setTimeout(()=>first.focus({preventScroll:true}),300);});}return invalid.length===0;}
@@ -2279,7 +2330,7 @@ $('regAdditionalGuestPayment').onchange=()=>{markRegistrationDirty();};
 $('regAdditionalGuestPaid').onchange=()=>{markRegistrationDirty();};$('useForInvoiceBtn').onclick=useRegistrationForInvoice;$('deleteRegistrationBtn').onclick=deleteRegistration;function updateSearchClearButtons(){$('clearRegistrationSearch').classList.toggle('hidden',!$('registrationSearch').value);$('clearInvoiceSearch').classList.toggle('hidden',!$('searchInvoices').value);}
 $('registrationSearch').oninput=()=>{updateSearchClearButtons();renderRegs();};$('clearRegistrationSearch').onclick=()=>{$('registrationSearch').value='';updateSearchClearButtons();renderRegs();$('registrationSearch').focus();};rf.invoiceRequested.onchange=toggleRegInvoice;rf.invoiceType.onchange=toggleRegInvoice;rf.idType.onchange=toggleIdOther;
 document.querySelectorAll('.filter-pill').forEach(b=>b.onclick=()=>setRegistrationFilter(b.dataset.filter));
-document.querySelectorAll('[data-reservation-attention]').forEach(b=>b.onclick=()=>{setReservationFilter(b.dataset.reservationAttention);$('reservationsOverview').scrollIntoView({behavior:'smooth',block:'start'});});
+document.querySelectorAll('[data-reservation-attention]').forEach(b=>b.onclick=()=>applyReservationAttentionFilter(b.dataset.reservationAttention));
 $('saveBtn').onclick=async()=>{await saveInvoice();updateMobileSaveBar();};$('deleteBtn').onclick=deleteInvoice;$('duplicateBtn').onclick=duplicateInvoice;$('newInvoiceBtn').onclick=()=>newInvoice();$('printBtn').onclick=()=>{if(validateInvoice(true))window.print();else $('saveMessage').textContent=tr[currentLang].required;};$('searchInvoices').oninput=()=>{updateSearchClearButtons();renderInvoices();};$('clearInvoiceSearch').onclick=()=>{$('searchInvoices').value='';updateSearchClearButtons();renderInvoices();$('searchInvoices').focus();};f.room.onchange=()=>{toggleInvoiceCustom();updatePreview()};f.payment.onchange=()=>{toggleInvoiceCustom();updatePreview()};f.taxMode.onchange=()=>updatePreview();f.checkin.onchange=()=>{manualNights=false;autoNights();updatePreview()};f.checkout.onchange=()=>{manualNights=false;autoNights();updatePreview()};f.nights.oninput=()=>{manualNights=true;updatePreview()};
 Object.values(f).filter(v=>v&&v.tagName!=='SELECT').forEach(v=>{if(v.type!=='hidden')v.addEventListener('input',updatePreview)});
 Object.values(rf).forEach(v=>{if(!v||v.type==='hidden')return; const ev=(v.tagName==='SELECT'||v.type==='checkbox')?'change':'input'; v.addEventListener(ev,markRegistrationDirty);v.addEventListener('input',()=>{if(String(v.value||'').trim()){v.closest('.field')?.classList.remove('field-invalid','invalid');v.classList.remove('invalid-control');v.removeAttribute('aria-invalid');}});v.addEventListener('change',()=>{if(String(v.value||'').trim()){v.closest('.field')?.classList.remove('field-invalid','invalid');v.classList.remove('invalid-control');v.removeAttribute('aria-invalid');}});});
@@ -2440,18 +2491,36 @@ function v4Settings(){
   }catch(e){ return {cleaning:5,touristTax:3.71,extraGuest:20,taxMode:'included'}; }
 }
 let v4SettingsSavedTimer=null;
-function v4SaveSettings(){
-  const s={
+async function v4SaveSettings(){
+  const prefs={
     cleaning:Number($('v4DefaultCleaning').value||0),
     touristTax:Number($('v4DefaultTouristTax').value||0),
     extraGuest:Number($('v4DefaultExtraGuest').value||0),
     taxMode:$('v4DefaultTaxMode').value||'included'
   };
-  localStorage.setItem(V4_SETTINGS_KEY,JSON.stringify(s));
+  localStorage.setItem(V4_SETTINGS_KEY,JSON.stringify(prefs));
+
+  let remoteSaved=true;
+  try{
+    const auth=await session();
+    if(auth?.user?.id){
+      const {error}=await supabaseClient.from('admin_user_preferences').upsert({
+        user_id:auth.user.id,
+        preferred_language:currentLang,
+        cleaning_fee:prefs.cleaning,
+        tourist_tax_rate:prefs.touristTax,
+        extra_guest_fee:prefs.extraGuest,
+        default_tax_mode:prefs.taxMode,
+        updated_at:new Date().toISOString()
+      },{onConflict:'user_id'});
+      if(error){remoteSaved=false;console.warn('Could not sync admin settings',error);}
+    }
+  }catch(e){remoteSaved=false;console.warn('Could not sync admin settings',e);}
+
   const btn=$('v4SaveSettings'),feedback=$('v4SettingsSaveFeedback');
   window.clearTimeout(v4SettingsSavedTimer);
   if(btn){btn.disabled=true;btn.classList.add('is-saved');btn.textContent=v4Text('Saved ✓','Opgeslagen ✓');}
-  if(feedback){feedback.textContent=v4Text('Settings saved successfully.','Instellingen succesvol opgeslagen.');feedback.classList.add('visible');}
+  if(feedback){feedback.textContent=remoteSaved?v4Text('Settings saved successfully.','Instellingen succesvol opgeslagen.'):v4Text('Saved on this device; account sync failed.','Op dit apparaat opgeslagen; accountsynchronisatie is mislukt.');feedback.classList.add('visible');}
   v4SettingsSavedTimer=window.setTimeout(()=>{
     if(btn){btn.disabled=false;btn.classList.remove('is-saved');btn.textContent=v4Text('Save settings','Instellingen opslaan');}
     feedback?.classList.remove('visible');
@@ -2544,8 +2613,7 @@ function v4WorkflowHtml(r){
   return registration+id+invoice;
 }
 function v4TaskCount(){
-  return ['registrationLinkNotCreated','idToVerify','invoiceToCreate','missingBookingReference','expiredRegistrationLink','needsAttention']
-    .reduce((n,key)=>n+reservationFilterCount(key),0);
+  return v4AllTasks().length;
 }
 function v4DepartureCount(){
   const t=localToday();
@@ -2773,7 +2841,8 @@ function renderV4WorkspaceActivity(){
   const r=v4CurrentReservation;if(!r)return;
   const inferred=[];
   const reg=reservationRegistration(r.id),inv=reg?linkedInvoiceForRegistration(reg.id):null;
-  if(inv)inferred.push({detail:`${v4Text('Invoice created','Factuur gemaakt')} · ${inv.invoice_number}`,created_at:inv.created_at||inv.invoice_date});
+  const hasLoggedInvoiceCreated=v4Activities.some(a=>a.action==='invoice_created');
+  if(inv&&!hasLoggedInvoiceCreated)inferred.push({detail:`${v4Text('Invoice created','Factuur gemaakt')} · ${inv.invoice_number}`,created_at:inv.created_at||inv.invoice_date});
   if(reg?.id_verified_at)inferred.push({detail:v4Text('ID verified','ID geverifieerd'),created_at:reg.id_verified_at});
   if(reg?.submitted_at)inferred.push({detail:v4Text('Guest registration submitted','Gastenregistratie ingediend'),created_at:reg.submitted_at});
   const all=[...v4Activities.map(a=>({detail:a.detail||a.action,created_at:a.created_at})),...inferred].filter(x=>x.created_at).sort((a,b)=>String(b.created_at).localeCompare(String(a.created_at)));
@@ -2974,11 +3043,84 @@ function openV4Invoice(inv){
   $('invoiceDetailsCard').classList.add('v4-invoice-open');
   $('previewWrapper').classList.add('v4-invoice-open');
 }
-function useRegistrationForInvoiceFromV4(reg){
+async function useRegistrationForInvoiceFromV4(reg){
+  if(!reg)return;
+  const linked=linkedInvoiceForRegistration(reg.id);
+  if(linked){
+    // A reservation workspace is a full-screen layer on mobile. Close it before
+    // navigating to the invoice so the invoice can never render behind it.
+    if(v4CurrentReservation)closeV4Reservation();
+    openV4Invoice(linked);
+    return;
+  }
+  if(!guardUnsaved('invoice'))return;
+
+  // Remember where the action originated. This lets the mobile invoice detail
+  // return to Home when launched from an open task, and to Reservations when
+  // launched from a reservation, while still presenting the invoice in front.
+  const sourceTab=isMobileShell()?(mobileShellState.tab||'reservations'):'invoices';
+
+  // Always begin with a clean invoice draft before applying reservation data.
+  // This prevents values from a previously opened invoice from carrying over.
+  await newInvoice(true);
+  const invoiceDefaults=v4Settings();
+
+  suppressDirty=true;
+  f.cleaning.value=Number(invoiceDefaults.cleaning||0).toFixed(2);
+  f.tourist.value=Number(invoiceDefaults.touristTax||0).toFixed(2);
+  f.taxMode.value=invoiceDefaults.taxMode||'included';
+
+  // Populate directly from the selected registration/reservation context.
   currentRegistrationId=reg.id;
-  useRegistrationForInvoice();
-  $('invoiceDetailsCard').classList.add('v4-invoice-open');$('previewWrapper').classList.add('v4-invoice-open');
-  if(!isMobileShell())setV4Module('invoices');
+  currentInvoiceId=null;
+  manualNights=false;
+  f.registrationId.value=reg.id||'';
+  f.invoiceDate.value=today();
+  // Invoice number was already allocated by newInvoice(true).
+  f.guestName.value=reg.full_name||'';
+  f.guestAddress.value='';
+  f.guestPostal.value='';
+  f.guestCity.value=reg.city||'';
+  f.guestCountry.value=reg.country||'';
+  f.companyName.value=reg.invoice_type==='company'?(reg.company_name||''):'';
+  f.companyAddress.value=reg.invoice_type==='company'?(reg.company_address||''):'';
+  f.vat.value=reg.invoice_type==='company'?(reg.vat_number||''):'';
+  f.email.value=reg.email||'';
+  f.booking.value=reg.booking_reference||'';
+  f.checkin.value=reg.checkin_date||'';
+  f.checkout.value=reg.checkout_date||'';
+  applyReservationRoomToInvoice(reg.id);
+  applyReservationPaymentToInvoice(reg.id);
+
+  const hasExtra=registrationGuestCount(reg)>1&&Number(reg.additional_guest_nights||0)>0;
+  const extraNights=hasExtra?Number(reg.additional_guest_nights||0):0;
+  const extraFee=hasExtra?additionalGuestTotalFromRegistration(reg):0;
+  f.additionalGuestFee.value=extraFee.toFixed(2);
+  f.additionalGuestNights.value=extraNights;
+  f.guests.value=registrationGuestCount(reg);
+  $('additionalGuestInvoiceFields').classList.toggle('hidden',!hasExtra);
+  applyCombinedPaymentToInvoice(reg.id);
+  autoNights();
+  $('deleteBtn').classList.add('hidden');
+  $('duplicateBtn').classList.add('hidden');
+  $('saveMessage').textContent='';
+  toggleInvoiceCustom();
+  updatePreview();
+  suppressDirty=false;
+  markInvoiceDirty();
+  updateMobileSaveBar();
+
+  // The reservation workspace must be gone before the invoice detail is shown;
+  // otherwise its fixed layer sits above the invoice on mobile.
+  if(v4CurrentReservation)closeV4Reservation();
+  $('invoiceDetailsCard').classList.add('v4-invoice-open');
+  $('previewWrapper').classList.add('v4-invoice-open');
+  if(isMobileShell()){
+    openMobileDetail('invoice',sourceTab);
+  }else{
+    setV4Module('invoices');
+    requestAnimationFrame(()=>document.querySelector('.form-card')?.scrollIntoView({behavior:'smooth',block:'start'}));
+  }
 }
 
 
@@ -3110,6 +3252,11 @@ toggleReservationNoShow=async function(r){
 
 
 
+// ============================================================
+// CURRENT MOBILE RESERVATION NAVIGATION
+// Full-screen detail + left-edge swipe-back. Historical bottom-sheet
+// gesture implementations have been removed from the active code/CSS.
+// ============================================================
 function initV4MobileReservationNavigation(){
   const workspace=$('v4ReservationWorkspace');
   const back=$('v4MobileReservationBack');
@@ -3210,7 +3357,44 @@ function initV4MobileReservationNavigation(){
 }
 
 
+
+function scrollToReservationResults(){
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{
+      const target=$('reservationFilters')||$('reservationList');
+      if(!target)return;
+      const top=Math.max(0,target.getBoundingClientRect().top+window.scrollY-14);
+      window.scrollTo({top,behavior:'smooth'});
+      mobileShellState.scroll.reservations=top;
+    });
+  });
+}
+
+function openReservationFilterFromHome(filter){
+  setV4Module('reservations');
+  setReservationFilter(filter);
+  scrollToReservationResults();
+}
+
+function applyReservationAttentionFilter(filter){
+  setReservationFilter(filter);
+  scrollToReservationResults();
+}
+
+
+
+function initMobileZoomLock(){
+  if(!isMobileShell())return;
+  document.addEventListener('touchmove',e=>{
+    if(e.touches&&e.touches.length>1)e.preventDefault();
+  },{passive:false});
+  ['gesturestart','gesturechange','gestureend'].forEach(type=>{
+    document.addEventListener(type,e=>e.preventDefault(),{passive:false});
+  });
+}
+
 function initV4(){
+  initMobileZoomLock();
   // Desktop module navigation.
   document.querySelectorAll('[data-v4-module]').forEach(b=>b.onclick=()=>setV4Module(b.dataset.v4Module));
   setV4Module('home');
@@ -3226,7 +3410,7 @@ function initV4(){
   $('v4ReservationPlatformFilter').onchange=e=>{v4ReservationPlatform=e.target.value;renderReservations();};
   $('v4ReservationRoomFilter').onchange=e=>{v4ReservationRoom=e.target.value;renderReservations();};
 
-  document.querySelectorAll('[data-v4-home-filter]').forEach(b=>b.onclick=()=>{setV4Module('reservations');setReservationFilter(b.dataset.v4HomeFilter);});
+  document.querySelectorAll('[data-v4-home-filter]').forEach(b=>b.onclick=()=>openReservationFilterFromHome(b.dataset.v4HomeFilter));
   $('v4HomeSyncBtn').onclick=()=>syncCalendars(true);
 
   $('v4ToolsBtn').onclick=e=>{
@@ -3261,7 +3445,11 @@ function initV4(){
   renderV4All();
 }
 
-// Override mobile shell definitions so Home becomes the entry tab and invoices move to More.
+// ============================================================
+// MOBILE ROUTING
+// Home/Reservations/Calendar/Guests are visible bottom tabs.
+// Invoices is a first-class internal route reached through More.
+// ============================================================
 mobileShellState.tab='home';
 mobileShellState.scroll.home=0;
 mobileTabElement=function(tab){return tab==='home'?$('homeOverview'):tab==='reservations'?$('reservationsOverview'):tab==='calendar'?$('calendarOverview'):tab==='guests'?$('registrationOverview'):tab==='invoices'?$('savedInvoicesCard'):null;};
@@ -3312,7 +3500,7 @@ initV4();
 initAdminNav();
 
 async function init(){
-  // Render immediately in the locally remembered language, including login.
+  showStartupView();
   setTexts();
   setReservationFilter(reservationFilter);
   toggleRegInvoice();
@@ -3321,34 +3509,39 @@ async function init(){
 
   const s=await session();
   if(!s){
+    hideStartupView();
     document.body.classList.remove('mobile-app-active');
-    $('loginView').classList.remove('hidden');
     $('appView').classList.add('hidden');
+    $('loginView').classList.remove('hidden');
+    setTexts();
     return;
   }
 
   if(!(await allowed())){
     await supabaseClient.auth.signOut();
+    hideStartupView();
+    $('appView').classList.add('hidden');
+    $('loginView').classList.remove('hidden');
     $('loginMessage').textContent=tr[currentLang].denied;
     return;
   }
 
-  // Supabase is authoritative after login, enabling cross-device language sync.
   const before=currentLang;
   await loadAccountLanguagePreference();
-  if(currentLang!==before){
-    await applyAdminLanguage(currentLang,{persist:false});
-  }else{
-    setTexts();
-  }
+  if(currentLang!==before) await applyAdminLanguage(currentLang,{persist:false});
+  else setTexts();
 
   $('loginView').classList.add('hidden');
   $('appView').classList.remove('hidden');
   $('logoutBtn').classList.remove('hidden');
   initMobileAppShell();
+
   await Promise.all([loadRegs(),loadInvoices(),loadReservations(),newInvoice(true)]);
   setReservationFilter(reservationFilter||'upcoming');
-  await autoSyncCalendars();
+  hideStartupView();
+  // Calendar synchronization is useful but should never block access to the
+  // administration UI. Run it after Home is already usable.
+  autoSyncCalendars().catch(err=>console.warn('Background calendar sync failed',err));
 }
 init().catch(err=>{
   console.error('Admin initialization failed:', err);

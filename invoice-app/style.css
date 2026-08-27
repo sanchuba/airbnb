@@ -3193,73 +3193,6 @@ body.v4-invoices-module #savedInvoicesCard { display:block; }
 
 
 /* =========================================================
-   v4.1.1 – mobile reservation swipe-to-dismiss
-   ========================================================= */
-.v4-mobile-sheet-handle {
-  display:none;
-}
-
-@media(max-width:700px){
-  .v4-reservation-workspace {
-    --sheet-drag-y:0px;
-    transform:translateY(var(--sheet-drag-y)) !important;
-    will-change:transform;
-    touch-action:pan-y;
-    transition:transform .20s cubic-bezier(.22,.8,.28,1);
-  }
-
-  .v4-reservation-workspace.is-dragging {
-    transition:none;
-    user-select:none;
-    -webkit-user-select:none;
-  }
-
-  .v4-reservation-workspace.is-dismissing {
-    pointer-events:none;
-  }
-
-  .v4-mobile-sheet-handle {
-    display:block;
-    width:38px;
-    height:4px;
-    margin:-5px auto 11px;
-    border-radius:999px;
-    background:#d0c8bf;
-    opacity:.9;
-  }
-
-  #v4ReservationBackdrop {
-    transition:opacity .20s ease;
-  }
-}
-
-
-/* =========================================================
-   v4.1.2 – mobile reservation background scroll lock
-   ========================================================= */
-@media(max-width:700px){
-  body.v4-sheet-open {
-    position:fixed !important;
-    left:0;
-    right:0;
-    width:100%;
-    overflow:hidden !important;
-    overscroll-behavior:none;
-  }
-
-  .v4-reservation-workspace {
-    overflow-y:auto;
-    overscroll-behavior:contain;
-    -webkit-overflow-scrolling:touch;
-  }
-
-  .v4-reservation-workspace.is-dragging {
-    overscroll-behavior:none;
-  }
-}
-
-
-/* =========================================================
    v4.1.3 – mobile reservation as full-screen detail page
    Replaces bottom-sheet/down-swipe interaction.
    ========================================================= */
@@ -3354,25 +3287,7 @@ body.v4-invoices-module #savedInvoicesCard { display:block; }
   /* The fullscreen page itself covers the background completely. */
   #v4ReservationBackdrop {
     display:none !important;
-  }
-
-  /* Remove all visual/behavior remnants of the former draggable sheet. */
-  .v4-mobile-sheet-handle {
-    display:none !important;
-  }
-}
-
-@media(max-width:700px){
-  body.v4-sheet-open {
-    position:static !important;
-    top:auto !important;
-    left:auto !important;
-    right:auto !important;
-    width:auto !important;
-    overflow:auto !important;
-  }
-}
-
+  }}
 
 /* =========================================================
    v4.1.4 – QR modal above mobile reservation detail
@@ -3429,4 +3344,37 @@ body.v4-invoices-module #savedInvoicesCard { display:block; }
   .v4-platform-inline-link { font-size:11px; padding:5px 8px; }
   .v4-reference-with-link { align-items:flex-end; max-width:100%; }
   .v4-reference-platform-link { max-width:190px; text-align:right; }
+}
+
+.startup-view{position:fixed;inset:0;z-index:20000;display:grid;place-items:center;min-height:100dvh;padding:24px;background:#f5efe6;color:#244a3a}
+.startup-view.hidden{display:none!important}
+.startup-brand{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;transform:translateY(-3vh)}
+.startup-mark{display:grid;place-items:center;width:58px;height:58px;border-radius:18px;background:#315846;color:#fff;font:800 14px/1 Inter,sans-serif;letter-spacing:.08em;box-shadow:0 12px 30px rgba(36,74,58,.16)}
+.startup-name{margin-top:4px;font-family:Georgia,'Times New Roman',serif;font-size:clamp(25px,6vw,36px);font-weight:700;letter-spacing:-.02em}
+.startup-status{color:#8a827a;font-size:13px;font-weight:650}
+.startup-status::after{content:'';display:inline-block;width:12px;height:12px;margin-left:8px;vertical-align:-1px;border:2px solid rgba(49,88,70,.18);border-top-color:#315846;border-radius:50%;animation:ngrStartupSpin .8s linear infinite}
+@keyframes ngrStartupSpin{to{transform:rotate(360deg)}}
+body.app-starting #mobileBottomNav,body.app-starting #mobileDetailBar{visibility:hidden!important}
+
+
+/* =========================================================
+   v4.2.1 – calendar reservation note line breaks
+   ========================================================= */
+.calendar-detail-alert > span {
+  display:block;
+  white-space:pre-line;
+}
+
+
+/* v4.2.3 – calendar detail: breathing room below attention note */
+.calendar-detail-alert:not(.hidden) + #calendarDetailBadges {
+  margin-top:12px;
+}
+
+
+
+
+/* v4.4.0 – consolidated active reservation navigation rule */
+#reservationFilters {
+  scroll-margin-top:18px;
 }
