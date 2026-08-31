@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.4.4';
+const NGR_ADMIN_BUILD='4.4.5';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -2767,6 +2767,12 @@ function v4PrimaryAction(r,card){
   }
   if(reg?.invoice_requested&&!linked&&!r.cancellation_confirmed_at&&r.checkout_date<=localToday()){
     b.textContent=v4Text('Create invoice','Maak factuur');b.onclick=e=>{e.stopPropagation();useRegistrationForInvoiceFromV4(reg);};return b;
+  }
+  // Direct action for Reservations > Booking reference missing.
+  if(reservationMatchesFilter(r,'missingBookingReference')){
+    b.textContent=v4Text('Add reference','Referentie toevoegen');
+    b.onclick=e=>{e.stopPropagation();showV4BookingReferenceEditor(r);};
+    return b;
   }
   b.textContent=v4Text('Open reservation','Open reservering');b.onclick=e=>{e.stopPropagation();openV4Reservation(r);};return b;
 }
