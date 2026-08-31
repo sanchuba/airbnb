@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.4.2';
+const NGR_ADMIN_BUILD='4.4.3';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -2796,8 +2796,11 @@ function renderReservationsV4(){
     if(qrInvite)menu.push(v4MenuButton(v4Text('Show QR code','Toon QR-code'),()=>showRegistrationQr(qrInvite,r)));
     if(reg)menu.push(v4MenuButton(v4Text('Open guest profile','Open gastprofiel'),()=>openV4GuestProfile(reg)));
     if(linked)menu.push(v4MenuButton(`${v4Text('Open invoice','Open factuur')} ${linked.invoice_number}`,()=>openV4Invoice(linked)));
+    if(r.platform==='booking'&&!bookingReferenceForReservation(r)){
+      menu.push(v4MenuButton(v4Text('Add Booking reference','Voeg Booking-referentie toe'),()=>showV4BookingReferenceEditor(r)));
+    }
     if(r.status==='active'){
-      menu.push(v4MenuButton(r.needs_attention?v4Text('Edit attention note','Bewerk notitie'):v4Text('Mark for attention','Markeer voor aandacht'),()=>showReservationAttentionEditor(r,card)));
+      menu.push(v4MenuButton(r.needs_attention?v4Text('Edit attention note','Bewerk notitie'):v4Text('Mark for attention','Markeer voor aandacht'),()=>{openV4Reservation(r);showV4AttentionEditor(r);}));
       if(r.needs_attention)menu.push(v4MenuButton(v4Text('Resolve attention','Los aandachtspunt op'),async()=>{await setReservationAttentionState(r,false,'');}));
       if(r.checkout_date<=localToday()||r.no_show)menu.push(v4MenuButton(r.no_show?tr[currentLang].undoNoShow:tr[currentLang].markNoShow,()=>toggleReservationNoShow(r),{danger:!r.no_show}));
     }else{
@@ -2905,6 +2908,13 @@ function openV4Reservation(r){
     if(linked){const i=document.createElement('button');i.className='action-btn secondary';i.textContent=v4Text('Open invoice','Open factuur');i.onclick=()=>openV4Invoice(linked);actions.appendChild(i);}
     else if(reg.invoice_requested&&r.checkout_date<=localToday()){const i=document.createElement('button');i.className='action-btn secondary';i.textContent=v4Text('Create invoice','Maak factuur');i.onclick=()=>useRegistrationForInvoiceFromV4(reg);actions.appendChild(i);}
   }
+  if(r.platform==='booking'&&!bookingReferenceForReservation(r)){
+    const addRef=document.createElement('button');
+    addRef.className='action-btn secondary';
+    addRef.textContent=v4Text('Add Booking reference','Voeg Booking-referentie toe');
+    addRef.onclick=()=>showV4BookingReferenceEditor(r);
+    actions.appendChild(addRef);
+  }
   if(r.status==='active'){
     const att=document.createElement('button');att.className='action-btn secondary';att.textContent=r.needs_attention?v4Text('Edit note','Bewerk notitie'):v4Text('Mark for attention','Markeer voor aandacht');att.onclick=()=>showV4AttentionEditor(r);actions.appendChild(att);
     if(r.needs_attention){const resolve=document.createElement('button');resolve.className='action-btn secondary';resolve.textContent=v4Text('Resolve','Oplossen');resolve.onclick=async()=>{await setReservationAttentionState(r,false,'');closeV4Reservation();};actions.appendChild(resolve);}
@@ -2933,6 +2943,47 @@ function openV4Reservation(r){
   $('v4ReservationBackdrop').classList.remove('hidden');
   loadV4Activity(r.id);
 }
+function showV4BookingReferenceEditor(r){
+  if(!r||r.platform!=='booking')return;
+  // Work inside the reservation workspace so the editor is independent of
+  // legacy reservation-card DOM classes.
+  if(v4CurrentReservation?.id!==r.id)openV4Reservation(r);
+  const body=$('v4ReservationWorkspaceBody');if(!body)return;
+  const old=$('v4WorkspaceBookingReferenceEditor');
+  if(old){old.querySelector('input')?.focus();return;}
+
+  const div=document.createElement('div');
+  div.id='v4WorkspaceBookingReferenceEditor';
+  div.className='reservation-booking-ref-editor';
+  const hint=currentLang==='nl'
+    ?'Voer het reserveringsnummer van Booking.com in. Daarna wordt de Booking.com-link automatisch beschikbaar.'
+    :'Enter the Booking.com reservation number. The Booking.com shortcut will then become available automatically.';
+  div.innerHTML=`<div class="reservation-booking-ref-editor-copy"><strong>${escapeHtml(v4Text('Booking reference missing','Booking-referentie ontbreekt'))}</strong><span class="muted">${escapeHtml(hint)}</span></div><div class="reservation-booking-ref-editor-controls"><input type="text" inputmode="numeric" pattern="[0-9]*" autocomplete="off" placeholder="${escapeHtml(v4Text('Booking.com reservation number','Booking.com-reserveringsnummer'))}" aria-label="${escapeHtml(v4Text('Booking.com reservation number','Booking.com-reserveringsnummer'))}"><button type="button" class="action-btn secondary">${escapeHtml(v4Text('Cancel','Annuleren'))}</button><button type="button" class="action-btn primary">${escapeHtml(v4Text('Save','Opslaan'))}</button></div>`;
+  const input=div.querySelector('input'),buttons=div.querySelectorAll('button'),cancel=buttons[0],save=buttons[1];
+  input.addEventListener('input',()=>{input.value=input.value.replace(/\D/g,'');input.classList.remove('invalid-control');input.removeAttribute('aria-invalid');});
+  input.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();save.click();}});
+  cancel.onclick=()=>div.remove();
+  save.onclick=async()=>{
+    const value=normalizeBookingReservationId(input.value);
+    if(!value){
+      input.classList.add('invalid-control');input.setAttribute('aria-invalid','true');
+      alert(v4Text('Enter a valid Booking.com reservation number.','Voer een geldig Booking.com-reserveringsnummer in.'));
+      input.focus();return;
+    }
+    save.disabled=true;
+    const {error}=await supabaseClient.rpc('set_reservation_booking_reference',{
+      p_reservation_id:r.id,
+      p_booking_reference:value
+    });
+    if(error){save.disabled=false;alert(error.message);return;}
+    await Promise.all([loadRegs(),loadReservations()]);
+    const refreshed=reservations.find(x=>x.id===r.id);
+    if(refreshed)openV4Reservation(refreshed);
+  };
+  body.insertBefore(div,body.querySelector('.v4-activity'));
+  requestAnimationFrame(()=>input.focus());
+}
+
 function showV4AttentionEditor(r){
   const body=$('v4ReservationWorkspaceBody'),old=$('v4WorkspaceAttentionEditor');if(old){old.remove();return;}
   const div=document.createElement('div');div.id='v4WorkspaceAttentionEditor';div.className='reservation-attention-editor';div.innerHTML=`<label>${escapeHtml(v4Text('Internal note','Interne notitie'))}</label><textarea rows="4">${escapeHtml(r.attention_note||'')}</textarea><div class="button-row"><button class="action-btn secondary" type="button">${escapeHtml(v4Text('Cancel','Annuleren'))}</button><button class="action-btn primary" type="button">${escapeHtml(v4Text('Save note','Notitie opslaan'))}</button></div>`;
