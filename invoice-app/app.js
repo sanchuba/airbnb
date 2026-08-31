@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.4.3';
+const NGR_ADMIN_BUILD='4.4.4';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -2694,6 +2694,10 @@ function renderV4Home(){
       actions.appendChild(b);
     }else if(task.type==='invoice' && reg){
       const b=document.createElement('button'); b.className='action-btn primary'; b.textContent=v4Text('Create invoice','Maak factuur'); b.onclick=()=>{useRegistrationForInvoiceFromV4(reg);};
+      actions.appendChild(b);
+    }else if(task.type==='bookingref'){
+      const b=document.createElement('button'); b.className='action-btn primary'; b.textContent=v4Text('Add reference','Referentie toevoegen');
+      b.onclick=()=>showV4BookingReferenceEditor(r);
       actions.appendChild(b);
     }else{
       const b=document.createElement('button'); b.className='action-btn primary'; b.textContent=v4Text('Open reservation','Open reservering'); b.onclick=()=>openV4Reservation(r);
