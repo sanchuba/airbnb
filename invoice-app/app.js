@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.4.5';
+const NGR_ADMIN_BUILD='4.4.6';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -2757,6 +2757,16 @@ function v4MenuLink(text,href){
 function v4PrimaryAction(r,card){
   const x=tr[currentLang],reg=reservationRegistration(r.id),inv=reservationInvite(r.id),linked=reg?linkedInvoiceForRegistration(reg.id):null;
   let b=document.createElement('button');b.className='action-btn primary v4-primary-card-action';b.type='button';
+
+  // Context-specific filter actions take priority over the normal workflow.
+  // When the user intentionally filters for missing Booking.com references,
+  // the card must lead directly to fixing that exact issue.
+  if(reservationFilter==='missingBookingReference' && reservationMatchesFilter(r,'missingBookingReference')){
+    b.textContent=v4Text('Add reference','Referentie toevoegen');
+    b.onclick=e=>{e.stopPropagation();showV4BookingReferenceEditor(r);};
+    return b;
+  }
+
   if(!reg && r.status==='active' && r.checkout_date>localToday()){
     b.textContent=inv?v4Text('Copy registration link','Kopieer registratielink'):v4Text('Create registration link','Maak registratielink');
     b.onclick=async e=>{e.stopPropagation();if(inv)await v4CopyRegistrationLink(r,b);else await createReservationInvite(r,b,card);};
@@ -2768,12 +2778,7 @@ function v4PrimaryAction(r,card){
   if(reg?.invoice_requested&&!linked&&!r.cancellation_confirmed_at&&r.checkout_date<=localToday()){
     b.textContent=v4Text('Create invoice','Maak factuur');b.onclick=e=>{e.stopPropagation();useRegistrationForInvoiceFromV4(reg);};return b;
   }
-  // Direct action for Reservations > Booking reference missing.
-  if(reservationMatchesFilter(r,'missingBookingReference')){
-    b.textContent=v4Text('Add reference','Referentie toevoegen');
-    b.onclick=e=>{e.stopPropagation();showV4BookingReferenceEditor(r);};
-    return b;
-  }
+
   b.textContent=v4Text('Open reservation','Open reservering');b.onclick=e=>{e.stopPropagation();openV4Reservation(r);};return b;
 }
 
