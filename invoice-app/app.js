@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.4.6';
+const NGR_ADMIN_BUILD='4.4.8';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -2782,6 +2782,20 @@ function v4PrimaryAction(r,card){
   b.textContent=v4Text('Open reservation','Open reservering');b.onclick=e=>{e.stopPropagation();openV4Reservation(r);};return b;
 }
 
+async function replaceBookingReservationWithNewGuest(r){
+  if(!r||r.platform!=='booking'||r.status!=='active')return;
+  const ok=confirm(v4Text(
+    'Has the current Booking.com guest cancelled and been replaced by a different guest for the same dates? The current reservation and its guest registration will be kept as cancelled history, and a new reservation card will be created for the replacement guest.',
+    'Heeft de huidige Booking.com-gast geannuleerd en is deze vervangen door een andere gast voor dezelfde datums? De huidige reservering en gastregistratie blijven als geannuleerde historie bewaard en er wordt een nieuwe reserveringskaart gemaakt voor de vervangende gast.'
+  ));
+  if(!ok)return;
+  const {error}=await supabaseClient.rpc('replace_booking_reservation_with_new_guest',{p_reservation_id:r.id});
+  if(error){alert(error.message||String(error));return;}
+  await loadReservations();
+  closeV4Reservation();
+  renderV4Home();renderReservationsV4();renderCalendar();
+}
+
 function renderReservationsV4(){
   updateReservationFilterCounts();
   const rows=reservations.filter(isReservationListRecord).filter(r=>reservationMatchesFilter(r,reservationFilter)).filter(v4ReservationPassesSecondary).sort((a,b)=>compareReservationsForFilter(a,b,reservationFilter));
@@ -2815,6 +2829,7 @@ function renderReservationsV4(){
       menu.push(v4MenuButton(v4Text('Add Booking reference','Voeg Booking-referentie toe'),()=>showV4BookingReferenceEditor(r)));
     }
     if(r.status==='active'){
+      if(r.platform==='booking')menu.push(v4MenuButton(v4Text('New guest replaced this booking','Nieuwe gast vervangt deze boeking'),()=>replaceBookingReservationWithNewGuest(r),{danger:true}));
       menu.push(v4MenuButton(r.needs_attention?v4Text('Edit attention note','Bewerk notitie'):v4Text('Mark for attention','Markeer voor aandacht'),()=>{openV4Reservation(r);showV4AttentionEditor(r);}));
       if(r.needs_attention)menu.push(v4MenuButton(v4Text('Resolve attention','Los aandachtspunt op'),async()=>{await setReservationAttentionState(r,false,'');}));
       if(r.checkout_date<=localToday()||r.no_show)menu.push(v4MenuButton(r.no_show?tr[currentLang].undoNoShow:tr[currentLang].markNoShow,()=>toggleReservationNoShow(r),{danger:!r.no_show}));
@@ -2931,6 +2946,9 @@ function openV4Reservation(r){
     actions.appendChild(addRef);
   }
   if(r.status==='active'){
+    if(r.platform==='booking'){
+      const replaced=document.createElement('button');replaced.className='action-btn secondary';replaced.textContent=v4Text('New guest replaced this booking','Nieuwe gast vervangt deze boeking');replaced.onclick=()=>replaceBookingReservationWithNewGuest(r);actions.appendChild(replaced);
+    }
     const att=document.createElement('button');att.className='action-btn secondary';att.textContent=r.needs_attention?v4Text('Edit note','Bewerk notitie'):v4Text('Mark for attention','Markeer voor aandacht');att.onclick=()=>showV4AttentionEditor(r);actions.appendChild(att);
     if(r.needs_attention){const resolve=document.createElement('button');resolve.className='action-btn secondary';resolve.textContent=v4Text('Resolve','Oplossen');resolve.onclick=async()=>{await setReservationAttentionState(r,false,'');closeV4Reservation();};actions.appendChild(resolve);}
   }else{
