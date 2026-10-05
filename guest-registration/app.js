@@ -12,7 +12,7 @@ const t = {
     guestInfo: 'Guest information', fullName: 'Full name', city: 'City', country: 'Country', checkin: 'Check-in date', checkout: 'Check-out date',
     invoice: 'Invoice', wantInvoice: 'I would like to receive an invoice by email.', invoiceTiming: 'The invoice will be sent by email after check-out.', successInvoiceTitle: 'Invoice requested', successInvoiceText: 'Your invoice will be sent by email after check-out.', personal: 'Personal invoice', company: 'Company invoice', email: 'Email address', companyName: 'Company name', companyAddress: 'Company address', vat: 'VAT number (if applicable)',
     declaration: 'Guest declaration', declarationText: 'I confirm that the information I have provided is complete and correct.', privacy: 'Your information is used for guest registration and administration. Invoice details are used only when an invoice is requested.',
-    submit: 'Submit guest information', requiredHint: 'Required field', optionalLabel: 'optional', required: 'Please complete all required fields.', invoiceEmail: 'Please enter the email address where the invoice should be sent.', companyRequired: 'Please enter the company name.', declarationRequired: 'Please confirm that the information is complete and correct.', submitting: 'Submitting…', homeButton: 'Open Guest Guide'
+    submit: 'Submit guest information', requiredHint: 'Required field', optionalLabel: 'optional', required: 'Please complete all required fields.', invoiceEmail: 'Please enter the email address where the invoice should be sent.', companyRequired: 'Please enter the company name.', declarationRequired: 'Please confirm that the information is complete and correct.', submitting: 'Submitting…', homeButton: 'Open Guest Guide', multiIntro:'This booking includes {count} separate rooms. Please enter the guest staying in each room.', guestNumber:'Guest {n}', roomLabel:'Room'
   },
   nl: {
     pageTitle: 'Gasteninformatie', intro: 'Vul je gastgegevens vóór aankomst in.',
@@ -21,7 +21,7 @@ const t = {
     guestInfo: 'Gastgegevens', fullName: 'Volledige naam', city: 'Woonplaats', country: 'Land', checkin: 'Incheckdatum', checkout: 'Uitcheckdatum',
     invoice: 'Factuur', wantInvoice: 'Ik wil graag een factuur per e-mail ontvangen.', invoiceTiming: 'De factuur wordt na het uitchecken per e-mail verstuurd.', successInvoiceTitle: 'Factuur aangevraagd', successInvoiceText: 'Je ontvangt de factuur na het uitchecken per e-mail.', personal: 'Particuliere factuur', company: 'Zakelijke factuur', email: 'E-mailadres', companyName: 'Bedrijfsnaam', companyAddress: 'Bedrijfsadres', vat: 'Btw-identificatienummer (indien van toepassing)',
     declaration: 'Verklaring van de gast', declarationText: 'Ik bevestig dat de door mij ingevulde gegevens volledig en correct zijn.', privacy: 'Je gegevens worden gebruikt voor gastenregistratie en administratieve doeleinden. Factuurgegevens worden alleen gebruikt wanneer een factuur wordt aangevraagd.',
-    submit: 'Gastgegevens verzenden', requiredHint: 'Verplicht veld', optionalLabel: 'optioneel', required: 'Vul alle verplichte velden in.', invoiceEmail: 'Vul het e-mailadres in waar de factuur naartoe moet.', companyRequired: 'Vul de bedrijfsnaam in.', declarationRequired: 'Bevestig dat de gegevens volledig en correct zijn.', submitting: 'Verzenden…', homeButton: 'Open de gastengids'
+    submit: 'Gastgegevens verzenden', requiredHint: 'Verplicht veld', optionalLabel: 'optioneel', required: 'Vul alle verplichte velden in.', invoiceEmail: 'Vul het e-mailadres in waar de factuur naartoe moet.', companyRequired: 'Vul de bedrijfsnaam in.', declarationRequired: 'Bevestig dat de gegevens volledig en correct zijn.', submitting: 'Verzenden…', homeButton: 'Open de gastengids', multiIntro:'Deze boeking bestaat uit {count} aparte kamers. Vul voor elke kamer de gegevens in van de gast die daar verblijft.', guestNumber:'Gast {n}', roomLabel:'Kamer'
   }
 };
 
@@ -32,6 +32,8 @@ function browserDefaultLanguage(){
 }
 let currentLang = localStorage.getItem(GUEST_LANGUAGE_KEY) || browserDefaultLanguage();
 let token = new URLSearchParams(window.location.search).get('token');
+let inviteData=null;
+let multiGuestFields=[];
 
 const el = id => document.getElementById(id);
 const form = el('guestForm');
@@ -76,6 +78,7 @@ function setLanguage(lang) {
   el('labelCompanyAddress').innerHTML=optional(x.companyAddress);
   el('labelVatNumber').innerHTML=optional(currentLang==='nl'?'Btw-identificatienummer':'VAT number');
   el('declarationTitle').textContent=x.declaration; el('declarationText').innerHTML=x.declarationText+requiredStar; el('privacyText').textContent=x.privacy; el('submitBtn').textContent=x.submit; el('successHomeBtn').textContent=x.homeButton;
+  if(inviteData?.multi_room)renderMultiRoomGuests(inviteData);
   if (!form.classList.contains('hidden')) return;
   if (!el('loadingState').classList.contains('hidden')) el('loadingState').textContent=x.loading;
 }
@@ -98,6 +101,11 @@ function validate() {
     if (!fields.email.value.trim() || !fields.email.validity.valid) { markInvalid(fields.email); return {message:x.invoiceEmail,field:fields.email}; }
     if (invoiceType()==='company' && !fields.companyName.value.trim()) { markInvalid(fields.companyName); return {message:x.companyRequired,field:fields.companyName}; }
   }
+  for(const mg of multiGuestFields){
+    for(const f of [mg.full_name,mg.city,mg.country]){
+      if(!f.value.trim()){markInvalid(f);return {message:x.required,field:f};}
+    }
+  }
   if (!fields.declarationAccepted.checked) {
     fields.declarationAccepted.closest('.check-row')?.classList.add('invalid-check');
     return {message:x.declarationRequired,field:fields.declarationAccepted};
@@ -111,6 +119,34 @@ function focusInvalidField(field){
   setTimeout(()=>{try{field.focus({preventScroll:true});}catch(e){field.focus();}},320);
 }
 
+
+function roomDisplay(room){
+  if(room.room_key==='cozy')return currentLang==='nl'?'Knusse kamer':'Cozy room';
+  if(room.room_key==='spacious')return currentLang==='nl'?'Ruime kamer':'Spacious room';
+  return room.room_name||t[currentLang].roomLabel;
+}
+function renderMultiRoomGuests(invite){
+  const host=el('additionalGuests');host.innerHTML='';multiGuestFields=[];
+  const rooms=Array.isArray(invite.rooms)?invite.rooms:[];
+  if(!invite.multi_room||rooms.length<2)return;
+  el('pageIntro').textContent=t[currentLang].multiIntro.replace('{count}',rooms.length);
+  rooms.slice(1).forEach((room,idx)=>{
+    const section=document.createElement('section');section.className='form-section multi-guest-section';
+    section.innerHTML=`<div class="multi-room-heading"><h2>${t[currentLang].guestNumber.replace('{n}',idx+2)}</h2><span>${roomDisplay(room)}</span></div>
+      <div class="field"><label>${t[currentLang].fullName} <span class="required-star">*</span></label><input data-field="full_name" autocomplete="name" maxlength="160"></div>
+      <div class="field"><label>${t[currentLang].city} <span class="required-star">*</span></label><input data-field="city" autocomplete="address-level2" maxlength="120"></div>
+      <div class="field"><label>${t[currentLang].country} <span class="required-star">*</span></label><select data-field="country"></select></div>
+      <div class="grid-2 stay-dates"><div class="field"><label>${t[currentLang].checkin}</label><input type="date" value="${room.checkin_date||invite.checkin_date||''}" disabled></div>
+      <div class="field"><label>${t[currentLang].checkout}</label><input type="date" value="${room.checkout_date||invite.checkout_date||''}" disabled></div></div>`;
+    host.appendChild(section);
+    const obj={reservation_id:room.reservation_id,full_name:section.querySelector('[data-field="full_name"]'),city:section.querySelector('[data-field="city"]'),country:section.querySelector('[data-field="country"]')};
+    populateCountries(obj.country);
+    multiGuestFields.push(obj);
+  });
+  const first=rooms[0];
+  el('guestInfoTitle').textContent=`${t[currentLang].guestNumber.replace('{n}',1)} · ${roomDisplay(first)}`;
+}
+
 async function loadInvite() {
   const x=t[currentLang];
   if (!token) {
@@ -122,8 +158,10 @@ async function loadInvite() {
   if (error || !invite) { el('invalidState').textContent=x.invalid; el('invalidState').classList.remove('hidden'); return; }
   if (invite.already_submitted) { el('successText').textContent=x.already; el('successState').classList.remove('hidden'); return; }
   if (!invite.valid) { el('invalidState').textContent=x.invalid; el('invalidState').classList.remove('hidden'); return; }
+  inviteData=invite;
   fields.checkinDate.value = invite.checkin_date || '';
   fields.checkoutDate.value = invite.checkout_date || '';
+  renderMultiRoomGuests(invite);
   form.classList.remove('hidden');
 }
 
@@ -144,7 +182,28 @@ form.addEventListener('submit', async e => {
     p_vat_number: fields.invoiceRequested.checked && invoiceType()==='company' ? fields.vatNumber.value.trim() : null,
     p_declaration_accepted: fields.declarationAccepted.checked
   };
-  const { error } = await supabaseClient.rpc('submit_guest_registration', params);
+  let error=null;
+  if(inviteData?.multi_room){
+    const rooms=Array.isArray(inviteData.rooms)?inviteData.rooms:[];
+    const guests=[{
+      reservation_id:rooms[0]?.reservation_id,
+      full_name:fields.fullName.value.trim(),city:fields.city.value.trim(),country:fields.country.value.trim()
+    },...multiGuestFields.map(m=>({
+      reservation_id:m.reservation_id,full_name:m.full_name.value.trim(),city:m.city.value.trim(),country:m.country.value.trim()
+    }))];
+    ({error}=await supabaseClient.rpc('submit_multiroom_guest_registration',{
+      p_token:token,p_guests:guests,
+      p_invoice_requested:fields.invoiceRequested.checked,
+      p_invoice_type:fields.invoiceRequested.checked?invoiceType():null,
+      p_email:fields.invoiceRequested.checked?fields.email.value.trim():null,
+      p_company_name:fields.invoiceRequested.checked&&invoiceType()==='company'?fields.companyName.value.trim():null,
+      p_company_address:fields.invoiceRequested.checked&&invoiceType()==='company'?fields.companyAddress.value.trim():null,
+      p_vat_number:fields.invoiceRequested.checked&&invoiceType()==='company'?fields.vatNumber.value.trim():null,
+      p_declaration_accepted:fields.declarationAccepted.checked
+    }));
+  }else{
+    ({error}=await supabaseClient.rpc('submit_guest_registration', params));
+  }
   if (error) {
     el('formMessage').textContent=error.message; el('submitBtn').disabled=false; el('submitBtn').textContent=x.submit; return;
   }

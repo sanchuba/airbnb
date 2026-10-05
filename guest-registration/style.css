@@ -236,3 +236,8 @@ input:focus, textarea:focus, select:focus {
   color: var(--brand-green-deep);
 }
 .home-btn:focus-visible { outline-color: rgba(48,77,64,.24); }
+
+.multi-room-heading{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:18px}
+.multi-room-heading h2{margin:0}
+.multi-room-heading span{font-weight:700;color:var(--brand-brown);background:var(--brand-cream-soft);border:1px solid var(--border);border-radius:999px;padding:5px 10px;font-size:13px}
+.multi-guest-section{background:#fcfbf8;border:1px solid var(--border);border-radius:14px;padding:18px;margin-top:18px}
