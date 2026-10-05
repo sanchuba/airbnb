@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.5.0.2';
+const NGR_ADMIN_BUILD='4.5.1';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -154,7 +154,18 @@ function applyReservationPaymentToInvoice(registrationId){
   toggleInvoiceCustom();
   return true;
 }
-function reservationRegistration(resId){ return registrations.find(r=>r.reservation_id===resId)||null; }
+function reservationRegistration(resId){
+  const direct=registrations.find(g=>g.reservation_id===resId);
+  if(direct)return direct;
+  const reservation=reservations.find(r=>r.id===resId);
+  if(reservation?.platform!=='booking')return null;
+  const ref=bookingReferenceForReservation(reservation);
+  if(!ref)return null;
+  const groupIds=new Set(reservations
+    .filter(r=>r.platform==='booking'&&bookingReferenceForReservation(r)===ref)
+    .map(r=>r.id));
+  return registrations.find(g=>groupIds.has(g.reservation_id))||null;
+}
 function inviteHasReservation(i,resId){return i?.reservation_id===resId || (Array.isArray(i?.group_reservation_ids)&&i.group_reservation_ids.includes(resId));}
 function reservationInvite(resId){ return reservationInvites.find(i=>inviteHasReservation(i,resId) && !i.used_at && new Date(i.expires_at)>new Date())||null; }
 function expiredReservationInvite(resId){
@@ -2660,8 +2671,8 @@ function v4AllTasks(){
   const seenGroups=new Set();
   return reservations.filter(isReservationListRecord).map(r=>({r,task:v4TaskDefinition(r)})).filter(x=>{
     if(!x.task)return false;
-    if(x.task.type==='link'&&isMultiRoomBooking(x.r)){
-      const key='booking:'+bookingReferenceForReservation(x.r);
+    if(['link','id','invoice','expired'].includes(x.task.type)&&isMultiRoomBooking(x.r)){
+      const key=x.task.type+':booking:'+bookingReferenceForReservation(x.r);
       if(seenGroups.has(key))return false;
       seenGroups.add(key);
     }
