@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.5.1';
+const NGR_ADMIN_BUILD='4.5.1.1';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -159,10 +159,22 @@ function reservationRegistration(resId){
   if(direct)return direct;
   const reservation=reservations.find(r=>r.id===resId);
   if(reservation?.platform!=='booking')return null;
-  const ref=bookingReferenceForReservation(reservation);
+
+  // IMPORTANT: do not call bookingReferenceForReservation() here.
+  // That helper can fall back to reservationRegistration(), which would recurse
+  // forever for a brand-new Booking.com reservation without a reference yet.
+  const directRef=normalizeBookingReservationId(reservation.booking_reference);
+  const inviteRef=normalizeBookingReservationId(latestReservationInvite(reservation.id)?.booking_reference);
+  const ref=directRef||inviteRef;
   if(!ref)return null;
+
   const groupIds=new Set(reservations
-    .filter(r=>r.platform==='booking'&&bookingReferenceForReservation(r)===ref)
+    .filter(r=>{
+      if(r.platform!=='booking')return false;
+      const rDirect=normalizeBookingReservationId(r.booking_reference);
+      const rInvite=normalizeBookingReservationId(latestReservationInvite(r.id)?.booking_reference);
+      return (rDirect||rInvite)===ref;
+    })
     .map(r=>r.id));
   return registrations.find(g=>groupIds.has(g.reservation_id))||null;
 }
@@ -3674,6 +3686,7 @@ async function init(){
 }
 init().catch(err=>{
   console.error('Admin initialization failed:', err);
+  hideStartupView();
   const msg=document.getElementById('loginMessage');
   if(msg) msg.textContent='The admin app could not start. Please refresh the page. If this continues, check the browser console.';
 });
