@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.4.9';
+const NGR_ADMIN_BUILD='4.5.0.1';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -155,11 +155,12 @@ function applyReservationPaymentToInvoice(registrationId){
   return true;
 }
 function reservationRegistration(resId){ return registrations.find(r=>r.reservation_id===resId)||null; }
-function reservationInvite(resId){ return reservationInvites.find(i=>i.reservation_id===resId && !i.used_at && new Date(i.expires_at)>new Date())||null; }
+function inviteHasReservation(i,resId){return i?.reservation_id===resId || (Array.isArray(i?.group_reservation_ids)&&i.group_reservation_ids.includes(resId));}
+function reservationInvite(resId){ return reservationInvites.find(i=>inviteHasReservation(i,resId) && !i.used_at && new Date(i.expires_at)>new Date())||null; }
 function expiredReservationInvite(resId){
-  return reservationInvites.find(i=>i.reservation_id===resId && !i.used_at && new Date(i.expires_at)<=new Date())||null;
+  return reservationInvites.find(i=>inviteHasReservation(i,resId) && !i.used_at && new Date(i.expires_at)<=new Date())||null;
 }
-function latestReservationInvite(resId){ return reservationInvites.find(i=>i.reservation_id===resId)||null; }
+function latestReservationInvite(resId){ return reservationInvites.find(i=>inviteHasReservation(i,resId))||null; }
 function reservationLink(inv){ return `${PUBLIC_FORM_BASE}?token=${encodeURIComponent(inv.token)}`; }
 function unlinkedRegistrations(){ return registrations.filter(g=>!g.reservation_id); }
 function exactReservationCandidates(reservation){
@@ -757,7 +758,7 @@ async function fetchAllRows(buildQuery,{pageSize=500}={}){
 async function loadReservations(){
   const [{data:r,error:re},{data:iv,error:ie}]=await Promise.all([
     fetchAllRows(()=>supabaseClient.from('reservations').select('*').order('checkin_date',{ascending:true})),
-    fetchAllRows(()=>supabaseClient.from('guest_registration_invites').select('id,token,reservation_id,booking_reference,booking_platform,used_at,expires_at').not('reservation_id','is',null).order('created_at',{ascending:false}))
+    fetchAllRows(()=>supabaseClient.from('guest_registration_invites').select('id,token,reservation_id,group_reservation_ids,booking_reference,booking_platform,used_at,expires_at').not('reservation_id','is',null).order('created_at',{ascending:false}))
   ]);
   if(re){ $('reservationList').innerHTML=`<p class="muted">${escapeHtml(re.message)}</p>`; return; }
   reservations=r||[]; reservationInvites=ie?[]:(iv||[]); renderReservations(); renderAttention(); renderCalendar();
@@ -1382,6 +1383,24 @@ function addReservationLinkBox(parent,inv,reservation=null){
   wrap.querySelector('.qr-link-btn').onclick=e=>{e.stopPropagation();showRegistrationQr(inv,reservation);};
   parent.appendChild(wrap);
 }
+function bookingGroupForReservation(r){
+  const ref=bookingReferenceForReservation(r);
+  if(r?.platform!=='booking'||!ref)return [r];
+  return reservations.filter(x=>x.platform==='booking'&&x.status==='active'&&bookingReferenceForReservation(x)===ref);
+}
+function isMultiRoomBooking(r){
+  const g=bookingGroupForReservation(r);
+  return g.length>1 && g.every(x=>x.checkin_date===r.checkin_date&&x.checkout_date===r.checkout_date);
+}
+async function createRegistrationInviteSmart(reservation,button,item){
+  if(!isMultiRoomBooking(reservation))return createReservationInvite(reservation,button,item);
+  button.disabled=true;const old=button.textContent;button.textContent=tr[currentLang].loading;
+  const {data,error}=await supabaseClient.rpc('create_guest_registration_invite_for_booking_group',{p_reservation_id:reservation.id});
+  button.disabled=false;button.textContent=old;
+  if(error){alert(error.message);return;}
+  await loadReservations();
+}
+
 async function createReservationInvite(reservation,button,item){
   button.disabled=true; const old=button.textContent; button.textContent=tr[currentLang].loading;
   const {data,error}=await supabaseClient.rpc('create_guest_registration_invite_for_reservation',{p_reservation_id:reservation.id});
@@ -2636,19 +2655,28 @@ function v4TaskDefinition(r){
 }
 function v4AllTasks(){
   const order={link:1,id:2,attention:3,bookingref:4,expired:5,invoice:6};
-  return reservations.filter(isReservationListRecord).map(r=>({r,task:v4TaskDefinition(r)})).filter(x=>x.task)
-    .sort((a,b)=>(order[a.task.type]-order[b.task.type])||String(a.r.checkin_date).localeCompare(String(b.r.checkin_date)));
+  const seenGroups=new Set();
+  return reservations.filter(isReservationListRecord).map(r=>({r,task:v4TaskDefinition(r)})).filter(x=>{
+    if(!x.task)return false;
+    if(x.task.type==='link'&&isMultiRoomBooking(x.r)){
+      const key='booking:'+bookingReferenceForReservation(x.r);
+      if(seenGroups.has(key))return false;
+      seenGroups.add(key);
+    }
+    return true;
+  }).sort((a,b)=>(order[a.task.type]-order[b.task.type])||String(a.r.checkin_date).localeCompare(String(b.r.checkin_date)));
 }
 
 async function v4CopyRegistrationLink(r,btn){
   const inv=reservationInvite(r.id);
-  if(!inv){ await createReservationInvite(r,btn,btn.closest('.v4-task,.v4-reservation-card,.v4-reservation-workspace')||document.body); return; }
+  if(!inv){ await createRegistrationInviteSmart(r,btn,btn.closest('.v4-task,.v4-reservation-card,.v4-reservation-workspace')||document.body); return; }
   try{
     await navigator.clipboard.writeText(reservationLink(inv));
     btn.textContent=v4Text('✓ Link copied','✓ Link gekopieerd');
     btn.disabled=true;
-    await markReservationLinkCopied(r.id,true);
-    await v4LogActivity(r.id,'registration_link_copied',v4Text('Registration link copied','Registratielink gekopieerd'));
+    const copiedGroup=isMultiRoomBooking(r)?bookingGroupForReservation(r):[r];
+    for(const member of copiedGroup)await markReservationLinkCopied(member.id,true);
+    await v4LogActivity(r.id,'registration_link_copied',isMultiRoomBooking(r)?v4Text('Multi-room registration link copied','Registratielink voor meerdere kamers gekopieerd'):v4Text('Registration link copied','Registratielink gekopieerd'));
     setTimeout(async()=>{await loadReservations();},600);
   }catch(e){ console.error(e); btn.disabled=false; }
 }
@@ -2679,15 +2707,15 @@ function renderV4Home(){
     const reg=reservationRegistration(r.id);
     item.innerHTML=`<div class="v4-task-main">
       <div class="v4-task-kicker">${escapeHtml(task.label)}</div>
-      <div class="v4-task-title">${escapeHtml(v4ReservationDisplayName(r))}</div>
-      <div class="v4-task-meta">${escapeHtml(roomLabel(r.room_key))} · ${fmt(r.checkin_date)} → ${fmt(r.checkout_date)}</div>
+      <div class="v4-task-title">${escapeHtml(task.type==='link'&&isMultiRoomBooking(r)?v4Text('Booking.com · multi-room booking','Booking.com · meerdere kamers'):v4ReservationDisplayName(r))}</div>
+      <div class="v4-task-meta">${escapeHtml(task.type==='link'&&isMultiRoomBooking(r)?`${bookingGroupForReservation(r).length} ${v4Text('rooms','kamers')} · ${bookingGroupForReservation(r).map(x=>roomLabel(x.room_key)).join(' + ')}`:roomLabel(r.room_key))} · ${fmt(r.checkin_date)} → ${fmt(r.checkout_date)}</div>
       ${task.type==='attention'&&r.attention_note?`<div class="v4-task-note">${escapeHtml(r.attention_note)}</div>`:''}
     </div><div class="v4-task-actions"></div>`;
     const actions=item.querySelector('.v4-task-actions');
     if(task.type==='link'){
       const inv=reservationInvite(r.id);
       const b=document.createElement('button'); b.className='action-btn primary'; b.textContent=inv?v4Text('Copy link','Kopieer link'):v4Text('Generate link','Maak link');
-      b.onclick=async()=>{ if(inv)await v4CopyRegistrationLink(r,b); else {await createReservationInvite(r,b,item); await v4LogActivity(r.id,'registration_link_generated',v4Text('Registration link generated','Registratielink gemaakt'));} };
+      b.onclick=async()=>{ if(inv)await v4CopyRegistrationLink(r,b); else {await createRegistrationInviteSmart(r,b,item); await v4LogActivity(r.id,'registration_link_generated',v4Text('Registration link generated','Registratielink gemaakt'));} };
       actions.appendChild(b);
     }else if(task.type==='id' && reg){
       const b=document.createElement('button'); b.className='action-btn primary'; b.textContent=v4Text('Open guest','Open gast'); b.onclick=()=>openV4GuestProfile(reg);
@@ -2769,7 +2797,7 @@ function v4PrimaryAction(r,card){
 
   if(!reg && r.status==='active' && r.checkout_date>localToday()){
     b.textContent=inv?v4Text('Copy registration link','Kopieer registratielink'):v4Text('Create registration link','Maak registratielink');
-    b.onclick=async e=>{e.stopPropagation();if(inv)await v4CopyRegistrationLink(r,b);else await createReservationInvite(r,b,card);};
+    b.onclick=async e=>{e.stopPropagation();if(inv)await v4CopyRegistrationLink(r,b);else await createRegistrationInviteSmart(r,b,card);};
     return b;
   }
   if(reg && !reg.id_verified && r.checkin_date<=localToday() && r.checkout_date>localToday()){
@@ -2929,7 +2957,7 @@ function openV4Reservation(r){
   const actions=$('v4WorkspaceActions');
   if(!reg){
     const b=document.createElement('button');b.className='action-btn primary';b.textContent=inv?v4Text('Copy registration link','Kopieer registratielink'):v4Text('Create registration link','Maak registratielink');
-    b.onclick=async()=>{if(inv)await v4CopyRegistrationLink(r,b);else{await createReservationInvite(r,b,body);await v4LogActivity(r.id,'registration_link_generated',v4Text('Registration link generated','Registratielink gemaakt'));}};actions.appendChild(b);
+    b.onclick=async()=>{if(inv)await v4CopyRegistrationLink(r,b);else{await createRegistrationInviteSmart(r,b,body);await v4LogActivity(r.id,'registration_link_generated',v4Text('Registration link generated','Registratielink gemaakt'));}};actions.appendChild(b);
     if(inv){
       const qr=document.createElement('button');qr.className='action-btn secondary v4-qr-workspace-btn';qr.textContent=v4Text('Show QR code','Toon QR-code');qr.onclick=()=>showRegistrationQr(inv,r);actions.appendChild(qr);
     }
