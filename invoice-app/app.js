@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.5.1.1';
+const NGR_ADMIN_BUILD='4.5.1.2';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -2982,7 +2982,16 @@ function openV4Reservation(r){
   const actions=$('v4WorkspaceActions');
   if(!reg){
     const b=document.createElement('button');b.className='action-btn primary';b.textContent=inv?v4Text('Copy registration link','Kopieer registratielink'):v4Text('Create registration link','Maak registratielink');
-    b.onclick=async()=>{if(inv)await v4CopyRegistrationLink(r,b);else{await createRegistrationInviteSmart(r,b,body);await v4LogActivity(r.id,'registration_link_generated',v4Text('Registration link generated','Registratielink gemaakt'));}};actions.appendChild(b);
+    b.onclick=async()=>{
+      if(inv){await v4CopyRegistrationLink(r,b);return;}
+      await createRegistrationInviteSmart(r,b,body);
+      await v4LogActivity(r.id,'registration_link_generated',v4Text('Registration link generated','Registratielink gemaakt'));
+      // loadReservations() refreshes the data, but the already-open reservation
+      // workspace is not rebuilt automatically. Reopen it from the refreshed
+      // reservation object so "Kopieer registratielink" and the QR button appear immediately.
+      const refreshed=reservations.find(x=>x.id===r.id)||r;
+      openV4Reservation(refreshed);
+    };actions.appendChild(b);
     if(inv){
       const qr=document.createElement('button');qr.className='action-btn secondary v4-qr-workspace-btn';qr.textContent=v4Text('Show QR code','Toon QR-code');qr.onclick=()=>showRegistrationQr(inv,r);actions.appendChild(qr);
     }
