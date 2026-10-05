@@ -1,4 +1,4 @@
-const NGR_ADMIN_BUILD='4.5.0.1';
+const NGR_ADMIN_BUILD='4.5.0.2';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
 const SUPABASE_URL = 'https://rmvfrgpampxduldzfwxi.supabase.co';
@@ -2645,16 +2645,18 @@ function v4DepartureCount(){
 
 function v4TaskDefinition(r){
   const c=reservationFilterContext(r);
+  // Booking.com reference comes first. After it is added, the existing
+  // sequential workflow advances to the registration-link task.
+  if(reservationMatchesFilter(r,'missingBookingReference')) return {type:'bookingref',label:v4Text('Booking reference missing','Booking-referentie ontbreekt')};
   if(reservationMatchesFilter(r,'registrationLinkNotCreated')) return {type:'link',label:v4Text('Registration link to send','Registratielink versturen')};
   if(reservationMatchesFilter(r,'idToVerify')) return {type:'id',label:v4Text('ID to verify','ID verifiëren')};
   if(reservationMatchesFilter(r,'invoiceToCreate')) return {type:'invoice',label:v4Text('Invoice to create','Factuur maken')};
-  if(reservationMatchesFilter(r,'missingBookingReference')) return {type:'bookingref',label:v4Text('Booking reference missing','Booking-referentie ontbreekt')};
   if(reservationMatchesFilter(r,'expiredRegistrationLink')) return {type:'expired',label:v4Text('Registration link expired','Registratielink verlopen')};
   if(reservationMatchesFilter(r,'needsAttention')) return {type:'attention',label:v4Text('Needs attention','Aandacht nodig')};
   return null;
 }
 function v4AllTasks(){
-  const order={link:1,id:2,attention:3,bookingref:4,expired:5,invoice:6};
+  const order={bookingref:1,link:2,id:3,attention:4,expired:5,invoice:6};
   const seenGroups=new Set();
   return reservations.filter(isReservationListRecord).map(r=>({r,task:v4TaskDefinition(r)})).filter(x=>{
     if(!x.task)return false;
