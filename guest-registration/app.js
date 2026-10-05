@@ -78,7 +78,6 @@ function setLanguage(lang) {
   el('labelCompanyAddress').innerHTML=optional(x.companyAddress);
   el('labelVatNumber').innerHTML=optional(currentLang==='nl'?'Btw-identificatienummer':'VAT number');
   el('declarationTitle').textContent=x.declaration; el('declarationText').innerHTML=x.declarationText+requiredStar; el('privacyText').textContent=x.privacy; el('submitBtn').textContent=x.submit; el('successHomeBtn').textContent=x.homeButton;
-  if(inviteData?.multi_room)renderMultiRoomGuests(inviteData);
   if (!form.classList.contains('hidden')) return;
   if (!el('loadingState').classList.contains('hidden')) el('loadingState').textContent=x.loading;
 }
@@ -161,7 +160,6 @@ async function loadInvite() {
   inviteData=invite;
   fields.checkinDate.value = invite.checkin_date || '';
   fields.checkoutDate.value = invite.checkout_date || '';
-  renderMultiRoomGuests(invite);
   form.classList.remove('hidden');
 }
 
@@ -183,27 +181,7 @@ form.addEventListener('submit', async e => {
     p_declaration_accepted: fields.declarationAccepted.checked
   };
   let error=null;
-  if(inviteData?.multi_room){
-    const rooms=Array.isArray(inviteData.rooms)?inviteData.rooms:[];
-    const guests=[{
-      reservation_id:rooms[0]?.reservation_id,
-      full_name:fields.fullName.value.trim(),city:fields.city.value.trim(),country:fields.country.value.trim()
-    },...multiGuestFields.map(m=>({
-      reservation_id:m.reservation_id,full_name:m.full_name.value.trim(),city:m.city.value.trim(),country:m.country.value.trim()
-    }))];
-    ({error}=await supabaseClient.rpc('submit_multiroom_guest_registration',{
-      p_token:token,p_guests:guests,
-      p_invoice_requested:fields.invoiceRequested.checked,
-      p_invoice_type:fields.invoiceRequested.checked?invoiceType():null,
-      p_email:fields.invoiceRequested.checked?fields.email.value.trim():null,
-      p_company_name:fields.invoiceRequested.checked&&invoiceType()==='company'?fields.companyName.value.trim():null,
-      p_company_address:fields.invoiceRequested.checked&&invoiceType()==='company'?fields.companyAddress.value.trim():null,
-      p_vat_number:fields.invoiceRequested.checked&&invoiceType()==='company'?fields.vatNumber.value.trim():null,
-      p_declaration_accepted:fields.declarationAccepted.checked
-    }));
-  }else{
-    ({error}=await supabaseClient.rpc('submit_guest_registration', params));
-  }
+  ({error}=await supabaseClient.rpc('submit_guest_registration', params));
   if (error) {
     el('formMessage').textContent=error.message; el('submitBtn').disabled=false; el('submitBtn').textContent=x.submit; return;
   }
