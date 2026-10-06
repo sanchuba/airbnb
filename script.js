@@ -678,7 +678,7 @@ function setupAvailabilityForm(lang) {
     const mondayOffset = (first.getDay()+6)%7;
     const gridStart = new Date(first); gridStart.setDate(first.getDate()-mondayOffset);
     const today = todayIso();
-    const rangeEnd = checkout.value || (choosingCheckout ? hoverIso : '');
+    const rangeEnd = checkout.value;
     for (let i=0;i<42;i++) {
       const d=new Date(gridStart); d.setDate(gridStart.getDate()+i);
       const iso=toIso(d);
@@ -690,22 +690,45 @@ function setupAvailabilityForm(lang) {
       if (iso===checkin.value) btn.classList.add('range-start','selected');
       if (iso===checkout.value) btn.classList.add('range-end','selected');
       if (checkin.value && rangeEnd && iso>checkin.value && iso<=rangeEnd) btn.classList.add('in-range');
-      btn.addEventListener('mouseenter',()=>{if(choosingCheckout && iso>checkin.value){hoverIso=iso;renderCalendar();}});
       btn.addEventListener('click',()=>{
         if (iso<today) return;
-        if (!choosingCheckout || !checkin.value || (checkin.value && checkout.value)) {
-          checkin.value=iso; checkout.value=''; choosingCheckout=true; hoverIso='';
+        if (!checkin.value || !choosingCheckout || checkout.value) {
+          checkin.value=iso;
+          checkout.value='';
+          choosingCheckout=true;
         } else if (iso<=checkin.value) {
-          checkin.value=iso; checkout.value=''; choosingCheckout=true; hoverIso='';
+          // A date on/before the current check-in simply becomes the new check-in.
+          checkin.value=iso;
+          checkout.value='';
+          choosingCheckout=true;
         } else {
-          checkout.value=iso; choosingCheckout=false; hoverIso='';
+          // The second click completes the range.
+          checkout.value=iso;
+          choosingCheckout=false;
         }
-        updateRangeText(); renderCalendar(); updateAvailabilityUi(lang);
-        if (checkout.value) setTimeout(()=>closeCalendar(),180);
+        hoverIso='';
+        updateRangeText();
+        renderCalendar();
+        updateAvailabilityUi(lang);
+        if (checkout.value) setTimeout(closeCalendar,220);
       });
       daysGrid.appendChild(btn);
     }
   }
+  function previewRangeTo(iso) {
+    if (!choosingCheckout || !checkin.value || !iso || iso<=checkin.value) return;
+    daysGrid.querySelectorAll('.date-range-day').forEach(day=>{
+      const d=day.dataset.date;
+      day.classList.toggle('range-preview', d>checkin.value && d<=iso);
+    });
+  }
+  daysGrid.addEventListener('pointerover',e=>{
+    const day=e.target.closest('.date-range-day');
+    if(day && !day.disabled) previewRangeTo(day.dataset.date);
+  });
+  daysGrid.addEventListener('pointerleave',()=>{
+    daysGrid.querySelectorAll('.range-preview').forEach(day=>day.classList.remove('range-preview'));
+  });
   function openCalendar() {
     if (panel.hidden) {
       panel.hidden=false; trigger.setAttribute('aria-expanded','true');

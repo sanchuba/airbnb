@@ -1684,3 +1684,6 @@ body {
 /* v3.19.1 — date range interaction fixes */
 .date-range-day.range-end { background:var(--heading); color:#fff; border-radius:10px; opacity:1; }
 .date-range-day.range-start { background:var(--heading); color:#fff; border-radius:10px; opacity:1; }
+
+/* v3.19.2 — stable second-click range selection */
+.date-range-day.range-preview:not(.selected) { background:rgba(48,77,64,.11); border-radius:0; }
