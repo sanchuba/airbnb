@@ -15,7 +15,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="./style.css?v=4.5.1.2" />
+  <link rel="stylesheet" href="./style.css?v=4.5.2" />
 </head>
 <body>
   <div class="container">
@@ -409,6 +409,7 @@
           <div class="card form-card screen-only" id="invoiceDetailsCard">
             <div class="section-header"><h2 id="formTitle">Invoice Details</h2><button id="newInvoiceBtn" class="action-btn secondary">New invoice</button></div>
             <input id="guestRegistrationId" type="hidden" />
+            <div class="field"><label id="labelInvoiceLanguage" for="invoiceLanguage">Invoice language</label><select id="invoiceLanguage"><option value="en">English</option><option value="nl">Nederlands</option></select></div>
             <div class="inline-grid"><div class="field" data-required="true"><label id="labelInvoiceNumber" for="invoiceNumber">Invoice number</label><input id="invoiceNumber" /></div><div class="field" data-required="true"><label id="labelInvoiceDate" for="invoiceDate">Invoice date</label><input id="invoiceDate" type="date" /></div></div>
             <div class="field" data-required="true"><label id="labelGuestName" for="guestName">Guest name</label><input id="guestName" /></div>
             <div class="field"><label id="labelGuestAddress" for="guestAddress">Guest address</label><input id="guestAddress" /></div>
@@ -654,7 +655,7 @@
   </div>
   <button id="backToTopBtn" class="back-to-top-btn screen-only" type="button" aria-label="Back to top" title="Back to top">↑</button>
   <script src="https://cdn.jsdelivr.net/gh/davidshimjs/qrcodejs/qrcode.min.js"></script>
-  <script type="module" src="./app.js?v=4.5.1.2"></script>
+  <script type="module" src="./app.js?v=4.5.2"></script>
   <script>
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => navigator.serviceWorker.register('./sw.js?v=3.16.10').catch(() => {}));
