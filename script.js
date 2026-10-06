@@ -689,7 +689,7 @@ function setupAvailabilityForm(lang) {
       if (iso===today) btn.classList.add('today');
       if (iso===checkin.value) btn.classList.add('range-start','selected');
       if (iso===checkout.value) btn.classList.add('range-end','selected');
-      if (checkin.value && rangeEnd && iso>checkin.value && iso<rangeEnd) btn.classList.add('in-range');
+      if (checkin.value && rangeEnd && iso>checkin.value && iso<=rangeEnd) btn.classList.add('in-range');
       btn.addEventListener('mouseenter',()=>{if(choosingCheckout && iso>checkin.value){hoverIso=iso;renderCalendar();}});
       btn.addEventListener('click',()=>{
         if (iso<today) return;
@@ -723,7 +723,10 @@ function setupAvailabilityForm(lang) {
     if(candidate>=current){visibleMonth=candidate;renderCalendar();}
   });
   picker.querySelector('.date-range-next').addEventListener('click',()=>{visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,1);renderCalendar();});
-  document.addEventListener('click',e=>{if(!panel.hidden && !picker.contains(e.target))closeCalendar();});
+  // Use pointerdown for outside-click detection. A date click re-renders the day grid;
+  // checking on the later click event would see a detached old day button and incorrectly
+  // treat it as an outside click, closing the calendar after the first selection.
+  document.addEventListener('pointerdown',e=>{if(!panel.hidden && !picker.contains(e.target))closeCalendar();});
   document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)closeCalendar();});
 
   function sanitizeDates() {

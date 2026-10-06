@@ -1680,3 +1680,7 @@ body {
   .date-range-day { min-height:36px; }
   .date-range-trigger { min-height:62px; }
 }
+
+/* v3.19.1 — date range interaction fixes */
+.date-range-day.range-end { background:var(--heading); color:#fff; border-radius:10px; opacity:1; }
+.date-range-day.range-start { background:var(--heading); color:#fff; border-radius:10px; opacity:1; }
