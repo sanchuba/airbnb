@@ -625,81 +625,130 @@ function setupAvailabilityForm(lang) {
   const form = document.getElementById(`availabilityForm${cap}`);
   const checkin = document.getElementById(`checkin${cap}`);
   const checkout = document.getElementById(`checkout${cap}`);
-  if (!form || !checkin || !checkout) return;
+  const picker = form?.querySelector(`[data-range-picker="${lang}"]`);
+  const trigger = document.getElementById(`dateRangeTrigger${cap}`);
+  const panel = document.getElementById(`dateRangePanel${cap}`);
+  const value = document.getElementById(`dateRangeValue${cap}`);
+  const prompt = document.getElementById(`dateRangePrompt${cap}`);
+  const selection = document.getElementById(`dateRangeSelection${cap}`);
+  const monthLabel = picker?.querySelector('.date-range-month');
+  const daysGrid = picker?.querySelector('.date-range-days');
+  const weekdays = picker?.querySelector('.date-range-weekdays');
+  if (!form || !checkin || !checkout || !picker || !trigger || !panel || !daysGrid) return;
+
+  const locale = lang === 'en' ? 'en-GB' : 'nl-NL';
+  const todayIso = () => isoTodayLocal();
+  const toIso = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  const monthStart = d => new Date(d.getFullYear(), d.getMonth(), 1);
+  let visibleMonth = monthStart(new Date());
+  let choosingCheckout = false;
+  let hoverIso = '';
+
+  function displayDate(iso) {
+    const d = parseIsoDate(iso);
+    return d ? d.toLocaleDateString(locale, { day:'numeric', month:'short', year:'numeric' }) : '';
+  }
+  function updateRangeText() {
+    if (checkin.value && checkout.value) {
+      const nights = nightsBetween(checkin.value, checkout.value);
+      value.textContent = `${displayDate(checkin.value)} → ${displayDate(checkout.value)} · ${nights} ${lang === 'en' ? (nights === 1 ? 'night' : 'nights') : (nights === 1 ? 'nacht' : 'nachten')}`;
+      selection.textContent = lang === 'en'
+        ? `Check-in ${displayDate(checkin.value)} · Check-out ${displayDate(checkout.value)}`
+        : `Inchecken ${displayDate(checkin.value)} · Uitchecken ${displayDate(checkout.value)}`;
+    } else if (checkin.value) {
+      value.textContent = `${displayDate(checkin.value)} → ${lang === 'en' ? 'choose check-out' : 'kies uitcheckdatum'}`;
+      selection.textContent = lang === 'en'
+        ? `Check-in ${displayDate(checkin.value)} · Now choose check-out`
+        : `Inchecken ${displayDate(checkin.value)} · Kies nu je uitcheckdatum`;
+    } else {
+      value.textContent = lang === 'en' ? 'Choose check-in and check-out' : 'Kies incheck- en uitcheckdatum';
+      selection.textContent = lang === 'en' ? 'No dates selected yet' : 'Nog geen data geselecteerd';
+    }
+    prompt.textContent = choosingCheckout
+      ? (lang === 'en' ? 'Select your check-out date' : 'Kies je uitcheckdatum')
+      : (lang === 'en' ? 'Select your check-in date' : 'Kies je incheckdatum');
+  }
+  function renderCalendar() {
+    monthLabel.textContent = visibleMonth.toLocaleDateString(locale, { month:'long', year:'numeric' });
+    weekdays.innerHTML = '';
+    const weekdayNames = lang === 'en' ? ['Mo','Tu','We','Th','Fr','Sa','Su'] : ['Ma','Di','Wo','Do','Vr','Za','Zo'];
+    weekdayNames.forEach(x => { const el=document.createElement('span'); el.textContent=x; weekdays.appendChild(el); });
+    daysGrid.innerHTML = '';
+    const first = monthStart(visibleMonth);
+    const mondayOffset = (first.getDay()+6)%7;
+    const gridStart = new Date(first); gridStart.setDate(first.getDate()-mondayOffset);
+    const today = todayIso();
+    const rangeEnd = checkout.value || (choosingCheckout ? hoverIso : '');
+    for (let i=0;i<42;i++) {
+      const d=new Date(gridStart); d.setDate(gridStart.getDate()+i);
+      const iso=toIso(d);
+      const btn=document.createElement('button');
+      btn.type='button'; btn.className='date-range-day'; btn.textContent=String(d.getDate()); btn.dataset.date=iso;
+      if (d.getMonth()!==visibleMonth.getMonth()) btn.classList.add('outside-month');
+      if (iso<today) { btn.disabled=true; btn.classList.add('past'); }
+      if (iso===today) btn.classList.add('today');
+      if (iso===checkin.value) btn.classList.add('range-start','selected');
+      if (iso===checkout.value) btn.classList.add('range-end','selected');
+      if (checkin.value && rangeEnd && iso>checkin.value && iso<rangeEnd) btn.classList.add('in-range');
+      btn.addEventListener('mouseenter',()=>{if(choosingCheckout && iso>checkin.value){hoverIso=iso;renderCalendar();}});
+      btn.addEventListener('click',()=>{
+        if (iso<today) return;
+        if (!choosingCheckout || !checkin.value || (checkin.value && checkout.value)) {
+          checkin.value=iso; checkout.value=''; choosingCheckout=true; hoverIso='';
+        } else if (iso<=checkin.value) {
+          checkin.value=iso; checkout.value=''; choosingCheckout=true; hoverIso='';
+        } else {
+          checkout.value=iso; choosingCheckout=false; hoverIso='';
+        }
+        updateRangeText(); renderCalendar(); updateAvailabilityUi(lang);
+        if (checkout.value) setTimeout(()=>closeCalendar(),180);
+      });
+      daysGrid.appendChild(btn);
+    }
+  }
+  function openCalendar() {
+    if (panel.hidden) {
+      panel.hidden=false; trigger.setAttribute('aria-expanded','true');
+      visibleMonth=monthStart(parseIsoDate(checkin.value)||new Date());
+      choosingCheckout=Boolean(checkin.value && !checkout.value);
+      updateRangeText(); renderCalendar();
+    }
+  }
+  function closeCalendar() { panel.hidden=true; trigger.setAttribute('aria-expanded','false'); hoverIso=''; }
+  trigger.addEventListener('click',()=>panel.hidden?openCalendar():closeCalendar());
+  picker.querySelector('.date-range-close').addEventListener('click',closeCalendar);
+  picker.querySelector('.date-range-prev').addEventListener('click',()=>{
+    const candidate=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()-1,1);
+    const current=monthStart(new Date());
+    if(candidate>=current){visibleMonth=candidate;renderCalendar();}
+  });
+  picker.querySelector('.date-range-next').addEventListener('click',()=>{visibleMonth=new Date(visibleMonth.getFullYear(),visibleMonth.getMonth()+1,1);renderCalendar();});
+  document.addEventListener('click',e=>{if(!panel.hidden && !picker.contains(e.target))closeCalendar();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!panel.hidden)closeCalendar();});
 
   function sanitizeDates() {
-    const today = isoTodayLocal();
-    checkin.min = today;
-
-    if (checkin.value && checkin.value < today) {
-      checkin.value = '';
-    }
-
-    checkout.min = checkin.value || today;
-
-    if (
-      checkout.value &&
-      (checkout.value <= today || (checkin.value && checkout.value <= checkin.value))
-    ) {
-      checkout.value = '';
-    }
-
-    updateAvailabilityUi(lang);
+    const today=todayIso();
+    if(checkin.value && checkin.value<today){checkin.value='';checkout.value='';}
+    if(checkout.value && (!checkin.value || checkout.value<=checkin.value)) checkout.value='';
+    updateRangeText(); updateAvailabilityUi(lang);
   }
-
-  function syncDates(source) {
-    const today = isoTodayLocal();
-    checkin.min = today;
-
-    if (source === checkin) {
-      if (checkin.value && checkin.value < today) {
-        checkin.value = '';
-      }
-      checkout.min = checkin.value || today;
-      if (checkout.value && (!checkin.value || checkout.value <= checkin.value)) {
-        checkout.value = '';
-      }
-    }
-
-    if (source === checkout && checkout.value && checkout.value <= today) {
-      checkout.value = '';
-    }
-
-    updateAvailabilityUi(lang);
-  }
-
-  checkin.addEventListener('change', () => syncDates(checkin));
-  checkout.addEventListener('change', () => syncDates(checkout));
 
   form.addEventListener('submit', event => {
     event.preventDefault();
     form.querySelector('.availability-error')?.remove();
-
-    const inDate = checkin.value;
-    const outDate = checkout.value;
-
-    if (!hasValidFutureStay(inDate, outDate)) {
-      const p = document.createElement('p');
-      p.className = 'availability-error';
-      p.textContent = isPastIsoDate(inDate)
-        ? (lang === 'en'
-            ? 'Check-in cannot be in the past. Please choose today or a future date.'
-            : 'De incheckdatum kan niet in het verleden liggen. Kies vandaag of een toekomstige datum.')
-        : (lang === 'en'
-            ? 'Please choose a valid check-in and check-out date.'
-            : 'Kies een geldige incheck- en uitcheckdatum.');
-      form.appendChild(p);
-      updateAvailabilityUi(lang);
-      return;
+    const inDate=checkin.value, outDate=checkout.value;
+    if (!hasValidFutureStay(inDate,outDate)) {
+      const p=document.createElement('p'); p.className='availability-error';
+      p.textContent=isPastIsoDate(inDate)
+        ? (lang==='en'?'Check-in cannot be in the past. Please choose today or a future date.':'De incheckdatum kan niet in het verleden liggen. Kies vandaag of een toekomstige datum.')
+        : (lang==='en'?'Please choose a valid check-in and check-out date.':'Kies een geldige incheck- en uitcheckdatum.');
+      form.appendChild(p); updateAvailabilityUi(lang); openCalendar(); return;
     }
-
-    window.open(buildBookingUrl(inDate, outDate), '_blank', 'noopener,noreferrer');
+    window.open(buildBookingUrl(inDate,outDate),'_blank','noopener,noreferrer');
   });
-
   sanitizeDates();
-  window.addEventListener('pageshow', sanitizeDates);
+  window.addEventListener('pageshow',sanitizeDates);
 }
-
 setupAvailabilityForm('en');
 setupAvailabilityForm('nl');
 loadPublicAvailability();

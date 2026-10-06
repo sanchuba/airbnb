@@ -137,15 +137,30 @@
 <h2>Check availability</h2>
 <p class="booking-lead">Choose your check-in and check-out dates.</p>
 <form class="availability-form" data-lang="en" id="availabilityFormEn" novalidate="">
-<div class="availability-fields">
-<label class="availability-field">
-<span>Check-in</span>
-<input id="checkinEn" name="checkin" required="" type="date"/>
-</label>
-<label class="availability-field">
-<span>Check-out</span>
-<input id="checkoutEn" name="checkout" required="" type="date"/>
-</label>
+<div class="date-range-picker" data-range-picker="en">
+<button class="date-range-trigger" id="dateRangeTriggerEn" type="button" aria-expanded="false" aria-controls="dateRangePanelEn">
+<span class="date-range-trigger-copy">
+<small>Stay dates</small>
+<strong id="dateRangeValueEn">Choose check-in and check-out</strong>
+</span>
+<span class="date-range-icon" aria-hidden="true">▦</span>
+</button>
+<input id="checkinEn" name="checkin" type="hidden"/>
+<input id="checkoutEn" name="checkout" type="hidden"/>
+<div class="date-range-panel" id="dateRangePanelEn" hidden>
+<div class="date-range-panel-head">
+<div><strong id="dateRangePromptEn">Select your check-in date</strong><small>Then select your check-out date</small></div>
+<button class="date-range-close" type="button" aria-label="Close calendar">×</button>
+</div>
+<div class="date-range-nav">
+<button class="date-range-nav-btn date-range-prev" type="button" aria-label="Previous month">‹</button>
+<strong class="date-range-month"></strong>
+<button class="date-range-nav-btn date-range-next" type="button" aria-label="Next month">›</button>
+</div>
+<div class="date-range-weekdays" aria-hidden="true"></div>
+<div class="date-range-days"></div>
+<div class="date-range-selection" id="dateRangeSelectionEn">No dates selected yet</div>
+</div>
 </div>
 <div aria-live="polite" class="availability-status" id="availabilityStatusEn">
 <div class="availability-status-head">
@@ -425,15 +440,30 @@
 <h2>Controleer beschikbaarheid</h2>
 <p class="booking-lead">Kies je aankomst- en vertrekdatum.</p>
 <form class="availability-form" data-lang="nl" id="availabilityFormNl" novalidate="">
-<div class="availability-fields">
-<label class="availability-field">
-<span>Inchecken</span>
-<input id="checkinNl" name="checkin" required="" type="date"/>
-</label>
-<label class="availability-field">
-<span>Uitchecken</span>
-<input id="checkoutNl" name="checkout" required="" type="date"/>
-</label>
+<div class="date-range-picker" data-range-picker="nl">
+<button class="date-range-trigger" id="dateRangeTriggerNl" type="button" aria-expanded="false" aria-controls="dateRangePanelNl">
+<span class="date-range-trigger-copy">
+<small>Verblijfsdata</small>
+<strong id="dateRangeValueNl">Kies incheck- en uitcheckdatum</strong>
+</span>
+<span class="date-range-icon" aria-hidden="true">▦</span>
+</button>
+<input id="checkinNl" name="checkin" type="hidden"/>
+<input id="checkoutNl" name="checkout" type="hidden"/>
+<div class="date-range-panel" id="dateRangePanelNl" hidden>
+<div class="date-range-panel-head">
+<div><strong id="dateRangePromptNl">Kies je incheckdatum</strong><small>Kies daarna je uitcheckdatum</small></div>
+<button class="date-range-close" type="button" aria-label="Kalender sluiten">×</button>
+</div>
+<div class="date-range-nav">
+<button class="date-range-nav-btn date-range-prev" type="button" aria-label="Vorige maand">‹</button>
+<strong class="date-range-month"></strong>
+<button class="date-range-nav-btn date-range-next" type="button" aria-label="Volgende maand">›</button>
+</div>
+<div class="date-range-weekdays" aria-hidden="true"></div>
+<div class="date-range-days"></div>
+<div class="date-range-selection" id="dateRangeSelectionNl">Nog geen data geselecteerd</div>
+</div>
 </div>
 <div aria-live="polite" class="availability-status" id="availabilityStatusNl">
 <div class="availability-status-head">
